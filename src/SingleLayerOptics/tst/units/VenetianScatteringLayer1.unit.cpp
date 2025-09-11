@@ -60,28 +60,28 @@ TEST_F(TestVenetianScatteringLayer1, TestVenetian1)
 
     Side aSide = Side::Front;
 
-    double T_dir_dir = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect);
+    double T_dir_dir = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0.292893, T_dir_dir, 1e-6);
 
-    double R_dir_dir = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect);
+    double R_dir_dir = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect);
     EXPECT_NEAR(0, R_dir_dir, 1e-6);
 
-    double T_dir_dif = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse);
+    double T_dir_dif = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.162897, T_dir_dif, 1e-6);
 
-    double R_dir_dif = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse);
+    double R_dir_dif = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.356835, R_dir_dif, 1e-6);
 
-    double T_dif_dif = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse);
+    double T_dif_dif = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.486233, T_dif_dif, 1e-6);
 
-    double R_dif_dif = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse);
+    double R_dif_dif = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.329593, R_dif_dif, 1e-6);
 
     double A_dir = aShade.getAbsorptance(aSide, ScatteringSimple::Direct);
@@ -105,28 +105,28 @@ TEST_F(TestVenetianScatteringLayer1, TestVenetian2)
     const double Theta = 45;
     const double Phi = 90;
 
-    double T_dir_dir = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, Theta, Phi);
+    double T_dir_dir = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, Theta, Phi);
     EXPECT_NEAR(1, T_dir_dir, 1e-6);
 
-    double R_dir_dir = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect, Theta, Phi);
+    double R_dir_dir = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, Theta, Phi);
     EXPECT_NEAR(0, R_dir_dir, 1e-6);
 
-    double T_dir_dif = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse, Theta, Phi);
+    double T_dir_dif = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, Theta, Phi);
     EXPECT_NEAR(0, T_dir_dif, 1e-6);
 
-    double R_dir_dif = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse, Theta, Phi);
+    double R_dir_dif = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, Theta, Phi);
     EXPECT_NEAR(0, R_dir_dif, 1e-6);
 
-    double T_dif_dif = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse, Theta, Phi);
+    double T_dif_dif = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, Theta, Phi);
     EXPECT_NEAR(0.486233, T_dif_dif, 1e-6);
 
-    double R_dif_dif = aShade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse, Theta, Phi);
+    double R_dif_dif = aShade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, Theta, Phi);
     EXPECT_NEAR(0.329593, R_dif_dif, 1e-6);
 
     double A_dir = aShade.getAbsorptance(aSide, ScatteringSimple::Direct, Theta, Phi);

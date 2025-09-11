@@ -20,7 +20,7 @@ protected:
         auto airTemperature = 300;   // Kelvins
         auto airSpeed = 5.5;         // meters per second
         auto airDirection = Tarcog::ISO15099::AirHorizontalDirection::Windward;
-        auto tSky = 270;             // Kelvins
+        auto tSky = 270;   // Kelvins
         auto solarRadiation = 789;
 
         std::shared_ptr<Tarcog::ISO15099::CEnvironment> Outdoor =

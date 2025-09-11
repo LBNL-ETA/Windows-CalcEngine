@@ -1,6 +1,10 @@
+#include <mutex>
+
 #include "PhotovoltaicSpecularBSDFLayer.hpp"
 #include "MaterialDescription.hpp"
 #include "SpecularCell.hpp"
+
+std::mutex m_lockjscPrime;
 
 namespace SingleLayerOptics
 {
@@ -20,8 +24,10 @@ namespace SingleLayerOptics
     }
 
     std::vector<std::vector<double>>
-      PhotovoltaicSpecularBSDFLayer::jscPrime(FenestrationCommon::Side t_Side, const std::vector<double> & wavelengths) const
+      PhotovoltaicSpecularBSDFLayer::jscPrime(FenestrationCommon::Side t_Side,
+                                              const std::vector<double> & wavelengths) const
     {
+        std::lock_guard m_guard(m_lockjscPrime);
         std::vector<std::vector<double>> result;
         auto jscPrime{m_PVMaterial->jscPrime(t_Side)};
         if(jscPrime.size() != wavelengths.size())
@@ -32,7 +38,8 @@ namespace SingleLayerOptics
         {
             std::vector<double> curVal;
 
-            // No angular dependence for jsc for now. Every direction will have the same electricity generation.
+            // No angular dependence for jsc for now. Every direction will have the same electricity
+            // generation.
             for(size_t i = 0u; i < m_BSDFHemisphere.getDirections(BSDFDirection::Incoming).size();
                 ++i)
             {
@@ -53,7 +60,7 @@ namespace SingleLayerOptics
     {
         std::vector<double> result;
         result.reserve(electricalCurrent.size());
-        for(const auto & cur: electricalCurrent)
+        for(const auto & cur : electricalCurrent)
         {
             result.push_back(m_PVPowerTable.voc(cur));
         }

@@ -35,8 +35,8 @@ namespace SingleLayerOptics
     /////////////////////////////////////////////////////////////////
 
     BSDFDirections::BSDFDirections(const std::vector<BSDFDefinition> & t_Definitions) :
-        m_Patches(createBSDFPatches(
-          getThetaAngles(t_Definitions), getNumberOfPhiAngles(t_Definitions))),
+        m_Patches(
+          createBSDFPatches(getThetaAngles(t_Definitions), getNumberOfPhiAngles(t_Definitions))),
         m_LambdaVector(getLambdaVector(m_Patches)),
         m_LambdaMatrix(setLambdaMatrix(m_LambdaVector))
     {}
@@ -88,7 +88,8 @@ namespace SingleLayerOptics
                 {
                     AngleLimits currentPhiLimits(lowerPhi);
                     patches.emplace_back(currentThetaLimits, currentPhiLimits);
-                } else
+                }
+                else
                 {
                     AngleLimits currentPhiLimits(lowerPhi, upperPhi);
                     patches.emplace_back(currentThetaLimits, currentPhiLimits);
@@ -221,7 +222,7 @@ namespace SingleLayerOptics
         return m_Directions.at(tDirection);
     }
 
-    BSDFHemisphere BSDFHemisphere::create(BSDFBasis t_Basis)
+    BSDFHemisphere BSDFHemisphere::create(const BSDFBasis t_Basis)
     {
         return BSDFHemisphere(t_Basis);
     }

@@ -45,4 +45,4 @@ namespace SingleLayerOptics
 
         std::vector<PVPowerProperties> m_PVPowerProperties;
     };
-}
+}   // namespace SingleLayerOptics

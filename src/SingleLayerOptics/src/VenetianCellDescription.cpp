@@ -205,12 +205,11 @@ namespace SingleLayerOptics
       double t_ProfileAngle, FenestrationCommon::Side t_Side, const BSDFDirection t_Direction)
     {
         // Define a map of conditions for reverting the angle
-        static const std::map<std::pair<BSDFDirection, FenestrationCommon::Side>, bool> revertMap = {
-          {{BSDFDirection::Incoming, FenestrationCommon::Side::Front}, true},
-          {{BSDFDirection::Outgoing, FenestrationCommon::Side::Back}, true},
-          {{BSDFDirection::Incoming, FenestrationCommon::Side::Back}, false},
-          {{BSDFDirection::Outgoing, FenestrationCommon::Side::Front}, false}
-        };
+        static const std::map<std::pair<BSDFDirection, FenestrationCommon::Side>, bool> revertMap =
+          {{{BSDFDirection::Incoming, FenestrationCommon::Side::Front}, true},
+           {{BSDFDirection::Outgoing, FenestrationCommon::Side::Back}, true},
+           {{BSDFDirection::Incoming, FenestrationCommon::Side::Back}, false},
+           {{BSDFDirection::Outgoing, FenestrationCommon::Side::Front}, false}};
 
         // Check if the current (t_Direction, t_Side) combination should revert the angle
         const bool shouldRevertAngle = revertMap.at({t_Direction, t_Side});
@@ -227,16 +226,10 @@ namespace SingleLayerOptics
         return cellBeamViewFactors(t_Direction.profileAngle(), t_Side, t_BeamDirection);
     }
 
-    double CVenetianCellDescription::T_dir_dir(const FenestrationCommon::Side t_Side,
-                                               const CBeamDirection & t_Direction)
+    double CVenetianCellDescription::Beam_dir_dir(const FenestrationCommon::Side t_Side,
+                                                  const CBeamDirection & t_Direction)
     {
         return m_BeamGeometry.directToDirect(-t_Direction.profileAngle(), t_Side);
-    }
-
-    double CVenetianCellDescription::R_dir_dir(const FenestrationCommon::Side,
-                                               const CBeamDirection &)
-    {
-        return 0;
     }
 
     FenestrationCommon::Venetian::Geometry CVenetianCellDescription::getVenetianGeometry() const
@@ -286,8 +279,8 @@ namespace SingleLayerOptics
         const std::map<Side, size_t> sideIndex{
           {Side::Front, static_cast<size_t>(numberOfSegments / 2)}, {Side::Back, 0}};
 
-        B[sideIndex.at(t_Side)].viewFactor = T_dir_dir(t_Side, t_Direction);
-        B[sideIndex.at(t_Side)].percentViewed = T_dir_dir(t_Side, t_Direction);
+        B[sideIndex.at(t_Side)].viewFactor = Beam_dir_dir(t_Side, t_Direction);
+        B[sideIndex.at(t_Side)].percentViewed = Beam_dir_dir(t_Side, t_Direction);
 
         return B;
     }

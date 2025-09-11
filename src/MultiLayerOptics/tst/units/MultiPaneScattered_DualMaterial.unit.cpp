@@ -99,28 +99,28 @@ TEST_F(MultiPaneScattered_DualMaterial, TestSpecular1)
     double theta = 0;
     double phi = 0;
 
-    double T_dir_dir = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDirect, theta, phi);
+    double T_dir_dir = aLayer.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.7, T_dir_dir, 1e-6);
 
-    double T_dir_dif = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DirectDiffuse, theta, phi);
+    double T_dir_dif = aLayer.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0, T_dir_dif, 1e-6);
 
-    double T_dif_dif = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
+    double T_dif_dif = aLayer.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.7, T_dif_dif, 1e-6);
 
-    double R_dir_dir = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDirect, theta, phi);
+    double R_dir_dir = aLayer.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDirect, theta, phi);
     EXPECT_NEAR(0.1, R_dir_dir, 1e-6);
 
-    double R_dir_dif = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DirectDiffuse, theta, phi);
+    double R_dir_dif = aLayer.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DirectDiffuse, theta, phi);
     EXPECT_NEAR(0, R_dir_dif, 1e-6);
 
-    double R_dif_dif = aLayer.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
+    double R_dif_dif = aLayer.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, aSide, Scattering::DiffuseDiffuse, theta, phi);
     EXPECT_NEAR(0.1, R_dif_dif, 1e-6);
 
     double A_dir1 = aLayer.getAbsorptanceLayer(1, aSide, ScatteringSimple::Direct, theta, phi);

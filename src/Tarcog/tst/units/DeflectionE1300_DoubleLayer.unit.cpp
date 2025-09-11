@@ -5,9 +5,7 @@
 #include <WCETarcog.hpp>
 
 class TestDeflectionE1300_DoubleLayer : public testing::Test
-{
-
-};
+{};
 
 TEST_F(TestDeflectionE1300_DoubleLayer, DeflectionSquaredWindow)
 {

@@ -115,22 +115,14 @@ protected:
         m_TbVis = m_TfVis;
         m_RfVis = loadRfVis();
         m_RbVis = m_RfVis;
-        m_MaterialVis =
-          std::make_shared<CMaterialSingleBandBSDF>(m_TfVis,
-                                                    m_TbVis,
-                                                    m_RfVis,
-                                                    m_RbVis,
-                                                    m_Hemisphere);
+        m_MaterialVis = std::make_shared<CMaterialSingleBandBSDF>(
+          m_TfVis, m_TbVis, m_RfVis, m_RbVis, m_Hemisphere);
         m_TfSol = loadTfSol();
         m_TbSol = m_TfSol;
         m_RfSol = loadRfSol();
         m_RbSol = m_RfSol;
-        m_MaterialSol =
-          std::make_shared<CMaterialSingleBandBSDF>(m_TfSol,
-                                                    m_TbSol,
-                                                    m_RfSol,
-                                                    m_RbSol,
-                                                    m_Hemisphere);
+        m_MaterialSol = std::make_shared<CMaterialSingleBandBSDF>(
+          m_TfSol, m_TbSol, m_RfSol, m_RbSol, m_Hemisphere);
         m_Material = std::make_shared<CMaterialDualBandBSDF>(m_MaterialVis, m_MaterialSol);
         m_Material->createRangesFromRatio(ConstantsData::NIRRatio);
 

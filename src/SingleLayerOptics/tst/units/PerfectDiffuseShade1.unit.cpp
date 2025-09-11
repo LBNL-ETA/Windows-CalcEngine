@@ -42,13 +42,13 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
 
     BSDFIntegrator aResults = aShade->getResults();
 
-    double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.000000000, tauDiff, 1e-6);
 
-    double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.550000000, RfDiff, 1e-6);
 
-    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
@@ -67,7 +67,7 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
         EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
     }
 
-    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
                       0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070, 0.175070,
@@ -91,14 +91,13 @@ TEST_F(TestPerfectDiffuseShade1, TestSolarProperties)
 
 TEST_F(TestPerfectDiffuseShade1, AtWavelength)
 {
-
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
 
     const auto correct{0.55};
-    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::R)};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySurface::R)};
 
     EXPECT_NEAR(correct, result, 1e-6);
 }

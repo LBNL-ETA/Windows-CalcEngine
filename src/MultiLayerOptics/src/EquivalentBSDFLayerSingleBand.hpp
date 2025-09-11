@@ -64,10 +64,11 @@ namespace MultiLayerOptics
                       const std::vector<double> & jcsBack = std::vector<double>());
 
         FenestrationCommon::SquareMatrix getMatrix(FenestrationCommon::Side t_Side,
-                                                   FenestrationCommon::PropertySimple t_Property);
+                                                   FenestrationCommon::PropertySurface t_Property);
 
-        FenestrationCommon::SquareMatrix getProperty(FenestrationCommon::Side t_Side,
-                                                     FenestrationCommon::PropertySimple t_Property);
+        FenestrationCommon::SquareMatrix
+          getProperty(FenestrationCommon::Side t_Side,
+                      FenestrationCommon::PropertySurface t_Property);
 
         std::vector<double> getLayerAbsorptances(size_t Index, FenestrationCommon::Side t_Side);
         std::vector<double> getLayerJSC(size_t Index, FenestrationCommon::Side t_Side);
@@ -116,8 +117,7 @@ namespace MultiLayerOptics
                                                        size_t matrixSize,
                                                        AbsorptanceLayers & absLayers);
 
-        void CalculateLayerAbsorptances(size_t numberOfLayers,
-                                        IrradiationMatrices irradiation);
+        void CalculateLayerAbsorptances(size_t numberOfLayers, IrradiationMatrices irradiation);
 
 
         // Photovoltaic properties for every direction. Vector is scaled to incoming

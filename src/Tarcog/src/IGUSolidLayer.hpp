@@ -55,8 +55,8 @@ namespace Tarcog::ISO15099
         void calculateConvectionOrConductionFlow() override;
 
         double m_Conductivity;
-    private:
 
+    private:
         double m_SolarAbsorptance;
     };
 

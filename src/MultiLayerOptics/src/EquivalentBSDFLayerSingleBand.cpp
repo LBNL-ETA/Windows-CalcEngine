@@ -31,31 +31,31 @@ namespace MultiLayerOptics
     {
         const auto aLambda = t_FrontLayer.lambdaVector();
         const auto InterRefl1 = interReflectance(aLambda,
-                                                 t_FrontLayer.at(Side::Back, PropertySimple::R),
-                                                 t_BackLayer.at(Side::Front, PropertySimple::R));
+                                                 t_FrontLayer.at(Side::Back, PropertySurface::R),
+                                                 t_BackLayer.at(Side::Front, PropertySurface::R));
 
         const auto InterRefl2 = interReflectance(aLambda,
-                                                 t_BackLayer.at(Side::Front, PropertySimple::R),
-                                                 t_FrontLayer.at(Side::Back, PropertySimple::R));
+                                                 t_BackLayer.at(Side::Front, PropertySurface::R),
+                                                 t_FrontLayer.at(Side::Back, PropertySurface::R));
 
-        m_Tf = equivalentT(t_BackLayer.at(Side::Front, PropertySimple::T),
+        m_Tf = equivalentT(t_BackLayer.at(Side::Front, PropertySurface::T),
                            InterRefl1,
                            aLambda,
-                           t_FrontLayer.at(Side::Front, PropertySimple::T));
-        m_Tb = equivalentT(t_FrontLayer.at(Side::Back, PropertySimple::T),
+                           t_FrontLayer.at(Side::Front, PropertySurface::T));
+        m_Tb = equivalentT(t_FrontLayer.at(Side::Back, PropertySurface::T),
                            InterRefl2,
                            aLambda,
-                           t_BackLayer.at(Side::Back, PropertySimple::T));
-        m_Rf = equivalentR(t_FrontLayer.at(Side::Front, PropertySimple::R),
-                           t_FrontLayer.at(Side::Front, PropertySimple::T),
-                           t_FrontLayer.at(Side::Back, PropertySimple::T),
-                           t_BackLayer.at(Side::Front, PropertySimple::R),
+                           t_BackLayer.at(Side::Back, PropertySurface::T));
+        m_Rf = equivalentR(t_FrontLayer.at(Side::Front, PropertySurface::R),
+                           t_FrontLayer.at(Side::Front, PropertySurface::T),
+                           t_FrontLayer.at(Side::Back, PropertySurface::T),
+                           t_BackLayer.at(Side::Front, PropertySurface::R),
                            InterRefl2,
                            aLambda);
-        m_Rb = equivalentR(t_BackLayer.at(Side::Back, PropertySimple::R),
-                           t_BackLayer.at(Side::Back, PropertySimple::T),
-                           t_BackLayer.at(Side::Front, PropertySimple::T),
-                           t_FrontLayer.at(Side::Back, PropertySimple::R),
+        m_Rb = equivalentR(t_BackLayer.at(Side::Back, PropertySurface::R),
+                           t_BackLayer.at(Side::Back, PropertySurface::T),
+                           t_BackLayer.at(Side::Front, PropertySurface::T),
+                           t_FrontLayer.at(Side::Back, PropertySurface::R),
                            InterRefl1,
                            aLambda);
 
@@ -123,8 +123,7 @@ namespace MultiLayerOptics
               std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
         m_EquivalentLayer = BSDFIntegrator(t_Layer);
-        EnumSide sides;
-        for(Side aSide : sides)
+        for(Side aSide : allSides())
         {
             m_A[aSide] = std::vector<std::vector<double>>();
             m_JSC[aSide] = std::vector<std::vector<double>>();
@@ -134,14 +133,14 @@ namespace MultiLayerOptics
     }
 
     SquareMatrix CEquivalentBSDFLayerSingleBand::getMatrix(const Side t_Side,
-                                                           const PropertySimple t_Property)
+                                                           const PropertySurface t_Property)
     {
         calcEquivalentProperties();
         return m_EquivalentLayer.getMatrix(t_Side, t_Property);
     }
 
     SquareMatrix CEquivalentBSDFLayerSingleBand::getProperty(const Side t_Side,
-                                                             const PropertySimple t_Property)
+                                                             const PropertySurface t_Property)
     {
         return getMatrix(t_Side, t_Property);
     }
@@ -188,8 +187,7 @@ namespace MultiLayerOptics
               std::vector<double>(t_Layer.lambdaVector().size(), 0));
         }
         m_PropertiesCalculated = false;
-        EnumSide sides;
-        for(Side aSide : sides)
+        for(Side aSide : allSides())
         {
             m_A.at(aSide).clear();
             m_JSC.at(aSide).clear();
@@ -200,12 +198,15 @@ namespace MultiLayerOptics
       CEquivalentBSDFLayerSingleBand::BuildForwardAndBackwardLayers(size_t numberOfLayers)
     {
         AbsorptanceLayers result;
+        result.Forward.reserve(numberOfLayers);
+        result.Backward.reserve(numberOfLayers);
+
         m_EquivalentLayer = m_Layers[0];
         result.Forward.push_back(m_EquivalentLayer);
         for(size_t i = 1; i < numberOfLayers; ++i)
         {
             m_EquivalentLayer = CBSDFDoubleLayer(m_EquivalentLayer, m_Layers[i]).value();
-            result.Forward.push_back(m_EquivalentLayer);
+            result.Forward.push_back(m_EquivalentLayer);   // keep same semantics
         }
 
         result.Backward.push_back(m_EquivalentLayer);
@@ -227,6 +228,10 @@ namespace MultiLayerOptics
                                                                  AbsorptanceLayers & absLayers)
     {
         IrradiationMatrices result;
+        result.Iminus[EnergyFlow::Forward].reserve(numberOfLayers);
+        result.Iminus[EnergyFlow::Backward].reserve(numberOfLayers);
+        result.Iplus[EnergyFlow::Forward].reserve(numberOfLayers);
+        result.Iplus[EnergyFlow::Backward].reserve(numberOfLayers);
 
         // Equations used here are from Klems-Matrix Layer calculations- part 2 paper
         // Note that absorptance calculations do not need irradiances leaving first layer
@@ -238,48 +243,47 @@ namespace MultiLayerOptics
             {
                 SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
-                result.Iminus[EnergyFlow::Backward].push_back(iMinus);
+                result.Iminus[EnergyFlow::Backward].push_back(std::move(iMinus));
                 SquareMatrix iPlus{matrixSize};
-                result.Iplus[EnergyFlow::Forward].push_back(iPlus);
+                result.Iplus[EnergyFlow::Forward].push_back(std::move(iPlus));
             }
             else
             {
                 BSDFIntegrator & Layer1 = absLayers.Forward[i];
                 BSDFIntegrator & Layer2 = absLayers.Backward[i + 1];
                 const auto InterRefl2{interReflectance(m_Lambda,
-                                                       Layer2.at(Side::Front, PropertySimple::R),
-                                                       Layer1.at(Side::Back, PropertySimple::R))};
-                const auto iMinus{
-                  iminusCalc(InterRefl2, Layer2.getMatrix(Side::Back, PropertySimple::T))};
-                result.Iminus[EnergyFlow::Backward].push_back(iMinus);
-                const auto iPlus{iplusCalc(InterRefl2,
-                                           Layer2.getMatrix(Side::Front, PropertySimple::R),
-                                           Layer1.getMatrix(Side::Front, PropertySimple::T))};
-                result.Iplus[EnergyFlow::Forward].push_back(iPlus);
+                                                       Layer2.at(Side::Front, PropertySurface::R),
+                                                       Layer1.at(Side::Back, PropertySurface::R))};
+                auto iMinus =
+                  iminusCalc(InterRefl2, Layer2.getMatrix(Side::Back, PropertySurface::T));
+                result.Iminus[EnergyFlow::Backward].push_back(std::move(iMinus));
+                auto iPlus = iplusCalc(InterRefl2,
+                                       Layer2.getMatrix(Side::Front, PropertySurface::R),
+                                       Layer1.getMatrix(Side::Front, PropertySurface::T));
+                result.Iplus[EnergyFlow::Forward].push_back(std::move(iPlus));
             }
 
             if(i == 0)
             {
                 SquareMatrix iMinus{matrixSize};
                 iMinus.setIdentity();
-                result.Iminus[EnergyFlow::Forward].push_back(iMinus);
+                result.Iminus[EnergyFlow::Forward].push_back(std::move(iMinus));
                 SquareMatrix iPlus{matrixSize};
-                result.Iplus[EnergyFlow::Backward].push_back(iPlus);
+                result.Iplus[EnergyFlow::Backward].push_back(std::move(iPlus));
             }
             else
             {
                 BSDFIntegrator & Layer1 = absLayers.Forward[i - 1];
                 BSDFIntegrator & Layer2 = absLayers.Backward[i];
                 const auto InterRefl1{interReflectance(m_Lambda,
-                                                       Layer1.at(Side::Back, PropertySimple::R),
-                                                       Layer2.at(Side::Front, PropertySimple::R))};
-                const auto iMinus{
-                  iminusCalc(InterRefl1, Layer1.at(Side::Front, PropertySimple::T))};
-                result.Iminus[EnergyFlow::Forward].push_back(iMinus);
-                const auto iPlus{iplusCalc(InterRefl1,
-                                           Layer1.at(Side::Back, PropertySimple::R),
-                                           Layer2.at(Side::Back, PropertySimple::T))};
-                result.Iplus[EnergyFlow::Backward].push_back(iPlus);
+                                                       Layer1.at(Side::Back, PropertySurface::R),
+                                                       Layer2.at(Side::Front, PropertySurface::R))};
+                auto iMinus = iminusCalc(InterRefl1, Layer1.at(Side::Front, PropertySurface::T));
+                result.Iminus[EnergyFlow::Forward].push_back(std::move(iMinus));
+                auto iPlus = iplusCalc(InterRefl1,
+                                       Layer1.at(Side::Back, PropertySurface::R),
+                                       Layer2.at(Side::Back, PropertySurface::T));
+                result.Iplus[EnergyFlow::Backward].push_back(std::move(iPlus));
             }
         }
 
@@ -289,33 +293,40 @@ namespace MultiLayerOptics
     void CEquivalentBSDFLayerSingleBand::CalculateLayerAbsorptances(size_t numberOfLayers,
                                                                     IrradiationMatrices irradiation)
     {
-        for(size_t i = 0; i < numberOfLayers; i++)
+        for(auto side : allSides())
         {
-            EnumSide sides;
-            for(Side aSide : sides)
+            m_A[side].clear();
+            m_A[side].reserve(numberOfLayers);
+            m_JSC[side].clear();
+            m_JSC[side].reserve(numberOfLayers);
+        }
+
+        for(size_t i = 0; i < numberOfLayers; ++i)
+        {
+            for(Side aSide : allSides())
             {
-                auto AbsFront{m_Layers[i].Abs(aSide)};
-                auto AbsBack{m_Layers[i].Abs(oppositeSide(aSide))};
-                auto aEnergyFlow{aSide == Side::Front ? EnergyFlow::Forward : EnergyFlow::Backward};
-                auto absorbedFront{AbsFront * irradiation.Iminus.at(aEnergyFlow)[i]};
-                auto absorbedBack{AbsBack * irradiation.Iplus.at(aEnergyFlow)[i]};
+                auto AbsFront = m_Layers[i].Abs(aSide);
+                auto AbsBack = m_Layers[i].Abs(oppositeSide(aSide));
+                auto flow = (aSide == Side::Front) ? EnergyFlow::Forward : EnergyFlow::Backward;
+
+                auto absorbedFront = AbsFront * irradiation.Iminus.at(flow)[i];
+                auto absorbedBack = AbsBack * irradiation.Iplus.at(flow)[i];
                 std::transform(absorbedFront.begin(),
                                absorbedFront.end(),
                                absorbedBack.begin(),
                                absorbedFront.begin(),
                                std::plus<>());
-                m_A.at(aSide).push_back(absorbedFront);
+                m_A.at(aSide).push_back(std::move(absorbedFront));
 
-                // Photovoltaic calculation
-                auto jscFront{m_JSCPrime.at(aSide)[i] * irradiation.Iminus.at(aEnergyFlow)[i]};
-                auto jscBack{m_JSCPrime.at(oppositeSide(aSide))[i]
-                             * irradiation.Iplus.at(aEnergyFlow)[i]};
+                auto jscFront = m_JSCPrime.at(aSide)[i] * irradiation.Iminus.at(flow)[i];
+                auto jscBack =
+                  m_JSCPrime.at(oppositeSide(aSide))[i] * irradiation.Iplus.at(flow)[i];
                 std::transform(jscFront.begin(),
                                jscFront.end(),
                                jscBack.begin(),
                                jscFront.begin(),
                                std::plus<>());
-                m_JSC.at(aSide).push_back(jscFront);
+                m_JSC.at(aSide).push_back(std::move(jscFront));
             }
         }
     }
@@ -341,20 +352,15 @@ namespace MultiLayerOptics
     SquareMatrix CEquivalentBSDFLayerSingleBand::iminusCalc(const SquareMatrix & t_InterRefl,
                                                             const SquareMatrix & t_T) const
     {
-        const auto part2 = multiplyWithDiagonalMatrix(m_Lambda, t_T);
-        auto part1 = t_InterRefl * part2;
-        return part1;
+        return t_InterRefl * multiplyWithDiagonalMatrix(m_Lambda, t_T);
     }
 
     SquareMatrix CEquivalentBSDFLayerSingleBand::iplusCalc(const SquareMatrix & t_InterRefl,
                                                            const SquareMatrix & t_R,
                                                            const SquareMatrix & t_T) const
     {
-        const auto part2 = multiplyWithDiagonalMatrix(m_Lambda, t_R);
-        const auto part3 = multiplyWithDiagonalMatrix(m_Lambda, t_T);
-        auto part1 = t_InterRefl * part2;
-        part1 = part1 * part3;
-        return part1;
+        return t_InterRefl * multiplyWithDiagonalMatrix(m_Lambda, t_R)
+               * multiplyWithDiagonalMatrix(m_Lambda, t_T);
     }
 
 }   // namespace MultiLayerOptics

@@ -69,13 +69,14 @@ namespace SingleLayerOptics
                 double Rf = aMat[i].getProperty(Property::R, Side::Front);
                 double Rb = aMat[i].getProperty(Property::R, Side::Back);
 
-                m_EnergiesBand.emplace_back(
-                  LayerProperties{Tf, Rf, Tb, Rb}, venetianForwardGeometry, m_BackwardFlowCellDescription);
+                m_EnergiesBand.emplace_back(LayerProperties{Tf, Rf, Tb, Rb},
+                                            venetianForwardGeometry,
+                                            m_BackwardFlowCellDescription);
             }
         }
     }
 
-    void CVenetianCell::setSourceData(CSeries & t_SourceData)
+    void CVenetianCell::setSourceData(const CSeries & t_SourceData)
     {
         CBaseCell::setSourceData(t_SourceData);
         generateVenetianEnergy();

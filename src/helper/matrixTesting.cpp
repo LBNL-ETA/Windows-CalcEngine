@@ -18,4 +18,4 @@ namespace Helper
             }
         }
     }
-}
+}   // namespace Helper

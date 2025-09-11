@@ -15,6 +15,11 @@ namespace SingleLayerOptics
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
 
+    bool CSpecularBSDFLayer::isEmissivityPolynomialApplicable() const
+    {
+        return true;
+    }
+
 
     std::shared_ptr<CSpecularCell> CSpecularBSDFLayer::cellAsSpecular() const
     {

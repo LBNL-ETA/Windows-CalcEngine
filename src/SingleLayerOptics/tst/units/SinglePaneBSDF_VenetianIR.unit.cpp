@@ -98,11 +98,11 @@ TEST_F(SinglePaneBSDF_VenetianIR, TestBSDF1)
     auto aLayer = getLayer().getResults();
 
     const double tauDiff =
-      aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T);
+      aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySurface::T);
     EXPECT_NEAR(0.42293224373137134, tauDiff, 1e-6);
 
     const double rhoDiff =
-      aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::R);
+      aLayer.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySurface::R);
     EXPECT_NEAR(0.020572975598423356, rhoDiff, 1e-6);
 
     const double absDiff = aLayer.AbsDiffDiff(FenestrationCommon::Side::Front);
@@ -112,11 +112,11 @@ TEST_F(SinglePaneBSDF_VenetianIR, TestBSDF1)
     const auto phi{0.0};
 
     const double tauDir = aLayer.DirDir(
-      FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::T, theta, phi);
+      FenestrationCommon::Side::Front, FenestrationCommon::PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.93675867352783815, tauDir, 1e-6);
 
     const double rhoDir = aLayer.DirDir(
-      FenestrationCommon::Side::Front, FenestrationCommon::PropertySimple::R, theta, phi);
+      FenestrationCommon::Side::Front, FenestrationCommon::PropertySurface::R, theta, phi);
     EXPECT_NEAR(7.5834925662017421e-5, rhoDir, 1e-6);
 
     const double absDir = aLayer.Abs(FenestrationCommon::Side::Front, theta, phi);

@@ -61,4 +61,4 @@ namespace SingleLayerOptics
         const auto lastIndex{index == m_PVPowerProperties.size() ? index : index + 1u};
         return {index, lastIndex};
     }
-}
+}   // namespace SingleLayerOptics

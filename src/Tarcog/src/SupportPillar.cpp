@@ -16,13 +16,9 @@ namespace Tarcog::ISO15099
         static const std::unordered_map<CellSpacingType, std::function<double(double)>>
           areaCalculators = {
             {CellSpacingType::Square, [](double r) { return r * r; }},
-            {CellSpacingType::ShiftedSquare,
-             [](double r) { return r * r; }},
-            {CellSpacingType::ShiftedRotatedSquare,
-             [](double r) { return r * r; }},
-            {CellSpacingType::NumberOfPillarsPerArea,
-             [](double r) { return r * r; }}
-          };
+            {CellSpacingType::ShiftedSquare, [](double r) { return r * r; }},
+            {CellSpacingType::ShiftedRotatedSquare, [](double r) { return r * r; }},
+            {CellSpacingType::NumberOfPillarsPerArea, [](double r) { return r * r; }}};
 
         auto it = areaCalculators.find(type);
         if(it != areaCalculators.end())
@@ -241,7 +237,7 @@ namespace Tarcog::ISO15099
     ////  TriangularPillar
     ////////////////////////////////////////////////////////////////////////////
     TriangularPillarLayer::TriangularPillarLayer(const CIGUGapLayer & layer,
-                                                 const TriangularPillar &data) :
+                                                 const TriangularPillar & data) :
         UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
         m_PillarLength(data.length)
     {}
@@ -260,7 +256,7 @@ namespace Tarcog::ISO15099
     ////  PentagonPillar
     ////////////////////////////////////////////////////////////////////////////
     PentagonPillarLayer::PentagonPillarLayer(const CIGUGapLayer & layer,
-                                             const PentagonPillar &data) :
+                                             const PentagonPillar & data) :
         UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
         m_PillarLength(data.length)
     {}
@@ -278,8 +274,7 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////////////////////////////////
     ////  HexagonPillar
     ////////////////////////////////////////////////////////////////////////////
-    HexagonPillarLayer::HexagonPillarLayer(const CIGUGapLayer & layer,
-                                           const HexagonPillar &data) :
+    HexagonPillarLayer::HexagonPillarLayer(const CIGUGapLayer & layer, const HexagonPillar & data) :
         UniversalSupportPillar(layer, data.materialConductivity, data.cellArea),
         m_PillarLength(data.length)
     {}
@@ -354,7 +349,8 @@ namespace Tarcog::ISO15099
 
         return rpGen(getPreviousLayer()->getConductivity(), m_Radius1)
                + rpGen(getNextLayer()->getConductivity(), m_Radius2)
-               + m_Thickness / (materialConductivity() * WCE_PI * std::pow((m_Radius1 + m_Radius2) / 2, 2));
+               + m_Thickness
+                   / (materialConductivity() * WCE_PI * std::pow((m_Radius1 + m_Radius2) / 2, 2));
     }
 
     ////////////////////////////////////////////////////////////////////////////

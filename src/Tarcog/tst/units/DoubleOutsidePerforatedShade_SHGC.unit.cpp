@@ -58,11 +58,7 @@ protected:
         auto windowHeight = 1.0;
 
         EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
-          windowWidth,
-          windowHeight,
-          thickness_31111,
-          aGeometry,
-          openness};
+          windowWidth, windowHeight, thickness_31111, aGeometry, openness};
 
 
         auto Ef = 0.640892;

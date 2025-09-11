@@ -114,14 +114,12 @@ namespace Table
 
         if(!result.has_value() && extrapolate == Extrapolate::Yes)
         {
-            const auto firstValue{
-              std::find_if(std::begin(table), std::end(table), [&](const point & a) {
-                  return a.y.has_value();
-              })};
-            const auto lastValue{
-              std::find_if(std::rbegin(table), std::rend(table), [&](const point & a) {
-                  return a.y.has_value();
-              })};
+            const auto firstValue{std::find_if(std::begin(table),
+                                               std::end(table),
+                                               [&](const point & a) { return a.y.has_value(); })};
+            const auto lastValue{std::find_if(std::rbegin(table),
+                                              std::rend(table),
+                                              [&](const point & a) { return a.y.has_value(); })};
             result = table[0].x.value() > value ? firstValue->y : lastValue->y;
         }
 

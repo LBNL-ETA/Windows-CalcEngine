@@ -1,6 +1,6 @@
 name: Latest Ubuntu
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -11,41 +11,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y g++-11
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y g++-11
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_CXX_STANDARD=17 -DFORCE_SINGLE_PROJECT=OFF
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_CXX_STANDARD=17 -DFORCE_SINGLE_PROJECT=OFF
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-      
-    - name: Test Fenestration Common
-      working-directory: ${{github.workspace}}/build
-      run: src/Common/FenestrationCommon_tests
-      
-    - name: Test Viewer
-      working-directory: ${{github.workspace}}/build
-      run: src/Viewer/Viewer_tests
-      
-    - name: Test Gases
-      working-directory: ${{github.workspace}}/build
-      run: src/Gases/Gases_tests
-      
-    - name: Test Tarcog
-      working-directory: ${{github.workspace}}/build
-      run: src/Tarcog/Tarcog_tests
-      
-    - name: Test Spectral Averaging
-      working-directory: ${{github.workspace}}/build
-      run: src/SpectralAveraging/SpectralAveraging_tests
-      
-    - name: Test Single Layer Optics
-      working-directory: ${{github.workspace}}/build
-      run: src/SingleLayerOptics/SingleLayerOptics_tests
-      
-    - name: Test Multi Layer Optics
-      working-directory: ${{github.workspace}}/build
-      run: src/MultiLayerOptics/MultiLayerOptics_tests
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Test Fenestration Common
+        working-directory: ${{github.workspace}}/build
+        run: src/Common/FenestrationCommon_tests
+
+      - name: Test Viewer
+        working-directory: ${{github.workspace}}/build
+        run: src/Viewer/Viewer_tests
+
+      - name: Test Gases
+        working-directory: ${{github.workspace}}/build
+        run: src/Gases/Gases_tests
+
+      - name: Test Tarcog
+        working-directory: ${{github.workspace}}/build
+        run: src/Tarcog/Tarcog_tests
+
+      - name: Test Spectral Averaging
+        working-directory: ${{github.workspace}}/build
+        run: src/SpectralAveraging/SpectralAveraging_tests
+
+      - name: Test Single Layer Optics
+        working-directory: ${{github.workspace}}/build
+        run: src/SingleLayerOptics/SingleLayerOptics_tests
+
+      - name: Test Multi Layer Optics
+        working-directory: ${{github.workspace}}/build
+        run: src/MultiLayerOptics/MultiLayerOptics_tests

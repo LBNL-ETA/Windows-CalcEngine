@@ -12,8 +12,7 @@ namespace Tarcog::ISO15099
 
     SurfacesManager & SurfacesManager::operator=(const SurfacesManager & t_Layer)
     {
-        FenestrationCommon::EnumSide sides;
-        for(auto aSide : sides)
+        for(auto aSide : FenestrationCommon::allSides())
         {
             const auto aSurface = t_Layer.m_Surface.at(aSide);
             if(aSurface != nullptr)
@@ -90,8 +89,8 @@ namespace Tarcog::ISO15099
     }
 
     void SurfacesManager::setSurfaceState(double const t_Temperature,
-                                         double const t_J,
-                                         FenestrationCommon::Side const t_Position)
+                                          double const t_J,
+                                          FenestrationCommon::Side const t_Position)
     {
         m_Surface.at(t_Position)->setTemperature(t_Temperature);
         m_Surface.at(t_Position)->setJ(t_J);

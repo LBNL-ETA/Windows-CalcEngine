@@ -22,7 +22,7 @@ TEST_F(TestCMABestWorstUvalues, TestWorstIGUUValue)
     SCOPED_TRACE("Begin Test: Test CMA Best Worst IGU U-value calculations");
     auto worst{CMA::CreateBestWorstUFactorOption(CMA::Option::Worst)};
     const auto uValue{worst.uValue()};
-    constexpr auto correctUValue{2.839511};
+    constexpr auto correctUValue{2.839130};
 
     EXPECT_NEAR(correctUValue, uValue, 1e-6);
 }

@@ -1,20 +1,15 @@
-
-#include <cmath>
-
-#include <thread>
-
 #include "EquivalentBSDFLayer.hpp"
 #include "EquivalentBSDFLayerSingleBand.hpp"
 
 using FenestrationCommon::CMatrixSeries;
 using FenestrationCommon::Side;
-using FenestrationCommon::PropertySimple;
+using FenestrationCommon::PropertySurface;
 using FenestrationCommon::CSeries;
 
 namespace MultiLayerOptics
 {
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths) :
-        m_CombinedLayerWavelengths(t_CommonWavelengths), m_Calculated(false)
+        m_CombinedLayerWavelengths(t_CommonWavelengths)
     {}
 
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(
@@ -22,10 +17,8 @@ namespace MultiLayerOptics
       const std::optional<std::vector<double>> & matrixWavelengths) :
         m_Layer(std::move(t_Layer)),
         m_Lambda(m_Layer[0]->getResults().lambdaMatrix()),
-        m_CombinedLayerWavelengths(matrixWavelengths.has_value()
-                                     ? matrixWavelengths.value()
-                                     : unionOfLayerWavelengths(m_Layer)),
-        m_Calculated(false)
+        m_CombinedLayerWavelengths(matrixWavelengths.has_value() ? matrixWavelengths.value()
+                                                                 : unionOfLayerWavelengths(m_Layer))
     {
         for(const auto & layer : m_Layer)
         {
@@ -56,49 +49,38 @@ namespace MultiLayerOptics
 
     CMatrixSeries CEquivalentBSDFLayer::getTotalA(const Side t_Side)
     {
-        if(!m_Calculated)
-        {
-            calculate();
-        }
+        ensureCache();
         return m_TotA.at(t_Side);
     }
 
     CMatrixSeries CEquivalentBSDFLayer::getTotalJSC(Side t_Side)
     {
-        if(!m_Calculated)
-        {
-            calculate();
-        }
+        ensureCache();
         return m_TotJSC.at(t_Side);
     }
 
-    CMatrixSeries CEquivalentBSDFLayer::getTotal(const Side t_Side, const PropertySimple t_Property)
+    CMatrixSeries CEquivalentBSDFLayer::getTotal(const Side t_Side,
+                                                 const PropertySurface t_Property)
     {
-        if(!m_Calculated)
-        {
-            calculate();
-        }
+        ensureCache();
         return m_Tot.at({t_Side, t_Property});
     }
 
     std::vector<FenestrationCommon::MatrixAtWavelength>
-      CEquivalentBSDFLayer::getWavelengthMatrices(Side t_Side, PropertySimple t_Property)
+      CEquivalentBSDFLayer::getWavelengthMatrices(Side t_Side, PropertySurface t_Property)
     {
-        if(!m_Calculated)
-        {
-            calculate();
-        }
+        ensureCache();
         return m_Tot.at({t_Side, t_Property}).seriesMatrices();
     }
 
     void CEquivalentBSDFLayer::setSolarRadiation(CSeries & t_SolarRadiation)
     {
-        // Need to recreate wavelenght by wavelength layers
+        // Need to recreate wavelength by wavelength layers
         for(auto & aLayer : m_Layer)
         {
             aLayer->setSourceData(t_SolarRadiation);
         }
-        m_Calculated = false;
+        invalidateCache();
     }
 
     std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & CEquivalentBSDFLayer::getLayers()
@@ -113,15 +95,13 @@ namespace MultiLayerOptics
 
     void CEquivalentBSDFLayer::calculate(const FenestrationCommon::ProgressCallback & callback)
     {
-        FenestrationCommon::EnumSide sides;
-        for(Side aSide : sides)
+        for(Side aSide : FenestrationCommon::allSides())
         {
             m_TotA[aSide] =
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
             m_TotJSC[aSide] =
               CMatrixSeries(m_Layer.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
-            FenestrationCommon::EnumPropertySimple properties;
-            for(PropertySimple aProperty : properties)
+            for(PropertySurface aProperty : FenestrationCommon::allPropertySimple())
             {
                 m_Tot[{aSide, aProperty}] = CMatrixSeries(
                   m_Lambda.size(), m_Lambda.size(), m_CombinedLayerWavelengths.size());
@@ -129,23 +109,57 @@ namespace MultiLayerOptics
         }
 
         calculateWavelengthByWavelengthProperties(callback);
+    }
 
-        m_Calculated = true;
+    bool CEquivalentBSDFLayer::hasCache() const
+    {
+        return !m_Tot.empty();
+    }
+
+    void CEquivalentBSDFLayer::ensureCache()
+    {
+        if(!hasCache())
+        {
+            calculate();
+        }
+    }
+
+    void CEquivalentBSDFLayer::invalidateCache()
+    {
+        m_Tot.clear();
+        m_TotA.clear();
+        m_TotJSC.clear();
     }
 
     void CEquivalentBSDFLayer::calculateWavelengthByWavelengthProperties(
       const FenestrationCommon::ProgressCallback & callback)
     {
+        using FenestrationCommon::Side;
+
+        // 0) Precompute Jsc' for ALL layers, both sides, across ALL wavelengths (once)
+        std::vector<std::vector<std::vector<double>>> jscFront(m_Layer.size());
+        std::vector<std::vector<std::vector<double>>> jscBack(m_Layer.size());
+        for(size_t i = 0; i < m_Layer.size(); ++i)
+        {
+            jscFront[i] = m_Layer[i]->jscPrime(Side::Front, m_CombinedLayerWavelengths);
+            jscBack[i] = m_Layer[i]->jscPrime(Side::Back, m_CombinedLayerWavelengths);
+        }
+
         FenestrationCommon::executeInParallel<size_t>(
           0u,
           m_CombinedLayerWavelengths.size() - 1u,
-          [this](size_t index) {
-              // Do not refactor auto layer variable out since calling
-              // getEquivalentLayerAtWavelength is calculation intensive and it will slow down the
-              // execution
-              auto layer{getEquivalentLayerAtWavelength(index)};
-              FenestrationCommon::EnumSide sides;
-              for(auto aSide : sides)
+          [this, &jscFront, &jscBack](size_t index) {
+              // 1) Build the per-wavelength equivalent layer using the precomputed slices
+              auto wl0 = m_Layer[0]->getResultsAtWavelength(index);
+              CEquivalentBSDFLayerSingleBand layer{wl0, jscFront[0][index], jscBack[0][index]};
+              for(size_t i = 1; i < m_Layer.size(); ++i)
+              {
+                  auto wli = m_Layer[i]->getResultsAtWavelength(index);
+                  layer.addLayer(wli, jscFront[i][index], jscBack[i][index]);
+              }
+
+              // 2) Store results (unchanged)
+              for(auto aSide : FenestrationCommon::allSides())
               {
                   for(size_t layerNumber = 0; layerNumber < m_Layer.size(); ++layerNumber)
                   {
@@ -154,15 +168,13 @@ namespace MultiLayerOptics
                         layerNumber,
                         m_CombinedLayerWavelengths[index],
                         layer.getLayerAbsorptances(layerNumber + 1, aSide));
-
                       m_TotJSC.at(aSide).setPropertiesAtIndex(
                         index,
                         layerNumber,
                         m_CombinedLayerWavelengths[index],
                         layer.getLayerJSC(layerNumber + 1, aSide));
                   }
-                  FenestrationCommon::EnumPropertySimple properties;
-                  for(auto aProperty : properties)
+                  for(auto aProperty : FenestrationCommon::allPropertySimple())
                   {
                       m_Tot.at({aSide, aProperty})
                         .setPropertiesAtIndex(index,
@@ -177,15 +189,18 @@ namespace MultiLayerOptics
     CEquivalentBSDFLayerSingleBand
       CEquivalentBSDFLayer::getEquivalentLayerAtWavelength(size_t wavelengthIndex) const
     {
-        auto jscPrimeFront{m_Layer[0]->jscPrime(Side::Front, m_CombinedLayerWavelengths)};
-        auto jscPrimeBack{m_Layer[0]->jscPrime(Side::Back, m_CombinedLayerWavelengths)};
-        auto layerWLResults{m_Layer[0]->getResultsAtWavelength(wavelengthIndex)};
+        using FenestrationCommon::Side;
 
+        // First layer
+        auto jscPrimeFront = m_Layer[0]->jscPrime(Side::Front, m_CombinedLayerWavelengths);
+        auto jscPrimeBack = m_Layer[0]->jscPrime(Side::Back, m_CombinedLayerWavelengths);
+        auto wl0 = m_Layer[0]->getResultsAtWavelength(wavelengthIndex);
 
         CEquivalentBSDFLayerSingleBand result{
-          layerWLResults, jscPrimeFront[wavelengthIndex], jscPrimeBack[wavelengthIndex]};
+          wl0, jscPrimeFront[wavelengthIndex], jscPrimeBack[wavelengthIndex]};
 
-        for(size_t i = 1u; i < m_Layer.size(); ++i)
+        // Remaining layers
+        for(size_t i = 1; i < m_Layer.size(); ++i)
         {
             jscPrimeFront = m_Layer[i]->jscPrime(Side::Front, m_CombinedLayerWavelengths);
             jscPrimeBack = m_Layer[i]->jscPrime(Side::Back, m_CombinedLayerWavelengths);

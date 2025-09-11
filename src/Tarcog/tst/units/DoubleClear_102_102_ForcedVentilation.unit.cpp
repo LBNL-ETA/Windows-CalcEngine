@@ -58,7 +58,7 @@
 
 [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CIGUGapLayer> createForcedVentilationGap()
 {
-    constexpr auto gapThickness = 0.0127;          // [m]
+    constexpr auto gapThickness = 0.0127;   // [m]
     auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
     constexpr auto gapAirSpeed = 1;                // [m/s]
     constexpr auto inletAirTemperature = 294.15;   // [K]
@@ -298,8 +298,7 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     aRun = Tarcog::ISO15099::System::SHGC;
 
     Temperature = aSystem->getTemperatures(aRun);
-    correctTemperature = {
-      305.253628, 305.144926, 302.097278, 302.074315};
+    correctTemperature = {305.253628, 305.144926, 302.097278, 302.074315};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -326,8 +325,7 @@ TEST_F(TestDoubleClear102_102_ForcedVentilation, SummerSystem)
     }
 
     radiosity = aSystem->getRadiosities(aRun);
-    correctRadiosity = {
-      492.163153, 488.900813, 474.891627, 467.273541};
+    correctRadiosity = {492.163153, 488.900813, 474.891627, 467.273541};
     ASSERT_EQ(correctRadiosity.size(), radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)

@@ -6,7 +6,8 @@ namespace FenestrationCommon
 {
     struct TableValue
     {
-        TableValue(double t_X, double t_Y) : x(t_X), y(t_Y) {}
+        TableValue(double t_X, double t_Y) : x(t_X), y(t_Y)
+        {}
         double x;
         double y;
     };

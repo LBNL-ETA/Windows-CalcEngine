@@ -34,9 +34,9 @@ namespace SpectralAveraging
                       std::shared_ptr<CSpectralSample> const & t_Data2,
                       double const t_Angle2) const;
         void interpolate(std::vector<double> const & t_Wavelengths) const;
-        //		std::shared_ptr< CSpectralSample > Interpolate( const double t_fraction, const
-        //std::shared_ptr< CSpectralSample > t_Data1, const std::shared_ptr< CSpectralSample >
-        //t_Data2 ) const;
+        //		std::shared_ptr< CSpectralSample > Interpolate( const double t_fraction,
+        //const std::shared_ptr< CSpectralSample > t_Data1, const std::shared_ptr< CSpectralSample >
+        // t_Data2 ) const;
 
     private:
         std::shared_ptr<CSpectralSample> m_Data;
@@ -60,7 +60,7 @@ namespace SpectralAveraging
         std::shared_ptr<CSingleAngularMeasurement> getMeasurements(double const t_Angle);
         // Note that previous function (getMeasurements) needs to do interpolation if user asks for
         // t_Angle that does not exist.So this is where you want to do your interpolation work
-        virtual void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        virtual void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         [[nodiscard]] FenestrationCommon::Limits getWavelengthLimits() const;
 
@@ -73,4 +73,3 @@ namespace SpectralAveraging
     };
 
 }   // namespace SpectralAveraging
-

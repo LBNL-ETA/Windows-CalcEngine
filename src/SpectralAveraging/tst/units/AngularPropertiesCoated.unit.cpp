@@ -23,7 +23,7 @@ TEST_F(TestAngularPropertiesCoated, Test1)
     auto R0 = 0.066;
     auto angle = 0.0;
 
-    auto aAngularFactory = CAngularPropertiesFactory(T0, R0, 0, T0);
+    auto aAngularFactory = CAngularPropertiesFactory(T0, R0, 0);
     auto aProperties = aAngularFactory.getAngularProperties(SurfaceType::Coated);
 
     EXPECT_NEAR(0.7236606, aProperties->transmittance(angle), 1e-6);
@@ -50,7 +50,7 @@ TEST_F(TestAngularPropertiesCoated, Test2)
     auto R0 = 0.3592343;
     auto angle = 0.0;
 
-    auto aAngularFactory = CAngularPropertiesFactory(T0, R0, 0, T0);
+    auto aAngularFactory = CAngularPropertiesFactory(T0, R0, 0);
     auto aProperties = aAngularFactory.getAngularProperties(SurfaceType::Coated);
 
     EXPECT_NEAR(0.457016074875, aProperties->transmittance(angle), 1e-6);

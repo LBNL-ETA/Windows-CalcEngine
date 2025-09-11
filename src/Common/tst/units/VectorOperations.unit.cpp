@@ -37,10 +37,11 @@ TEST_F(TestVectorOperations, TwoVectorsMultDifferentSize)
 
     EXPECT_THROW(mult<double>(ser1, ser2), std::runtime_error);
 
-    try {
+    try
+    {
         const auto result{mult<double>(ser1, ser2)};
     }
-    catch (const std::exception & e)
+    catch(const std::exception & e)
     {
         EXPECT_STREQ(e.what(), "Vectors that are multiplied with each other are different size.");
     }

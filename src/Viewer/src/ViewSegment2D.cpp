@@ -119,7 +119,7 @@ namespace Viewer
 
     CViewSegment2D CViewSegment2D::translate(const double t_x, const double t_y)
     {
-        const auto aSegment {CSegment2D::translate(t_x, t_y)};
+        const auto aSegment{CSegment2D::translate(t_x, t_y)};
         return {aSegment.startPoint(), aSegment.endPoint()};
     }
 

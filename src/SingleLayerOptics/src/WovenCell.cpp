@@ -1,6 +1,7 @@
 #include <cmath>
 #include <algorithm>
 #include <cassert>
+#include <ranges>
 
 #include "WovenCell.hpp"
 #include "CellDescription.hpp"
@@ -13,13 +14,58 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
+    namespace Helper
+    {
+        double Tscatter(const double gamma, const CBeamDirection & t_Direction, const double Rmat)
+        {
+            double Tsct{0};
+            if(Rmat > 0)
+            {
+                const double aAlt = degrees(t_Direction.Altitude());
+                const double aAzm = degrees(t_Direction.Azimuth());
+
+                if(gamma < 1)
+                {
+                    const double Tscattermax =
+                      0.0229 * gamma + 0.2971 * Rmat - 0.03624 * std::pow(gamma, 2)
+                      + 0.04763 * std::pow(Rmat, 2) - 0.44416 * gamma * Rmat;
+                    const double DeltaMax = 89.7 - 10 * gamma / 0.16;
+                    const double Delta = std::pow(std::pow(aAlt, 2) + std::pow(aAzm, 2), 0.5);
+                    const double PeakRatio = 1 / (0.2 * Rmat * (1 - gamma));
+
+                    double E = 0;
+                    if(Delta > DeltaMax)
+                    {
+                        E = -(std::pow(std::abs(Delta - DeltaMax), 2.5)) / 600;
+                        Tsct = -0.2 * Rmat * Tscattermax * (1 - gamma)
+                               * std::max(0.0, (Delta - DeltaMax) / (90 - DeltaMax));
+                    }
+                    else
+                    {
+                        E = -(std::pow(std::abs(Delta - DeltaMax), 2)) / 600;
+                        Tsct = 0;
+                    }
+                    Tsct = Tsct
+                           + 0.2 * Rmat * Tscattermax * (1 - gamma)
+                               * (1 + (PeakRatio - 1) * std::exp(E));
+                }
+
+                if(Tsct < 0)
+                {
+                    Tsct = 0;
+                }
+            }
+
+            return Tsct;
+        }
+    }   // namespace Helper
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     //  CWovenCell
     ////////////////////////////////////////////////////////////////////////////////////////////
     CWovenCell::CWovenCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
                            const std::shared_ptr<ICellDescription> & t_Cell) :
-        CBaseCell(t_MaterialProperties, t_Cell),
-        CUniformDiffuseCell(t_MaterialProperties, t_Cell)
+        CBaseCell(t_MaterialProperties, t_Cell), CUniformDiffuseCell(t_MaterialProperties, t_Cell)
     {}
 
     double CWovenCell::T_dir_dif(const Side t_Side, const CBeamDirection & t_Direction)
@@ -40,23 +86,31 @@ namespace SingleLayerOptics
     std::vector<double> CWovenCell::T_dir_dif_band(const Side t_Side,
                                                    const CBeamDirection & t_Direction)
     {
-        const size_t size{m_Material->getBandSize()};
-        std::vector<double> result;
-        result.reserve(size);
-        for(size_t i = 0; i < size; ++i)
+        // Get both band vectors once
+        auto material =
+          CUniformDiffuseCell::T_dir_dif_band(t_Side, t_Direction);   // vector<double>
+        auto scatter = T_scatter_band(t_Side, t_Direction);           // vector<double>
+
+        // Stop at the shorter just in case (they should match)
+        const auto n = std::min(material.size(), scatter.size());
+        material.resize(n);
+
+        // In-place element-wise sum via zip
+        for(auto && [m, s] : common::views::zip(material, scatter))
         {
-            result.push_back(T_dir_dif_at_wavelength(t_Side, t_Direction, i));
+            m += s;
         }
-        return result;
+
+        return material;   // NRVO/move
     }
 
     double CWovenCell::T_dir_dif_at_wavelength(FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex)
     {
-        auto Tmaterial{
-          CUniformDiffuseCell::T_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex)};
-        auto Tsct{Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex)};
+        const double Tmaterial =
+          CUniformDiffuseCell::T_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        const double Tsct = Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex);
         return Tmaterial + Tsct;
     }
 
@@ -73,13 +127,14 @@ namespace SingleLayerOptics
         return result;
     }
 
-    double CWovenCell::R_dir_dif_at_wavelength(FenestrationCommon::Side t_Side,
+    double CWovenCell::R_dir_dif_at_wavelength(Side t_Side,
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex)
     {
-        auto RMaterial{CUniformDiffuseCell::R_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex)};
-        auto Tsct{Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex)};
-        return RMaterial - Tsct;
+        const double Rmaterial =
+          CUniformDiffuseCell::R_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        const double Tsct = Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        return Rmaterial - Tsct;
     }
 
     std::shared_ptr<CWovenCellDescription> CWovenCell::getCellAsWoven() const
@@ -95,65 +150,30 @@ namespace SingleLayerOptics
         return aCell;
     }
 
-    double CWovenCell::Tscatter_single(const Side t_Side, const CBeamDirection & t_Direction)
+    double CWovenCell::Tscatter_single(const Side t_Side, const CBeamDirection & t_Direction) const
     {
         // Get matterial property from the opposite side of woven thread
         Side aScatterSide = oppositeSide(t_Side);
         double RScatter_mat = m_Material->getProperty(Property::R, aScatterSide);
-        return Tscatter(t_Direction, RScatter_mat);
+        return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, RScatter_mat);
     }
 
-    double CWovenCell::Tscatter_at_wavelength(FenestrationCommon::Side t_Side,
+    std::vector<double> CWovenCell::T_scatter_band(const Side t_Side,
+                                                   const CBeamDirection & t_Direction) const
+    {
+        auto RScatterMat{m_Material->getBandProperties(Property::R, oppositeSide(t_Side))};
+        std::vector<double> result(RScatterMat.size());
+        std::ranges::transform(RScatterMat, result.begin(), [&](double r) {
+            return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, r);
+        });
+        return result;
+    }
+
+    double CWovenCell::Tscatter_at_wavelength(Side t_Side,
                                               const CBeamDirection & t_Direction,
-                                              size_t wavelengthIndex)
+                                              size_t i) const
     {
-        auto RScatterMat{
-          m_Material->getBandProperty(Property::R, oppositeSide(t_Side), wavelengthIndex)};
-        return Tscatter(t_Direction, RScatterMat);
-    }
-
-    double CWovenCell::Tscatter(const CBeamDirection & t_Direction, const double Rmat) const
-    {
-        double Tsct{0};
-        if(Rmat > 0)
-        {
-            const double aAlt = degrees(t_Direction.Altitude());
-            const double aAzm = degrees(t_Direction.Azimuth());
-            const auto & aCell = *getCellAsWoven();
-            const double gamma = aCell.gamma();
-
-            if(gamma < 1)
-            {
-                const double Tscattermax = 0.0229 * gamma + 0.2971 * Rmat
-                                           - 0.03624 * std::pow(gamma, 2)
-                                           + 0.04763 * std::pow(Rmat, 2) - 0.44416 * gamma * Rmat;
-                const double DeltaMax = 89.7 - 10 * gamma / 0.16;
-                const double Delta = std::pow(std::pow(aAlt, 2) + std::pow(aAzm, 2), 0.5);
-                const double PeakRatio = 1 / (0.2 * Rmat * (1 - gamma));
-
-                double E = 0;
-                if(Delta > DeltaMax)
-                {
-                    E = -(std::pow(std::abs(Delta - DeltaMax), 2.5)) / 600;
-                    Tsct = -0.2 * Rmat * Tscattermax * (1 - gamma)
-                           * std::max(0.0, (Delta - DeltaMax) / (90 - DeltaMax));
-                }
-                else
-                {
-                    E = -(std::pow(std::abs(Delta - DeltaMax), 2)) / 600;
-                    Tsct = 0;
-                }
-                Tsct =
-                  Tsct
-                  + 0.2 * Rmat * Tscattermax * (1 - gamma) * (1 + (PeakRatio - 1) * std::exp(E));
-            }
-
-            if(Tsct < 0)
-            {
-                Tsct = 0;
-            }
-        }
-
-        return Tsct;
+        const auto & Rband = m_Material->getBandProperties(Property::R, oppositeSide(t_Side));
+        return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, Rband[i]);
     }
 }   // namespace SingleLayerOptics

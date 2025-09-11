@@ -66,49 +66,51 @@ TEST_F(TestEquivalentLayerWithScattering2, TestTripleLayerBack)
     // Direct-Direct
     ///////////////////////////////////////////////
     double Tf =
-      doubleLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect);
+      doubleLayer.getPropertySurface(PropertySurface::T, Side::Front, Scattering::DirectDirect);
     EXPECT_NEAR(0.000648224, Tf, 1e-6);
 
     double Rf =
-      doubleLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect);
+      doubleLayer.getPropertySurface(PropertySurface::R, Side::Front, Scattering::DirectDirect);
     EXPECT_NEAR(0.050534583, Rf, 1e-6);
 
     double Tb =
-      doubleLayer.getPropertySimple(PropertySimple::T, Side::Back, Scattering::DirectDirect);
+      doubleLayer.getPropertySurface(PropertySurface::T, Side::Back, Scattering::DirectDirect);
     EXPECT_NEAR(0.002567576, Tb, 1e-6);
 
     double Rb =
-      doubleLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDirect);
+      doubleLayer.getPropertySurface(PropertySurface::R, Side::Back, Scattering::DirectDirect);
     EXPECT_NEAR(0.250039501, Rb, 1e-6);
 
     ///////////////////////////////////////////////
     // Diffuse-Diffuse
     ///////////////////////////////////////////////
-    Tf = doubleLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+    Tf =
+      doubleLayer.getPropertySurface(PropertySurface::T, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.167799034, Tf, 1e-6);
 
-    Rf = doubleLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+    Rf =
+      doubleLayer.getPropertySurface(PropertySurface::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.692483233, Rf, 1e-6);
 
-    Tb = doubleLayer.getPropertySimple(PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse);
+    Tb = doubleLayer.getPropertySurface(PropertySurface::T, Side::Back, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.284211597, Tb, 1e-6);
 
-    Rb = doubleLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
+    Rb = doubleLayer.getPropertySurface(PropertySurface::R, Side::Back, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.395593248, Rb, 1e-6);
 
     ///////////////////////////////////////////////
     // Direct-Diffuse
     ///////////////////////////////////////////////
-    Tf = doubleLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDiffuse);
+    Tf = doubleLayer.getPropertySurface(PropertySurface::T, Side::Front, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.197511986, Tf, 1e-6);
 
-    Rf = doubleLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDiffuse);
+    Rf = doubleLayer.getPropertySurface(PropertySurface::R, Side::Front, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.429497739, Rf, 1e-6);
 
-    Tb = doubleLayer.getPropertySimple(PropertySimple::T, Side::Back, Scattering::DirectDiffuse);
+    Tb = doubleLayer.getPropertySurface(PropertySurface::T, Side::Back, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.220590948, Tb, 1e-6);
 
-    Rb = doubleLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDiffuse);
+    Rb = doubleLayer.getPropertySurface(PropertySurface::R, Side::Back, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.316271007, Rb, 1e-6);
 }
 
@@ -123,48 +125,50 @@ TEST_F(TestEquivalentLayerWithScattering2, TestTripleLayerFront)
     // Direct-Direct
     ///////////////////////////////////////////////
     double Tf =
-      doubleLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDirect);
+      doubleLayer.getPropertySurface(PropertySurface::T, Side::Front, Scattering::DirectDirect);
     EXPECT_NEAR(0.000648224, Tf, 1e-6);
 
     double Rf =
-      doubleLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDirect);
+      doubleLayer.getPropertySurface(PropertySurface::R, Side::Front, Scattering::DirectDirect);
     EXPECT_NEAR(0.050534583, Rf, 1e-6);
 
     double Tb =
-      doubleLayer.getPropertySimple(PropertySimple::T, Side::Back, Scattering::DirectDirect);
+      doubleLayer.getPropertySurface(PropertySurface::T, Side::Back, Scattering::DirectDirect);
     EXPECT_NEAR(0.002567576, Tb, 1e-6);
 
     double Rb =
-      doubleLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDirect);
+      doubleLayer.getPropertySurface(PropertySurface::R, Side::Back, Scattering::DirectDirect);
     EXPECT_NEAR(0.250039501, Rb, 1e-6);
 
     ///////////////////////////////////////////////
     // Diffuse-Diffuse
     ///////////////////////////////////////////////
-    Tf = doubleLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+    Tf =
+      doubleLayer.getPropertySurface(PropertySurface::T, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.167799034, Tf, 1e-6);
 
-    Rf = doubleLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+    Rf =
+      doubleLayer.getPropertySurface(PropertySurface::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.692483233, Rf, 1e-6);
 
-    Tb = doubleLayer.getPropertySimple(PropertySimple::T, Side::Back, Scattering::DiffuseDiffuse);
+    Tb = doubleLayer.getPropertySurface(PropertySurface::T, Side::Back, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.284211597, Tb, 1e-6);
 
-    Rb = doubleLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DiffuseDiffuse);
+    Rb = doubleLayer.getPropertySurface(PropertySurface::R, Side::Back, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(0.395593248, Rb, 1e-6);
 
     ///////////////////////////////////////////////
     // Direct-Diffuse
     ///////////////////////////////////////////////
-    Tf = doubleLayer.getPropertySimple(PropertySimple::T, Side::Front, Scattering::DirectDiffuse);
+    Tf = doubleLayer.getPropertySurface(PropertySurface::T, Side::Front, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.197511986, Tf, 1e-6);
 
-    Rf = doubleLayer.getPropertySimple(PropertySimple::R, Side::Front, Scattering::DirectDiffuse);
+    Rf = doubleLayer.getPropertySurface(PropertySurface::R, Side::Front, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.429497739, Rf, 1e-6);
 
-    Tb = doubleLayer.getPropertySimple(PropertySimple::T, Side::Back, Scattering::DirectDiffuse);
+    Tb = doubleLayer.getPropertySurface(PropertySurface::T, Side::Back, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.220590948, Tb, 1e-6);
 
-    Rb = doubleLayer.getPropertySimple(PropertySimple::R, Side::Back, Scattering::DirectDiffuse);
+    Rb = doubleLayer.getPropertySurface(PropertySurface::R, Side::Back, Scattering::DirectDiffuse);
     EXPECT_NEAR(0.316271007, Rb, 1e-6);
 }

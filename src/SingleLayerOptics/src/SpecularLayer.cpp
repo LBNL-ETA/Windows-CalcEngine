@@ -41,7 +41,7 @@ namespace SingleLayerOptics
         return m_Cell.getBandWavelengths();
     }
 
-    void SpecularLayer::setSourceData(FenestrationCommon::CSeries & t_SourceData)
+    void SpecularLayer::setSourceData(const FenestrationCommon::CSeries & t_SourceData)
     {
         m_Cell.setSourceData(t_SourceData);
     }

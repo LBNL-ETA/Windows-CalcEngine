@@ -12,7 +12,7 @@ namespace MultiLayerOptics
 
     struct SimpleResults
     {
-        SimpleResults() : T(0), R(0){};
+        SimpleResults() : T(0), R(0) {};
         double T;
         double R;
     };
@@ -58,11 +58,11 @@ namespace MultiLayerOptics
                       const double t_Theta = 0,
                       const double t_Phi = 0);
 
-        double getPropertySimple(const FenestrationCommon::PropertySimple t_Property,
-                                 const FenestrationCommon::Side t_Side,
-                                 const FenestrationCommon::Scattering t_Scattering,
-                                 const double t_Theta = 0,
-                                 const double t_Phi = 0);
+        double getPropertySurface(const FenestrationCommon::PropertySurface t_Property,
+                                  const FenestrationCommon::Side t_Side,
+                                  const FenestrationCommon::Scattering t_Scattering,
+                                  const double t_Theta = 0,
+                                  const double t_Phi = 0);
 
         SingleLayerOptics::CScatteringLayer getLayer() const;
 

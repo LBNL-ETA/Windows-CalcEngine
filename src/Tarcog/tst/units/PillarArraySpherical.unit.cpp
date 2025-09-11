@@ -44,7 +44,8 @@ protected:
         const auto pillarConductivity = 20.0;   // [W/(m·K)]
         const auto pillarArea = 0.02 * 0.02;    // [m²]
 
-        Tarcog::ISO15099::SphericalPillar pillar{pillarHeight, pillarConductivity, pillarArea, contactRadius};
+        Tarcog::ISO15099::SphericalPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, contactRadius};
 
         auto gap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 

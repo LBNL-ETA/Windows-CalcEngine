@@ -1,5 +1,4 @@
-#ifndef BASECELL_H
-#define BASECELL_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -28,7 +27,7 @@ namespace SingleLayerOptics
                   const std::shared_ptr<ICellDescription> & t_CellDescription,
                   double rotation = 0);
 
-        virtual void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        virtual void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         // Direct to direct component of transmitted ray
         // These dir_dir and dir_dir_band functions are returning only direct portion of the
@@ -39,19 +38,19 @@ namespace SingleLayerOptics
         virtual double R_dir_dir(FenestrationCommon::Side t_Side,
                                  const CBeamDirection & t_Direction);
 
-        virtual std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,
-                                                   const CBeamDirection & t_Direction);
-
         virtual double T_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex);
 
-        virtual std::vector<double> R_dir_dir_band(FenestrationCommon::Side t_Side,
-                                                   const CBeamDirection & t_Direction);
-
         virtual double R_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex);
+
+        virtual std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,
+                                                   const CBeamDirection & t_Direction);
+
+        virtual std::vector<double> R_dir_dir_band(FenestrationCommon::Side t_Side,
+                                                   const CBeamDirection & t_Direction);
 
         std::vector<double> getBandWavelengths() const;
         virtual void setBandWavelengths(const std::vector<double> & wavelengths);
@@ -61,7 +60,7 @@ namespace SingleLayerOptics
         double getMinLambda() const;
         double getMaxLambda() const;
 
-        void Flipped(bool flipped) const;
+        void Flipped(bool flipped);
 
         std::shared_ptr<CMaterial> getMaterial();
 
@@ -71,7 +70,9 @@ namespace SingleLayerOptics
 
         // This indicates cell rotation in phi angle
         double m_CellRotation;
+
+    private:
+        template<class F>
+        std::vector<double> makeBand(F && f);
     };
 }   // namespace SingleLayerOptics
-
-#endif

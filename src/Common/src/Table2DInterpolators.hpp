@@ -27,15 +27,18 @@ namespace Table
     [[nodiscard]] std::vector<point>
       columnInterpolation(const Table2D<std::optional<double>> & table, double value);
 
-    enum class Extrapolate {No, Yes};
+    enum class Extrapolate
+    {
+        No,
+        Yes
+    };
 
     //! Function to interpolate point on x-y curve.
     //!
     //! \param table Table of input points (x-y)
     //! \param value Value of x for which interpolation is performed
     //! \return Interpolated y value
-    [[nodiscard]] std::optional<double> tableColumnInterpolation(const std::vector<point> & table,
-                                                                 double value,
-                                                                 Extrapolate extrapolate = Extrapolate::No);
+    [[nodiscard]] std::optional<double> tableColumnInterpolation(
+      const std::vector<point> & table, double value, Extrapolate extrapolate = Extrapolate::No);
 
 }   // namespace Table

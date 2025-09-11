@@ -13,7 +13,7 @@ namespace Tarcog
         constexpr double DEFAULT_TILT = 90;
         constexpr double DEFAULT_ENV_EMISSIVITY = 1;
         constexpr double DEFAULT_FRACTION_OF_CLEAR_SKY = 1;
-    }
+    }   // namespace TarcogConstants
 
     namespace IterationConstants
     {
@@ -26,7 +26,7 @@ namespace Tarcog
         constexpr double RELAXATION_PARAMETER_AIRFLOW_MIN = 0.1;
         constexpr double RELAXATION_PARAMETER_AIRFLOW_STEP = 0.1;
         constexpr double CONVERGENCE_TOLERANCE_AIRFLOW = 1e-2;
-    }
+    }   // namespace IterationConstants
 
     namespace MaterialConstants
     {
@@ -37,5 +37,5 @@ namespace Tarcog
     {
         constexpr double YOUNGSMODULUS = 7.2e10;
         constexpr double POISONRATIO = 0.22;
-    }
-}
+    }   // namespace DeflectionConstants
+}   // namespace Tarcog

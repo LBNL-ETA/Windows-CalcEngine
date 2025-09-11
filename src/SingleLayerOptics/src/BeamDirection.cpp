@@ -19,8 +19,7 @@ namespace SingleLayerOptics
     }
 
     CBeamDirection::CBeamDirection(const double t_Theta, const double t_Phi) :
-        m_Theta(t_Theta),
-        m_Phi(t_Phi)
+        m_Theta(t_Theta), m_Phi(t_Phi)
     {
         if(t_Theta < 0)
         {
@@ -125,4 +124,4 @@ namespace SingleLayerOptics
         m_ProfileAngle = -std::atan(std::sin(radians(t_Phi)) * std::tan(radians(t_Theta)));
         m_ProfileAngle = degrees(m_ProfileAngle);
     }
-} // namespace SingleLayerOptics
+}   // namespace SingleLayerOptics

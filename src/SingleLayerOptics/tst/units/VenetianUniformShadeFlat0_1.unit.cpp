@@ -61,13 +61,13 @@ TEST_F(TestVenetianUniformShadeFlat0_1, TestVenetian1)
 
     auto aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.65093991496438897, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.188319, RfDiff, 1e-6);
 
-    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
     size_t size = aT.size();
@@ -122,7 +122,7 @@ TEST_F(TestVenetianUniformShadeFlat0_1, TestVenetian1)
     }
 
     // Front reflectance
-    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
     correctResults.clear();
 
@@ -175,7 +175,7 @@ TEST_F(TestVenetianUniformShadeFlat0_1, TestVenetian1)
     }
 
     // Back transmittance
-    auto aTb = aResults.getMatrix(Side::Back, PropertySimple::T);
+    auto aTb = aResults.getMatrix(Side::Back, PropertySurface::T);
 
     correctResults.clear();
 
@@ -228,7 +228,7 @@ TEST_F(TestVenetianUniformShadeFlat0_1, TestVenetian1)
     }
 
     // Back reflectance
-    auto aRb = aResults.getMatrix(Side::Back, PropertySimple::R);
+    auto aRb = aResults.getMatrix(Side::Back, PropertySurface::R);
 
     correctResults.clear();
 
@@ -283,14 +283,13 @@ TEST_F(TestVenetianUniformShadeFlat0_1, TestVenetian1)
 
 TEST_F(TestVenetianUniformShadeFlat0_1, AtWavelength)
 {
-
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
 
     const auto correct{0.650940};
-    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySurface::T)};
 
     EXPECT_NEAR(correct, result, 1e-6);
 }

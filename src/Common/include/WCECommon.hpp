@@ -3,6 +3,7 @@
 #include "../src/Constants.hpp"
 #include "../src/CommonWavelengths.hpp"
 #include "../src/EnumerationTemplate.hpp"
+#include "../src/EnumValues.hpp"
 #include "../src/FenestrationCommon.hpp"
 #include "../src/Hemispherical2DIntegrator.hpp"
 #include "../src/IntegratorStrategy.hpp"
@@ -27,3 +28,4 @@
 #include "../src/Venetian.hpp"
 #include "../src/Perforated.hpp"
 #include "../src/Woven.hpp"
+#include "../src/Zip.hpp"

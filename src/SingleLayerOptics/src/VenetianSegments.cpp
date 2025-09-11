@@ -35,7 +35,7 @@ namespace SingleLayerOptics
 
     double CVenetianCellEnergy::T_dir_dir(const CBeamDirection & t_Direction)
     {
-        return m_Cell->T_dir_dir(Side::Front, t_Direction);
+        return m_Cell->Beam_dir_dir(Side::Front, t_Direction);
     }
 
     double CVenetianCellEnergy::T_dir_dif(const CBeamDirection & t_Direction)
@@ -47,7 +47,7 @@ namespace SingleLayerOptics
 
             const auto irradiance =
               slatIrradiances(diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh);
-            std::lock_guard<std::mutex> lock(irradianceMutex);
+            std::lock_guard lock(irradianceMutex);
             m_DirectToDiffuseSlatIrradiances[t_Direction] = irradiance;
         }
 
@@ -66,7 +66,7 @@ namespace SingleLayerOptics
               beamToDiffuseViewFactors(Side::Back, t_Direction, *m_Cell, m_SlatSegmentsMesh)};
             const auto irradiance =
               slatIrradiances(diffuseViewFactors, slatsDiffuseRadiancesMatrix, m_SlatSegmentsMesh);
-            std::lock_guard<std::mutex> lock(irradianceMutex);
+            std::lock_guard lock(irradianceMutex);
             m_DirectToDiffuseSlatIrradiances[t_Direction] = irradiance;
         }
 
@@ -96,9 +96,9 @@ namespace SingleLayerOptics
         {
             auto result = t_Direction.unitVector();
             if((t_BSDFDirection == BSDFDirection::Outgoing
-                 && t_Side == FenestrationCommon::Side::Front)
+                && t_Side == FenestrationCommon::Side::Front)
                || (t_BSDFDirection == BSDFDirection::Incoming
-                    && t_Side == FenestrationCommon::Side::Back))
+                   && t_Side == FenestrationCommon::Side::Back))
             {
                 result = Viewer::CSegment2D(result.startPoint(),
                                             {-result.endPoint().x(), result.endPoint().y()});
@@ -324,7 +324,7 @@ namespace SingleLayerOptics
           t_Side,
           mesh.numberOfSegments,
           cell.cellBeamViewFactors(t_Side, BSDFDirection::Incoming, t_IncomingDirection),
-          cell.T_dir_dir(t_Side, t_IncomingDirection))};
+          cell.Beam_dir_dir(t_Side, t_IncomingDirection))};
 
         std::vector<double> B;
         B.reserve(2 * mesh.numberOfSegments);

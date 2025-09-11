@@ -50,22 +50,22 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
 
     BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.041876313, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.670686365, RfDiff, 1e-6);
 
     const auto theta{0};
     const auto phi{0};
 
-    const auto tauDirHem{aResults.DirHem(Side::Front, PropertySimple::T, theta, phi)};
+    const auto tauDirHem{aResults.DirHem(Side::Front, PropertySurface::T, theta, phi)};
     EXPECT_NEAR(0.055556, tauDirHem, 1e-6);
 
-    const double RfDirHem{aResults.DirHem(Side::Front, PropertySimple::R, theta, phi)};
+    const double RfDirHem{aResults.DirHem(Side::Front, PropertySurface::R, theta, phi)};
     EXPECT_NEAR(0.661111, RfDirHem, 1e-6);
 
-    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
     const size_t size = aT.size();
@@ -89,7 +89,7 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
         EXPECT_NEAR(correctResults[i], calculatedResults[i], 1e-5);
     }
 
-    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.210438, 0.211198, 0.211233, 0.210818, 0.211233, 0.211198, 0.211233,
                       0.210818, 0.211233, 0.212138, 0.212284, 0.211973, 0.211288, 0.211973,
@@ -113,14 +113,13 @@ TEST_F(TestRectangularPerforatedShade1, TestSolarProperties)
 
 TEST_F(TestRectangularPerforatedShade1, AtWavelength)
 {
-
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
 
     const auto correct{0.0418763};
-    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySurface::T)};
 
     EXPECT_NEAR(correct, result, 1e-6);
 }

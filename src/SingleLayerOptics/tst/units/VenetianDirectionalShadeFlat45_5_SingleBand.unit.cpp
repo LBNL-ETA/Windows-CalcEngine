@@ -62,10 +62,10 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5_SingleBand, TestVenetian1)
 
     BSDFIntegrator aResults = aShade->getResults();
 
-    const double tau = aResults.DirHem(Side::Front, PropertySimple::T, 0, 0);
+    const double tau = aResults.DirHem(Side::Front, PropertySurface::T, 0, 0);
     EXPECT_NEAR(0.501682, tau, 1e-6);
 
-    const double Rf = aResults.DirHem(Side::Front, PropertySimple::R, 0, 0);
+    const double Rf = aResults.DirHem(Side::Front, PropertySurface::R, 0, 0);
     EXPECT_NEAR(0.035756, Rf, 1e-6);
 
     const auto absFront = aResults.AbsDiffDiff(Side::Front);

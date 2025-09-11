@@ -1,5 +1,4 @@
-#ifndef EQUIVALENTBSDFLAYERMULTIWL_H
-#define EQUIVALENTBSDFLAYERMULTIWL_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -39,11 +38,11 @@ namespace MultiLayerOptics
 
         // Transmittance and reflectance wavelength by wavelength matrices
         FenestrationCommon::CMatrixSeries getTotal(FenestrationCommon::Side t_Side,
-                                                   FenestrationCommon::PropertySimple t_Property);
+                                                   FenestrationCommon::PropertySurface t_Property);
 
         [[nodiscard]] std::vector<FenestrationCommon::MatrixAtWavelength>
           getWavelengthMatrices(FenestrationCommon::Side t_Side,
-                                FenestrationCommon::PropertySimple t_Property);
+                                FenestrationCommon::PropertySurface t_Property);
 
         void setSolarRadiation(FenestrationCommon::CSeries & t_SolarRadiation);
 
@@ -73,19 +72,20 @@ namespace MultiLayerOptics
 
         // Total Transmittance and Reflectance values for every wavelength (does not include source
         // data)
-        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySimple>,
+        std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySurface>,
                  FenestrationCommon::CMatrixSeries>
           m_Tot;
 
         FenestrationCommon::SquareMatrix m_Lambda;
 
         std::vector<double> m_CombinedLayerWavelengths;
-        bool m_Calculated;
+
+        bool hasCache() const;
+        void ensureCache();
+        void invalidateCache();
 
         void calculateWavelengthByWavelengthProperties(
           const FenestrationCommon::ProgressCallback & callback = nullptr);
     };
 
 }   // namespace MultiLayerOptics
-
-#endif

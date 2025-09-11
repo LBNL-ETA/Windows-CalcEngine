@@ -1,8 +1,11 @@
-#ifndef SPECTRALSAMPLE_H
-#define SPECTRALSAMPLE_H
+#pragma once
+
+#include "SpectralSampleData.hpp"
+
 
 #include <memory>
 #include <vector>
+
 #include <WCECommon.hpp>
 
 namespace SpectralAveraging
@@ -32,45 +35,44 @@ namespace SpectralAveraging
         virtual ~CSample() = default;
         explicit CSample(const FenestrationCommon::CSeries & t_SourceData);
         CSample();
-        CSample(const CSample & t_Sample);
-        CSample & operator=(CSample const & t_Sample);
+        CSample(const CSample & t_Sample) = default;
+        CSample & operator=(CSample const & t_Sample) = default;
 
         //! \brief Assigns detector and wavelengths from other sample.
-        void assignDetectorAndWavelengths(const std::shared_ptr<CSample> & t_Sample);
+        void assignDetectorAndWavelengths(const CSample & t_Sample);
 
         // Gets source data. In case wavelengths are referenced to detector or custom
         // wavelength set, it will perform interpolation according to desired settings.
         FenestrationCommon::CSeries & getSourceData();
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         // Setting detector spectral properties for the sample
         void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData);
 
-        [[nodiscard]] FenestrationCommon::IntegrationType getIntegrator() const;
-        [[nodiscard]] double getNormalizationCoeff() const;
-
         // Integrate sample property over the certain spectrum range
-        double getProperty(double const minLambda,
-                           double const maxLambda,
-                           FenestrationCommon::Property const t_Property,
-                           FenestrationCommon::Side const t_Side);
+        double getProperty(double minLambda,
+                           double maxLambda,
+                           FenestrationCommon::Property t_Property,
+                           FenestrationCommon::Side t_Side,
+                           ScatteringType t_ScatteringType = ScatteringType::Total);
 
         // Spectral properties over the wavelength range
-        FenestrationCommon::CSeries &
-          getEnergyProperties(FenestrationCommon::Property const t_Property,
-                              FenestrationCommon::Side const t_Side);
+        FenestrationCommon::CSeries & getEnergyProperties(FenestrationCommon::Property t_Property,
+                                                          FenestrationCommon::Side t_Side,
+                                                          ScatteringType t_ScatteringType);
 
         // Defining the source of wavelengths to be used with the sample. Wavelengths can be used
         // from measured sample, detector data or can be custom provided.
-        void setWavelengths(WavelengthSet const t_WavelengthSet,
+        void setWavelengths(WavelengthSet t_WavelengthSet,
                             const std::vector<double> & t_Wavelenghts = {});
 
         // For given incoming source and detector data, calculates energy (Transmitted, Reflected or
         // Absorbed) for given spectrum range.
-        double getEnergy(double const minLambda,
-                         double const maxLambda,
-                         FenestrationCommon::Property const t_Property,
-                         FenestrationCommon::Side const t_Side);
+        double getEnergy(double minLambda,
+                         double maxLambda,
+                         FenestrationCommon::Property t_Property,
+                         FenestrationCommon::Side t_Side,
+                         ScatteringType t_ScatteringType);
 
         [[nodiscard]] std::vector<double> getWavelengths() const;
 
@@ -84,8 +86,8 @@ namespace SpectralAveraging
                                          double normalizationCoefficient) = 0;
 
         // It can be single or multiple samples. In any case this should be seen as single set of
-        // wavelengts
-        virtual std::vector<double> getWavelengthsFromSample() const = 0;
+        // wavelengths
+        [[nodiscard]] virtual std::vector<double> getWavelengthsFromSample() const = 0;
 
         FenestrationCommon::CSeries m_SourceData;
         FenestrationCommon::CSeries m_DetectorData;
@@ -95,11 +97,13 @@ namespace SpectralAveraging
 
         // Keep energy for current state of the sample. Energy is calculated for each wavelength.
         FenestrationCommon::CSeries m_IncomingSource;
-        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 FenestrationCommon::CSeries>
-          m_EnergySource;
+        std::map<ScatteringKey, FenestrationCommon::CSeries> m_EnergySource;
 
         bool m_StateCalculated;
+
+        FenestrationCommon::IntegrationType m_IntegrationType{
+          FenestrationCommon::IntegrationType::Trapezoidal};
+        double m_NormalizationCoefficient{1.0};
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -119,9 +123,9 @@ namespace SpectralAveraging
         std::shared_ptr<CSpectralSampleData> getMeasuredData();
 
         // Returns property at each wavelength
-        FenestrationCommon::CSeries
-          getWavelengthsProperty(const FenestrationCommon::Property t_Property,
-                                 const FenestrationCommon::Side t_Side);
+        FenestrationCommon::CSeries getWavelengthsProperty(FenestrationCommon::Property t_Property,
+                                                           FenestrationCommon::Side t_Side,
+                                                           ScatteringType t_Scatter);
 
         [[nodiscard]] std::vector<double> getWavelengthsFromSample() const override;
 
@@ -139,9 +143,7 @@ namespace SpectralAveraging
 
         std::shared_ptr<CSpectralSampleData> m_SampleData;
 
-        std::map<std::pair<FenestrationCommon::Property, FenestrationCommon::Side>,
-                 FenestrationCommon::CSeries>
-          m_Property;
+        std::map<ScatteringKey, FenestrationCommon::CSeries> m_Property;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -169,5 +171,3 @@ namespace SpectralAveraging
     };
 
 }   // namespace SpectralAveraging
-
-#endif

@@ -10,8 +10,6 @@ namespace SingleLayerOptics
     public:
         CPerforatedCellDescription(const double t_x, const double t_y, const double t_Thickness);
 
-        double R_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
-
     protected:
         double m_x;
         double m_y;
@@ -27,7 +25,8 @@ namespace SingleLayerOptics
                                  const double t_Thickness,
                                  const double t_Radius);
 
-        double T_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_Direction);
 
         [[nodiscard]] double xDimension() const;
         [[nodiscard]] double yDimension() const;
@@ -53,7 +52,8 @@ namespace SingleLayerOptics
                                     const double t_XHole,
                                     const double t_YHole);
 
-        double T_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_Direction);
 
         [[nodiscard]] double xDimension() const;
         [[nodiscard]] double yDimension() const;

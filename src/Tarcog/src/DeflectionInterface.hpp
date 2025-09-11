@@ -10,4 +10,4 @@ namespace Tarcog
         [[nodiscard]] virtual double getMaxDeflection() const = 0;
         [[nodiscard]] virtual double getMeanDeflection() const = 0;
     };
-}
+}   // namespace Tarcog

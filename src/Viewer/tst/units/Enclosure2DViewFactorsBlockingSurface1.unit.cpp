@@ -1,4 +1,4 @@
- #include <memory>
+#include <memory>
 #include <gtest/gtest.h>
 
 #include <memory>

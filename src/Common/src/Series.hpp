@@ -35,7 +35,7 @@ namespace FenestrationCommon
     public:
         CSeries() = default;
 
-        explicit CSeries (size_t size);
+        explicit CSeries(size_t size);
         explicit CSeries(const std::vector<std::pair<double, double>> & t_values);
         CSeries(const std::initializer_list<std::pair<double, double>> & t_values);
 
@@ -47,9 +47,10 @@ namespace FenestrationCommon
         // Create wavelength array with identical values over entire wavelength spectrum
         void setConstantValues(const std::vector<double> & t_x, double t_Value);
 
-        [[nodiscard]] CSeries integrate(IntegrationType t_IntegrationType,
-                          double normalizationCoefficient = 1,
-                          const std::optional<std::vector<double>> & integrationPoints = std::nullopt) const;
+        [[nodiscard]] CSeries integrate(
+          IntegrationType t_IntegrationType,
+          double normalizationCoefficient = 1,
+          const std::optional<std::vector<double>> & integrationPoints = std::nullopt) const;
 
         [[nodiscard]] CSeries interpolate(const std::vector<double> & t_Wavelengths) const;
 

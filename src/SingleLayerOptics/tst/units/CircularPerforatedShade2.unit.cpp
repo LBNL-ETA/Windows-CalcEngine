@@ -47,21 +47,21 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     SCOPED_TRACE("Begin Test: Circular perforated cell - Solar properties.");
 
     constexpr auto Tolerance = 1e-6;
-    
+
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.2, tauDiff, Tolerance);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.8, RfDiff, Tolerance);
 
-    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySurface::R);
     EXPECT_NEAR(0.8, RbDiff, Tolerance);
 
-    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
     const auto size = aT.size();
 
@@ -107,7 +107,7 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     }
 
     // Test first row for reflectance matrix
-    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
                       0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
@@ -129,7 +129,7 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     }
 
     // Test first row for reflectance matrix
-    auto aRb = aResults.getMatrix(Side::Back, PropertySimple::R);
+    auto aRb = aResults.getMatrix(Side::Back, PropertySurface::R);
 
     correctResults = {0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,
                       0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648, 0.254648,

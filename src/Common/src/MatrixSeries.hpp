@@ -28,7 +28,10 @@ namespace FenestrationCommon
         // add property at specific series position
         void addProperty(size_t i, size_t j, double t_Wavelength, double t_Value);
         void addProperties(size_t i, double t_Wavelength, const std::vector<double> & t_Values);
-        void setPropertiesAtIndex(size_t index, size_t i, double t_Wavelength, const std::vector<double> & t_Values);
+        void setPropertiesAtIndex(size_t index,
+                                  size_t i,
+                                  double t_Wavelength,
+                                  const std::vector<double> & t_Values);
         void addProperties(double t_Wavelength, const SquareMatrix & t_Matrix);
         void setPropertiesAtIndex(size_t index, double t_Wavelength, const SquareMatrix & t_Matrix);
 
@@ -56,7 +59,7 @@ namespace FenestrationCommon
 
         SquareMatrix getSquaredMatrixSums(double minLambda,
                                           double maxLambda,
-                                          const std::vector<double> & t_ScaleValue);
+                                          const std::vector<double> & t_ScaleValue) const;
 
         [[nodiscard]] std::vector<MatrixAtWavelength> seriesMatrices() const;
 

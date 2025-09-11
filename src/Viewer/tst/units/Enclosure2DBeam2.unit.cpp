@@ -104,8 +104,7 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam1)
     /////////////////////////////////////////////////////////////
     Side aSide = Side::Front;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_EQ(0, aEnclosure->directToDirect(profileAngle, aSide));
 
@@ -152,8 +151,7 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam2)
     /////////////////////////////////////////////////////////////
     Side aSide = Side::Front;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_EQ(0, aEnclosure->directToDirect(profileAngle, aSide));
 
@@ -200,8 +198,7 @@ TEST_F(TestEnclosure2DBeam2, Enclosure2DBeam3)
     /////////////////////////////////////////////////////////////
     Side aSide = Side::Front;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     size_t correctSize = 1;
 

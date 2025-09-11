@@ -19,7 +19,7 @@ TEST_F(TestPolarPoint, PolarPointTest1)
 {
     SCOPED_TRACE("Begin Test: Polar point conversions (1).");
 
-    const auto aPoint {CPoint2D::createPointFromPolarCoordinates(259, 1.58)};
+    const auto aPoint{CPoint2D::createPointFromPolarCoordinates(259, 1.58)};
 
     double x = aPoint.x();
     double y = aPoint.y();

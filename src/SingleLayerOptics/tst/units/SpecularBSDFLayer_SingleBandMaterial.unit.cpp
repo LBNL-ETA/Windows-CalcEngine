@@ -82,10 +82,10 @@ TEST_F(TestSpecularBSDFLayer_SingleBandMaterial, SingleBandSpecular)
 
     BSDFIntegrator aResults = aLayer->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.0, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.05, RfDiff, 1e-6);
 
     const auto AbsFront{aResults.Abs(Side::Front)};

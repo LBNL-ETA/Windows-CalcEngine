@@ -15,12 +15,10 @@ using namespace SpectralAveraging;
 namespace
 {
     constexpr auto writeResults{false};
-    void processWavelength(int index,
-                           BSDFIntegrator & aResults,
-                           const std::string & test_data_dir)
+    void processWavelength(int index, BSDFIntegrator & aResults, const std::string & test_data_dir)
     {
         // Front transmittance
-        const auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+        const auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
         const std::string file_path_t =
           test_data_dir + "/data/TestVenetianUniformShadeFlat45_5_Multiwavelength/aTf"
           + std::to_string(index + 1) + ".csv";
@@ -36,7 +34,7 @@ namespace
         }
 
         // Front reflectance
-        const auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+        const auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
         const std::string file_path_r =
           test_data_dir + "/data/TestVenetianUniformShadeFlat45_5_Multiwavelength/aRf"
           + std::to_string(index + 1) + ".csv";

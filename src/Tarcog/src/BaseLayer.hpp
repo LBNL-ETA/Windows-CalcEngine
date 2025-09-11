@@ -48,7 +48,7 @@ namespace Tarcog::ISO15099
 
         //! Some of the layers will require pre-calculation to be done in order to perform
         //! main loop calculation.
-        virtual void precalculateState(){};
+        virtual void precalculateState() {};
 
         double getConductivity();
         double getEffectiveThermalConductivity();

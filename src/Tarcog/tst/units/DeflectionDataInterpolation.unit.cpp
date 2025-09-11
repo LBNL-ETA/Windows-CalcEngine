@@ -5,7 +5,6 @@
 
 class TestDeflectionDataInterpolation : public testing::Test
 {
-
 protected:
     void SetUp() override
     {}

@@ -80,13 +80,12 @@ protected:
         const double wettedLength{0.05633282};
         const double absorptance{0.3};
 
-        const Tarcog::ISO15099::FrameData frameData{
-            .UValue = uValue,
-            .EdgeUValue = edgeUValue,
-            .ProjectedFrameDimension = projectedFrameDimension,
-            .WettedLength = wettedLength,
-            .Absorptance = absorptance
-        };
+        const Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
 
         const auto windowWidth{1.5};
         const auto windowHeight{1.2};

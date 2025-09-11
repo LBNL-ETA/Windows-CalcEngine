@@ -23,7 +23,7 @@ namespace MultiLayerOptics
                                                const double t_Rf_dif_dif,
                                                const double t_Tb_dif_dif,
                                                const double t_Rb_dif_dif) :
-        m_Calculated(false), m_Theta(0), m_Phi(0)
+        m_Angles(std::nullopt)
     {
         CScatteringLayer aLayer(t_Tf_dir_dir,
                                 t_Rf_dir_dir,
@@ -42,7 +42,7 @@ namespace MultiLayerOptics
     }
 
     CMultiLayerScattered::CMultiLayerScattered(const CScatteringLayer & t_Layer) :
-        m_Calculated(false), m_Theta(0), m_Phi(0)
+        m_Angles(std::nullopt)
     {
         initialize(t_Layer);
     }
@@ -91,16 +91,16 @@ namespace MultiLayerOptics
                 assert("Incorrect side selected.");
                 break;
         }
-        m_Calculated = false;
+        invalidate();
     }
 
-    void CMultiLayerScattered::setSourceData(CSeries & t_SourceData)
+    void CMultiLayerScattered::setSourceData(const CSeries & t_SourceData)
     {
         for(auto & layer : m_Layers)
         {
             layer.setSourceData(t_SourceData);
-            m_Calculated = false;
         }
+        invalidate();
     }
 
     size_t CMultiLayerScattered::getNumOfLayers() const
@@ -108,16 +108,16 @@ namespace MultiLayerOptics
         return m_Layers.size();
     }
 
-    double CMultiLayerScattered::getPropertySimple(const double,
-                                                   const double,
-                                                   const PropertySimple t_Property,
-                                                   const Side t_Side,
-                                                   const Scattering t_Scattering,
-                                                   const double t_Theta,
-                                                   const double t_Phi)
+    double CMultiLayerScattered::getPropertySurface(const double,
+                                                    const double,
+                                                    const PropertySurface t_Property,
+                                                    const Side t_Side,
+                                                    const Scattering t_Scattering,
+                                                    const double t_Theta,
+                                                    const double t_Phi)
     {
         calculateState(t_Theta, t_Phi);
-        return m_Layer->getPropertySimple(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
+        return m_Layer->getPropertySurface(t_Property, t_Side, t_Scattering, t_Theta, t_Phi);
     }
 
     double CMultiLayerScattered::getAbsorptanceLayer(const size_t Index,
@@ -129,14 +129,13 @@ namespace MultiLayerOptics
         return getAbsorptanceLayer(0, 0, Index, t_Side, t_Scattering, t_Theta, t_Phi);
     }
 
-    double
-      CMultiLayerScattered::getAbsorptanceLayer(double,
-                                                double,
-                                                size_t Index,
-                                                FenestrationCommon::Side t_Side,
-                                                FenestrationCommon::ScatteringSimple t_Scattering,
-                                                double t_Theta,
-                                                double t_Phi)
+    double CMultiLayerScattered::getAbsorptanceLayer(double,
+                                                     double,
+                                                     size_t Index,
+                                                     Side t_Side,
+                                                     ScatteringSimple t_Scattering,
+                                                     double t_Theta,
+                                                     double t_Phi)
     {
         calculateState(t_Theta, t_Phi);
         return m_InterRef->getAbsorptance(Index, t_Side, t_Scattering, t_Theta, t_Phi);
@@ -159,13 +158,12 @@ namespace MultiLayerOptics
         return abs;
     }
 
-    std::vector<double> CMultiLayerScattered::getAbsorptanceLayersHeat(
-      double minLambda,
-      double maxLambda,
-      FenestrationCommon::Side side,
-      FenestrationCommon::ScatteringSimple scattering,
-      double theta,
-      double phi)
+    std::vector<double> CMultiLayerScattered::getAbsorptanceLayersHeat(double minLambda,
+                                                                       double maxLambda,
+                                                                       Side side,
+                                                                       ScatteringSimple scattering,
+                                                                       double theta,
+                                                                       double phi)
     {
         return getAbsorptanceLayers(minLambda, maxLambda, side, scattering, theta, phi);
     }
@@ -202,7 +200,7 @@ namespace MultiLayerOptics
 
     void CMultiLayerScattered::calculateState(const double t_Theta, const double t_Phi)
     {
-        if(!m_Calculated || (t_Theta != m_Theta) || (t_Phi != m_Phi))
+        if(!sameAngles(t_Theta, t_Phi))
         {
             m_Layer = std::make_shared<CEquivalentScatteringLayer>(m_Layers[0], t_Theta, t_Phi);
             m_InterRef = std::make_shared<CInterRef>(m_Layers[0], t_Theta, t_Phi);
@@ -211,10 +209,21 @@ namespace MultiLayerOptics
                 m_Layer->addLayer(m_Layers[i], Side::Back, t_Theta, t_Phi);
                 m_InterRef->addLayer(m_Layers[i], Side::Back, t_Theta, t_Phi);
             }
-            m_Calculated = true;
-            m_Theta = t_Theta;
-            m_Phi = t_Phi;
+            m_Angles = Angles{t_Theta, t_Phi};
         }
+    }
+
+    bool CMultiLayerScattered::sameAngles(const double theta, const double phi) const
+    {
+        using FenestrationCommon::isEqual;
+        return m_Angles && isEqual(m_Angles->theta, theta) && isEqual(m_Angles->phi, phi);
+    }
+
+    void CMultiLayerScattered::invalidate() noexcept
+    {
+        m_Angles.reset();
+        m_InterRef.reset();
+        m_Layer.reset();
     }
 
     std::vector<double> CMultiLayerScattered::getWavelengths() const
@@ -252,6 +261,5 @@ namespace MultiLayerOptics
             addLayer(layer);
         }
     }
-
 
 }   // namespace MultiLayerOptics

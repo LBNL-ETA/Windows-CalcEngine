@@ -32,6 +32,19 @@ namespace FenestrationCommon
 
         [[nodiscard]] std::vector<std::vector<double>> getMatrix() const;
 
+        // Faster member operators (no friends needed)
+        SquareMatrix operator*(const SquareMatrix & rhs) const;
+        SquareMatrix & operator*=(const SquareMatrix & rhs);
+
+        SquareMatrix operator+(const SquareMatrix & rhs) const;
+        SquareMatrix & operator+=(const SquareMatrix & rhs);
+
+        SquareMatrix operator-(const SquareMatrix & rhs) const;
+        SquareMatrix & operator-=(const SquareMatrix & rhs);
+
+        // Matrix–vector (right): M * v
+        std::vector<double> operator*(const std::vector<double> & v) const;
+
     private:
         // explicit SquareMatrix(SquareMatrix && tMatrix);
         SquareMatrix LU() const;
@@ -40,15 +53,7 @@ namespace FenestrationCommon
         std::vector<std::vector<double>> m_Matrix;
     };
 
-    SquareMatrix operator*(const SquareMatrix & first, const SquareMatrix & second);
-    SquareMatrix operator*=(SquareMatrix & first, const SquareMatrix & second);
-    SquareMatrix operator+(const SquareMatrix & first, const SquareMatrix & second);
-    SquareMatrix operator+=(SquareMatrix & first, const SquareMatrix & second);
-    SquareMatrix operator-(const SquareMatrix & first, const SquareMatrix & second);
-    SquareMatrix operator-=(SquareMatrix & first, const SquareMatrix & second);
-
     std::vector<double> operator*(const std::vector<double> & first, const SquareMatrix & second);
-    std::vector<double> operator*(const SquareMatrix & first, const std::vector<double> & second);
 
     SquareMatrix multiplyWithDiagonalMatrix(const std::vector<double> & tInput,
                                             const SquareMatrix & tMatrix);

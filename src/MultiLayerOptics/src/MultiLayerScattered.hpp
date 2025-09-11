@@ -1,11 +1,10 @@
-#ifndef MULTILAYER_H
-#define MULTILAYER_H
+#pragma once
 
 #include <memory>
 #include <vector>
 
-#include "WCECommon.hpp"
-#include "WCESingleLayerOptics.hpp"
+#include <WCECommon.hpp>
+#include <WCESingleLayerOptics.hpp>
 
 namespace SingleLayerOptics
 {
@@ -60,17 +59,17 @@ namespace MultiLayerOptics
         void addLayer(const SingleLayerOptics::CScatteringLayer & t_Layer,
                       FenestrationCommon::Side t_Side = FenestrationCommon::Side::Back);
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData);
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
 
         size_t getNumOfLayers() const;
 
-        double getPropertySimple(double minLambda,
-                                 double maxLambda,
-                                 FenestrationCommon::PropertySimple t_Property,
-                                 FenestrationCommon::Side t_Side,
-                                 FenestrationCommon::Scattering t_Scattering,
-                                 double t_Theta = 0,
-                                 double t_Phi = 0) override;
+        double getPropertySurface(double minLambda,
+                                  double maxLambda,
+                                  FenestrationCommon::PropertySurface t_Property,
+                                  FenestrationCommon::Side t_Side,
+                                  FenestrationCommon::Scattering t_Scattering,
+                                  double t_Theta = 0,
+                                  double t_Phi = 0) override;
 
         double getAbsorptanceLayer(size_t Index,
                                    FenestrationCommon::Side t_Side,
@@ -121,7 +120,7 @@ namespace MultiLayerOptics
 
         // TODO: Need scattering to be the same approach as other two types
         void setCalculationProperties(const SingleLayerOptics::CalculationProperties &) override
-          {};
+        {}
 
         explicit CMultiLayerScattered(const SingleLayerOptics::CScatteringLayer & t_Layer);
 
@@ -136,10 +135,16 @@ namespace MultiLayerOptics
         std::shared_ptr<CEquivalentScatteringLayer> m_Layer;
         std::vector<SingleLayerOptics::CScatteringLayer> m_Layers;
 
-        bool m_Calculated;
-        double m_Theta;
-        double m_Phi;
+        struct Angles
+        {
+            double theta;
+            double phi;
+        };
+
+        std::optional<Angles> m_Angles;
+
+        bool sameAngles(double theta, double phi) const;
+
+        void invalidate() noexcept;
     };
 }   // namespace MultiLayerOptics
-
-#endif

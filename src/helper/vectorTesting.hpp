@@ -18,4 +18,5 @@ namespace Helper
               << testName << ": vector element " << i << " is not correct.";
         }
     }
-}
+
+}   // namespace Helper

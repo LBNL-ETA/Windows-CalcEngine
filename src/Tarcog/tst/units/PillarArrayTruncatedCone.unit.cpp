@@ -43,7 +43,8 @@ protected:
         const auto pillarConductivity = 20.0;   // [W/(m·K)]
         const auto pillarArea = 0.02 * 0.02;    // [m²]
 
-        Tarcog::ISO15099::TruncatedConePillar pillar{pillarHeight, pillarConductivity, pillarArea, radius1, radius2};
+        Tarcog::ISO15099::TruncatedConePillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, radius1, radius2};
 
         auto gap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 

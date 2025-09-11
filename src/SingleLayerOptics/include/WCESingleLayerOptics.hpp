@@ -1,5 +1,4 @@
-#ifndef SINGLELAYEROPTICS_H
-#define SINGLELAYEROPTICS_H
+#pragma once
 
 #include "../src/BaseCell.hpp"
 #include "../src/BeamDirection.hpp"
@@ -14,6 +13,7 @@
 #include "../src/CellDescription.hpp"
 #include "../src/DirectionalDiffuseBSDFLayer.hpp"
 #include "../src/DirectionalDiffuseCell.hpp"
+#include "../src/MaterialDirDifCell.hpp"
 #include "../src/LayerSingleComponent.hpp"
 #include "../src/MaterialDescription.hpp"
 #include "../src/Material.hpp"
@@ -38,5 +38,3 @@
 #include "../src/IScatteringLayer.hpp"
 #include "../src/ColorProperties.hpp"
 #include "../src/CalculationProperties.hpp"
-
-#endif

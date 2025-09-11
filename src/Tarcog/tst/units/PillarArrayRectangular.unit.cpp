@@ -44,7 +44,8 @@ protected:
         const auto pillarConductivity = 20.0;   // [W/(m·K)]
         const auto pillarArea = 0.02 * 0.02;    // [m²]
 
-        Tarcog::ISO15099::RectangularPillar pillar{pillarHeight, pillarConductivity, pillarArea, length, width};
+        Tarcog::ISO15099::RectangularPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, length, width};
 
         auto gap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
@@ -69,7 +70,7 @@ TEST_F(PillarArrayRectangular, WidthMuchBiggerThanLength)
 {
     constexpr auto tolerance = 1e-6;
     constexpr auto length = 0.25e-3;   //[m]
-    constexpr auto width = 0.05e-3;   //[m]
+    constexpr auto width = 0.05e-3;    //[m]
 
     const auto aGap = createModel(length, width);
 

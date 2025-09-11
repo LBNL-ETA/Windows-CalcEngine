@@ -5,11 +5,14 @@ Checks: >
   -modernize-use-trailing-return-type,
   performance-*,
   readability-*,
+  -readability-magic-numbers,
+  -modernize-use-designated-initializers, # disable designated initializer suggestion
   bugprone-*,
   -bugprone-easily-swappable-parameters,
   -cppcoreguidelines-member-function-hidden,
   -cppcoreguidelines-owning-memory.NonOwningRawPointer,
   -cppcoreguidelines-owning-memory
+
 
 WarningsAsErrors: ''
 

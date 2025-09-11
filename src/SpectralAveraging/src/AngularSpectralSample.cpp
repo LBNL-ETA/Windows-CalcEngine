@@ -4,11 +4,12 @@
 #include <cmath>
 #include <mutex>
 
+#include <WCECommon.hpp>
+
 #include "AngularSpectralSample.hpp"
-#include "MeasuredSampleData.hpp"
+#include "SpectralSampleData.hpp"
 #include "SpectralSample.hpp"
 #include "AngularProperties.hpp"
-#include "WCECommon.hpp"
 
 std::mutex findAngularSample;
 
@@ -20,13 +21,11 @@ namespace SpectralAveraging
     //// CAngularSpectralProperties
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    CAngularSpectralProperties::CAngularSpectralProperties(
-      std::shared_ptr<CSpectralSample> const & t_SpectralSample,
-      double const t_Angle,
-      MaterialType const t_Type,
-      double const t_Thickness) :
-        m_Angle(t_Angle),
-        m_Thickness(t_Thickness)
+    CAngularSpectralProperties::CAngularSpectralProperties(CSpectralSample & t_SpectralSample,
+                                                           double const t_Angle,
+                                                           MaterialType const t_Type,
+                                                           double const t_Thickness) :
+        m_Angle(t_Angle), m_Thickness(t_Thickness)
     {
         m_AngularData = std::make_shared<CSpectralSampleData>();
         calculateAngularProperties(t_SpectralSample, t_Type);
@@ -42,71 +41,97 @@ namespace SpectralAveraging
         return m_AngularData;
     }
 
-    void CAngularSpectralProperties::calculateAngularProperties(
-      std::shared_ptr<CSpectralSample> const & t_SpectralSample, MaterialType const t_Type)
+    inline double calcHaze(const double direct, const double diffuse, const double tol = 1e-8)
     {
-        assert(t_SpectralSample != nullptr);
+        const double sum = direct + diffuse;
+        if(std::abs(sum) <= tol)
+        {
+            return 0.0;
+        }
+        return diffuse / sum;
+    }
 
-        auto aMeasuredData = t_SpectralSample->getMeasuredData();
-        auto aWavelengths = t_SpectralSample->getWavelengths();
+    void CAngularSpectralProperties::calculateAngularProperties(CSpectralSample & t_SpectralSample,
+                                                                MaterialType const t_Type)
+    {
+        auto md = t_SpectralSample.getMeasuredData();
+        auto wl = t_SpectralSample.getWavelengths();
 
         // Spectral sample is not initialized yet, use wavelengths from measured data instead.
-        if(aWavelengths.empty())
+        if(wl.empty())
         {
-            aWavelengths = aMeasuredData->getWavelengths();
+            wl = md->getWavelengths();
         }
 
         if(m_Angle != 0)
         {
-            auto aSourceData = t_SpectralSample->getSourceData();
+            const auto aTf =
+              md->properties(Property ::T, Side::Front, ScatteringType::Total).interpolate(wl);
+            assert(aTf.size() == wl.size());
 
-
-            const auto aT =
-              aMeasuredData->properties(Property ::T, Side::Front).interpolate(aWavelengths);
-            assert(aT.size() == aWavelengths.size());
+            const auto aTb =
+              md->properties(Property ::T, Side::Back, ScatteringType::Total).interpolate(wl);
+            assert(aTb.size() == wl.size());
 
             const auto aRf =
-              aMeasuredData->properties(Property::R, Side::Front).interpolate(aWavelengths);
-            assert(aRf.size() == aWavelengths.size());
+              md->properties(Property::R, Side::Front, ScatteringType::Total).interpolate(wl);
+            assert(aRf.size() == wl.size());
 
             const auto aRb =
-              aMeasuredData->properties(Property::R, Side::Back).interpolate(aWavelengths);
-            assert(aRb.size() == aWavelengths.size());
+              md->properties(Property::R, Side::Back, ScatteringType::Total).interpolate(wl);
+            assert(aRb.size() == wl.size());
 
-            const auto lowLambda = 0.3;
-            const auto highLambda = 2.5;
+            using PT = ScatteringType;
+            // Direct/Diffuse (for haze only)
+            // clang-format off
+            const auto Tf_dir = md->properties(Property::T, Side::Front, PT::Direct).interpolate(wl);
+            const auto Tf_dif = md->properties(Property::T, Side::Front, PT::Diffuse).interpolate(wl);
+            const auto Tb_dir = md->properties(Property::T, Side::Back, PT::Direct).interpolate(wl);
+            const auto Tb_dif = md->properties(Property::T, Side::Back, PT::Diffuse).interpolate(wl);
+            const auto Rf_dir = md->properties(Property::R, Side::Front, PT::Direct).interpolate(wl);
+            const auto Rf_dif = md->properties(Property::R, Side::Front, PT::Diffuse).interpolate(wl);
+            const auto Rb_dir = md->properties(Property::R, Side::Back, PT::Direct).interpolate(wl);
+            const auto Rb_dif = md->properties(Property::R, Side::Back, PT::Diffuse).interpolate(wl);
+            // clang-format on
 
-            // TODO: Only one side is measured and it is considered that front properties are equal
-            // to back properties
-            const auto aTSolNorm =
-              t_SpectralSample->getProperty(lowLambda, highLambda, Property::T, Side::Front);
-
-            for(size_t i = 0; i < aWavelengths.size(); ++i)
+            for(size_t i = 0; i < wl.size(); ++i)
             {
-                const auto ww = aWavelengths[i] * 1e-6;
-                const auto T = aT[i].value();
-                const auto Rf = aRf[i].value();
-                const auto Rb = aRb[i].value();
-
                 const auto aSurfaceType = coatingType.at(t_Type);
 
-                auto aFrontFactory = CAngularPropertiesFactory(T, Rf, m_Thickness, aTSolNorm);
-                auto aBackFactory = CAngularPropertiesFactory(T, Rb, m_Thickness, aTSolNorm);
+                auto aFrontFactory =
+                  CAngularPropertiesFactory(aTf[i].value(), aRf[i].value(), m_Thickness);
+                auto aBackFactory =
+                  CAngularPropertiesFactory(aTb[i].value(), aRb[i].value(), m_Thickness);
 
-                auto aFrontProperties = aFrontFactory.getAngularProperties(aSurfaceType);
-                auto aBackProperties = aBackFactory.getAngularProperties(aSurfaceType);
+                const auto aFrontProperties = aFrontFactory.getAngularProperties(aSurfaceType);
+                const auto aBackProperties = aBackFactory.getAngularProperties(aSurfaceType);
 
-                const auto Tangle = aFrontProperties->transmittance(m_Angle, ww);
+                const auto ww = wl[i] * 1e-6;
+
+                const auto Tfangle = aFrontProperties->transmittance(m_Angle, ww);
+                const auto Tbangle = aBackProperties->transmittance(m_Angle, ww);
                 const auto Rfangle = aFrontProperties->reflectance(m_Angle, ww);
                 const auto Rbangle = aBackProperties->reflectance(m_Angle, ww);
 
-                m_AngularData->addRecord(ww * 1e6, Tangle, Rfangle, Rbangle);
+                OpticalProperties direct;
+                direct.Tf = (1 - calcHaze(Tf_dir[i].value(), Tf_dif[i].value())) * Tfangle;
+                direct.Tb = (1 - calcHaze(Tb_dir[i].value(), Tb_dif[i].value())) * Tbangle;
+                direct.Rf = (1 - calcHaze(Rf_dir[i].value(), Rf_dif[i].value())) * Rfangle;
+                direct.Rb = (1 - calcHaze(Rb_dir[i].value(), Rb_dif[i].value())) * Rbangle;
+
+                OpticalProperties diffuse;
+                diffuse.Tf = calcHaze(Tf_dir[i].value(), Tf_dif[i].value()) * Tfangle;
+                diffuse.Tb = calcHaze(Tb_dir[i].value(), Tb_dif[i].value()) * Tbangle;
+                diffuse.Rf = calcHaze(Rf_dir[i].value(), Rf_dif[i].value()) * Rfangle;
+                diffuse.Rb = calcHaze(Rb_dir[i].value(), Rb_dif[i].value()) * Rbangle;
+
+                m_AngularData->addRecord(ww * 1e6, direct, diffuse);
             }
         }
         else
         {
-            m_AngularData = aMeasuredData;
-            m_AngularData->interpolate(aWavelengths);
+            m_AngularData = md;
+            m_AngularData->interpolate(wl);
         }
     }
 
@@ -116,8 +141,7 @@ namespace SpectralAveraging
 
     CSpectralSampleAngle::CSpectralSampleAngle(std::shared_ptr<CSpectralSample> const & t_Sample,
                                                double const t_Angle) :
-        m_Sample(t_Sample),
-        m_Angle(t_Angle)
+        m_Sample(t_Sample), m_Angle(t_Angle)
     {}
 
     double CSpectralSampleAngle::angle() const
@@ -134,103 +158,117 @@ namespace SpectralAveraging
     //// CAngularSpectralSample
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    CAngularSpectralSample::CAngularSpectralSample(
-      std::shared_ptr<CSpectralSample> const & t_SpectralSample,
-      double const t_Thickness,
-      FenestrationCommon::MaterialType const t_Type) :
-        m_SpectralSampleZero(t_SpectralSample),
-        m_Thickness(t_Thickness),
-        m_Type(t_Type)
+    CAngularSpectralSample::CAngularSpectralSample(const CSpectralSample & t_SpectralSample,
+                                                   const double t_Thickness,
+                                                   const MaterialType t_Type) :
+        m_SpectralSampleZero(t_SpectralSample), m_Thickness(t_Thickness), m_Type(t_Type)
     {}
 
-    void CAngularSpectralSample::setSourceData(CSeries & t_SourceData)
+    void CAngularSpectralSample::setSourceData(const CSeries & t_SourceData)
     {
-        m_SpectralSampleZero->setSourceData(t_SourceData);
+        m_SpectralSampleZero.setSourceData(t_SourceData);
         m_SpectralProperties.clear();
     }
 
-    void CAngularSpectralSample::setDetectorData(CSeries & t_DetectorData)
+    void CAngularSpectralSample::setDetectorData(const CSeries & t_DetectorData)
     {
-        m_SpectralSampleZero->setDetectorData(t_DetectorData);
+        m_SpectralSampleZero.setDetectorData(t_DetectorData);
         m_SpectralProperties.clear();
     }
 
-    double CAngularSpectralSample::getProperty(double const minLambda,
-                                               double const maxLambda,
-                                               Property const t_Property,
-                                               Side const t_Side,
-                                               double const t_Angle)
+    double CAngularSpectralSample::getProperty(const double minLambda,
+                                               const double maxLambda,
+                                               const Property t_Property,
+                                               const Side t_Side,
+                                               const double t_Angle,
+                                               const ScatteringType t_Scatter)
     {
         auto aSample = findSpectralSample(t_Angle);
-        return aSample->getProperty(minLambda, maxLambda, t_Property, t_Side);
+        return aSample->getProperty(minLambda, maxLambda, t_Property, t_Side, t_Scatter);
     }
 
-    std::vector<double> CAngularSpectralSample::getWavelengthProperties(Property const t_Property,
-                                                                        Side const t_Side,
-                                                                        double const t_Angle)
+    std::vector<double>
+      CAngularSpectralSample::getWavelengthProperties(const Property t_Property,
+                                                      const Side t_Side,
+                                                      const double t_Angle,
+                                                      const ScatteringType t_Scatter)
     {
-
-        auto aSample = findSpectralSample(t_Angle);
-
-        auto aProperties = aSample->getWavelengthsProperty(t_Property, t_Side);
-
-        return aProperties.getYArray();
+        const auto aSample = findSpectralSample(t_Angle);
+        if(aSample)
+        {
+            return aSample->getWavelengthsProperty(t_Property, t_Side, t_Scatter).getYArray();
+        }
+        return {};
     }
 
     std::vector<double> CAngularSpectralSample::getBandWavelengths() const
     {
-        return m_SpectralSampleZero->getWavelengthsFromSample();
+        return m_SpectralSampleZero.getWavelengthsFromSample();
     }
 
     void CAngularSpectralSample::setBandWavelengths(const std::vector<double> & wavelegths)
     {
-        m_SpectralSampleZero->setWavelengths(WavelengthSet::Custom, wavelegths);
-        
+        m_SpectralSampleZero.setWavelengths(WavelengthSet::Custom, wavelegths);
+
         // All previous spectral properties are calculated with different wavelengths
         m_SpectralProperties.clear();
     }
 
     void CAngularSpectralSample::Flipped(bool flipped)
     {
-        m_SpectralSampleZero->Flipped(flipped);
+        m_SpectralSampleZero.Flipped(flipped);
         for(auto & val : m_SpectralProperties)
         {
-            val->sample()->Flipped(flipped);
+            val.sample()->Flipped(flipped);
         }
     }
 
     std::shared_ptr<CSpectralSample>
-      CAngularSpectralSample::findSpectralSample(double const t_Angle)
+      CAngularSpectralSample::findSpectralSample(const double t_Angle)
     {
-        std::lock_guard<std::mutex> lock(findAngularSample);
-
-        std::shared_ptr<CSpectralSample> aSample = nullptr;
-
-        const auto it = find_if(m_SpectralProperties.begin(),
-                                m_SpectralProperties.end(),
-                                [&t_Angle](std::shared_ptr<CSpectralSampleAngle> const & obj) {
-                                    return std::abs(obj->angle() - t_Angle) < 1e-6;
-                                });
-
-        if(it != m_SpectralProperties.end())
+        // Fast read path
+        if(auto fast =
+             [&] {
+                 std::shared_lock rlk(m_propsMx);
+                 return findUnlocked(t_Angle);
+             }();
+           fast)
         {
-            aSample = (*it)->sample();
-        }
-        else
-        {
-            auto aAngularData =
-              CAngularSpectralProperties(m_SpectralSampleZero, t_Angle, m_Type, m_Thickness);
-
-            aSample =
-              std::make_shared<CSpectralSample>(aAngularData.properties(),
-                                                m_SpectralSampleZero->getSourceData());
-            aSample->assignDetectorAndWavelengths(m_SpectralSampleZero);
-            const auto aSpectralSampleAngle =
-              std::make_shared<CSpectralSampleAngle>(aSample, t_Angle);
-            m_SpectralProperties.push_back(aSpectralSampleAngle);
+            return fast;
         }
 
-        return aSample;
+        // Slow write path (double-check under exclusive lock)
+        std::unique_lock wlk(m_propsMx);
+        if(auto existing = findUnlocked(t_Angle))
+        {
+            return existing;
+        }
+
+        auto s = makeSampleUnlocked(t_Angle);
+        m_SpectralProperties.emplace_back(s, t_Angle);   // preserve append order
+        return s;
+    }
+
+    CAngularSpectralSample::SamplePtr CAngularSpectralSample::findUnlocked(double angle) const
+    {
+        const auto pred = [angle](const CSpectralSampleAngle & obj) {
+            return std::abs(obj.angle() - angle) < EPS;
+        };
+        if(auto it = std::ranges::find_if(m_SpectralProperties, pred);
+           it != m_SpectralProperties.end())
+        {
+            return it->sample();
+        }
+        return {};
+    }
+
+    CAngularSpectralSample::SamplePtr CAngularSpectralSample::makeSampleUnlocked(double angle)
+    {
+        CAngularSpectralProperties props(m_SpectralSampleZero, angle, m_Type, m_Thickness);
+        auto s = std::make_shared<CSpectralSample>(props.properties(),
+                                                   m_SpectralSampleZero.getSourceData());
+        s->assignDetectorAndWavelengths(m_SpectralSampleZero);
+        return s;
     }
 
 }   // namespace SpectralAveraging

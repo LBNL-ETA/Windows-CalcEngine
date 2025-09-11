@@ -1,5 +1,4 @@
-#ifndef DIRECTIONALDIFFUSECELL_H
-#define DIRECTIONALDIFFUSECELL_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -55,5 +54,3 @@ namespace SingleLayerOptics
     };
 
 }   // namespace SingleLayerOptics
-
-#endif

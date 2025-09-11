@@ -12,9 +12,7 @@ namespace SingleLayerOptics
     ///  AngleLimits
     /////////////////////////////////////////////////////////////////
 
-    AngleLimits::AngleLimits(double const t_Low, double const t_High) :
-        m_Low(t_Low),
-        m_High(t_High)
+    AngleLimits::AngleLimits(double const t_Low, double const t_High) : m_Low(t_Low), m_High(t_High)
     {}
 
     AngleLimits::AngleLimits(double t_High) : m_Type(Type::Central), m_Low(0), m_High(t_High)

@@ -1,11 +1,13 @@
 #include <cassert>
 
+#include <WCECommon.hpp>
+
 #include "BaseCell.hpp"
 #include "CellDescription.hpp"
-#include "WCECommon.hpp"
 #include "MaterialDescription.hpp"
 
-using namespace FenestrationCommon;
+using FenestrationCommon::Side;
+using FenestrationCommon::CSeries;
 
 namespace SingleLayerOptics
 {
@@ -15,12 +17,10 @@ namespace SingleLayerOptics
     CBaseCell::CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
                          const std::shared_ptr<ICellDescription> & t_CellDescription,
                          const double rotation) :
-        m_Material(t_Material),
-        m_CellDescription(t_CellDescription),
-        m_CellRotation(rotation)
+        m_Material(t_Material), m_CellDescription(t_CellDescription), m_CellRotation(rotation)
     {}
 
-    void CBaseCell::setSourceData(CSeries & t_SourceData)
+    void CBaseCell::setSourceData(const CSeries & t_SourceData)
     {
         m_Material->setSourceData(t_SourceData);
     }
@@ -29,32 +29,14 @@ namespace SingleLayerOptics
     {
         if(m_CellRotation != 0)
         {
-            return m_CellDescription->T_dir_dir(t_Side, t_Direction.rotate(m_CellRotation));
+            return m_CellDescription->Beam_dir_dir(t_Side, t_Direction.rotate(m_CellRotation));
         }
-        return m_CellDescription->T_dir_dir(t_Side, t_Direction);
+        return m_CellDescription->Beam_dir_dir(t_Side, t_Direction);
     }
 
-    double CBaseCell::R_dir_dir(const Side t_Side, const CBeamDirection & t_Direction)
+    double CBaseCell::R_dir_dir(const Side, const CBeamDirection &)
     {
-        if(m_CellRotation != 0)
-        {
-            return m_CellDescription->R_dir_dir(t_Side, t_Direction.rotate(m_CellRotation));
-        }
-        return m_CellDescription->R_dir_dir(t_Side, t_Direction);
-    }
-
-    std::vector<double> CBaseCell::T_dir_dir_band(const Side t_Side,
-                                                  const CBeamDirection & t_Direction)
-    {
-        const size_t size = m_Material->getBandSize();
-        std::vector<double> aResults;
-        aResults.reserve(size);
-        for(size_t i = 0; i < size; i++)
-        {
-            aResults.push_back(T_dir_dir_at_wavelength(t_Side, t_Direction, i));
-        }
-
-        return aResults;
+        return 0;
     }
 
     double CBaseCell::T_dir_dir_at_wavelength(const FenestrationCommon::Side t_Side,
@@ -65,26 +47,37 @@ namespace SingleLayerOptics
         return T_dir_dir(t_Side, t_Direction);
     }
 
-    std::vector<double> CBaseCell::R_dir_dir_band(const Side t_Side,
-                                                  const CBeamDirection & t_Direction)
-    {
-        const size_t size = m_Material->getBandSize();
-        std::vector<double> aResults;
-        aResults.reserve(size);
-        for(size_t i = 0; i < size; i++)
-        {
-            aResults.push_back(R_dir_dir_at_wavelength(t_Side, t_Direction, i));
-        }
-
-        return aResults;
-    }
-
     double CBaseCell::R_dir_dir_at_wavelength(const FenestrationCommon::Side t_Side,
                                               const CBeamDirection & t_Direction,
                                               size_t wavelengthIndex)
     {
         std::ignore = wavelengthIndex;
         return R_dir_dir(t_Side, t_Direction);
+    }
+
+    template<class F>
+    std::vector<double> CBaseCell::makeBand(F && f)
+    {
+        const size_t n = m_Material->getBandSize();
+        std::vector<double> out;
+        out.reserve(n);
+        for(size_t i = 0; i < n; ++i)
+            out.push_back(f(i));
+        return out;
+    }
+
+    std::vector<double> CBaseCell::T_dir_dir_band(const Side t_Side,
+                                                  const CBeamDirection & t_Direction)
+    {
+        return makeBand(
+          [&](const size_t index) { return T_dir_dir_at_wavelength(t_Side, t_Direction, index); });
+    }
+
+    std::vector<double> CBaseCell::R_dir_dir_band(const Side t_Side,
+                                                  const CBeamDirection & t_Direction)
+    {
+        return makeBand(
+          [&](const size_t index) { return R_dir_dir_at_wavelength(t_Side, t_Direction, index); });
     }
 
     std::vector<double> CBaseCell::getBandWavelengths() const
@@ -119,7 +112,7 @@ namespace SingleLayerOptics
         return m_Material->getMaxLambda();
     }
 
-    void CBaseCell::Flipped(bool flipped) const
+    void CBaseCell::Flipped(bool flipped)
     {
         m_Material->Flipped(flipped);
     }

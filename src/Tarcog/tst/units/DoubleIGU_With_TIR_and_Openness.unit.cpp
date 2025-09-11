@@ -119,10 +119,12 @@ TEST_F(DoubleIGU_With_TIR_and_Openness, Test1)
     const auto numOfIter = aSystem->getNumberOfIterations();
     EXPECT_EQ(24u, numOfIter);
 
-    const auto ventilatedFlowOutdoor = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
+    const auto ventilatedFlowOutdoor =
+      aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
     EXPECT_NEAR(0.0, ventilatedFlowOutdoor, 1e-6);
 
-    const auto ventilatedFlowIndoor = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
+    const auto ventilatedFlowIndoor =
+      aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(9.152949, ventilatedFlowIndoor, 1e-6);
 
     const auto uValue = aSystem->getUValue();

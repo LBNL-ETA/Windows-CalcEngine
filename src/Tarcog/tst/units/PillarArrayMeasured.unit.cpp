@@ -6,16 +6,16 @@
 class PillarArrayMeasured : public testing::Test
 {
 protected:
-    static std::shared_ptr<Tarcog::ISO15099::CIGUGapLayer> createModel(
-    const Tarcog::ISO15099::PillarMeasurement & measuredPillar)
+    static std::shared_ptr<Tarcog::ISO15099::CIGUGapLayer>
+      createModel(const Tarcog::ISO15099::PillarMeasurement & measuredPillar)
     {   /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
         auto layer1TransmittanceIR = 0.0;      // [-]
         auto layer1EmissivityFrontIR = 0.84;   // [-]
 
-        auto layer2TransmittanceIR = 0.0;      // [-]
-        auto layer2EmissivityBackIR = 0.84;    // [-]
+        auto layer2TransmittanceIR = 0.0;     // [-]
+        auto layer2EmissivityBackIR = 0.84;   // [-]
 
         auto layer1 = Tarcog::ISO15099::Layers::solid(measuredPillar.glass1.thickness,
                                                       measuredPillar.glass1.conductivity,
@@ -53,9 +53,9 @@ protected:
 TEST_F(PillarArrayMeasured, CStar)
 {
     // Pillar measurement
-        Tarcog::ISO15099::Glass glass1{0.003048, 1.0, 0.84};
-        Tarcog::ISO15099::Glass glass2{0.00312, 1.0, 0.15};
-        Tarcog::ISO15099::PillarMeasurement pillar{0.0064, 0.0112, 288.15, 308.15, glass1, glass2};
+    Tarcog::ISO15099::Glass glass1{0.003048, 1.0, 0.84};
+    Tarcog::ISO15099::Glass glass2{0.00312, 1.0, 0.15};
+    Tarcog::ISO15099::PillarMeasurement pillar{0.0064, 0.0112, 288.15, 308.15, glass1, glass2};
 
     const auto aGap = createModel(pillar);
 

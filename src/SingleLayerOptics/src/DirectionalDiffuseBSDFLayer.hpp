@@ -1,8 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <functional>
+#include <vector>
+#include <span>
 
 #include "BSDFLayer.hpp"
+#include "HomogeneousDiffuseCell.hpp"
+#include "MaterialDirDifCell.hpp"
 
 namespace SingleLayerOptics
 {
@@ -12,11 +17,16 @@ namespace SingleLayerOptics
     class CDirectionalBSDFLayer : public CBSDFLayer
     {
     public:
-        CDirectionalBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
-                              const BSDFHemisphere & t_Hemisphere);
+        using WeightFn = std::function<double(double)>;
+
+        CDirectionalBSDFLayer(
+          const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+          const BSDFHemisphere & t_Hemisphere,
+          WeightFn && weightFn = [](double) { return 1.0; });
 
     protected:
-        std::shared_ptr<CDirectionalDiffuseCell> cellAsDirectionalDiffuse() const;
+        CDirectionalDiffuseCell * cellAsDirectionalDiffuse() const;
+
         void calcDiffuseDistribution(const FenestrationCommon::Side aSide,
                                      const CBeamDirection & incomingDirection,
                                      const size_t incomingDirectionIndex) override;
@@ -30,9 +40,30 @@ namespace SingleLayerOptics
                                                   size_t wavelengthIndex,
                                                   BSDFIntegrator & results) override;
 
+        std::span<const double> weights() const noexcept
+        {
+            return {m_weights.data(), m_weights.size()};
+        }
+
         std::vector<double> lambdas;
 
-        virtual double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) = 0;
+    private:
+        template<class F>
+        void for_each_outgoing_(F && f) const
+        {
+            const auto & dirs = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
+            const auto wght = weights();
+            const size_t M = dirs.size();
+            for(size_t out = 0; out < M; ++out)
+            {
+                const CBeamDirection oDir = dirs[out].centerPoint();
+                const double s = wght[out];
+                f(out, oDir, s);
+            }
+        }
+
+        std::vector<double> m_weights;
+        WeightFn m_weightsFunction;
     };
 
     class CDirectionalDiffuseBSDFLayer : public CDirectionalBSDFLayer
@@ -41,18 +72,24 @@ namespace SingleLayerOptics
         CDirectionalDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
                                      const BSDFHemisphere & t_Hemisphere);
 
-    protected:
-        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
+        bool isEmissivityPolynomialApplicable() const override;
     };
 
     class CHomogeneousDiffuseBSDFLayer : public CDirectionalBSDFLayer
     {
     public:
-        CHomogeneousDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+        CHomogeneousDiffuseBSDFLayer(const std::shared_ptr<CHomogeneousDiffuseCell> & t_Cell,
                                      const BSDFHemisphere & t_Hemisphere);
+    };
 
-    protected:
-        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
+    class CMaterialDirectionalDiffuseBSDFLayer : public CDirectionalBSDFLayer
+    {
+    public:
+        CMaterialDirectionalDiffuseBSDFLayer(
+          const std::shared_ptr<CMaterialDirectionalDiffuseCell> & t_Cell,
+          const BSDFHemisphere & t_Hemisphere);
+
+        bool isEmissivityPolynomialApplicable() const override;
     };
 
     class CMatrixBSDFLayer : public CDirectionalBSDFLayer
@@ -60,9 +97,6 @@ namespace SingleLayerOptics
     public:
         CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
                          const BSDFHemisphere & t_Hemisphere);
-
-    protected:
-        double diffuseDistributionScalar(size_t incomingDirection, size_t outgoingDirection) override;
     };
 
 }   // namespace SingleLayerOptics

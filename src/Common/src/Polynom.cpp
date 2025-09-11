@@ -31,8 +31,7 @@ namespace FenestrationCommon
     //  PolynomPoint
     ////////////////////////////////////////////////////////////////////
     PolynomPoint::PolynomPoint(double const t_Value, Polynom const & t_Poly) :
-        m_Polynom(t_Poly),
-        m_Value(t_Value)
+        m_Polynom(t_Poly), m_Value(t_Value)
     {}
 
     double PolynomPoint::value() const

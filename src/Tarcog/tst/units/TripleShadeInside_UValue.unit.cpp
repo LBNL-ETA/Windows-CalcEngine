@@ -54,7 +54,7 @@ protected:
           solidLayerThickness, solidLayerConductance, frontEmiss, frontTIR, backEmiss, backTIR);
 
         auto gapThickness = 0.0127;
-        //const auto gapPressure = 101325.0;
+        // const auto gapPressure = 101325.0;
         Gases::CGas gas1;
         gas1.addGasItem(0.1, Gases::GasDef::Air);
         gas1.addGasItem(0.9, Gases::GasDef::Argon);
@@ -73,14 +73,14 @@ protected:
         auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness);
 
         const auto shadeLayerConductance = 160.0;
-        //const auto shadeThickness = 1.000000e-04;
+        // const auto shadeThickness = 1.000000e-04;
         const auto shadeThickness = 0.0006;
 
         const auto dl{0.0};
         const auto dr{0.0};
         const auto dtop{0.0};
         const auto dbot{0.0};
-        const auto PermeabilityFactor = 0.3; // fraction
+        const auto PermeabilityFactor = 0.3;   // fraction
 
         EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerCommon effLayer{
@@ -91,8 +91,13 @@ protected:
         const auto Tirf = 0;
         const auto Tirb = 0;
 
-        auto aLayer3 = Tarcog::ISO15099::Layers::shading(
-          shadeThickness, shadeLayerConductance, effLayer.getEffectiveOpenness(), Ef, Tirf, Eb, Tirb);
+        auto aLayer3 = Tarcog::ISO15099::Layers::shading(shadeThickness,
+                                                         shadeLayerConductance,
+                                                         effLayer.getEffectiveOpenness(),
+                                                         Ef,
+                                                         Tirf,
+                                                         Eb,
+                                                         Tirb);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aLayer1, GapLayer1, aLayer2, GapLayer2, aLayer3});
@@ -119,8 +124,7 @@ TEST_F(TestTripleShadeInside_UValue, Test1)
     auto effectiveLayerConductivities{
       aSystem.getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
 
-    const auto systemKeff{
-      aSystem.getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
+    const auto systemKeff{aSystem.getEffectiveSystemConductivity(Tarcog::ISO15099::System::Uvalue)};
     EXPECT_NEAR(0.040152, systemKeff, 1e-6);
 
     const auto uval = aSystem.getUValue();

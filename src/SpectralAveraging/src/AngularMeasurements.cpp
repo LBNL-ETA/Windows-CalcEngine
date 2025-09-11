@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "SpectralSample.hpp"
-#include "MeasuredSampleData.hpp"
+#include "SpectralSampleData.hpp"
 #include "WCECommon.hpp"
 #include "AngularMeasurements.hpp"
 
@@ -18,8 +18,7 @@ namespace SpectralAveraging
 
     CSingleAngularMeasurement::CSingleAngularMeasurement(
       std::shared_ptr<CSpectralSample> const & t_Data, double const t_Angle) :
-        m_Data(t_Data),
-        m_Angle(t_Angle)
+        m_Data(t_Data), m_Angle(t_Angle)
     {
         if(t_Data == nullptr)
         {
@@ -51,12 +50,18 @@ namespace SpectralAveraging
     {
         auto aData = std::make_shared<CSpectralSampleData>();
         auto wlv = t_Data1->getWavelengthsFromSample();
-        auto trans1 = t_Data1->getMeasuredData()->properties(Property ::T, Side::Front);
-        auto trans2 = t_Data2->getMeasuredData()->properties(Property ::T, Side::Front);
-        auto reflef1 = t_Data1->getMeasuredData()->properties(Property ::R, Side::Front);
-        auto reflef2 = t_Data2->getMeasuredData()->properties(Property ::R, Side::Front);
-        auto refleb1 = t_Data1->getMeasuredData()->properties(Property ::R, Side::Back);
-        auto refleb2 = t_Data2->getMeasuredData()->properties(Property ::R, Side::Back);
+        auto trans1 =
+          t_Data1->getMeasuredData()->properties(Property ::T, Side::Front, ScatteringType::Total);
+        auto trans2 =
+          t_Data2->getMeasuredData()->properties(Property ::T, Side::Front, ScatteringType::Total);
+        auto reflef1 =
+          t_Data1->getMeasuredData()->properties(Property ::R, Side::Front, ScatteringType::Total);
+        auto reflef2 =
+          t_Data2->getMeasuredData()->properties(Property ::R, Side::Front, ScatteringType::Total);
+        auto refleb1 =
+          t_Data1->getMeasuredData()->properties(Property ::R, Side::Back, ScatteringType::Total);
+        auto refleb2 =
+          t_Data2->getMeasuredData()->properties(Property ::R, Side::Back, ScatteringType::Total);
         auto frac = (t_Angle - t_Angle1) / (t_Angle2 - t_Angle1);
         for(size_t i = 0; i < wlv.size(); i++)
         {
@@ -67,10 +72,11 @@ namespace SpectralAveraging
             auto rf2 = reflef2[i].value();
             auto rb1 = refleb1[i].value();
             auto rb2 = refleb2[i].value();
-            auto t = t1 + frac * (t2 - t1);
+            auto tf = t1 + frac * (t2 - t1);
+            auto tb = t2 + frac * (t1 - t2);
             auto rf = rf1 + frac * (rf2 - rf1);
             auto rb = rb1 + frac * (rb2 - rb1);
-            aData->addRecord(wl, t, rf, rb);
+            aData->addRecord(wl, tf, tb, rf, rb);
         }
         auto aSample = std::make_shared<CSpectralSample>(aData, t_Data1->getSourceData());
 
@@ -95,8 +101,7 @@ namespace SpectralAveraging
     CAngularMeasurements::CAngularMeasurements(
       std::shared_ptr<CSingleAngularMeasurement> const & t_SignleMeasurement,
       std::vector<double> const & t_CommonWavelengths) :
-        m_SingleMeasurement(t_SignleMeasurement),
-        m_CommonWavelengths(t_CommonWavelengths)
+        m_SingleMeasurement(t_SignleMeasurement), m_CommonWavelengths(t_CommonWavelengths)
     {
         if(m_SingleMeasurement == nullptr)
         {
@@ -177,7 +182,7 @@ namespace SpectralAveraging
         return aAngular;
     }
 
-    void CAngularMeasurements::setSourceData(CSeries & t_SourceData)
+    void CAngularMeasurements::setSourceData(const CSeries & t_SourceData)
     {
         for(size_t i = 0; i < m_Measurements.size(); i++)
         {
@@ -187,7 +192,7 @@ namespace SpectralAveraging
         }
     }
 
-    FenestrationCommon::Limits CAngularMeasurements::getWavelengthLimits() const
+    Limits CAngularMeasurements::getWavelengthLimits() const
     {
         return {m_CommonWavelengths[0], m_CommonWavelengths[m_CommonWavelengths.size() - 1]};
     }

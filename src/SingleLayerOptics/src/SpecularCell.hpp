@@ -1,5 +1,4 @@
-#ifndef SPECULARCELL_H
-#define SPECULARCELL_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -35,7 +34,7 @@ namespace SingleLayerOptics
         double R_dir_dir(FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_Direction) override;
 
-        // Transmittance of specular material for enire wavelength spectrum
+        // Transmittance of specular material for entire wavelength spectrum
         std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,
                                            const CBeamDirection & t_Direction) override;
 
@@ -56,5 +55,3 @@ namespace SingleLayerOptics
     };
 
 }   // namespace SingleLayerOptics
-
-#endif

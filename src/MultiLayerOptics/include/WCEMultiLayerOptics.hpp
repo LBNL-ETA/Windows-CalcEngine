@@ -1,5 +1,4 @@
-#ifndef MULTILAYEROPTICS_H
-#define MULTILAYEROPTICS_H
+#pragma once
 
 #include "../src/AbsorptancesMultiPane.hpp"
 #include "../src/EquivalentBSDFLayer.hpp"
@@ -12,8 +11,4 @@
 #include "../src/MultiLayerScattered.hpp"
 #include "../src/MultiLayerSingleComponent.hpp"
 #include "../src/MultiPaneBSDF.hpp"
-#include "../src/MultiPaneSampleData.hpp"
-#include "../src/MultiPaneSpectralSample.hpp"
 #include "../src/MultiPaneSpecular.hpp"
-
-#endif

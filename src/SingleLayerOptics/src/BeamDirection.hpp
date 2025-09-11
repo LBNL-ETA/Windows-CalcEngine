@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include <WCEViewer.hpp>
 
 namespace SingleLayerOptics

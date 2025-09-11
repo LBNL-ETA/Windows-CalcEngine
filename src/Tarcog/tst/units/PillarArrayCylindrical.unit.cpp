@@ -50,7 +50,8 @@ protected:
         const auto pillarRadius = 0.25e-3;      // [m]
 
 
-        Tarcog::ISO15099::CylindricalPillar pillar{pillarHeight, pillarConductivity, pillarArea, pillarRadius};
+        Tarcog::ISO15099::CylindricalPillar pillar{
+          pillarHeight, pillarConductivity, pillarArea, pillarRadius};
 
         m_Gap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 

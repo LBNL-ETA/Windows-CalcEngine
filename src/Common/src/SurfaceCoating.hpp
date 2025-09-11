@@ -1,5 +1,4 @@
-#ifndef SURFACECOATING_H
-#define SURFACECOATING_H
+#pragma once
 
 #include <map>
 
@@ -34,5 +33,3 @@ namespace FenestrationCommon
       {MaterialType::Thermochromic, SurfaceType::Coated}};
 
 }   // namespace FenestrationCommon
-
-#endif

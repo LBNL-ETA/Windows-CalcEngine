@@ -9,8 +9,8 @@ namespace SingleLayerOptics
     // PhotovoltaicSpecularLayer
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    PhotovoltaicSpecularLayer::PhotovoltaicSpecularLayer(const CSpecularCell & cell,
-                                         const std::shared_ptr<CMaterial> & material) :
+    PhotovoltaicSpecularLayer::PhotovoltaicSpecularLayer(
+      const CSpecularCell & cell, const std::shared_ptr<CMaterial> & material) :
         SpecularLayer(cell), m_PVMaterial(material)
     {}
 
@@ -30,7 +30,8 @@ namespace SingleLayerOptics
     }
 
     std::shared_ptr<PhotovoltaicSpecularLayer>
-      PhotovoltaicSpecularLayer::createLayer(const std::shared_ptr<CMaterial> & material, PVPowerPropertiesTable powerTable)
+      PhotovoltaicSpecularLayer::createLayer(const std::shared_ptr<CMaterial> & material,
+                                             PVPowerPropertiesTable powerTable)
     {
         auto aCell = CSpecularCell(material);
         auto layer{std::make_shared<PhotovoltaicSpecularLayer>(aCell, material)};

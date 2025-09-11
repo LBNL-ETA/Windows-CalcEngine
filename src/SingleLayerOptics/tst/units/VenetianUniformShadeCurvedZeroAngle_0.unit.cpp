@@ -60,18 +60,18 @@ TEST_F(TestVenetianUniformShadeCurvedZeroAngle_0, TestVenetian1)
 
     BSDFIntegrator aResults = aShade->getResults();
 
-    double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.422932, tauDiff, 1e-6);
 
-    double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.020573, RfDiff, 1e-6);
 
     auto theta{0.0};
     auto phi{0.0};
-    double tauDir = aResults.DirDir(Side::Front, PropertySimple::T, theta, phi);
+    double tauDir = aResults.DirDir(Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.936759, tauDir, 1e-6);
 
-    double rhoDir = aResults.DirDir(Side::Front, PropertySimple::R, theta, phi);
+    double rhoDir = aResults.DirDir(Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(7.583e-05, rhoDir, 1e-6);
 
     double absIR = aResults.Abs(Side::Front, theta, phi);

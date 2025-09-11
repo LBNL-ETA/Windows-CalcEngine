@@ -7,8 +7,14 @@
 #include <mutex>
 
 #include <WCESpectralAveraging.hpp>
-#include "BeamDirection.hpp"   //  Need to include rather than forward declare to default incoming and outgoing directions to CBeamDirection()
-#include "BSDFDirections.hpp"   //  Needed to have BSDFHemisphere as a member of the BSDF materials.  Could forward declare if BSDF material was changed to hide members using the pimpl ideom.
+
+//  Need to include rather than forward declare to default incoming and outgoing directions to
+//  CBeamDirection()
+#include "BeamDirection.hpp"
+
+//  Needed to have BSDFHemisphere as a member of the BSDF materials.  Could forward declare if BSDF
+//  material was changed to hide members using the pimpl idiom.
+#include "BSDFDirections.hpp"
 
 namespace FenestrationCommon
 {
@@ -34,6 +40,25 @@ namespace SpectralAveraging
 namespace SingleLayerOptics
 {
     class CSurface;
+    using SurfacePtr = std::shared_ptr<CSurface>;
+
+    struct MaterialSurface
+    {
+        double T;
+        double R;
+    };
+
+    struct MaterialSurfaceProperties
+    {
+        MaterialSurface front;
+        MaterialSurface back;
+    };
+
+    enum class OutgoingAggregation
+    {
+        Beam,
+        Hemispherical
+    };
 
     struct RMaterialProperties
     {
@@ -43,7 +68,7 @@ namespace SingleLayerOptics
                            FenestrationCommon::Side t_Side) const;
 
     private:
-        std::map<FenestrationCommon::Side, std::shared_ptr<CSurface>> m_Surface;
+        std::map<FenestrationCommon::Side, SurfacePtr> m_Surface;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -61,29 +86,31 @@ namespace SingleLayerOptics
         CMaterial(double minLambda, double maxLambda);
         explicit CMaterial(FenestrationCommon::Limits wavelengthRange);
 
-        virtual void setSourceData(FenestrationCommon::CSeries &);
-        virtual void setDetectorData(FenestrationCommon::CSeries & t_DetectorData);
+        virtual void setSourceData(const FenestrationCommon::CSeries &);
+        virtual void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData);
 
         // Get certain material property over the entire range
-        virtual double
-          getProperty(FenestrationCommon::Property t_Property,
-                      FenestrationCommon::Side t_Side,
-                      const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const = 0;
+        virtual double getProperty(FenestrationCommon::Property t_Property,
+                                   FenestrationCommon::Side t_Side,
+                                   const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                                   const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                                   OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const = 0;
 
         // Get properties for every band defined in the material
-        virtual std::vector<double> getBandProperties(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const = 0;
+        virtual std::vector<double>
+          getBandProperties(FenestrationCommon::Property t_Property,
+                            FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                            const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                            OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const = 0;
 
         virtual double
           getBandProperty(FenestrationCommon::Property t_Property,
                           FenestrationCommon::Side t_Side,
                           size_t wavelengthIndex,
                           const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-                          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const = 0;
+                          const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                          OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const = 0;
 
         std::vector<RMaterialProperties> getBandProperties();
 
@@ -129,31 +156,37 @@ namespace SingleLayerOptics
     public:
         virtual ~CMaterialSingleBand() = default;
         CMaterialSingleBand(double t_Tf, double t_Tb, double t_Rf, double t_Rb);
+        CMaterialSingleBand(MaterialSurfaceProperties properties);
+        CMaterialSingleBand(MaterialSurfaceProperties direct, MaterialSurfaceProperties diffuse);
 
-        double
-          getProperty(FenestrationCommon::Property t_Property,
-                      FenestrationCommon::Side t_Side,
-                      const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        double getProperty(FenestrationCommon::Property t_Property,
+                           FenestrationCommon::Side t_Side,
+                           const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                           const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                           OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
-        [[nodiscard]] std::vector<double> getBandProperties(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] std::vector<double>
+          getBandProperties(FenestrationCommon::Property t_Property,
+                            FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                            const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                            OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
-        [[nodiscard]] double getBandProperty(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          size_t wavelengthIndex,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] double
+          getBandProperty(FenestrationCommon::Property t_Property,
+                          FenestrationCommon::Side t_Side,
+                          size_t wavelengthIndex,
+                          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                          const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                          OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
     private:
         std::vector<double> calculateBandWavelengths() override;
 
     protected:
-        std::map<FenestrationCommon::Side, std::shared_ptr<CSurface>> m_Property;
+        FenestrationCommon::
+          mmap<SurfacePtr, FenestrationCommon::Side, FenestrationCommon::ScatteringSimple>
+            m_Property;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -173,24 +206,26 @@ namespace SingleLayerOptics
                                 std::vector<std::vector<double>> const & t_Rb,
                                 BSDFHemisphere const & t_Hemisphere);
 
-        double
-          getProperty(FenestrationCommon::Property t_Property,
-                      FenestrationCommon::Side t_Side,
-                      const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        double getProperty(FenestrationCommon::Property t_Property,
+                           FenestrationCommon::Side t_Side,
+                           const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                           const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                           OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
-        [[nodiscard]] std::vector<double> getBandProperties(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] std::vector<double>
+          getBandProperties(FenestrationCommon::Property t_Property,
+                            FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                            const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                            OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
-        [[nodiscard]] double getBandProperty(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          size_t wavelengthIndex,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] double
+          getBandProperty(FenestrationCommon::Property t_Property,
+                          FenestrationCommon::Side t_Side,
+                          size_t wavelengthIndex,
+                          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                          const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                          OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
         std::vector<std::vector<double>> const &
           getBSDFMatrix(FenestrationCommon::Property const & t_Property,
@@ -227,27 +262,30 @@ namespace SingleLayerOptics
                           const std::shared_ptr<CMaterial> & solarRange);
 
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
-        void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData) override;
+        void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData) override;
 
         [[nodiscard]] double
           getProperty(FenestrationCommon::Property t_Property,
                       FenestrationCommon::Side t_Side,
                       const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+                      const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                      OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
-        [[nodiscard]] std::vector<double> getBandProperties(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] std::vector<double>
+          getBandProperties(FenestrationCommon::Property t_Property,
+                            FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                            const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                            OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
-        [[nodiscard]] double getBandProperty(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          size_t wavelengthIndex,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] double
+          getBandProperty(FenestrationCommon::Property t_Property,
+                          FenestrationCommon::Side t_Side,
+                          size_t wavelengthIndex,
+                          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                          const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                          OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
         // Creates all the required ranges in m_Materials from a ratio
         void createRangesFromRatio(double t_Ratio);
@@ -313,6 +351,13 @@ namespace SingleLayerOptics
                             double t_Fraction) override;
     };
 
+    /// Helper function to determine correct scattering type based on incoming and outgoing
+    /// directions
+
+    SpectralAveraging::ScatteringType scatter(const CBeamDirection & t_IncomingDirection,
+                                              const CBeamDirection & t_OutgoingDirection,
+                                              OutgoingAggregation t_Agg);
+
     //////////////////////////////////////////////////////////////////////////////////////////
     ///   CMaterialSample
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -330,8 +375,8 @@ namespace SingleLayerOptics
           double t_Thickness,
           FenestrationCommon::MaterialType t_Type);
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
-        void setDetectorData(FenestrationCommon::CSeries & t_DetectorData) override;
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData) override;
+        void setDetectorData(const FenestrationCommon::CSeries & t_DetectorData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
@@ -339,21 +384,24 @@ namespace SingleLayerOptics
           getProperty(FenestrationCommon::Property t_Property,
                       FenestrationCommon::Side t_Side,
                       const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+                      const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                      OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
         // Get properties at each wavelength and at given incident angle
-        [[nodiscard]] std::vector<double> getBandProperties(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] std::vector<double>
+          getBandProperties(FenestrationCommon::Property t_Property,
+                            FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                            const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                            OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
-        [[nodiscard]] double getBandProperty(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          size_t wavelengthIndex,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] double
+          getBandProperty(FenestrationCommon::Property t_Property,
+                          FenestrationCommon::Side t_Side,
+                          size_t wavelengthIndex,
+                          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                          const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                          OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
         void setBandWavelengths(const std::vector<double> & wavelengths) override;
 
@@ -362,48 +410,6 @@ namespace SingleLayerOptics
     protected:
         std::vector<double> calculateBandWavelengths() override;
         mutable SpectralAveraging::CAngularSpectralSample m_AngularSample;
-
-    private:
-        // Nested CacheKey structure
-        struct CacheKey
-        {
-            FenestrationCommon::Property property;
-            FenestrationCommon::Side side;
-            double incomingTheta;
-            size_t numberOfWavelengths;
-
-            bool operator==(const CacheKey & other) const
-            {
-                return property == other.property && side == other.side
-                       && numberOfWavelengths == other.numberOfWavelengths
-                       && FenestrationCommon::isEqual(incomingTheta, other.incomingTheta);
-            }
-        };
-
-        // Hash specialization for CacheKey
-        struct CacheKeyHash
-        {
-            std::size_t operator()(const CacheKey & key) const
-            {
-                // Use a robust way to combine hashes
-                size_t seed = 0;
-                hashCombine(seed, static_cast<int>(key.property));
-                hashCombine(seed, static_cast<int>(key.side));
-                hashCombine(seed, key.numberOfWavelengths);
-                hashCombine(seed, key.incomingTheta);
-                return seed;
-            }
-
-        private:
-            template<typename T>
-            void hashCombine(size_t & seed, const T & value) const
-            {
-                seed ^= std::hash<T>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-            }
-        };
-
-        mutable std::mutex m_CacheMutex;
-        mutable std::unordered_map<CacheKey, std::vector<double>, CacheKeyHash> m_Cache;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -438,29 +444,31 @@ namespace SingleLayerOptics
         CMaterialMeasured(
           const std::shared_ptr<SpectralAveraging::CAngularMeasurements> & t_Measurements);
 
-        void setSourceData(FenestrationCommon::CSeries & t_SourceData) override;
+        void setSourceData(const FenestrationCommon::CSeries & t_SourceData) override;
 
         // In this case sample property is taken. Standard spectral data file contains T, Rf, Rb
         // that is measured at certain wavelengths.
-        double
-          getProperty(FenestrationCommon::Property t_Property,
-                      FenestrationCommon::Side t_Side,
-                      const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-                      const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        double getProperty(FenestrationCommon::Property t_Property,
+                           FenestrationCommon::Side t_Side,
+                           const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                           const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                           OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
         // Get properties at each wavelength and at given incident angle
-        [[nodiscard]] std::vector<double> getBandProperties(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] std::vector<double>
+          getBandProperties(FenestrationCommon::Property t_Property,
+                            FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                            const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                            OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
-        [[nodiscard]] double getBandProperty(
-          FenestrationCommon::Property t_Property,
-          FenestrationCommon::Side t_Side,
-          size_t wavelengthIndex,
-          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
-          const CBeamDirection & t_OutgoingDirection = CBeamDirection()) const override;
+        [[nodiscard]] double
+          getBandProperty(FenestrationCommon::Property t_Property,
+                          FenestrationCommon::Side t_Side,
+                          size_t wavelengthIndex,
+                          const CBeamDirection & t_IncomingDirection = CBeamDirection(),
+                          const CBeamDirection & t_OutgoingDirection = CBeamDirection(),
+                          OutgoingAggregation t_Agg = OutgoingAggregation::Beam) const override;
 
     private:
         std::vector<double> calculateBandWavelengths() override;

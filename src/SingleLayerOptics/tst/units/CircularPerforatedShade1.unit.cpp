@@ -51,16 +51,16 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
 
     BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.320845, tauDiff, Tolerance);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.636708, RfDiff, Tolerance);
 
-    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySurface::R);
     EXPECT_NEAR(0.560303, RbDiff, Tolerance);
 
-    auto aT = aResults.getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
     const auto size = aT.size();
 
@@ -105,7 +105,7 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
     }
 
     // Test first row for reflectance matrix
-    auto aRf = aResults.getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.177733, 0.183667, 0.183667, 0.183667, 0.183667, 0.183667, 0.183667,
                       0.183667, 0.183667, 0.191002, 0.191002, 0.191002, 0.191002, 0.191002,
@@ -127,7 +127,7 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
     }
 
     // Test first row for reflectance matrix
-    auto aRb = aResults.getMatrix(Side::Back, PropertySimple::R);
+    auto aRb = aResults.getMatrix(Side::Back, PropertySurface::R);
 
     correctResults = {0.156405, 0.161627, 0.161627, 0.161627, 0.161627, 0.161627, 0.161627,
                       0.161627, 0.161627, 0.168082, 0.168082, 0.168082, 0.168082, 0.168082,
@@ -151,14 +151,13 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
 
 TEST_F(TestCircularPerforatedShade1, AtWavelength)
 {
-
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     constexpr size_t wavelengthIndex{0u};
     auto aResults{aShade->getResultsAtWavelength(wavelengthIndex)};
 
     const auto correct{0.320845};
-    const auto result{aResults.DiffDiff(Side::Front, PropertySimple::T)};
+    const auto result{aResults.DiffDiff(Side::Front, PropertySurface::T)};
 
     EXPECT_NEAR(correct, result, 1e-6);
 }

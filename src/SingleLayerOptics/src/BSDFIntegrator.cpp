@@ -13,32 +13,31 @@ namespace SingleLayerOptics
         m_DirectHemisphericalCalculated(false),
         m_DiffuseDiffuseCalculated(false)
     {
-        EnumSide sides;
-        for(auto t_Side : sides)
+        for(auto t_Side : allSides())
         {
-            EnumPropertySimple properties;
-            for(auto t_Property : properties)
+            for(auto t_Property : allPropertySimple())
             {
                 m_Matrix[std::make_pair(t_Side, t_Property)] = SquareMatrix(m_DimMatrices);
-                m_DirectHemispherical[std::make_pair(t_Side, t_Property)] = std::vector<double>(m_DimMatrices);
+                m_DirectHemispherical[std::make_pair(t_Side, t_Property)] =
+                  std::vector<double>(m_DimMatrices);
             }
         }
     }
 
-    double BSDFIntegrator::DiffDiff(const Side t_Side, const PropertySimple t_Property)
+    double BSDFIntegrator::DiffDiff(const Side t_Side, const PropertySurface t_Property)
     {
         calcDiffuseDiffuse();
         return m_DiffDiff.at(t_Side, t_Property);
     }
 
-    SquareMatrix & BSDFIntegrator::getMatrix(const Side t_Side, const PropertySimple t_Property)
+    SquareMatrix & BSDFIntegrator::getMatrix(const Side t_Side, const PropertySurface t_Property)
     {
-       return m_Matrix[std::make_pair(t_Side, t_Property)];
+        return m_Matrix[std::make_pair(t_Side, t_Property)];
     }
 
     const FenestrationCommon::SquareMatrix &
       BSDFIntegrator::at(const FenestrationCommon::Side t_Side,
-                         const FenestrationCommon::PropertySimple t_Property) const
+                         const FenestrationCommon::PropertySurface t_Property) const
     {
         return m_Matrix.at(std::make_pair(t_Side, t_Property));
     }
@@ -47,12 +46,12 @@ namespace SingleLayerOptics
                                      const SquareMatrix & t_Rho,
                                      Side t_Side)
     {
-        m_Matrix[std::make_pair(t_Side, PropertySimple::T)] = t_Tau;
-        m_Matrix[std::make_pair(t_Side, PropertySimple::R)] = t_Rho;
+        m_Matrix[std::make_pair(t_Side, PropertySurface::T)] = t_Tau;
+        m_Matrix[std::make_pair(t_Side, PropertySurface::R)] = t_Rho;
     }
 
     double BSDFIntegrator::DirDir(const Side t_Side,
-                                  const PropertySimple t_Property,
+                                  const PropertySurface t_Property,
                                   const double t_Theta,
                                   const double t_Phi) const
     {
@@ -63,7 +62,7 @@ namespace SingleLayerOptics
     }
 
     double BSDFIntegrator::DirDir(const Side t_Side,
-                                  const PropertySimple t_Property,
+                                  const PropertySurface t_Property,
                                   const size_t Index) const
     {
         const auto lambda = m_Directions.lambdaVector()[Index];
@@ -72,7 +71,7 @@ namespace SingleLayerOptics
     }
 
     std::vector<double> BSDFIntegrator::DirHem(const FenestrationCommon::Side t_Side,
-                                               const FenestrationCommon::PropertySimple t_Property)
+                                               const FenestrationCommon::PropertySurface t_Property)
     {
         calcHemispherical();
         return m_DirectHemispherical.at(std::make_pair(t_Side, t_Property));
@@ -85,7 +84,7 @@ namespace SingleLayerOptics
     }
 
     double BSDFIntegrator::DirHem(const Side t_Side,
-                                  const PropertySimple t_Property,
+                                  const PropertySurface t_Property,
                                   const double t_Theta,
                                   const double t_Phi)
     {
@@ -132,11 +131,9 @@ namespace SingleLayerOptics
     {
         if(!m_DiffuseDiffuseCalculated)
         {
-            EnumSide sides;
-            for(auto t_Side : sides)
+            for(auto t_Side : allSides())
             {
-                EnumPropertySimple properties;
-                for(auto t_PropertySimple : properties)
+                for(auto t_PropertySimple : allPropertySimple())
                 {
                     m_DiffDiff(t_Side, t_PropertySimple) =
                       integrate(getMatrix(t_Side, t_PropertySimple));
@@ -155,11 +152,9 @@ namespace SingleLayerOptics
     {
         if(!m_DirectHemisphericalCalculated)
         {
-            EnumSide sides;
-            for(auto t_Side : sides)
+            for(auto t_Side : allSides())
             {
-                EnumPropertySimple properties;
-                for(PropertySimple t_PropertySimple : properties)
+                for(PropertySurface t_PropertySimple : allPropertySimple())
                 {
                     m_DirectHemispherical[{t_Side, t_PropertySimple}] =
                       m_Directions.lambdaVector() * m_Matrix.at({t_Side, t_PropertySimple});
@@ -167,13 +162,14 @@ namespace SingleLayerOptics
                 m_Abs[t_Side] = std::vector<double>();
             }
 
-            const auto size = m_DirectHemispherical[{Side::Front, PropertySimple::T}].size();
+            const auto size = m_DirectHemispherical[{Side::Front, PropertySurface::T}].size();
             for(size_t i = 0; i < size; ++i)
             {
-                for(auto t_Side : sides)
+                for(auto t_Side : allSides())
                 {
-                    m_Abs.at(t_Side).push_back(1.0 - m_DirectHemispherical.at({t_Side, PropertySimple::T})[i]
-                                               - m_DirectHemispherical.at({t_Side, PropertySimple::R})[i]);
+                    m_Abs.at(t_Side).push_back(
+                      1.0 - m_DirectHemispherical.at({t_Side, PropertySurface::T})[i]
+                      - m_DirectHemispherical.at({t_Side, PropertySurface::R})[i]);
                 }
             }
             m_DirectHemisphericalCalculated = true;
@@ -181,7 +177,7 @@ namespace SingleLayerOptics
     }
     double BSDFIntegrator::AbsDiffDiff(FenestrationCommon::Side t_Side)
     {
-        return 1 - DiffDiff(t_Side, PropertySimple::T) - DiffDiff(t_Side, PropertySimple::R);
+        return 1 - DiffDiff(t_Side, PropertySurface::T) - DiffDiff(t_Side, PropertySurface::R);
     }
 
     void BSDFIntegrator::resetCalculatedResults()

@@ -50,19 +50,19 @@ namespace SingleLayerOptics
                           FenestrationCommon::IntegrationType::Trapezoidal,
                         double normalizationCoefficient = 1.0);
 
-        Trichromatic getTrichromatic(FenestrationCommon::PropertySimple t_Property,
+        Trichromatic getTrichromatic(FenestrationCommon::PropertySurface t_Property,
                                      FenestrationCommon::Side t_Side,
                                      FenestrationCommon::Scattering t_Scattering,
                                      double t_Theta = 0,
                                      double t_Phi = 0);
 
-        aRGB getRGB(FenestrationCommon::PropertySimple t_Property,
+        aRGB getRGB(FenestrationCommon::PropertySurface t_Property,
                     FenestrationCommon::Side t_Side,
                     FenestrationCommon::Scattering t_Scattering,
                     double t_Theta = 0,
                     double t_Phi = 0);
 
-        CIE_LAB getCIE_Lab(FenestrationCommon::PropertySimple t_Property,
+        CIE_LAB getCIE_Lab(FenestrationCommon::PropertySurface t_Property,
                            FenestrationCommon::Side t_Side,
                            FenestrationCommon::Scattering t_Scattering,
                            double t_Theta = 0,

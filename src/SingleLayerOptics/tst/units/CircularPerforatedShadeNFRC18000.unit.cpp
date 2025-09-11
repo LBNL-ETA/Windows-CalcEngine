@@ -50,13 +50,13 @@ TEST_F(TestCircularPerforatedShadeNFRC18000, TestSolarProperties)
 
     BSDFIntegrator aResults = aShade->getResults();
 
-    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySimple::T);
+    const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
     EXPECT_NEAR(0.257367, tauDiff, 1e-6);
 
-    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySimple::R);
+    const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.101741, RfDiff, 1e-6);
 
-    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySimple::R);
+    const double RbDiff = aResults.DiffDiff(Side::Back, PropertySurface::R);
     EXPECT_NEAR(0.118821, RbDiff, 1e-6);
 
     const double absfDiff = aResults.AbsDiffDiff(FenestrationCommon::Side::Front);

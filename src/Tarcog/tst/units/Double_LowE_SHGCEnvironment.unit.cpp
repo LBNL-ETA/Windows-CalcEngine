@@ -5,10 +5,10 @@
 #include "WCETarcog.hpp"
 #include "WCECommon.hpp"
 
-// This test is adopted to exactly match one of the test provided in WinCalc. If this test is compared
-// to the WINDOW output, the results will not be identical. This is because WINDOW uses header
-// from the optics file for the emissivity, while WinCalc will calculate emissivity if the data
-// are available and in this case, calculated emissivity is different from what is presented in
+// This test is adopted to exactly match one of the test provided in WinCalc. If this test is
+// compared to the WINDOW output, the results will not be identical. This is because WINDOW uses
+// header from the optics file for the emissivity, while WinCalc will calculate emissivity if the
+// data are available and in this case, calculated emissivity is different from what is presented in
 // the header of the optics file.
 class TestDouble_LowE_SHGCEnvironment : public testing::Test
 {

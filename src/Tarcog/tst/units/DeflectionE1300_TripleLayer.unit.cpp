@@ -196,8 +196,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionTestTripleClearNoLoad)
     const std::vector<Deflection::GapData> gap{{0.006, 273}, {0.025, 273}};
     Deflection::DeflectionE1300 def(width, height, layer, gap);
 
-    //const std::vector<double> appliedLoad{0, 0, 0};
-    //def.setAppliedLoad(appliedLoad);
+    // const std::vector<double> appliedLoad{0, 0, 0};
+    // def.setAppliedLoad(appliedLoad);
 
     const std::vector<double> loadTemperatures{259.44977388, 273.46099867};
     def.setLoadTemperatures(loadTemperatures);
@@ -212,7 +212,8 @@ TEST_F(TestDeflectionE1300_TripleLayer, DeflectionTestTripleClearNoLoad)
         EXPECT_NEAR(correctDeflection[i], deflection[i], 1e-9);
     }
 
-    const std::vector<double> correctPanesLoad{-19.254700278326521, 11.941581502135044, 7.3131187761958927};
+    const std::vector<double> correctPanesLoad{
+      -19.254700278326521, 11.941581502135044, 7.3131187761958927};
     for(size_t i = 0u; i < correctPanesLoad.size(); ++i)
     {
         EXPECT_NEAR(correctPanesLoad[i], panesLoad[i], 1e-6);

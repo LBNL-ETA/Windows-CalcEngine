@@ -1,10 +1,9 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "WCESpectralAveraging.hpp"
-#include "WCESingleLayerOptics.hpp"
-#include "WCECommon.hpp"
-
+#include <WCESpectralAveraging.hpp>
+#include <WCESingleLayerOptics.hpp>
+#include <WCECommon.hpp>
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -13,24 +12,21 @@ using namespace SpectralAveraging;
 // Test of calculating BSDF matrices over the entire wavelength range
 class TestSpecularLayerMultiWavelength_102 : public testing::Test
 {
-private:
     std::shared_ptr<CBSDFLayer> m_Layer;
 
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
-        // CSeries aSolarRadiation{
-        //  {0.3000, 0.0}, {0.3050, 3.4}, {0.3100, 15.6}, {0.3150, 41.1}, {0.3200, 71.2}};
-
-        const auto aMeasurements = CSpectralSampleData::create({{0.300, 0.0020, 0.0470, 0.0480},
-                                                                {0.305, 0.0030, 0.0470, 0.0480},
-                                                                {0.310, 0.0090, 0.0470, 0.0480},
-                                                                {0.315, 0.0350, 0.0470, 0.0480},
-                                                                {0.320, 0.1000, 0.0470, 0.0480}});
+        const auto aMeasurements = CSpectralSampleData::create(
+          {{0.300, {0.0020, 0.0020, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}},
+           {0.305, {0.0030, 0.0030, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}},
+           {0.310, {0.0090, 0.0090, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}},
+           {0.315, {0.0350, 0.0350, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}},
+           {0.320, {0.1000, 0.1000, 0.0470, 0.0480}, {0.0, 0.0, 0.0, 0.0}}});
 
 
-        const auto thickness = 3.048e-3;   // [m]
-        const MaterialType aType = MaterialType::Monolithic;
+        constexpr auto thickness = 3.048e-3;   // [m]
+        constexpr MaterialType aType = MaterialType::Monolithic;
 
         const auto aMaterial = Material::nBandMaterial(aMeasurements, thickness, aType);
 
@@ -44,7 +40,7 @@ public:
     std::shared_ptr<CBSDFLayer> getLayer()
     {
         return m_Layer;
-    };
+    }
 };
 
 TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
@@ -63,7 +59,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 1
     ///////////////////////////////////////////////////////////////////////
 
-    auto aT = aResults[0].getMatrix(Side::Front, PropertySimple::T);
+    auto aT = aResults[0].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -81,7 +77,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    auto aRf = aResults[0].getMatrix(Side::Front, PropertySimple::R);
+    auto aRf = aResults[0].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {
       0.61134,  0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508, 0.661508,
@@ -101,7 +97,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 2
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[1].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[1].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -119,7 +115,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = aResults[1].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[1].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.61134,  0.661507, 0.661507, 0.661507, 0.661507, 0.661507, 0.661507,
                       0.661507, 0.661507, 0.659001, 0.659001, 0.659001, 0.659001, 0.659001,
@@ -138,7 +134,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 3
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[2].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[2].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -156,7 +152,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = aResults[2].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[2].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.61134,  0.661498, 0.661498, 0.661498, 0.661498, 0.661498, 0.661498,
                       0.661498, 0.661498, 0.658976, 0.658976, 0.658976, 0.658976, 0.658976,
@@ -175,7 +171,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 4
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[3].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[3].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -193,7 +189,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = aResults[3].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[3].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.61134,  0.661398, 0.661398, 0.661398, 0.661398, 0.661398, 0.661398,
                       0.661398, 0.661398, 0.658665, 0.658665, 0.658665, 0.658665, 0.658665,
@@ -212,7 +208,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     ///  Wavelength number 5
     ///////////////////////////////////////////////////////////////////////
 
-    aT = aResults[4].getMatrix(Side::Front, PropertySimple::T);
+    aT = aResults[4].getMatrix(Side::Front, PropertySurface::T);
 
     // Test only diagonal of transmittance matrix
 
@@ -230,7 +226,7 @@ TEST_F(TestSpecularLayerMultiWavelength_102, TestSpecular1)
     }
 
     // Front reflectance
-    aRf = aResults[4].getMatrix(Side::Front, PropertySimple::R);
+    aRf = aResults[4].getMatrix(Side::Front, PropertySurface::R);
 
     correctResults = {0.61134,  0.660889, 0.660889, 0.660889, 0.660889, 0.660889, 0.660889,
                       0.660889, 0.660889, 0.657004, 0.657004, 0.657004, 0.657004, 0.657004,

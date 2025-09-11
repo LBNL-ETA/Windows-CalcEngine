@@ -18,7 +18,7 @@ namespace Tarcog::ISO15099
 
     class CEnvironment;
 
-    auto const OPENING_TOLERANCE = 1e-6;
+    auto constexpr OPENING_TOLERANCE = 1e-6;
 
     class CShadeOpenings
     {
@@ -44,11 +44,10 @@ namespace Tarcog::ISO15099
         void checkAndSetDominantWidth(double gapWidth);
 
     private:
-        void fixForValidity();
         [[nodiscard]] double openingMultiplier() const;
 
-        double m_Atop{OPENING_TOLERANCE};
-        double m_Abot{OPENING_TOLERANCE};
+        double m_Atop{0};
+        double m_Abot{0};
         double m_Aleft{0};
         double m_Aright{0};
         double m_Afront{0};
@@ -64,8 +63,7 @@ namespace Tarcog::ISO15099
                        const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface = nullptr,
                        const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface = nullptr);
 
-        CIGUShadeLayer(const SolidLayer & t_Layer,
-                       const CShadeOpenings & t_ShadeOpenings);
+        CIGUShadeLayer(const SolidLayer & t_Layer, const CShadeOpenings & t_ShadeOpenings);
 
         CIGUShadeLayer(double t_Thickness, double t_Conductivity);
 

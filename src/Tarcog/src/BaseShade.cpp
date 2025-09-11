@@ -26,36 +26,31 @@ namespace Tarcog::ISO15099
         m_Aright(t_Aright),
         m_Afront(t_Afront),
         m_FrontPorosity(t_FrontPorosity)
-    {
-        fixForValidity();
-    }
-
-    void CShadeOpenings::fixForValidity()
-    {
-        if(m_Atop == 0)
-        {
-            m_Atop = OPENING_TOLERANCE;
-        }
-
-        if(m_Abot == 0)
-        {
-            m_Abot = OPENING_TOLERANCE;
-        }
-    }
+    {}
 
     double CShadeOpenings::openingMultiplier() const
     {
-        return (m_Aleft + m_Aright + m_Afront) / (m_Abot + m_Atop);
+        const double denom = m_Abot + m_Atop;
+        // It is extremely important to use 2 * OPENING_TOLERANCE because the airflow equation
+        // becomes very sensitive around zero and will produce different results. The whole point is
+        // that Abot + Atop are 1e-6 each and should add up to 2e-6 (or whatever the tolerance is).
+        const double safeDenom = (denom == 0.0) ? 2 * OPENING_TOLERANCE : denom;
+
+        return (m_Aleft + m_Aright + m_Afront) / safeDenom;
     }
 
     double CShadeOpenings::Aeq_bot() const
     {
-        return m_Abot + 0.5 * m_Atop * openingMultiplier();
+        const double bot = std::max(OPENING_TOLERANCE, m_Abot);
+        const double top = std::max(OPENING_TOLERANCE, m_Atop);
+        return bot + 0.5 * top * openingMultiplier();
     }
 
     double CShadeOpenings::Aeq_top() const
     {
-        return m_Atop + 0.5 * m_Abot * openingMultiplier();
+        const double bot = std::max(OPENING_TOLERANCE, m_Abot);
+        const double top = std::max(OPENING_TOLERANCE, m_Atop);
+        return top + 0.5 * bot * openingMultiplier();
     }
 
     double CShadeOpenings::frontPorosity() const

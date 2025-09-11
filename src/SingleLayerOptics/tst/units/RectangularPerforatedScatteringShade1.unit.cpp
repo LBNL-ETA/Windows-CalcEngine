@@ -37,13 +37,13 @@ TEST_F(TestRectangularPerforatedScatteringShade1, TestProperties)
     auto shade =
       CScatteringLayer::createPerforatedRectangularLayer(aMaterial, x, y, thickness, xHole, yHole);
 
-    const double tir = shade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+    const double tir = shade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DiffuseDiffuse);
 
     EXPECT_NEAR(tir, 0.112482, 1e-6);
 
-    const double rir = shade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+    const double rir = shade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(rir, 0.394452, 1e-6);
 
 
@@ -68,19 +68,19 @@ TEST_F(TestRectangularPerforatedScatteringShade1, TestHighEmissivity)
     const auto x = 20.0;          // mm
     const auto y = 25.0;          // mm
     const auto thickness = 7.0;   // mm
-    const auto xHole = 0.001;       // mm
-    const auto yHole = 0.001;       // mm
+    const auto xHole = 0.001;     // mm
+    const auto yHole = 0.001;     // mm
 
     auto shade =
       CScatteringLayer::createPerforatedRectangularLayer(aMaterial, x, y, thickness, xHole, yHole);
 
-    const double tir = shade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::T, Side::Front, Scattering::DiffuseDiffuse);
+    const double tir = shade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DiffuseDiffuse);
 
     EXPECT_NEAR(tir, 0.1, 1e-6);
 
-    const double rir = shade.getPropertySimple(
-      minLambda, maxLambda, PropertySimple::R, Side::Front, Scattering::DiffuseDiffuse);
+    const double rir = shade.getPropertySurface(
+      minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DiffuseDiffuse);
     EXPECT_NEAR(rir, 0.01, 1e-6);
 
 

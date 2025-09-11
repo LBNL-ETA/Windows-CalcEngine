@@ -270,9 +270,7 @@ namespace CMA
             for(auto glazingOption : options)
             {
                 const auto frameData = divider.getFrame(spacerOption, glazingOption);
-                m_Window.at(spacerOption)
-                  .at(glazingOption)
-                  .setDividersAuto(frameData);
+                m_Window.at(spacerOption).at(glazingOption).setDividersAuto(frameData);
             }
         }
     }

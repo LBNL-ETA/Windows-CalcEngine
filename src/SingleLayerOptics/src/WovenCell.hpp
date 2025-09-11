@@ -1,5 +1,4 @@
-#ifndef WOVENCELL_H
-#define WOVENCELL_H
+#pragma once
 
 #include <memory>
 
@@ -37,15 +36,14 @@ namespace SingleLayerOptics
     private:
         std::shared_ptr<CWovenCellDescription> getCellAsWoven() const;
 
-        double Tscatter_single(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Tscatter_single(FenestrationCommon::Side t_Side,
+                               const CBeamDirection & t_Direction) const;
+        std::vector<double> T_scatter_band(FenestrationCommon::Side t_Side,
+                                           const CBeamDirection & t_Direction) const;
+
         double Tscatter_at_wavelength(FenestrationCommon::Side t_Side,
                                       const CBeamDirection & t_Direction,
-                                      size_t wavelengthIndex);
-
-        // Calculates scattered part of reflection from woven
-        double Tscatter(const CBeamDirection & t_Direction, double Rmat) const;
+                                      size_t i) const;
     };
 
 }   // namespace SingleLayerOptics
-
-#endif
