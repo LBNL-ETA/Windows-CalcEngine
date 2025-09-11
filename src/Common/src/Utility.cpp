@@ -6,16 +6,14 @@
 
 namespace FenestrationCommon
 {
-    IndexRange::IndexRange(size_t startIndex, size_t endIndex) :
-        start(startIndex),
-        end(endIndex)
+    IndexRange::IndexRange(size_t startIndex, size_t endIndex) : start(startIndex), end(endIndex)
     {}
 
     std::vector<IndexRange> chunkIt(size_t start, size_t end, size_t numberOfSplits)
     {
         size_t stepSize{numberOfSplits < (end - start)
-                            ? static_cast<size_t>((end - start) / numberOfSplits)
-                            : 0u};
+                          ? static_cast<size_t>((end - start) / numberOfSplits)
+                          : 0u};
 
         std::vector<IndexRange> result;
 
@@ -36,10 +34,11 @@ namespace FenestrationCommon
     {
         size_t numberOfThreads{1u};
 #if USE_PARALLEL_ALGORITHMS
-        numberOfThreads = std::min<size_t>(std::thread::hardware_concurrency(), static_cast<size_t>(numberOfJobs));
+        numberOfThreads =
+          std::min<size_t>(std::thread::hardware_concurrency(), static_cast<size_t>(numberOfJobs));
 #endif
-        //static const size_t maxNumberOfThreads{32u};
-        //numberOfThreads = std::minimum(numberOfThreads, maxNumberOfThreads);
+        // static const size_t maxNumberOfThreads{32u};
+        // numberOfThreads = std::minimum(numberOfThreads, maxNumberOfThreads);
         static const size_t minNumberOfThreads{1u};
         return std::max(minNumberOfThreads, numberOfThreads);
     }

@@ -53,8 +53,7 @@ namespace Viewer
     public:
         explicit PointsProfile2DCompare(double t_ProfileAngle);
 
-        bool operator()(const CPoint2D & t_Point1,
-                        const CPoint2D & t_Point2) const;
+        bool operator()(const CPoint2D & t_Point1, const CPoint2D & t_Point2) const;
 
     private:
         double m_ProfileAngle;

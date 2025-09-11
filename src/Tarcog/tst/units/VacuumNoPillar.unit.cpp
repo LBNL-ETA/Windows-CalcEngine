@@ -28,7 +28,8 @@ protected:
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        if (Outdoor == nullptr) throw std::runtime_error("Failed to create Outdoor environment.");
+        if(Outdoor == nullptr)
+            throw std::runtime_error("Failed to create Outdoor environment.");
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         /////////////////////////////////////////////////////////
@@ -38,7 +39,8 @@ protected:
         auto roomTemperature = 294.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-        if (Indoor == nullptr) throw std::runtime_error("Failed to create Indoor environment.");
+        if(Indoor == nullptr)
+            throw std::runtime_error("Failed to create Indoor environment.");
 
         /////////////////////////////////////////////////////////
         /// IGU
@@ -69,7 +71,8 @@ protected:
         auto gapThickness = 0.0001;
         auto gapPressure = 0.1333;
         auto m_GapLayer = Tarcog::ISO15099::Layers::gap(gapThickness, gapPressure);
-        if (m_GapLayer == nullptr) throw std::runtime_error("Failed to create gap layer.");
+        if(m_GapLayer == nullptr)
+            throw std::runtime_error("Failed to create gap layer.");
 
         auto windowWidth = 1.0;   //[m]
         auto windowHeight = 1.0;
@@ -84,7 +87,7 @@ protected:
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::CSingleSystem& GetSystem()
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem & GetSystem()
     {
         return m_TarcogSystem;
     }

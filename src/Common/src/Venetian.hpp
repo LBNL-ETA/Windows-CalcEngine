@@ -16,4 +16,4 @@ namespace FenestrationCommon::Venetian
 
     //! \brief Calculates geometrical thickness of venetian blind slats
     [[nodiscard]] double thickness(const Geometry & t_Geometry);
-}   // namespace FenestrationCommon
+}   // namespace FenestrationCommon::Venetian

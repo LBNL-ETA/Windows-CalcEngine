@@ -25,8 +25,8 @@ protected:
     {
         // Create material from samples
         constexpr auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = Material::nBandMaterial(
-          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        auto aMaterial_102 =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
         // Venetian blind material
         // Solar range
@@ -39,8 +39,8 @@ protected:
         constexpr auto Rfvis = 0.6;
         constexpr auto Rbvis = 0.6;
 
-        const auto aMaterialVenetian = Material::dualBandMaterial(
-          Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
+        const auto aMaterialVenetian =
+          Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
         constexpr auto slatWidth = 0.016;     // m

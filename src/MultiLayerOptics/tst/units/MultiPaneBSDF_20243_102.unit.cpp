@@ -25,8 +25,8 @@ protected:
     {
         // Create material from samples
         auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = Material::nBandMaterial(
-          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        auto aMaterial_102 =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
         thickness = 5.715e-3;   // [m]
         auto aMaterial_20243 = Material::nBandMaterial(
           SpectralSample::NFRC_20243(), thickness, MaterialType::Monolithic);
@@ -38,8 +38,9 @@ protected:
 
         m_Layer = CMultiPaneBSDF::create({Layer_20243, Layer_102});
 
-        const CalculationProperties input{StandardData::solarRadiationASTM_E891_87_Table1(),
-                                          StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
+        const CalculationProperties input{
+          StandardData::solarRadiationASTM_E891_87_Table1(),
+          StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 
@@ -74,16 +75,20 @@ TEST_F(MultiPaneBSDF_20243_103, TestSpecular1)
     double theta = 0;
     double phi = 0;
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.00043396730130541584, tauHem, 1e-6);
 
-    double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauDir =
+      aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.00043396730130541584, tauDir, 1e-6);
 
-    double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
+    double rhoHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.13176923275670094, rhoHem, 1e-6);
 
-    double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
+    double rhoDir =
+      aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.13176923275670094, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);

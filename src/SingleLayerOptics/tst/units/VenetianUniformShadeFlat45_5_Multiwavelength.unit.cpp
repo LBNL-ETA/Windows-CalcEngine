@@ -15,9 +15,7 @@ using namespace SpectralAveraging;
 namespace
 {
     constexpr auto writeResults{false};
-    void processWavelength(int index,
-                           BSDFIntegrator & aResults,
-                           const std::string & test_data_dir)
+    void processWavelength(int index, BSDFIntegrator & aResults, const std::string & test_data_dir)
     {
         // Front transmittance
         const auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);

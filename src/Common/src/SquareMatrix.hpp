@@ -33,17 +33,17 @@ namespace FenestrationCommon
         [[nodiscard]] std::vector<std::vector<double>> getMatrix() const;
 
         // Faster member operators (no friends needed)
-        SquareMatrix  operator*(const SquareMatrix& rhs) const;
-        SquareMatrix& operator*=(const SquareMatrix& rhs);
+        SquareMatrix operator*(const SquareMatrix & rhs) const;
+        SquareMatrix & operator*=(const SquareMatrix & rhs);
 
-        SquareMatrix  operator+(const SquareMatrix& rhs) const;
-        SquareMatrix& operator+=(const SquareMatrix& rhs);
+        SquareMatrix operator+(const SquareMatrix & rhs) const;
+        SquareMatrix & operator+=(const SquareMatrix & rhs);
 
-        SquareMatrix  operator-(const SquareMatrix& rhs) const;
-        SquareMatrix& operator-=(const SquareMatrix& rhs);
+        SquareMatrix operator-(const SquareMatrix & rhs) const;
+        SquareMatrix & operator-=(const SquareMatrix & rhs);
 
         // Matrix–vector (right): M * v
-        std::vector<double> operator*(const std::vector<double>& v) const;
+        std::vector<double> operator*(const std::vector<double> & v) const;
 
     private:
         // explicit SquareMatrix(SquareMatrix && tMatrix);

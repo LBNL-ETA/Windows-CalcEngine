@@ -120,7 +120,7 @@ namespace Tarcog::ISO15099
     double CIndoorEnvironment::calculateHc()
     {
         return (gasSpecification.airflowProperties.airSpeed > 0) ? hcFromAirSpeed()
-                                                                   : hcThermallyDriven();
+                                                                 : hcThermallyDriven();
     }
 
     double CIndoorEnvironment::getHr()

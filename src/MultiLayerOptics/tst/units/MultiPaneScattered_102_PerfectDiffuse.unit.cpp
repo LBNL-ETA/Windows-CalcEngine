@@ -25,8 +25,8 @@ protected:
     {
         // Create material from samples
         constexpr auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = Material::nBandMaterial(
-          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        auto aMaterial_102 =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
         // Solar range
         constexpr auto Tsol = 0.0;
@@ -38,8 +38,8 @@ protected:
         constexpr auto Rfvis = 0.1;
         constexpr auto Rbvis = 0.1;
 
-        auto aMaterial = Material::dualBandMaterial(
-          Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
+        auto aMaterial =
+          Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
         CScatteringLayer LayerDiffuse = CScatteringLayer::createPerfectlyDiffusingLayer(aMaterial);

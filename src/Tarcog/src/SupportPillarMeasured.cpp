@@ -40,12 +40,13 @@ namespace Tarcog::ISO15099
         return 1 / rGap(pm) - cRadiative(pm);
     }
 
-    // Measured vacuum pillar includes the measured conductance of the gas and putting this to zero will
-    // result in thermal conductivity of the gas to be zero.
+    // Measured vacuum pillar includes the measured conductance of the gas and putting this to zero
+    // will result in thermal conductivity of the gas to be zero.
     constexpr auto defaultVacuumPressure{0.0};
 
     MeasuredPillarLayer::MeasuredPillarLayer(const PillarMeasurement & pillar) :
-        CIGUGapLayer(pillar.totalThickness - pillar.glass1.thickness - pillar.glass2.thickness, defaultVacuumPressure),
+        CIGUGapLayer(pillar.totalThickness - pillar.glass1.thickness - pillar.glass2.thickness,
+                     defaultVacuumPressure),
         m_MeasuredConductance(cStar(pillar))
     {}
 

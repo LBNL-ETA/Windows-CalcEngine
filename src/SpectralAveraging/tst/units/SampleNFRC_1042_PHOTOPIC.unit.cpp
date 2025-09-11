@@ -15,7 +15,6 @@ class TestSampleNFRC_1042_PHOTOPIC : public testing::Test
     std::shared_ptr<CSpectralSample> m_Sample;
 
 protected:
-
     void SetUp() override
     {
         auto solarRadiation{StandardData::Photopic::solarRadiation()};

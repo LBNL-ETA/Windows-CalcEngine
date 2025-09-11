@@ -76,30 +76,32 @@ namespace SingleLayerOptics
               direction == SegmentsDirection::Positive ? 0 : dWidth * numSegments);
         }
 
-        CViewSegment2D createSegment(const Venetian::Geometry &venetian,
+        CViewSegment2D createSegment(const Venetian::Geometry & venetian,
                                      size_t segmentIndex,
-                                     const CPoint2D &startPoint,
+                                     const CPoint2D & startPoint,
                                      double dWidth,
                                      SegmentsDirection t_Direction)
         {
             const auto endPoint = CPoint2D::createPointFromPolarCoordinates(
-                venetian.SlatTiltAngle,
-                getNextRadius(segmentIndex, dWidth, venetian.SlatWidth, t_Direction));
+              venetian.SlatTiltAngle,
+              getNextRadius(segmentIndex, dWidth, venetian.SlatWidth, t_Direction));
             return {startPoint, endPoint};
         }
 
-         Viewer::CGeometry2D createCartesianSegments(const Venetian::Geometry &venetian,
+        Viewer::CGeometry2D createCartesianSegments(const Venetian::Geometry & venetian,
                                                     size_t t_NumOfSegments,
                                                     SegmentsDirection t_Direction)
         {
             double dWidth = venetian.SlatWidth / static_cast<double>(t_NumOfSegments);
-            CPoint2D startPoint = initializeStartPoint(venetian, t_Direction, dWidth, t_NumOfSegments);
+            CPoint2D startPoint =
+              initializeStartPoint(venetian, t_Direction, dWidth, t_NumOfSegments);
 
             Viewer::CGeometry2D aGeometry;
             for(size_t i = 1; i <= t_NumOfSegments; ++i)
             {
                 auto segment = createSegment(venetian, i, startPoint, dWidth, t_Direction);
-                aGeometry.appendSegment(createSegment(venetian, i, startPoint, dWidth, t_Direction));
+                aGeometry.appendSegment(
+                  createSegment(venetian, i, startPoint, dWidth, t_Direction));
                 startPoint = segment.endPoint();
             }
 

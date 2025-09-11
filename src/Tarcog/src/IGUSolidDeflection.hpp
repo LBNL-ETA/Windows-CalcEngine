@@ -38,7 +38,7 @@ namespace Tarcog::ISO15099
     {
     public:
         CIGUDeflectionMeasured(std::shared_ptr<CIGUSolidLayerDeflection> & t_Layer,
-                                const double t_MeanDeflection,
-                                const double t_MaxDeflection);
+                               const double t_MeanDeflection,
+                               const double t_MaxDeflection);
     };
 }   // namespace Tarcog::ISO15099

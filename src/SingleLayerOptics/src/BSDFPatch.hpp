@@ -19,7 +19,11 @@ namespace SingleLayerOptics
         virtual double average() const;
 
     protected:
-        enum class Type{Central, NonCentral};
+        enum class Type
+        {
+            Central,
+            NonCentral
+        };
         Type m_Type{Type::NonCentral};
         double m_Low;
         double m_High;

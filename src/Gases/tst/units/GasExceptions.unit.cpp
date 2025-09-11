@@ -3,17 +3,19 @@
 
 #include "WCEGases.hpp"
 
-class TestGasExceptions : public testing::Test {
-};
+class TestGasExceptions : public testing::Test
+{};
 
-TEST_F(TestGasExceptions, ZeroGasFractionException) {
+TEST_F(TestGasExceptions, ZeroGasFractionException)
+{
     SCOPED_TRACE("Test Zero Gas Fraction Exception");
 
     Gases::CGas gas{{{0, Gases::GasDef::Air}, {1, Gases::GasDef::Argon}}};
     EXPECT_THROW(gas.getGasProperties(), Gases::ZeroGasFractionError);
 }
 
-TEST_F(TestGasExceptions, ZeroMolecularWeight) {
+TEST_F(TestGasExceptions, ZeroMolecularWeight)
+{
     SCOPED_TRACE("Test zero molecular weight exception");
 
     const Gases::CGasData Broken{"Air",
@@ -34,7 +36,8 @@ TEST_F(TestGasExceptions, ZeroMolecularWeight) {
     EXPECT_THROW(gas.getGasProperties(), Gases::ZeroMolecularWeightError);
 }
 
-TEST_F(TestGasExceptions, ZeroViscosityError) {
+TEST_F(TestGasExceptions, ZeroViscosityError)
+{
     SCOPED_TRACE("Test zero viscosity exception");
 
     const Gases::CGasData Broken{"Air",

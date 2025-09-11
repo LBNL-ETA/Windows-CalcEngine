@@ -12,8 +12,8 @@ namespace Tarcog::ISO15099
     //! Contains thermal and physical characteristics of the glazing unit.
     struct IGUData
     {
-        double UValue{0};     //! Thermal transmittance (U-value) of the IGU [W/(m²·K)]
-        double Thickness{0};  //! Total thickness of the IGU [m]
+        double UValue{0};      //! Thermal transmittance (U-value) of the IGU [W/(m²·K)]
+        double Thickness{0};   //! Total thickness of the IGU [m]
     };
 
     //! Generic frame type will have edge of glass calculations based on coefficients
@@ -33,16 +33,16 @@ namespace Tarcog::ISO15099
     //! Contains thermal, dimensional, and optical characteristics of a window frame.
     struct FrameData
     {
-        double UValue{0};                   //! Thermal transmittance of the frame [W/(m²·K)]
-        double EdgeUValue{0};               //! Thermal transmittance at the edge of glass [W/(m²·K)]
-        double ProjectedFrameDimension{0};  //! Projected width/dimension of the frame [m]
-        double WettedLength{0};             //! Length of frame in contact with other materials [m]
-        double Absorptance{0.3};            //! Solar absorptance of the frame (0-1)
+        double UValue{0};       //! Thermal transmittance of the frame [W/(m²·K)]
+        double EdgeUValue{0};   //! Thermal transmittance at the edge of glass [W/(m²·K)]
+        double ProjectedFrameDimension{0};   //! Projected width/dimension of the frame [m]
+        double WettedLength{0};              //! Length of frame in contact with other materials [m]
+        double Absorptance{0.3};             //! Solar absorptance of the frame (0-1)
         std::optional<IGUData> iguData{};   //! Optional data for the IGU associated with this frame
         std::variant<std::monostate, GenericFrame, GenericDivider> Class{};
     };
 
-    double dividerUValue(const DividerBodyPoly& poly, double uCenter, double gap);
+    double dividerUValue(const DividerBodyPoly & poly, double uCenter, double gap);
 
     //! Calculates frame edge uValue based on FrameData type
     double frameEdgeUValue(const GenericFrame & c, double uCenter, double gap);

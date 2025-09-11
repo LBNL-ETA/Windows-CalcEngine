@@ -24,8 +24,8 @@ protected:
     {
         // Create material from samples
         constexpr auto thickness = 3.048e-3;   // [m]
-        auto aMaterial_102 = Material::nBandMaterial(
-          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        auto aMaterial_102 =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
         // Venetian blind material
         // Solar range

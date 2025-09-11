@@ -97,8 +97,7 @@ TEST_F(TestEnclosure2DBeam1, Enclosure2DBeam1)
 
     Side aSide = Side::Front;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_NEAR(0.5, aEnclosure->directToDirect(profileAngle, aSide), 1e-6);
 
@@ -146,8 +145,7 @@ TEST_F(TestEnclosure2DBeam1, Enclosure2DBeam2)
 
     Side aSide = Side::Front;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_EQ(0.125, aEnclosure->directToDirect(profileAngle, aSide));
 
@@ -195,8 +193,7 @@ TEST_F(TestEnclosure2DBeam1, Enclosure2DBeam3)
 
     Side aSide = Side::Front;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_EQ(0.0, aEnclosure->directToDirect(profileAngle, aSide));
 
@@ -251,8 +248,7 @@ TEST_F(TestEnclosure2DBeam1, Enclosure2DBeam4)
 
     Side aSide = Side::Back;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_EQ(1, aEnclosure->directToDirect(profileAngle, aSide));
 
@@ -275,8 +271,7 @@ TEST_F(TestEnclosure2DBeam1, Enclosure2DBeam5)
 
     Side aSide = Side::Back;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_NEAR(1.0 / 7.0, aEnclosure->directToDirect(profileAngle, aSide), 1e-6);
 
@@ -331,8 +326,7 @@ TEST_F(TestEnclosure2DBeam1, Enclosure2DBeam6)
 
     Side aSide = Side::Back;
 
-    const auto aViewFactors =
-      aEnclosure->beamViewFactors(profileAngle, aSide);
+    const auto aViewFactors = aEnclosure->beamViewFactors(profileAngle, aSide);
 
     EXPECT_EQ(0.0, aEnclosure->directToDirect(profileAngle, aSide));
 

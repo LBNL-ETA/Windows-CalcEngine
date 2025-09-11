@@ -34,9 +34,9 @@ namespace SpectralAveraging
                       std::shared_ptr<CSpectralSample> const & t_Data2,
                       double const t_Angle2) const;
         void interpolate(std::vector<double> const & t_Wavelengths) const;
-        //		std::shared_ptr< CSpectralSample > Interpolate( const double t_fraction, const
-        //std::shared_ptr< CSpectralSample > t_Data1, const std::shared_ptr< CSpectralSample >
-        //t_Data2 ) const;
+        //		std::shared_ptr< CSpectralSample > Interpolate( const double t_fraction,
+        //const std::shared_ptr< CSpectralSample > t_Data1, const std::shared_ptr< CSpectralSample >
+        // t_Data2 ) const;
 
     private:
         std::shared_ptr<CSpectralSample> m_Data;
@@ -73,4 +73,3 @@ namespace SpectralAveraging
     };
 
 }   // namespace SpectralAveraging
-

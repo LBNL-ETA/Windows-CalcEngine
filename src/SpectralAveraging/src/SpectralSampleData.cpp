@@ -130,8 +130,9 @@ namespace SpectralAveraging
         }
     }
 
-    CSeries
-      CSpectralSampleData::properties(const Property prop, const Side side, const ScatteringType type)
+    CSeries CSpectralSampleData::properties(const Property prop,
+                                            const Side side,
+                                            const ScatteringType type)
     {
         auto aSide = getSide(side, Flipped());
         if(prop == Property::T || prop == Property::R)

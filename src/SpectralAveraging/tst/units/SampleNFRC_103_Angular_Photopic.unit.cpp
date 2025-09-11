@@ -18,7 +18,8 @@ protected:
     void SetUp() override
     {
         m_Sample.setDetectorData(StandardData::Photopic::detectorData());
-        m_Sample.setWavelengths(WavelengthSet::Custom, StandardData::Photopic::wavelengthSetPhotopic());
+        m_Sample.setWavelengths(WavelengthSet::Custom,
+                                StandardData::Photopic::wavelengthSetPhotopic());
     }
 
 public:

@@ -38,25 +38,31 @@ TEST_F(TestSampleNFRC_1042, TestSampleEnergy)
     auto highLambda = 2.5;
 
     auto aSample = getSample();
-    auto transmittedSolar = aSample->getEnergy(lowLambda, highLambda, Property::T, Side::Front, ScatteringType::Total);
+    auto transmittedSolar =
+      aSample->getEnergy(lowLambda, highLambda, Property::T, Side::Front, ScatteringType::Total);
     EXPECT_NEAR(341.803618, transmittedSolar, 1e-6);
 
     aSample->setWavelengths(WavelengthSet::Source);
-    transmittedSolar = aSample->getEnergy(lowLambda, highLambda, Property::T, Side::Front, ScatteringType::Total);
+    transmittedSolar =
+      aSample->getEnergy(lowLambda, highLambda, Property::T, Side::Front, ScatteringType::Total);
     EXPECT_NEAR(341.756495, transmittedSolar, 1e-6);
 
     // This is to test repeatability
     aSample->setWavelengths(WavelengthSet::Data);
-    transmittedSolar = aSample->getEnergy(lowLambda, highLambda, Property::T, Side::Front, ScatteringType::Total);
+    transmittedSolar =
+      aSample->getEnergy(lowLambda, highLambda, Property::T, Side::Front, ScatteringType::Total);
     EXPECT_NEAR(341.803618, transmittedSolar, 1e-6);
 
-    auto reflectedFrontSolar = aSample->getEnergy(lowLambda, highLambda, Property::R, Side::Front, ScatteringType::Total);
+    auto reflectedFrontSolar =
+      aSample->getEnergy(lowLambda, highLambda, Property::R, Side::Front, ScatteringType::Total);
     EXPECT_NEAR(271.886233, reflectedFrontSolar, 1e-6);
 
-    auto reflectedBackSolar = aSample->getEnergy(lowLambda, highLambda, Property::R, Side::Back, ScatteringType::Total);
+    auto reflectedBackSolar =
+      aSample->getEnergy(lowLambda, highLambda, Property::R, Side::Back, ScatteringType::Total);
     EXPECT_NEAR(300.413703, reflectedBackSolar, 1e-6);
 
-    auto absorbedSolar = aSample->getEnergy(lowLambda, highLambda, Property::Abs, Side::Front, ScatteringType::Total);
+    auto absorbedSolar =
+      aSample->getEnergy(lowLambda, highLambda, Property::Abs, Side::Front, ScatteringType::Total);
     EXPECT_NEAR(143.124694, absorbedSolar, 1e-6);
 }
 

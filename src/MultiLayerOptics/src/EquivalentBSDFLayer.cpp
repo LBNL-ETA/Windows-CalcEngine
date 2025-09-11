@@ -17,9 +17,8 @@ namespace MultiLayerOptics
       const std::optional<std::vector<double>> & matrixWavelengths) :
         m_Layer(std::move(t_Layer)),
         m_Lambda(m_Layer[0]->getResults().lambdaMatrix()),
-        m_CombinedLayerWavelengths(matrixWavelengths.has_value()
-                                     ? matrixWavelengths.value()
-                                     : unionOfLayerWavelengths(m_Layer))
+        m_CombinedLayerWavelengths(matrixWavelengths.has_value() ? matrixWavelengths.value()
+                                                                 : unionOfLayerWavelengths(m_Layer))
     {
         for(const auto & layer : m_Layer)
         {

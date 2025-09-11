@@ -244,8 +244,8 @@ return {
     // clang-format on
 
 protected:
-void SetUp() override
-{
+    void SetUp() override
+    {
         using FenestrationCommon::MaterialType;
         using FenestrationCommon::WavelengthRange;
         using SingleLayerOptics::BSDFHemisphere;
@@ -293,7 +293,8 @@ TEST_F(MultiPaneBSDF_XMLLayer_QuarterBasis, TestBSDFMatrixAsInput)
     double theta = 0;
     double phi = 0;
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.793118, tauHem, 1e-6);
 
     double rhoFrontHem =
@@ -315,4 +316,3 @@ TEST_F(MultiPaneBSDF_XMLLayer_QuarterBasis, TestBSDFMatrixAsInput)
       minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
     EXPECT_NEAR(0.197612, absHeatDiffuse[0], 1e-6);
 }
-

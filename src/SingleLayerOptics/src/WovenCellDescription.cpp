@@ -12,9 +12,7 @@ using namespace FenestrationCommon;
 namespace SingleLayerOptics
 {
     CWovenCellDescription::CWovenCellDescription(const double t_Diameter, const double t_Spacing) :
-        ICellDescription(),
-        m_Diameter(t_Diameter),
-        m_Spacing(t_Spacing)
+        ICellDescription(), m_Diameter(t_Diameter), m_Spacing(t_Spacing)
     {
         if(m_Diameter <= 0)
         {

@@ -108,8 +108,9 @@ namespace SingleLayerOptics
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex)
     {
-        const double Tmaterial = CUniformDiffuseCell::T_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex);
-        const double Tsct      = Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        const double Tmaterial =
+          CUniformDiffuseCell::T_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        const double Tsct = Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex);
         return Tmaterial + Tsct;
     }
 
@@ -130,8 +131,9 @@ namespace SingleLayerOptics
                                                const CBeamDirection & t_Direction,
                                                size_t wavelengthIndex)
     {
-        const double Rmaterial = CUniformDiffuseCell::R_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex);
-        const double Tsct      = Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        const double Rmaterial =
+          CUniformDiffuseCell::R_dir_dif_at_wavelength(t_Side, t_Direction, wavelengthIndex);
+        const double Tsct = Tscatter_at_wavelength(t_Side, t_Direction, wavelengthIndex);
         return Rmaterial - Tsct;
     }
 
@@ -171,7 +173,7 @@ namespace SingleLayerOptics
                                               const CBeamDirection & t_Direction,
                                               size_t i) const
     {
-        const auto& Rband = m_Material->getBandProperties(Property::R, oppositeSide(t_Side));
+        const auto & Rband = m_Material->getBandProperties(Property::R, oppositeSide(t_Side));
         return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, Rband[i]);
     }
 }   // namespace SingleLayerOptics

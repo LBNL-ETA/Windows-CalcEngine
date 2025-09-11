@@ -173,23 +173,23 @@ namespace MultiLayerOptics
                        || (aSide == Side::Back && aEnergyFlow == EnergyFlow::Forward))
                     {
                         beamEnergy = curLayer.getPropertySurface(curLayer.getMinLambda(),
-                                                                curLayer.getMaxLambda(),
-                                                                PropertySurface::T,
-                                                                oppSide,
-                                                                Scattering::DirectDiffuse,
-                                                                t_Theta,
-                                                                t_Phi);
+                                                                 curLayer.getMaxLambda(),
+                                                                 PropertySurface::T,
+                                                                 oppSide,
+                                                                 Scattering::DirectDiffuse,
+                                                                 t_Theta,
+                                                                 t_Phi);
                     }
 
                     // Energy that gets converted to diffuse from beam that comes from
                     // interreflections in the gap or interior/exterior environments
                     double R = curLayer.getPropertySurface(curLayer.getMinLambda(),
-                                                          curLayer.getMaxLambda(),
-                                                          PropertySurface::R,
-                                                          aSide,
-                                                          Scattering::DirectDiffuse,
-                                                          t_Theta,
-                                                          t_Phi);
+                                                           curLayer.getMaxLambda(),
+                                                           PropertySurface::R,
+                                                           aSide,
+                                                           Scattering::DirectDiffuse,
+                                                           t_Theta,
+                                                           t_Phi);
                     const double intEnergy =
                       R * m_Energy.at(Scattering::DirectDirect).IEnergy(i, aSide, aEnergyFlow);
                     diffSum.addEnergy(aSide, aEnergyFlow, beamEnergy + intEnergy);
@@ -230,19 +230,19 @@ namespace MultiLayerOptics
                     If = diffSum.IEnergy(i + 1, Side::Front, aEnergyFlow);
                 }
                 const double Rf_bkw = bkwLayer.getPropertySurface(bkwLayer.getMinLambda(),
-                                                                 bkwLayer.getMaxLambda(),
-                                                                 PropertySurface::R,
-                                                                 Side::Front,
-                                                                 Scattering::DiffuseDiffuse,
-                                                                 t_Theta,
-                                                                 t_Phi);
+                                                                  bkwLayer.getMaxLambda(),
+                                                                  PropertySurface::R,
+                                                                  Side::Front,
+                                                                  Scattering::DiffuseDiffuse,
+                                                                  t_Theta,
+                                                                  t_Phi);
                 const double Rb_fwd = fwdLayer.getPropertySurface(fwdLayer.getMinLambda(),
-                                                                 fwdLayer.getMaxLambda(),
-                                                                 PropertySurface::R,
-                                                                 Side::Back,
-                                                                 Scattering::DiffuseDiffuse,
-                                                                 t_Theta,
-                                                                 t_Phi);
+                                                                  fwdLayer.getMaxLambda(),
+                                                                  PropertySurface::R,
+                                                                  Side::Back,
+                                                                  Scattering::DiffuseDiffuse,
+                                                                  t_Theta,
+                                                                  t_Phi);
                 const double interRef = 1 / (1 - Rf_bkw * Rb_fwd);
                 const double Ib_tot = (Ib * Rf_bkw + If) * interRef;
                 const double If_tot = (Ib + Rb_fwd * If) * interRef;

@@ -81,11 +81,7 @@ namespace SpectralAveraging
     {
     public:
         Coefficients() = default;
-        Coefficients(double t_C0,
-                     double t_C1,
-                     double t_C2,
-                     double t_C3,
-                     double t_C4);
+        Coefficients(double t_C0, double t_C1, double t_C2, double t_C3, double t_C4);
         [[nodiscard]] double interpolation(double t_Value) const;
 
     private:

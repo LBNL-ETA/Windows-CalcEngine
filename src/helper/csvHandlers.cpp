@@ -13,7 +13,7 @@ namespace Helper
             throw std::runtime_error("Could not open file to write");
         }
 
-        file << std::fixed << std::setprecision(9); // Set precision to 9 decimal places
+        file << std::fixed << std::setprecision(9);   // Set precision to 9 decimal places
 
         for(const auto & row : data)
         {

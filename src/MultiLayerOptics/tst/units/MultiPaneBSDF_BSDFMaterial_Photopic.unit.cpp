@@ -813,8 +813,8 @@ protected:
         const auto rfVisible = loadRfVisible();
         const auto rbVisible = loadRbVisible();
 
-        const auto aBSDFMaterial = Material::singleBandBSDFMaterial(
-          tfVisible, tbVisible, rfVisible, rbVisible, aBSDF);
+        const auto aBSDFMaterial =
+          Material::singleBandBSDFMaterial(tfVisible, tbVisible, rfVisible, rbVisible, aBSDF);
 
         aBSDFMaterial->setBandWavelengths(fiveNMWavelenths());
 
@@ -845,7 +845,8 @@ TEST_F(MultiPaneBSDF_BSDFMaterial_Photopic, TestBSDFMatrixAsInput)
     double theta = 0;
     double phi = 0;
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.059277, tauHem, 1e-6);
 
     double rhoFrontHem =
@@ -863,5 +864,3 @@ TEST_F(MultiPaneBSDF_BSDFMaterial_Photopic, TestBSDFMatrixAsInput)
       minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
     EXPECT_NEAR(0.856357, absHeat1[0], 1e-6);
 }
-
-

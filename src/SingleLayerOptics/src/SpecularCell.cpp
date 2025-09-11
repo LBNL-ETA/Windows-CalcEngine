@@ -44,7 +44,8 @@ namespace SingleLayerOptics
                                                   const CBeamDirection & t_Direction,
                                                   size_t wavelengthIndex)
     {
-        return m_Material->getBandProperty(Property::T, t_Side, wavelengthIndex, t_Direction, t_Direction);
+        return m_Material->getBandProperty(
+          Property::T, t_Side, wavelengthIndex, t_Direction, t_Direction);
     }
 
     // Reflectance of specular material over entire material range
@@ -71,7 +72,8 @@ namespace SingleLayerOptics
                                                   const CBeamDirection & t_Direction,
                                                   size_t wavelengthIndex)
     {
-        return m_Material->getBandProperty(Property::R, t_Side, wavelengthIndex, t_Direction, t_Direction);
+        return m_Material->getBandProperty(
+          Property::R, t_Side, wavelengthIndex, t_Direction, t_Direction);
     }
 
 }   // namespace SingleLayerOptics

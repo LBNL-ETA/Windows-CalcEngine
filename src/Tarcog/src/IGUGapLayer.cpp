@@ -21,7 +21,9 @@ namespace Tarcog::ISO15099
         return FenestrationCommon::isEqual(airSpeed, 0.0);
     }
 
-    CIGUGapLayer::CIGUGapLayer(double const t_Thickness, double const t_Pressure, bool t_isDCenterMeasured) :
+    CIGUGapLayer::CIGUGapLayer(double const t_Thickness,
+                               double const t_Pressure,
+                               bool t_isDCenterMeasured) :
         CBaseLayer(t_Thickness), m_isDCenterMeasured(t_isDCenterMeasured)
     {
         gasSpecification.pressure = t_Pressure;
@@ -29,7 +31,8 @@ namespace Tarcog::ISO15099
 
     CIGUGapLayer::CIGUGapLayer(double const t_Thickness,
                                double const t_Pressure,
-                               const Gases::CGas & t_Gas, bool t_isDCenterMeasured) :
+                               const Gases::CGas & t_Gas,
+                               bool t_isDCenterMeasured) :
         CBaseLayer(t_Thickness), m_isDCenterMeasured(t_isDCenterMeasured)
     {
         gasSpecification.pressure = t_Pressure;
@@ -40,7 +43,8 @@ namespace Tarcog::ISO15099
                                double t_Pressure,
                                const Gases::CGas & t_Gas,
                                double t_AccommodationCoefficient1,
-                               double t_AccommodationCoefficient2, bool t_isDCenterMeasured) :
+                               double t_AccommodationCoefficient2,
+                               bool t_isDCenterMeasured) :
         CBaseLayer(t_Thickness),
         m_AccommodationCoefficient1(t_AccommodationCoefficient1),
         m_AccommodationCoefficient2(t_AccommodationCoefficient2),
@@ -113,14 +117,12 @@ namespace Tarcog::ISO15099
         auto thickness = CBaseLayer::getThickness();
         if(m_isDCenterMeasured)
         {
-            auto previousLayer =
-              std::dynamic_pointer_cast<CIGUShadeLayer>(getPreviousLayer());
+            auto previousLayer = std::dynamic_pointer_cast<CIGUShadeLayer>(getPreviousLayer());
             if(previousLayer)
             {
                 thickness -= previousLayer->getThickness() / 2;
             }
-            auto nextLayer =
-              std::dynamic_pointer_cast<CIGUShadeLayer>(getNextLayer());
+            auto nextLayer = std::dynamic_pointer_cast<CIGUShadeLayer>(getNextLayer());
             if(nextLayer)
             {
                 thickness -= nextLayer->getThickness() / 2;

@@ -89,8 +89,8 @@ namespace Tarcog::ISO15099
     }
 
     void SurfacesManager::setSurfaceState(double const t_Temperature,
-                                         double const t_J,
-                                         FenestrationCommon::Side const t_Position)
+                                          double const t_J,
+                                          FenestrationCommon::Side const t_Position)
     {
         m_Surface.at(t_Position)->setTemperature(t_Temperature);
         m_Surface.at(t_Position)->setJ(t_J);

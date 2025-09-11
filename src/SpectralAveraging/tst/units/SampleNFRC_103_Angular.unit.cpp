@@ -112,6 +112,5 @@ INSTANTIATE_TEST_SUITE_P(
         AngleCase{ 90.0, ScatteringType::Direct,  0.000000, 0.000000, 1.000000, 1.000000, 0.000000, 0.000000 },
         AngleCase{ 90.0, ScatteringType::Diffuse, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }
     // clang-format on
-  ),
+    ),
   angleParamNames);
-

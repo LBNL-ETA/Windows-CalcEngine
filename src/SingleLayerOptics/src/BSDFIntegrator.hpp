@@ -29,8 +29,9 @@ namespace SingleLayerOptics
         void resetCalculatedResults();
 
         // Result matrices
-        FenestrationCommon::SquareMatrix & getMatrix(FenestrationCommon::Side t_Side,
-                                                     FenestrationCommon::PropertySurface t_Property);
+        FenestrationCommon::SquareMatrix &
+          getMatrix(FenestrationCommon::Side t_Side,
+                    FenestrationCommon::PropertySurface t_Property);
 
         [[nodiscard]] const FenestrationCommon::SquareMatrix &
           at(FenestrationCommon::Side t_Side, FenestrationCommon::PropertySurface t_Property) const;
@@ -87,7 +88,8 @@ namespace SingleLayerOptics
                  FenestrationCommon::SquareMatrix>
           m_Matrix;
 
-        //! Direct-Hemispherical transmittance/reflectance (front/back) for each of the incoming directions
+        //! Direct-Hemispherical transmittance/reflectance (front/back) for each of the incoming
+        //! directions
         std::map<std::pair<FenestrationCommon::Side, FenestrationCommon::PropertySurface>,
                  std::vector<double>>
           m_DirectHemispherical;

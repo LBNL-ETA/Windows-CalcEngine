@@ -20,8 +20,8 @@ protected:
     {
         // Create material from samples
         constexpr auto thickness = 3.048e-3;   // [m]
-        m_Material = Material::nBandMaterial(
-          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        m_Material =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
     }
 
 public:

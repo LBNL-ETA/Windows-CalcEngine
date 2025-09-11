@@ -55,9 +55,8 @@ TEST_F(MultiPaneBSDF_102_103_Condensed, SolarAndVisibleRange)
     double minLambda = 0.3;
     double maxLambda = 2.5;
 
-    const CalculationProperties input{
-      StandardData::solarRadiationASTM_E891_87_Table1(),
-      StandardData::condensedSpectrumDefault()};
+    const CalculationProperties input{StandardData::solarRadiationASTM_E891_87_Table1(),
+                                      StandardData::condensedSpectrumDefault()};
     aLayer.setCalculationProperties(input);
 
     double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::T);
@@ -75,16 +74,20 @@ TEST_F(MultiPaneBSDF_102_103_Condensed, SolarAndVisibleRange)
     double theta = 0;
     double phi = 0;
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.672295, tauHem, 1e-6);
 
-    double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauDir =
+      aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.672295, tauDir, 1e-6);
 
-    double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
+    double rhoHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.127319, rhoHem, 1e-6);
 
-    double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
+    double rhoDir =
+      aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.127319, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);

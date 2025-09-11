@@ -68,8 +68,8 @@ TEST_F(TestRectangularPerforatedScatteringShade1, TestHighEmissivity)
     const auto x = 20.0;          // mm
     const auto y = 25.0;          // mm
     const auto thickness = 7.0;   // mm
-    const auto xHole = 0.001;       // mm
-    const auto yHole = 0.001;       // mm
+    const auto xHole = 0.001;     // mm
+    const auto yHole = 0.001;     // mm
 
     auto shade =
       CScatteringLayer::createPerforatedRectangularLayer(aMaterial, x, y, thickness, xHole, yHole);

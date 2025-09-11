@@ -1,6 +1,7 @@
 #include "CalculationProperties.hpp"
 
-namespace SingleLayerOptics{
+namespace SingleLayerOptics
+{
 
     CalculationProperties::CalculationProperties(
       const FenestrationCommon::CSeries & solarRadiation,
@@ -33,4 +34,4 @@ namespace SingleLayerOptics{
     {
         return DetectorData.has_value() && DetectorData.value().size() != 0;
     }
-}   // namespace MultiLayerOptics
+}   // namespace SingleLayerOptics

@@ -497,7 +497,8 @@ TEST_F(TestSpecularAngularLayerProperty_102, TestSpecularAngular25degree)
     const double trans = aMaterial->getProperty(Property::T, Side::Front, angle, angle);
     const double refleF = aMaterial->getProperty(Property::R, Side::Front, angle, angle);
     const double refleB = aMaterial->getProperty(Property::R, Side::Back, angle, angle);
-    std::vector<double> aTrans = aMaterial->getBandProperties(Property::T, Side::Front, angle, angle);
+    std::vector<double> aTrans =
+      aMaterial->getBandProperties(Property::T, Side::Front, angle, angle);
 
     EXPECT_NEAR(0.79636496475913876, trans, 1e-6);
     EXPECT_NEAR(0.11405492103460167, refleF, 1e-6);

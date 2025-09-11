@@ -29,10 +29,10 @@ protected:
     {
         auto thickness = 3.048e-3;   // [m]
         auto aMaterial_102 = SingleLayerOptics::Material::nBandMaterial(
-            SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
         thickness = 5.715e-3;   // [m]
         auto aMaterial_103 = SingleLayerOptics::Material::nBandMaterial(
-            SpectralSample::NFRC_103(), thickness, MaterialType::Monolithic);
+          SpectralSample::NFRC_103(), thickness, MaterialType::Monolithic);
 
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);

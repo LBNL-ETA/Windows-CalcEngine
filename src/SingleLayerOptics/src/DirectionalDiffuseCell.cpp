@@ -94,8 +94,11 @@ namespace SingleLayerOptics
     {
         double cellT = CBaseCell::T_dir_dir(t_Side, t_IncomingDirection);
         double cellR = CBaseCell::R_dir_dir(t_Side, t_IncomingDirection);
-        auto materialValue = m_Material->getBandProperty(
-          FenestrationCommon::Property::R, t_Side, wavelengthIndex, t_IncomingDirection, t_OutgoingDirection);
+        auto materialValue = m_Material->getBandProperty(FenestrationCommon::Property::R,
+                                                         t_Side,
+                                                         wavelengthIndex,
+                                                         t_IncomingDirection,
+                                                         t_OutgoingDirection);
         return cellR + (1 - cellT) * materialValue;
     }
 

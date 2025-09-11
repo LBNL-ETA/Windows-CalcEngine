@@ -78,16 +78,16 @@ TEST_F(TestVenetianDirectionalShadeFlat0_1, TestVenetian1)
 
     const auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
-    const auto correctT{
-      Helper::readMatrixFromCSV(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat0_1_aT.csv")};
+    const auto correctT{Helper::readMatrixFromCSV(
+      TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat0_1_aT.csv")};
 
     Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
     // Front reflectance
     const auto aRf = aResults.getMatrix(Side::Front, PropertySurface::R);
 
-    const auto correctR{
-      Helper::readMatrixFromCSV(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat0_1_aRf.csv")};
+    const auto correctR{Helper::readMatrixFromCSV(
+      TEST_DATA_DIR_SINGLE_LAYER_OPTICS "/data/TestVenetianDirectionalShadeFlat0_1_aRf.csv")};
 
     Helper::compareMatrices(correctR, aRf.getMatrix(), 1e-6);
 }

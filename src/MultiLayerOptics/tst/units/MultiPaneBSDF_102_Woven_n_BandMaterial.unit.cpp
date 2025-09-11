@@ -24,8 +24,8 @@ protected:
     void SetUp() override
     {
         auto thickness = 3.048e-3;   // [m]
-        const auto aMaterial_102 = Material::nBandMaterial(
-          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        const auto aMaterial_102 =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Quarter);
         auto Layer_102 = CBSDFLayerMaker::getSpecularLayer(aMaterial_102, aBSDF);
@@ -44,8 +44,9 @@ protected:
 
         m_Layer = CMultiPaneBSDF::create({LayerWoven, Layer_102});
 
-        const CalculationProperties input{StandardData::solarRadiationASTM_E891_87_Table1(),
-                                          StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
+        const CalculationProperties input{
+          StandardData::solarRadiationASTM_E891_87_Table1(),
+          StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 

@@ -31,10 +31,10 @@ BraceWrapping:
   SplitEmptyFunction: false
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
-BreakBeforeBinaryOperators: 'NonAssignment' 
+BreakBeforeBinaryOperators: 'NonAssignment'
 BreakBeforeBraces: 'Custom'
 BreakBeforeInheritanceComma: false
-BreakBeforeTernaryOperators: true 
+BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: 'AfterColon'
 ColumnLimit: 100
 #CommentPragmas: '^ IWYU pragma:'
@@ -44,7 +44,7 @@ ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
-DisableFormat: false 
+DisableFormat: false
 FixNamespaceComments: true
 #****************** This may break the builds a lot because of include order issues*******************
 #IncludeBlocks: 'Regroup' 
@@ -52,28 +52,28 @@ FixNamespaceComments: true
 #  - Regex: 'stdafx\.h'
 #    Priority: '-1'
 #****************** END INCLUDE ORDER STRUCTURE*******************************************************
-IndentCaseLabels: true 
-IndentPPDirectives: 'AfterHash' 
-IndentWrappedFunctionNames: true  
+IndentCaseLabels: true
+IndentPPDirectives: 'AfterHash'
+IndentWrappedFunctionNames: true
 IndentWidth: 4
 KeepEmptyLinesAtTheStartOfBlocks: false
-Language: 'Cpp' 
+Language: 'Cpp'
 MaxEmptyLinesToKeep: 2
-PointerAlignment: 'Middle'   
+PointerAlignment: 'Middle'
 SpaceAfterCStyleCast: false
 SpaceAfterTemplateKeyword: false
-SpaceBeforeAssignmentOperators: true 
+SpaceBeforeAssignmentOperators: true
 #SpaceBeforeCtorInitializerColon: true #gives error when trying to run
 #SpaceBeforeInheritanceColon: true #gives error when trying to run
-SpaceBeforeParens: 'Never' 
+SpaceBeforeParens: 'Never'
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 3
 SpacesInAngles: false
 #SpaceBeforeRangeBasedForLoopColon: false #gives error when trying to run
-SpacesInCStyleCastParentheses: false 
+SpacesInCStyleCastParentheses: false
 SpacesInContainerLiterals: false
 SpacesInParentheses: false
-SpacesInSquareBrackets: false     
+SpacesInSquareBrackets: false
 
 SortIncludes: false  # Setting this to true may break the builds because of include order issues
 SortUsingDeclarations: false

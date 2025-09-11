@@ -53,7 +53,7 @@ namespace SpectralAveraging
     };
 
     constexpr std::array allScatteringTypes{
-        ScatteringType::Direct, ScatteringType::Diffuse, ScatteringType::Total};
+      ScatteringType::Direct, ScatteringType::Diffuse, ScatteringType::Total};
 
     constexpr std::array scatteringTypeString{"Direct", "Diffuse", "Total"};
 
@@ -92,4 +92,4 @@ namespace SpectralAveraging
     {
         return std::make_pair(p, s);
     }
-}
+}   // namespace SpectralAveraging

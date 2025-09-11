@@ -53,12 +53,14 @@ namespace SingleLayerOptics
 
         virtual bool isEmissivityPolynomialApplicable() const;
 
-        [[nodiscard]] virtual std::vector<std::vector<double>> jscPrime(
-            FenestrationCommon::Side t_Side,
-            const std::vector<double> & wavelengths = std::vector<double>()) const;
+        [[nodiscard]] virtual std::vector<std::vector<double>>
+          jscPrime(FenestrationCommon::Side t_Side,
+                   const std::vector<double> & wavelengths = std::vector<double>()) const;
 
-        [[nodiscard]] virtual std::vector<double> voc(const std::vector<double> & electricalCurrent) const;
-        [[nodiscard]] virtual std::vector<double> ff(const std::vector<double> & electricalCurrent) const;
+        [[nodiscard]] virtual std::vector<double>
+          voc(const std::vector<double> & electricalCurrent) const;
+        [[nodiscard]] virtual std::vector<double>
+          ff(const std::vector<double> & electricalCurrent) const;
 
     protected:
         // Diffuse calculation distribution will be calculated here. It will depend on base classes.

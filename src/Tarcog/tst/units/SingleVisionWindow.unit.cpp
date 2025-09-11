@@ -64,8 +64,8 @@ protected:
                 .WettedLength = projectedFrameDimension,
                 .Absorptance = 0.9,
                 .Class = Tarcog::ISO15099::GenericDivider{
-                    .EdgePoly = {1.19, 0.0, 0.73, 0.009},
-                    .BodyPoly = {5.56, 0.0004, -0.00003, 0.042, -0.003}}};
+                  .EdgePoly = {1.19, 0.0, 0.73, 0.009},
+                  .BodyPoly = {5.56, 0.0004, -0.00003, 0.042, -0.003}}};
     }
 
     // NOLINTEND
@@ -732,7 +732,7 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGC());
 
     // Set tight tolerance to force mismatch
-    constexpr double tightTolerance{0.0001};    // very tight to guarantee mismatch
+    constexpr double tightTolerance{0.0001};   // very tight to guarantee mismatch
     window.setUValueIGUTolerance(tightTolerance);
     window.setThicknessIGUTolerance(tightTolerance);
 

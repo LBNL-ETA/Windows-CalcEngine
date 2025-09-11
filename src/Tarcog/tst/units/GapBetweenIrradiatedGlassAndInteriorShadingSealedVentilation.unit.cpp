@@ -20,11 +20,15 @@ protected:
         /////////////////////////////////////////////////////////
 
         auto outdoorAirTemperature = 298.15;   // Kelvins
-        auto outdoorAirSpeed = 2.75;                // meters per second
-        auto tSky = outdoorAirTemperature;                 // Kelvins
+        auto outdoorAirSpeed = 2.75;           // meters per second
+        auto tSky = outdoorAirTemperature;     // Kelvins
         auto solarRadiation = 1000.0;
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
-          outdoorAirTemperature, outdoorAirSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
+        auto Outdoor =
+          Tarcog::ISO15099::Environments::outdoor(outdoorAirTemperature,
+                                                  outdoorAirSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -136,7 +140,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingSealedVentilation, GainEne
     EXPECT_NEAR(-0.0096361494942099352, gainEnergy, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingSealedVentilation, FirstLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingSealedVentilation,
+       FirstLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
@@ -170,7 +175,8 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingSealedVentilation, GapTemp
     EXPECT_NEAR(316.54176884372316, averageTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingSealedVentilation, SecondLayerSurfaceTemperatures)
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingSealedVentilation,
+       SecondLayerSurfaceTemperatures)
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 

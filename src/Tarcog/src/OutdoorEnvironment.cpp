@@ -106,8 +106,7 @@ namespace Tarcog::ISO15099
 
     double COutdoorEnvironment::getHr()
     {
-        return getRadiationFlow()
-               / (surfaceTemperature(Side::Back) - getRadiationTemperature());
+        return getRadiationFlow() / (surfaceTemperature(Side::Back) - getRadiationTemperature());
     }
 
     double COutdoorEnvironment::getRadiationTemperature() const

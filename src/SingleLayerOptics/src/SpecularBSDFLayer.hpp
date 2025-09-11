@@ -37,4 +37,3 @@ namespace SingleLayerOptics
     };
 
 }   // namespace SingleLayerOptics
-

@@ -49,7 +49,8 @@ namespace Gases
 
     private:
         [[nodiscard]] GasProperties fillStandardPressureProperties() const;
-        [[nodiscard]] GasProperties fillVacuumPressureProperties(double alpha1, double alpha2) const;
+        [[nodiscard]] GasProperties fillVacuumPressureProperties(double alpha1,
+                                                                 double alpha2) const;
         void resetCalculatedProperties();
         GasItemProperties m_Properties;
     };

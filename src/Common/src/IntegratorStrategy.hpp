@@ -2,9 +2,11 @@
 
 #include "Series.hpp"
 
-namespace FenestrationCommon {
+namespace FenestrationCommon
+{
 
-    enum class IntegrationType {
+    enum class IntegrationType
+    {
         Rectangular,
         RectangularCentroid,
         Trapezoidal,
@@ -14,8 +16,7 @@ namespace FenestrationCommon {
     };
 
     // Single non-virtual entry point that does NOT expose m_Series
-    CSeries integrate(IntegrationType type,
-                      const CSeries& series,
-                      double normalizationCoeff = 1.0);
+    CSeries
+      integrate(IntegrationType type, const CSeries & series, double normalizationCoeff = 1.0);
 
-} // namespace FenestrationCommon
+}   // namespace FenestrationCommon

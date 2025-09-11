@@ -12,7 +12,8 @@ namespace SingleLayerOptics
 
         double gamma() const;
 
-        double Beam_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction) override;
+        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_Direction) override;
 
         [[nodiscard]] double diameter() const;
         [[nodiscard]] double spacing() const;

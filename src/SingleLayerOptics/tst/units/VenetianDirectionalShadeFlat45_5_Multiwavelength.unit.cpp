@@ -22,7 +22,7 @@ namespace
           + std::to_string(index + 1) + ".csv";
 
         const auto correctT = Helper::readMatrixFromCSV(file_path_t);
-        //Helper::writeMatrixToCSV(aT.getMatrix(), file_path_t);
+        // Helper::writeMatrixToCSV(aT.getMatrix(), file_path_t);
         Helper::compareMatrices(correctT, aT.getMatrix(), 1e-6);
 
         // Front reflectance
@@ -32,7 +32,7 @@ namespace
           + std::to_string(index + 1) + ".csv";
 
         const auto correctR = Helper::readMatrixFromCSV(file_path_r);
-        //Helper::writeMatrixToCSV(aRf.getMatrix(), file_path_r);
+        // Helper::writeMatrixToCSV(aRf.getMatrix(), file_path_r);
         Helper::compareMatrices(correctR, aRf.getMatrix(), 1e-6);
     }
 }   // namespace

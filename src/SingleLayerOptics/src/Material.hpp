@@ -18,7 +18,6 @@ namespace SingleLayerOptics
     class Material
     {
     public:
-
         static std::shared_ptr<CMaterial> dualBandMaterial(double Tfsol,
                                                            double Tbsol,
                                                            double Rfsol,

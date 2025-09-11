@@ -33,7 +33,7 @@ TEST_F(TestBSDFThetaLimtisFullBasis, TestFullBasis)
 
     const auto aLimits = GetLimits();
 
-    const auto results {aLimits.getThetaLimits()};
+    const auto results{aLimits.getThetaLimits()};
 
     std::vector<double> correctResults{0, 5, 15, 25, 35, 45, 55, 65, 75, 90};
     EXPECT_EQ(results.size(), correctResults.size());

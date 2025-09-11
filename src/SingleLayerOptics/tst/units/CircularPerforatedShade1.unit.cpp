@@ -151,7 +151,6 @@ TEST_F(TestCircularPerforatedShade1, TestSolarProperties)
 
 TEST_F(TestCircularPerforatedShade1, AtWavelength)
 {
-
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     constexpr size_t wavelengthIndex{0u};

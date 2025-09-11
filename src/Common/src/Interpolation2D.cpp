@@ -7,8 +7,8 @@ namespace FenestrationCommon
     // SPChipInterpolation2D
     //////////////////////////////////////////////////////////////////////////////////////
 
-    SPChipInterpolation2D::SPChipInterpolation2D(
-      const std::vector<TableValue> & t_Points) : m_Points(t_Points)
+    SPChipInterpolation2D::SPChipInterpolation2D(const std::vector<TableValue> & t_Points) :
+        m_Points(t_Points)
     {
         m_Hs = calculateHs();
         m_Deltas = calculateDeltas();
@@ -117,9 +117,9 @@ namespace FenestrationCommon
     }
 
     double SPChipInterpolation2D::piecewiseCubicDerivative(double const delta_k,
-                                                            double const delta_k_minus_1,
-                                                            double const hk,
-                                                            double const hk_minus_1)
+                                                           double const delta_k_minus_1,
+                                                           double const hk,
+                                                           double const hk_minus_1)
     {
         double res;
         if((delta_k == 0) || (delta_k_minus_1 == 0) || (delta_k > 0 && delta_k_minus_1 < 0)
@@ -143,11 +143,11 @@ namespace FenestrationCommon
     }
 
     double SPChipInterpolation2D::interpolate(double const h,
-                                               double const s,
-                                               double const y_k,
-                                               double const y_k_plus_one,
-                                               double const d_k,
-                                               double const d_k_plus_one) const
+                                              double const s,
+                                              double const y_k,
+                                              double const y_k_plus_one,
+                                              double const d_k,
+                                              double const d_k_plus_one) const
     {
         return ((3 * h * std::pow(s, 2) - 2 * std::pow(s, 3)) / std::pow(h, 3)) * y_k_plus_one
                + ((std::pow(h, 3) - 3 * h * std::pow(s, 2) + 2 * std::pow(s, 3)) / std::pow(h, 3))

@@ -23,4 +23,4 @@ namespace Tarcog::ISO15099
         AirHorizontalDirection airHorizontalDirection{AirHorizontalDirection::None};
         bool isVentilationForced{false};
     };
-}
+}   // namespace Tarcog::ISO15099

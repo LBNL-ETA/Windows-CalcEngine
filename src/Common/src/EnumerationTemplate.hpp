@@ -12,7 +12,7 @@ namespace FenestrationCommon
             explicit Iterator(int value) : m_value(value)
             {}
 
-            T operator*(void)const
+            T operator*(void) const
             {
                 return static_cast<T>(m_value);
             }

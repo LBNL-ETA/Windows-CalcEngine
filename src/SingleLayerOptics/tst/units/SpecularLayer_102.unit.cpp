@@ -179,7 +179,8 @@ TEST_F(TestSpecularLayer_102, WavelengthByWavelengthResults)
     constexpr size_t wlIndex{5u};
     auto result = aLayer->getResultsAtWavelength(wlIndex);
 
-    const auto diffDiff = result.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySurface::T);
+    const auto diffDiff =
+      result.DiffDiff(FenestrationCommon::Side::Front, FenestrationCommon::PropertySurface::T);
     constexpr auto correct{0.167105};
 
     EXPECT_NEAR(diffDiff, correct, 1e-6);

@@ -136,8 +136,7 @@ namespace CMA
         std::map<Option, std::map<Option, Tarcog::ISO15099::DualVisionHorizontal>> m_Window;
     };
 
-    using DualVerticalFrameMap =
-      std::map<Tarcog::ISO15099::DualVerticalFramePosition, CMAFrame>;
+    using DualVerticalFrameMap = std::map<Tarcog::ISO15099::DualVerticalFramePosition, CMAFrame>;
 
     //////////////////////////////////////////
     //  CMAWindowDualVisionVertical

@@ -54,8 +54,8 @@ protected:
         m_Layer = CMultiPaneBSDF::create({Layer_102, perforated});
 
         const CalculationProperties input{
-          StandardData::solarRadiationASTM_E891_87_Table1(), // Solar radiation
-          StandardData::condensedSpectrumDefault()           // Common wavelengths
+          StandardData::solarRadiationASTM_E891_87_Table1(),   // Solar radiation
+          StandardData::condensedSpectrumDefault()             // Common wavelengths
         };
         m_Layer->setCalculationProperties(input);
     }
@@ -91,16 +91,20 @@ TEST_F(MultiPaneBSDF_102_Perforated, Test102PerofratedCircular)
     double theta = 0;
     double phi = 0;
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.170518, tauHem, 1e-6);
 
-    double tauDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauDir =
+      aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.076108, tauDir, 1e-6);
 
-    double rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
+    double rhoHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.521843, rhoHem, 1e-6);
 
-    double rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
+    double rhoDir =
+      aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.087788, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
@@ -130,4 +134,3 @@ TEST_F(MultiPaneBSDF_102_Perforated, Test102PerofratedCircular)
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
     EXPECT_NEAR(0.179177, abs2, 1e-6);
 }
-

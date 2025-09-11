@@ -22,8 +22,8 @@ protected:
     void SetUp() override
     {
         double thickness = 3.0e-3;   // [m]
-        const auto aMaterial_21467 =
-          Material::nBandMaterial(SpectralSample::NFRC_21467(), thickness, MaterialType::Monolithic);
+        const auto aMaterial_21467 = Material::nBandMaterial(
+          SpectralSample::NFRC_21467(), thickness, MaterialType::Monolithic);
 
         const auto layer102 = SpecularLayer::createLayer(aMaterial_21467);
 

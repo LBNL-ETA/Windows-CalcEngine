@@ -147,12 +147,14 @@ namespace Viewer
         void appendGeometry2D(const CGeometry2D & t_Geometry2D);
 
         // Beam view factors for given profile angle
-        std::vector<BeamViewFactor> beamViewFactors(double t_ProfileAngle, BeamPosition beamPosition);
+        std::vector<BeamViewFactor> beamViewFactors(double t_ProfileAngle,
+                                                    BeamPosition beamPosition);
 
         // Direct to direct transmitted beam component
         double directToDirect(double t_ProfileAngle, BeamPosition beamPosition);
 
-        void precalculateForProfileAngles(const std::vector<double> & t_ProfileAngles, BeamPosition beamPosition);
+        void precalculateForProfileAngles(const std::vector<double> & t_ProfileAngles,
+                                          BeamPosition beamPosition);
 
     private:
         struct RayBoundaries
@@ -166,7 +168,8 @@ namespace Viewer
             [[nodiscard]] bool isInRay(CPoint2D const & t_Point) const;
         };
 
-        CDirect2DRaysResult calculateAllProperties(double t_ProfileAngle, BeamPosition beamPosition);
+        CDirect2DRaysResult calculateAllProperties(double t_ProfileAngle,
+                                                   BeamPosition beamPosition);
 
         // Finds lower and upper ray of every enclosure in the system
         RayBoundaries findRayBoundaries(double t_ProfileAngle);

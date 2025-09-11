@@ -94,8 +94,8 @@ namespace Tarcog::ISO15099
 
         void clearDeflection();
 
-        void
-          setSolidLayerConductivities(const std::vector<double> & t_SolidLayerThermalConductivities);
+        void setSolidLayerConductivities(
+          const std::vector<double> & t_SolidLayerThermalConductivities);
         void setSolidLayerConductivity(size_t t_LayerIndex, double t_SolidLayerThermalConductivity);
 
         ShadingModifier getShadingModifier(Tarcog::ISO15099::Environment environment) const;

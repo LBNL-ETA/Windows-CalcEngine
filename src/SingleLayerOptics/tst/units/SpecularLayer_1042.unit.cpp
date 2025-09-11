@@ -24,7 +24,8 @@ protected:
           Material::nBandMaterial(SpectralSample::NFRC_1042(), thickness, MaterialType::Coated);
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
 
-        aMaterial->setBandWavelengths(StandardData::solarRadiationASTM_E891_87_Table1().getXArray());
+        aMaterial->setBandWavelengths(
+          StandardData::solarRadiationASTM_E891_87_Table1().getXArray());
 
         // make layer
         m_Layer = CBSDFLayerMaker::getSpecularLayer(aMaterial, aBSDF);

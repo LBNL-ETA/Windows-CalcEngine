@@ -22,10 +22,12 @@ protected:
         const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
-        const FenestrationCommon::Venetian::Geometry geometry{0.076200, 0.057150, 55.000000, 0.123967};
+        const FenestrationCommon::Venetian::Geometry geometry{
+          0.076200, 0.057150, 55.000000, 0.123967};
         const size_t numOfSlatSegments = 2;
 
-        const auto aCellDescription = std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
+        const auto aCellDescription =
+          std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
 
         m_Cell = std::make_shared<CVenetianCell>(aMaterial, aCellDescription);
     }

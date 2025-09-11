@@ -19,8 +19,8 @@ protected:
     void SetUp() override
     {
         constexpr auto thickness = 3.048e-3;   // [m]
-        const auto aMaterial = Material::nBandMaterial(SpectralSample::NFRC_102(),
-                                                       thickness, MaterialType::Monolithic);
+        const auto aMaterial =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
         m_Layer = CScatteringLayer::createSpecularLayer(aMaterial);
         m_Layer.setSourceData(StandardData::Photopic::solarRadiation());

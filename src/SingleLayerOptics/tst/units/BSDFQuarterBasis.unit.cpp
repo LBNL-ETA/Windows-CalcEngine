@@ -27,10 +27,10 @@ TEST_F(TestBSDFQuarterBasis, TestQuarterBasisPhis)
 
     auto aDirections = GetDirections(BSDFDirection::Incoming);
 
-    std::vector<double> correctResults = {0, 0,  45,  90,  135, 180, 225, 270, 315, 0,   30,
-                                          60,  90, 120, 150, 180, 210, 240, 270, 300, 330, 0,
-                                          30,  60, 90,  120, 150, 180, 210, 240, 270, 300, 330,
-                                          0,   45, 90,  135, 180, 225, 270, 315};
+    std::vector<double> correctResults = {0,  0,  45,  90,  135, 180, 225, 270, 315, 0,   30,
+                                          60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0,
+                                          30, 60, 90,  120, 150, 180, 210, 240, 270, 300, 330,
+                                          0,  45, 90,  135, 180, 225, 270, 315};
 
     size_t correctSize = 41;
 
@@ -64,7 +64,7 @@ TEST_F(TestBSDFQuarterBasis, TestQuarterBasisThetas)
     EXPECT_EQ(correctSize, aDirections.size());
 
     std::vector<double> thetaAngles;
-    for(const auto & direction: aDirections)
+    for(const auto & direction : aDirections)
     {
         thetaAngles.push_back(direction.centerPoint().theta());
     }

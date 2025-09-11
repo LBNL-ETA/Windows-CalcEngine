@@ -63,8 +63,7 @@ namespace Tarcog::ISO15099
                        const std::shared_ptr<Tarcog::ISO15099::Surface> & t_FrontSurface = nullptr,
                        const std::shared_ptr<Tarcog::ISO15099::Surface> & t_BackSurface = nullptr);
 
-        CIGUShadeLayer(const SolidLayer & t_Layer,
-                       const CShadeOpenings & t_ShadeOpenings);
+        CIGUShadeLayer(const SolidLayer & t_Layer, const CShadeOpenings & t_ShadeOpenings);
 
         CIGUShadeLayer(double t_Thickness, double t_Conductivity);
 

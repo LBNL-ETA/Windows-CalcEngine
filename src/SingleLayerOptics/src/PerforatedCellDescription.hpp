@@ -25,7 +25,8 @@ namespace SingleLayerOptics
                                  const double t_Thickness,
                                  const double t_Radius);
 
-        double Beam_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_Direction);
 
         [[nodiscard]] double xDimension() const;
         [[nodiscard]] double yDimension() const;
@@ -51,7 +52,8 @@ namespace SingleLayerOptics
                                     const double t_XHole,
                                     const double t_YHole);
 
-        double Beam_dir_dir(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
+                            const CBeamDirection & t_Direction);
 
         [[nodiscard]] double xDimension() const;
         [[nodiscard]] double yDimension() const;

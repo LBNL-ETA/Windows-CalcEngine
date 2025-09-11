@@ -59,9 +59,8 @@ protected:
 
         m_Layer = CMultiPaneSpecular::create({layer102, layer103});
 
-        const CalculationProperties input{
-          loadSolarRadiationFile(),
-          loadSolarRadiationFile().getXArray()};
+        const CalculationProperties input{loadSolarRadiationFile(),
+                                          loadSolarRadiationFile().getXArray()};
         m_Layer->setCalculationProperties(input);
     }
 

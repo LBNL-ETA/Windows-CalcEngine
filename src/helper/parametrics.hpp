@@ -27,7 +27,8 @@ namespace TestUtil
         if(!a.empty() && a.back() == '_')
             a.pop_back();
 
-        os << SpectralAveraging::scatterName(info.param.scatter) << "_" << (a.empty() ? "0" : a) << "deg";
+        os << SpectralAveraging::scatterName(info.param.scatter) << "_" << (a.empty() ? "0" : a)
+           << "deg";
         return os.str();
     };
-}   // namespace Helper
+}   // namespace TestUtil

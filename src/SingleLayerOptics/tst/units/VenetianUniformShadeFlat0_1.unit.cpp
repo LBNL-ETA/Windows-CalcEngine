@@ -283,7 +283,6 @@ TEST_F(TestVenetianUniformShadeFlat0_1, TestVenetian1)
 
 TEST_F(TestVenetianUniformShadeFlat0_1, AtWavelength)
 {
-
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     constexpr size_t wavelengthIndex{0u};

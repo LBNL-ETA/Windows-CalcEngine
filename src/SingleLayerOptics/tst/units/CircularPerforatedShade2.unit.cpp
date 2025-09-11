@@ -47,7 +47,7 @@ TEST_F(TestCircularPerforatedShade2, TestSolarProperties)
     SCOPED_TRACE("Begin Test: Circular perforated cell - Solar properties.");
 
     constexpr auto Tolerance = 1e-6;
-    
+
     std::shared_ptr<CBSDFLayer> aShade = GetShade();
 
     BSDFIntegrator aResults = aShade->getResults();

@@ -106,7 +106,8 @@ TEST_F(TestDoubleClearIndoorShadeAir, Test1)
 
     const std::vector correctTemp = {
       258.263891, 258.783935, 276.426524, 276.946569, 288.264550, 288.268356};
-    const std::vector correctJ = {250.329019, 264.865975, 320.451170, 341.531072, 383.499870, 397.713907};
+    const std::vector correctJ = {
+      250.329019, 264.865975, 320.451170, 341.531072, 383.499870, 397.713907};
 
     Helper::testVectors("Temperatures", correctTemp, temperature, Tolerance);
     Helper::testVectors("Radiosities", correctJ, radiosity, Tolerance);

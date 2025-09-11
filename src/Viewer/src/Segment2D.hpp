@@ -36,8 +36,7 @@ namespace Viewer
         [[nodiscard]] double angle() const;
 
         // Calculates if segment intersects with passed t_Segment
-        [[nodiscard]] bool
-          intersectionWithSegment(const CSegment2D & t_Segment) const;
+        [[nodiscard]] bool intersectionWithSegment(const CSegment2D & t_Segment) const;
 
         // For line made up of current segment, calculate how it intersects passed segment.
         [[nodiscard]] IntersectionStatus intersectionWithLine(const CSegment2D & t_Segment) const;
@@ -53,6 +52,7 @@ namespace Viewer
 
         //! Calculates unit normal to the surface segment
         [[nodiscard]] CPoint2D surfaceUnitNormal() const;
+
     protected:
         CPoint2D m_StartPoint;
         CPoint2D m_EndPoint;
@@ -65,8 +65,7 @@ namespace Viewer
 
         // Calculates intesection point between two lines made up of std::vector. Even if two
         // std::vectors do not intersect, point of intersection will be returned
-        [[nodiscard]] std::optional<CPoint2D>
-          intersection(const CSegment2D & t_Segment) const;
+        [[nodiscard]] std::optional<CPoint2D> intersection(const CSegment2D & t_Segment) const;
 
         // test if x coordinate is in range of rectangle made up of segment
         [[nodiscard]] bool isInRectangleRange(const CPoint2D & t_Point) const;

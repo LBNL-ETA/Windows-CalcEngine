@@ -69,8 +69,9 @@ namespace SingleLayerOptics
                 double Rf = aMat[i].getProperty(Property::R, Side::Front);
                 double Rb = aMat[i].getProperty(Property::R, Side::Back);
 
-                m_EnergiesBand.emplace_back(
-                  LayerProperties{Tf, Rf, Tb, Rb}, venetianForwardGeometry, m_BackwardFlowCellDescription);
+                m_EnergiesBand.emplace_back(LayerProperties{Tf, Rf, Tb, Rb},
+                                            venetianForwardGeometry,
+                                            m_BackwardFlowCellDescription);
             }
         }
     }

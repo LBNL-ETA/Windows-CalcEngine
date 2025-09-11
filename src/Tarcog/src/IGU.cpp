@@ -657,8 +657,8 @@ namespace Tarcog::ISO15099
 
         if(t_SolidLayerThermalConductivities.size() != getSolidLayers().size())
         {
-            throw std::runtime_error(
-              "Number of solid layer thermal conductivities does not match number of solid layers.");
+            throw std::runtime_error("Number of solid layer thermal conductivities does not match "
+                                     "number of solid layers.");
         }
 
         for(size_t i = 0; i < getSolidLayers().size(); ++i)
@@ -668,7 +668,7 @@ namespace Tarcog::ISO15099
     }
 
     void CIGU::setSolidLayerConductivity(size_t t_LayerIndex,
-                                                double t_SolidLayerThermalConductivity)
+                                         double t_SolidLayerThermalConductivity)
     {
         auto solidLayer = getSolidLayers();
 

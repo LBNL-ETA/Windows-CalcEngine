@@ -18,7 +18,8 @@ namespace SingleLayerOptics
             for(auto t_Property : allPropertySimple())
             {
                 m_Matrix[std::make_pair(t_Side, t_Property)] = SquareMatrix(m_DimMatrices);
-                m_DirectHemispherical[std::make_pair(t_Side, t_Property)] = std::vector<double>(m_DimMatrices);
+                m_DirectHemispherical[std::make_pair(t_Side, t_Property)] =
+                  std::vector<double>(m_DimMatrices);
             }
         }
     }
@@ -31,7 +32,7 @@ namespace SingleLayerOptics
 
     SquareMatrix & BSDFIntegrator::getMatrix(const Side t_Side, const PropertySurface t_Property)
     {
-       return m_Matrix[std::make_pair(t_Side, t_Property)];
+        return m_Matrix[std::make_pair(t_Side, t_Property)];
     }
 
     const FenestrationCommon::SquareMatrix &
@@ -166,8 +167,9 @@ namespace SingleLayerOptics
             {
                 for(auto t_Side : allSides())
                 {
-                    m_Abs.at(t_Side).push_back(1.0 - m_DirectHemispherical.at({t_Side, PropertySurface::T})[i]
-                                               - m_DirectHemispherical.at({t_Side, PropertySurface::R})[i]);
+                    m_Abs.at(t_Side).push_back(
+                      1.0 - m_DirectHemispherical.at({t_Side, PropertySurface::T})[i]
+                      - m_DirectHemispherical.at({t_Side, PropertySurface::R})[i]);
                 }
             }
             m_DirectHemisphericalCalculated = true;

@@ -33,7 +33,8 @@ protected:
         auto layer102 = SpecularLayer::createLayer(aMaterial_102);
         auto layer103 = SpecularLayer::createLayer(aMaterial_103);
 
-        m_Layer = CMultiPaneSpecular::create({layer102, layer103}, StandardData::condensedSpectrumDefault());
+        m_Layer = CMultiPaneSpecular::create({layer102, layer103},
+                                             StandardData::condensedSpectrumDefault());
 
         const CalculationProperties input{
           StandardData::solarRadiationASTM_E891_87_Table1(),

@@ -16,7 +16,7 @@ TEST_F(TestBeamDirections, TestBeamDirectionProfileAngle1)
 
     const auto hemisphere{BSDFHemisphere::create(BSDFBasis::Small)};
     const std::vector<double> profileAngles{hemisphere.profileAngles(BSDFDirection::Incoming)};
-    const std::vector<double> correctProfileAngles{0,0,0,0,0,0,0};
+    const std::vector<double> correctProfileAngles{0, 0, 0, 0, 0, 0, 0};
 
     EXPECT_EQ(7u, profileAngles.size());
     for(size_t i = 0u; i < correctProfileAngles.size(); ++i)

@@ -41,8 +41,8 @@ namespace Tarcog::ISO15099
         void calculateThermallyDrivenAirflowWithAdjacentGap(CIGUVentilatedGapLayer & adjacentGap);
 
         // Calculates airflow properties of the gap given inletTemperature temperature. In case
-        // inletTemperature temperature is not given, the function will use temperature provided in the
-        // gap constructor.
+        // inletTemperature temperature is not given, the function will use temperature provided in
+        // the gap constructor.
         void calculateVentilatedAirflow(double inletTemperature);
 
         std::shared_ptr<CBaseLayer> clone() const override;

@@ -144,7 +144,7 @@ TEST_F(TestBSDFMaterialDualBand, TestProperties)
       m_Material->getBandProperties(Property::T, Side::Front, incomingDirection, outgoingDirection);
     // C++
     const std::vector expectedBandProperties{
-        0.1219767, 0.1219767, 0.0416186, 0.0416186, 0.1219767, 0.1219767};
+      0.1219767, 0.1219767, 0.0416186, 0.0416186, 0.1219767, 0.1219767};
 
     EXPECT_EQ(bandProperties.size(), expectedBandProperties.size());
     for(size_t i = 0U; i < expectedBandProperties.size(); ++i)

@@ -51,12 +51,30 @@ namespace CMA
         Film m_convective;
         std::optional<Film> m_radiative;
 
-        double hci() const { return m_convective.inside; }
-        double hco() const { return m_convective.outside; }
-        double hri() const { return m_radiative ? m_radiative->inside : 0.0; }
-        double hro() const { return m_radiative ? m_radiative->outside : 0.0; }
-        double ho() const {return hco() + hro();}
-        double hi() const {return hci() + hri();}
+        double hci() const
+        {
+            return m_convective.inside;
+        }
+        double hco() const
+        {
+            return m_convective.outside;
+        }
+        double hri() const
+        {
+            return m_radiative ? m_radiative->inside : 0.0;
+        }
+        double hro() const
+        {
+            return m_radiative ? m_radiative->outside : 0.0;
+        }
+        double ho() const
+        {
+            return hco() + hro();
+        }
+        double hi() const
+        {
+            return hci() + hri();
+        }
 
         double m_GapConductance{0};
         double m_InteriorGlassThickness{0.006};

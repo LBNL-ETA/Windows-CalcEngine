@@ -83,8 +83,8 @@ namespace Tarcog::ISO15099
 
         void precalculateLayerStates();
 
-        void
-          setSolidLayerConductivities(const std::vector<double> & t_SolidLayerThermalConductivities);
+        void setSolidLayerConductivities(
+          const std::vector<double> & t_SolidLayerThermalConductivities);
         void setSolidLayerConductivity(size_t t_LayerIndex, double t_SolidLayerThermalConductivity);
 
     private:

@@ -14,9 +14,7 @@ namespace SingleLayerOptics
 {
     CBSDFLayer::CBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                            const BSDFHemisphere & t_Hemisphere) :
-        m_BSDFHemisphere(t_Hemisphere),
-        m_Cell(t_Cell),
-        m_Results(std::nullopt)
+        m_BSDFHemisphere(t_Hemisphere), m_Cell(t_Cell), m_Results(std::nullopt)
     {
         // TODO: Maybe to refactor results to incoming and outgoing if not affecting speed.
         // This is not necessary before axisymmetry is introduced
@@ -64,10 +62,8 @@ namespace SingleLayerOptics
             for(size_t i = 0; i < size; ++i)
             {
                 const CBeamDirection aDirection = aDirections[i].centerPoint();
-                const auto aTau =
-                  m_Cell->T_dir_dir_band(aSide, aDirection)[wavelengthIndex];
-                const auto aRho =
-                  m_Cell->R_dir_dir_band(aSide, aDirection)[wavelengthIndex];
+                const auto aTau = m_Cell->T_dir_dir_band(aSide, aDirection)[wavelengthIndex];
+                const auto aRho = m_Cell->R_dir_dir_band(aSide, aDirection)[wavelengthIndex];
                 double Lambda = aDirections[i].lambda();
 
                 auto & tau = results.getMatrix(aSide, PropertySurface::T);
@@ -87,7 +83,8 @@ namespace SingleLayerOptics
             for(size_t directionIndex = 0; directionIndex < aDirections.size(); ++directionIndex)
             {
                 const CBeamDirection aDirection = aDirections[directionIndex].centerPoint();
-                calcDiffuseDistribution_byWavelength(aSide, aDirection, directionIndex, wavelengthIndex, results);
+                calcDiffuseDistribution_byWavelength(
+                  aSide, aDirection, directionIndex, wavelengthIndex, results);
             }
         }
     }
@@ -201,7 +198,8 @@ namespace SingleLayerOptics
 
     std::vector<BSDFIntegrator> CBSDFLayer::calculate_wv()
     {
-        std::vector<BSDFIntegrator> results(m_Cell->getBandSize(), m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
+        std::vector<BSDFIntegrator> results(
+          m_Cell->getBandSize(), m_BSDFHemisphere.getDirections(BSDFDirection::Incoming));
 
         calc_dir_dir_wv(results);
         calc_dir_dif_wv(results);

@@ -471,7 +471,8 @@ TEST_F(MultiPaneBSDF_102_XMLLayer_QuarterBasis, TestBSDFMatrixAsInput)
     constexpr double theta = 0;
     constexpr double phi = 0;
 
-    double tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
+    double tauHem =
+      aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
     EXPECT_NEAR(0.662790, tauHem, 1e-6);
 
     double rhoFrontHem =

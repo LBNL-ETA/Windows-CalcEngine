@@ -41,11 +41,8 @@ protected:
 
         // make cell geometry
         const auto thickness_31111{0.00023};
-        const FenestrationCommon::Perforated::Geometry geometry{FenestrationCommon::Perforated::Type::Circular,
-                                                                0.00169,
-                                                                0.00169,
-                                                                0.00116,
-                                                                0.00116};
+        const FenestrationCommon::Perforated::Geometry geometry{
+          FenestrationCommon::Perforated::Type::Circular, 0.00169, 0.00169, 0.00116, 0.00116};
 
         const auto dl{0.0};
         const auto dr{0.0};

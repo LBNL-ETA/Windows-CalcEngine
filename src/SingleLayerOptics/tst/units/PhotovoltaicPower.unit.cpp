@@ -8,7 +8,7 @@
 class TestPhotovoltaicPower : public testing::Test
 {
 public:
-static SingleLayerOptics::PVPowerPropertiesTable table()
+    static SingleLayerOptics::PVPowerPropertiesTable table()
     {
         return {{{0.002478752, 0.550933333, 0.5467},
                  {0.002605841, 0.552778333, 0.5467415},
@@ -172,6 +172,7 @@ static SingleLayerOptics::PVPowerPropertiesTable table()
                  {7.028687581, 0.844288333, 0.4235015},
                  {7.389056099, 0.846133333, 0.4219}}};
     }
+
 protected:
     virtual void SetUp()
     {}

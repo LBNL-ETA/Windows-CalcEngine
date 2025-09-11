@@ -72,9 +72,10 @@ namespace SingleLayerOptics
                                                       const CBeamDirection & t_IncomingDirection,
                                                       const CBeamDirection & t_OutgoingDirection)
     {
-        return m_Material && t_IncomingDirection != t_OutgoingDirection ? m_Material->getProperty(
-                              Property::R, t_Side, t_IncomingDirection, t_OutgoingDirection)
-                          : 0;
+        return m_Material && t_IncomingDirection != t_OutgoingDirection
+                 ? m_Material->getProperty(
+                     Property::R, t_Side, t_IncomingDirection, t_OutgoingDirection)
+                 : 0;
     }
 
     std::vector<double>
@@ -82,9 +83,10 @@ namespace SingleLayerOptics
                                                       const CBeamDirection & t_IncomingDirection,
                                                       const CBeamDirection & t_OutgoingDirection)
     {
-        return m_Material && t_IncomingDirection != t_OutgoingDirection ? m_Material->getBandProperties(
-                              Property::T, t_Side, t_IncomingDirection, t_OutgoingDirection)
-                          : std::vector<double>();
+        return m_Material && t_IncomingDirection != t_OutgoingDirection
+                 ? m_Material->getBandProperties(
+                     Property::T, t_Side, t_IncomingDirection, t_OutgoingDirection)
+                 : std::vector<double>();
     }
 
     double CMaterialDirectionalDiffuseCell::T_dir_dif_by_wavelength(
@@ -104,9 +106,10 @@ namespace SingleLayerOptics
                                                       const CBeamDirection & t_IncomingDirection,
                                                       const CBeamDirection & t_OutgoingDirection)
     {
-        return m_Material && t_IncomingDirection != t_OutgoingDirection ? m_Material->getBandProperties(
-                              Property::R, t_Side, t_IncomingDirection, t_OutgoingDirection)
-                          : std::vector<double>();
+        return m_Material && t_IncomingDirection != t_OutgoingDirection
+                 ? m_Material->getBandProperties(
+                     Property::R, t_Side, t_IncomingDirection, t_OutgoingDirection)
+                 : std::vector<double>();
     }
 
     double CMaterialDirectionalDiffuseCell::R_dir_dif_by_wavelength(

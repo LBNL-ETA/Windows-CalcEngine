@@ -16,9 +16,7 @@ namespace MultiLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     CEquivalentLayerSingleComponentMWAngle::CEquivalentLayerSingleComponentMWAngle(
       CEquivalentLayerSingleComponentMW t_Layer, CAbsorptancesMultiPane t_Abs, double t_Angle) :
-        m_Layer(std::move(t_Layer)),
-        m_Abs(std::move(t_Abs)),
-        m_Angle(t_Angle)
+        m_Layer(std::move(t_Layer)), m_Abs(std::move(t_Abs)), m_Angle(t_Angle)
     {}
 
     double CEquivalentLayerSingleComponentMWAngle::angle() const
@@ -74,12 +72,12 @@ namespace MultiLayerOptics
     }
 
     double CMultiPaneSpecular::getPropertySurface(const double minLambda,
-                                                 const double maxLambda,
-                                                 FenestrationCommon::PropertySurface t_Property,
-                                                 FenestrationCommon::Side t_Side,
-                                                 FenestrationCommon::Scattering t_Scattering,
-                                                 double t_Theta,
-                                                 double)
+                                                  const double maxLambda,
+                                                  FenestrationCommon::PropertySurface t_Property,
+                                                  FenestrationCommon::Side t_Side,
+                                                  FenestrationCommon::Scattering t_Scattering,
+                                                  double t_Theta,
+                                                  double)
     {
         double result(0);
         const auto prop(toProperty(t_Property));

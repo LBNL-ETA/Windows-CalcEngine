@@ -12,7 +12,8 @@ using namespace FenestrationCommon;
 
 class TestSampleNFRC_1042_Angular : public testing::Test
 {
-    CSpectralSample m_Sample{SpectralSample::NFRC_1042(), StandardData::solarRadiationASTM_E891_87_Table1()};
+    CSpectralSample m_Sample{SpectralSample::NFRC_1042(),
+                             StandardData::solarRadiationASTM_E891_87_Table1()};
 
 public:
     CSpectralSample & getSample()

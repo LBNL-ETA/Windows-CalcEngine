@@ -25,8 +25,8 @@ protected:
     {
         // Create material from samples
         constexpr auto thickness = 3.048e-3;   // [m]
-        const auto aMaterial_102 = Material::nBandMaterial(
-          SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
+        const auto aMaterial_102 =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness, MaterialType::Monolithic);
 
         // Solar
         constexpr auto Tsol = 0.0;

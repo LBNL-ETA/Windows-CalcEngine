@@ -205,12 +205,11 @@ namespace SingleLayerOptics
       double t_ProfileAngle, FenestrationCommon::Side t_Side, const BSDFDirection t_Direction)
     {
         // Define a map of conditions for reverting the angle
-        static const std::map<std::pair<BSDFDirection, FenestrationCommon::Side>, bool> revertMap = {
-          {{BSDFDirection::Incoming, FenestrationCommon::Side::Front}, true},
-          {{BSDFDirection::Outgoing, FenestrationCommon::Side::Back}, true},
-          {{BSDFDirection::Incoming, FenestrationCommon::Side::Back}, false},
-          {{BSDFDirection::Outgoing, FenestrationCommon::Side::Front}, false}
-        };
+        static const std::map<std::pair<BSDFDirection, FenestrationCommon::Side>, bool> revertMap =
+          {{{BSDFDirection::Incoming, FenestrationCommon::Side::Front}, true},
+           {{BSDFDirection::Outgoing, FenestrationCommon::Side::Back}, true},
+           {{BSDFDirection::Incoming, FenestrationCommon::Side::Back}, false},
+           {{BSDFDirection::Outgoing, FenestrationCommon::Side::Front}, false}};
 
         // Check if the current (t_Direction, t_Side) combination should revert the angle
         const bool shouldRevertAngle = revertMap.at({t_Direction, t_Side});
@@ -228,7 +227,7 @@ namespace SingleLayerOptics
     }
 
     double CVenetianCellDescription::Beam_dir_dir(const FenestrationCommon::Side t_Side,
-                                               const CBeamDirection & t_Direction)
+                                                  const CBeamDirection & t_Direction)
     {
         return m_BeamGeometry.directToDirect(-t_Direction.profileAngle(), t_Side);
     }

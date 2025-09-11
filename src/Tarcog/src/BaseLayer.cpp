@@ -9,9 +9,7 @@ namespace Tarcog::ISO15099
     {}
 
     CBaseLayer::CBaseLayer(double thickness) :
-        HeatFlowLayer(),
-        SurfacesManager(),
-        m_Thickness(thickness)
+        HeatFlowLayer(), SurfacesManager(), m_Thickness(thickness)
     {
         if(thickness <= 0)
         {

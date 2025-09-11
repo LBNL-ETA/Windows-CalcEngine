@@ -74,7 +74,8 @@ protected:
     }
 
 public:
-    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const {
+    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSystem> GetSystem() const
+    {
         return m_TarcogSystem;
     };
 };

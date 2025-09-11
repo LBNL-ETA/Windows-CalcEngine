@@ -63,7 +63,7 @@ namespace Table
     std::vector<T> Table2D<T>::column(size_t i) const
     {
         std::vector<T> result;
-        for(const auto & vec: values_)
+        for(const auto & vec : values_)
         {
             result.push_back(vec[i]);
         }

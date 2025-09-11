@@ -64,36 +64,36 @@ namespace SingleLayerOptics
         m_LayerX->setCalculationProperties(inputX);
         auto X = m_SDx / m_SDy * 100
                  * m_LayerX->getPropertySurface(m_LayerX->getMinLambda(),
-                                               m_LayerX->getMaxLambda(),
-                                               t_Property,
-                                               t_Side,
-                                               t_Scattering,
-                                               t_Theta,
-                                               t_Phi);
+                                                m_LayerX->getMaxLambda(),
+                                                t_Property,
+                                                t_Side,
+                                                t_Scattering,
+                                                t_Theta,
+                                                t_Phi);
 
         SingleLayerOptics::CalculationProperties inputY{
           m_Source, m_wavelengths, m_DetectorY, m_Integrator, m_NormalizationCoefficient};
         m_LayerX->setCalculationProperties(inputY);
         auto Y = 100
                  * m_LayerX->getPropertySurface(m_LayerX->getMinLambda(),
-                                               m_LayerX->getMaxLambda(),
-                                               t_Property,
-                                               t_Side,
-                                               t_Scattering,
-                                               t_Theta,
-                                               t_Phi);
+                                                m_LayerX->getMaxLambda(),
+                                                t_Property,
+                                                t_Side,
+                                                t_Scattering,
+                                                t_Theta,
+                                                t_Phi);
 
         SingleLayerOptics::CalculationProperties inputZ{
           m_Source, m_wavelengths, m_DetectorZ, m_Integrator, m_NormalizationCoefficient};
         m_LayerX->setCalculationProperties(inputZ);
         auto Z = m_SDz / m_SDy * 100
                  * m_LayerX->getPropertySurface(m_LayerX->getMinLambda(),
-                                               m_LayerX->getMaxLambda(),
-                                               t_Property,
-                                               t_Side,
-                                               t_Scattering,
-                                               t_Theta,
-                                               t_Phi);
+                                                m_LayerX->getMaxLambda(),
+                                                t_Property,
+                                                t_Side,
+                                                t_Scattering,
+                                                t_Theta,
+                                                t_Phi);
         return Trichromatic(X, Y, Z);
     }
 
@@ -144,34 +144,34 @@ namespace SingleLayerOptics
           m_Source, m_wavelengths, m_DetectorX, m_Integrator, m_NormalizationCoefficient};
         m_LayerX->setCalculationProperties(inputX);
         auto X = m_LayerX->getPropertySurface(m_LayerX->getMinLambda(),
-                                             m_LayerX->getMaxLambda(),
-                                             t_Property,
-                                             t_Side,
-                                             t_Scattering,
-                                             t_Theta,
-                                             t_Phi);
+                                              m_LayerX->getMaxLambda(),
+                                              t_Property,
+                                              t_Side,
+                                              t_Scattering,
+                                              t_Theta,
+                                              t_Phi);
 
         SingleLayerOptics::CalculationProperties inputY{
           m_Source, m_wavelengths, m_DetectorY, m_Integrator, m_NormalizationCoefficient};
         m_LayerX->setCalculationProperties(inputY);
         auto Y = m_LayerX->getPropertySurface(m_LayerX->getMinLambda(),
-                                             m_LayerX->getMaxLambda(),
-                                             t_Property,
-                                             t_Side,
-                                             t_Scattering,
-                                             t_Theta,
-                                             t_Phi);
+                                              m_LayerX->getMaxLambda(),
+                                              t_Property,
+                                              t_Side,
+                                              t_Scattering,
+                                              t_Theta,
+                                              t_Phi);
 
         SingleLayerOptics::CalculationProperties inputZ{
           m_Source, m_wavelengths, m_DetectorZ, m_Integrator, m_NormalizationCoefficient};
         m_LayerX->setCalculationProperties(inputZ);
         auto Z = m_LayerX->getPropertySurface(m_LayerX->getMinLambda(),
-                                             m_LayerX->getMaxLambda(),
-                                             t_Property,
-                                             t_Side,
-                                             t_Scattering,
-                                             t_Theta,
-                                             t_Phi);
+                                              m_LayerX->getMaxLambda(),
+                                              t_Property,
+                                              t_Side,
+                                              t_Scattering,
+                                              t_Theta,
+                                              t_Phi);
 
         std::vector<double> Q{X, Y, Z};
         for(auto & val : Q)

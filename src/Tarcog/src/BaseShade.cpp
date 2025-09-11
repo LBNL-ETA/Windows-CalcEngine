@@ -31,9 +31,9 @@ namespace Tarcog::ISO15099
     double CShadeOpenings::openingMultiplier() const
     {
         const double denom = m_Abot + m_Atop;
-        // It is extremely important to use 2 * OPENING_TOLERANCE because the airflow equation becomes
-        // very sensitive around zero and will produce different results. The whole point is that
-        // Abot + Atop are 1e-6 each and should add up to 2e-6 (or whatever the tolerance is).
+        // It is extremely important to use 2 * OPENING_TOLERANCE because the airflow equation
+        // becomes very sensitive around zero and will produce different results. The whole point is
+        // that Abot + Atop are 1e-6 each and should add up to 2e-6 (or whatever the tolerance is).
         const double safeDenom = (denom == 0.0) ? 2 * OPENING_TOLERANCE : denom;
 
         return (m_Aleft + m_Aright + m_Afront) / safeDenom;

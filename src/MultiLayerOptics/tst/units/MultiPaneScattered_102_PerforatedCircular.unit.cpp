@@ -25,8 +25,8 @@ protected:
     {
         // Create material from samples
         constexpr auto thickness1 = 3.048e-3;   // [m]
-        auto aMaterial_102 = Material::nBandMaterial(
-          SpectralSample::NFRC_102(), thickness1, MaterialType::Monolithic);
+        auto aMaterial_102 =
+          Material::nBandMaterial(SpectralSample::NFRC_102(), thickness1, MaterialType::Monolithic);
 
         // Setting circular perforated shade with double range material
         constexpr auto Tsol = 0.1;
@@ -38,14 +38,14 @@ protected:
         constexpr auto Rfvis = 0.6;
         constexpr auto Rbvis = 0.6;
 
-        auto aMaterialPerforated = Material::dualBandMaterial(
-          Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
+        auto aMaterialPerforated =
+          Material::dualBandMaterial(Tsol, Tsol, Rfsol, Rbsol, Tvis, Tvis, Rfvis, Rbvis);
 
         // make cell geometry
-        constexpr auto x = 0.01905;         // m
-        constexpr auto y = 0.01905;         // m
-        constexpr auto thickness2 = 0.005;  // m
-        constexpr auto radius = 0.003175;   // m
+        constexpr auto x = 0.01905;          // m
+        constexpr auto y = 0.01905;          // m
+        constexpr auto thickness2 = 0.005;   // m
+        constexpr auto radius = 0.003175;    // m
 
         CScatteringLayer Layer102 = CScatteringLayer::createSpecularLayer(aMaterial_102);
         CScatteringLayer LayerPerforated = CScatteringLayer::createPerforatedCircularLayer(

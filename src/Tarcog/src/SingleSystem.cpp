@@ -423,7 +423,8 @@ namespace Tarcog::ISO15099
 
         auto getGlassLayer = [&](const auto & shading) {
             return (isInterior ? shading->getPreviousLayer()->getPreviousLayer()
-                               : shading->getNextLayer()->getNextLayer()).get();
+                               : shading->getNextLayer()->getNextLayer())
+              .get();
         };
 
         auto getAdjacentLayer = [&](const auto * glass) {

@@ -38,7 +38,7 @@ protected:
         // Create BSDF from definitions
         const auto aBSDF = BSDFHemisphere::create(aDefinitions);
 
-        CSeries aSolarRadiation {StandardData::solarRadiationASTM_E891_87_Table1()};
+        CSeries aSolarRadiation{StandardData::solarRadiationASTM_E891_87_Table1()};
 
         const auto aMeasurements = SpectralSample::NFRC_102();
 

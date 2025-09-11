@@ -17,9 +17,9 @@ TEST(TestSimpleTrapezoidalIntegration, TestTrapezoidal)
 
     ASSERT_EQ(correctValues.size(), series.size());
 
-    for (std::size_t i = 0; i < correctValues.size(); ++i)
+    for(std::size_t i = 0; i < correctValues.size(); ++i)
     {
-        EXPECT_NEAR(correctValues[i].x(),     series[i].x(),     1e-6);
+        EXPECT_NEAR(correctValues[i].x(), series[i].x(), 1e-6);
         EXPECT_NEAR(correctValues[i].value(), series[i].value(), 1e-6);
     }
 }

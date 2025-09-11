@@ -227,22 +227,25 @@ namespace SpectralAveraging
       CAngularSpectralSample::findSpectralSample(const double t_Angle)
     {
         // Fast read path
-        if (auto fast = [&]{
-                std::shared_lock rlk(m_propsMx);
-                return findUnlocked(t_Angle);
-            }(); fast)
+        if(auto fast =
+             [&] {
+                 std::shared_lock rlk(m_propsMx);
+                 return findUnlocked(t_Angle);
+             }();
+           fast)
         {
             return fast;
         }
 
         // Slow write path (double-check under exclusive lock)
         std::unique_lock wlk(m_propsMx);
-        if (auto existing = findUnlocked(t_Angle)) {
+        if(auto existing = findUnlocked(t_Angle))
+        {
             return existing;
         }
 
         auto s = makeSampleUnlocked(t_Angle);
-        m_SpectralProperties.emplace_back(s, t_Angle);  // preserve append order
+        m_SpectralProperties.emplace_back(s, t_Angle);   // preserve append order
         return s;
     }
 

@@ -96,9 +96,9 @@ namespace SingleLayerOptics
         {
             auto result = t_Direction.unitVector();
             if((t_BSDFDirection == BSDFDirection::Outgoing
-                 && t_Side == FenestrationCommon::Side::Front)
+                && t_Side == FenestrationCommon::Side::Front)
                || (t_BSDFDirection == BSDFDirection::Incoming
-                    && t_Side == FenestrationCommon::Side::Back))
+                   && t_Side == FenestrationCommon::Side::Back))
             {
                 result = Viewer::CSegment2D(result.startPoint(),
                                             {-result.endPoint().x(), result.endPoint().y()});

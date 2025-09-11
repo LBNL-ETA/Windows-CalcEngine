@@ -78,7 +78,7 @@ public:
 TEST_F(TestDoubleClearSingleSystemNoSun, Test1)
 {
     SCOPED_TRACE("Begin Test: Double Clear Single System - Surface temperatures");
-    
+
     constexpr auto Tolerance{1e-6};
     const auto aSystem = GetSystem();
     ASSERT_TRUE(aSystem != nullptr);

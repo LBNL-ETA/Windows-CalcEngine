@@ -7,7 +7,7 @@
 
 namespace Deflection
 {
-    const double defaultGlassDensity = Tarcog::MaterialConstants::GLASSDENSITY;                                                // kg/m3
+    const double defaultGlassDensity = Tarcog::MaterialConstants::GLASSDENSITY;             // kg/m3
     const double defaultPressure = 101325;                                                  // Pa
     const double defaultModulusOfElasticity = Tarcog::DeflectionConstants::YOUNGSMODULUS;   // Pa
 
