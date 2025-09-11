@@ -34,14 +34,6 @@ public:
     }
 };
 
-namespace
-{
-    CBeamDirection direction(const double theta, const double phi)
-    {
-        return {theta, phi};
-    }
-}   // namespace
-
 TEST_F(TestDirectDiffuseCell1, TestNormalIncidence)
 {
     auto aCell = GetCell();
