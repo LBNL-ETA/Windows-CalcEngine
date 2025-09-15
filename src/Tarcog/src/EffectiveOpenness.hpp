@@ -164,9 +164,8 @@ namespace EffectiveLayers
     {
     public:
         EffectiveLayerLouveredShutter(
-          double width,
-          double height,
-          double thickness,
+          double systemWidth,
+          double systemHeight,
           const FenestrationCommon::LouveredShutter::Geometry & geometry,
           const ShadeOpenness & openness = {0, 0, 0, 0});
 

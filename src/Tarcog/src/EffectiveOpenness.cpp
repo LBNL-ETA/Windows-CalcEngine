@@ -139,14 +139,13 @@ namespace EffectiveLayers
     }
 
     EffectiveLayerLouveredShutter::EffectiveLayerLouveredShutter(
-      double width,
-      double height,
-      double thickness,
+      double systemWidth,
+      double systemHeight,
       const FenestrationCommon::LouveredShutter::Geometry & geometry,
       const ShadeOpenness & openness) :
-        EffectiveLayer(width,
-                       height,
-                       thickness,
+        EffectiveLayer(systemWidth,
+                       systemHeight,
+                       geometry.SlatThickness,
                        openness,
                        {1.385e-01, 8.805e-01, 0.0580255, 1.225e-01},
                        ThermalPermeability::LouveredShutter::permeabilityFactor(geometry)),

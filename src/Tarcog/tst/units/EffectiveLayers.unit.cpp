@@ -181,12 +181,11 @@ TEST(TestEffectiveLayer, TestLouveredShutterEffectiveOpenness)
 {
     constexpr auto systemWidth{1.0};            // m
     constexpr auto systemHeight{1.0};           // m
-    constexpr auto materialThickness{0.0006};   // m
     FenestrationCommon::LouveredShutter::Geometry geometry{0.0889, 0.01, 87.0, 0.0762};
     const EffectiveLayers::ShadeOpenness openness{0.0, 0.0, 0.0, 0.0};
 
     EffectiveLayers::EffectiveLayerLouveredShutter louveredShutter{
-      systemWidth, systemHeight, materialThickness, geometry, openness};
+      systemWidth, systemHeight, geometry, openness};
 
     EXPECT_NEAR(0.00179327, louveredShutter.effectiveThickness(), 1e-8);
 
