@@ -12,8 +12,6 @@ namespace EffectiveLayers
     //! of view
     struct ShadeOpenness
     {
-        ShadeOpenness(double dl, double dr, double dtop, double dbot);
-
         //! \var Dl
         //! \brief Left side openness of the shading layer [m]
         double Dl;
@@ -35,13 +33,6 @@ namespace EffectiveLayers
     //! calculations.
     struct EffectiveOpenness
     {
-        EffectiveOpenness(double effectiveFrontThermalOpennessArea,
-                          double al,
-                          double ar,
-                          double atop,
-                          double abot,
-                          double permeabilityFactor);
-
         //! \var EffectiveFrontThermalOpennessArea
         //! \brief Effective front thermal openness area used for in between gap (or environment
         //! calculations) [m²]
@@ -72,7 +63,6 @@ namespace EffectiveLayers
 
     struct Coefficients
     {
-        Coefficients(double c1, double c2, double c3, double c4);
         double C1;
         double C2;
         double C3;

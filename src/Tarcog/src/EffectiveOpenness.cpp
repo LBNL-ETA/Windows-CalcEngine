@@ -4,24 +4,6 @@
 
 namespace EffectiveLayers
 {
-    ShadeOpenness::ShadeOpenness(double dl, double dr, double dtop, double dbot) :
-        Dl(dl), Dr(dr), Dtop(dtop), Dbot(dbot)
-    {}
-
-    EffectiveOpenness::EffectiveOpenness(const double effectiveFrontThermalOpennessArea,
-                                         const double al,
-                                         const double ar,
-                                         const double atop,
-                                         const double abot,
-                                         const double permeabilityFactor) :
-        EffectiveFrontThermalOpennessArea(effectiveFrontThermalOpennessArea),
-        Al(al),
-        Ar(ar),
-        Atop(atop),
-        Abot(abot),
-        PermeabilityFactor(permeabilityFactor)
-    {}
-
     bool isClosed(const EffectiveOpenness & effectiveOpenness)
     {
         return effectiveOpenness.EffectiveFrontThermalOpennessArea == 0.0
@@ -48,10 +30,6 @@ namespace EffectiveLayers
     {
         return m_PermeabilityFactor;
     }
-
-    Coefficients::Coefficients(double c1, double c2, double c3, double c4) :
-        C1(c1), C2(c2), C3(c3), C4(c4)
-    {}
 
     EffectiveVenetian::EffectiveVenetian(double width,
                                          double height,
