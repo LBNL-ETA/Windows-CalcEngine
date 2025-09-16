@@ -53,11 +53,8 @@ protected:
 
         EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
-
         EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
-          windowWidth, windowHeight, matThickness, geometry, openness};
+          matThickness, geometry, openness};
 
         // From unit test
         auto Ef = 0.5564947806702053;
@@ -88,16 +85,11 @@ protected:
         // From unit test
         aLayer2->setSolarHeatGain(0.08669346, solarRadiation);
 
+        auto windowWidth = 1.0;
+        auto windowHeight = 1.0;
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aLayer1, GapLayer1, aLayer2});
-
-        // Alternative option of adding layers.
-        // aIGU.addLayer(aLayer1);
-        // aIGU.addLayer(GapLayer1);
-        // aIGU.addLayer(aLayer2);
-        // aIGU.addLayer(GapLayer2);
-        // aIGU.addLayer(aLayer3);
 
         /////////////////////////////////////////////////////////
         // System

@@ -6,7 +6,7 @@
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
 #include "SupportPillarMeasured.hpp"
-#include "EffectiveOpenness.hpp"
+#include "EffectiveMultipliers.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 
 namespace Tarcog::ISO15099::Layers
@@ -121,7 +121,7 @@ namespace Tarcog::ISO15099::Layers
 
     SolidLayer shading(double thickness,
                        double conductivity,
-                       const EffectiveLayers::EffectiveOpenness & effectiveOpenness,
+                       const EffectiveLayers::EffectiveMultipliers & effectiveOpenness,
                        double frontEmissivity,
                        double frontIRTransmittance,
                        double backEmissivity,
@@ -137,17 +137,15 @@ namespace Tarcog::ISO15099::Layers
                          backIRTransmittance);
         }
 
-        return std::make_shared<CIGUShadeLayer>(
+        auto layer = std::make_shared<CIGUShadeLayer>(
           thickness,
           conductivity,
-          CShadeOpenings(effectiveOpenness.Atop,
-                         effectiveOpenness.Abot,
-                         effectiveOpenness.Al,
-                         effectiveOpenness.Ar,
-                         effectiveOpenness.EffectiveFrontThermalOpennessArea,
-                         effectiveOpenness.PermeabilityFactor),
           std::make_shared<Surface>(frontEmissivity, frontIRTransmittance),
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
+
+        layer->assignEffectiveMultipliers(effectiveOpenness);
+
+        return layer;
     }
 
     ShadeLayer sealedLayer(double thickness,
@@ -160,7 +158,6 @@ namespace Tarcog::ISO15099::Layers
         return std::make_shared<CIGUShadeLayer>(
           thickness,
           conductivity,
-          CShadeOpenings(),
           std::make_shared<Surface>(frontEmissivity, frontIRTransmittance),
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
     }

@@ -59,7 +59,7 @@ private:
         const FenestrationCommon::Venetian::Geometry venetianGeometry{0.0508, 0.012, 0.0, 0.0};
 
         EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
-          windowWidth, windowHeight, matThickness, venetianGeometry};
+          matThickness, venetianGeometry};
 
         // From window
         auto Ef = 0.762609422207;

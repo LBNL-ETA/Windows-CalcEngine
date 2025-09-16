@@ -51,11 +51,8 @@ protected:
 
         EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
-
         EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
-          windowWidth, windowHeight, thickness_31111, geometry, openness};
+          thickness_31111, geometry, openness};
 
         auto Ef = 0.640892;
         auto Eb = 0.623812;
@@ -84,6 +81,8 @@ protected:
 
         aLayer2->setSolarHeatGain(0.034677, solarRadiation);
 
+        constexpr auto windowWidth = 1.0;
+        constexpr auto windowHeight = 1.0;
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aLayer1, GapLayer1, aLayer2});
