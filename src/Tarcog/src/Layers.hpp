@@ -3,7 +3,7 @@
 #include <memory>
 #include <WCEGases.hpp>
 
-#include "EffectiveOpenness.hpp"
+#include "EffectiveMultipliers.hpp"
 #include "TarcogConstants.hpp"
 #include "SupportPillar.hpp"
 #include "SupportPillarMeasured.hpp"
@@ -31,8 +31,8 @@ namespace Tarcog::ISO15099
 
         SolidLayer shading(double thickness,
                            double conductivity,
-                           const EffectiveLayers::EffectiveOpenness & effectiveOpenness =
-                             EffectiveLayers::EffectiveOpenness(0, 0, 0, 0, 0, 0),
+                           const EffectiveLayers::EffectiveMultipliers & effectiveOpenness =
+                             EffectiveLayers::EffectiveMultipliers{0, 0, 0, 0, 0, 0},
                            double frontEmissivity = 0.84,
                            double frontIRTransmittance = 0.0,
                            double backEmissivity = 0.84,

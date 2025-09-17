@@ -84,7 +84,7 @@ protected:
 
         EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerCommon effLayer{
-          windowWidth, windowHeight, shadeThickness, PermeabilityFactor, openness};
+          shadeThickness, PermeabilityFactor, openness};
 
         const auto Ef = 0.9;
         const auto Eb = 0.9;

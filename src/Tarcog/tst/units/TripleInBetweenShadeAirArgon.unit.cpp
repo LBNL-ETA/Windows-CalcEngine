@@ -59,11 +59,8 @@ protected:
 
         EffectiveLayers::ShadeOpenness openness{Aleft, Aright, Atop, Abot};
 
-        double windowWidth = 1;
-        double windowHeight = 1;
-
         EffectiveLayers::EffectiveLayerCommon effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor, openness};
+          shadeLayerThickness, PermeabilityFactor, openness};
 
         auto layer2 = Tarcog::ISO15099::Layers::shading(
           shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
@@ -96,6 +93,8 @@ protected:
         auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness, Gas1);
         ASSERT_TRUE(gap2 != nullptr);
 
+        double windowWidth = 1;
+        double windowHeight = 1;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
 

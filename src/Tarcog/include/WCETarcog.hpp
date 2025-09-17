@@ -28,7 +28,7 @@
 #include "../src/TarcogConstants.hpp"
 #include "../src/IGUEN673.hpp"
 #include "../src/PermeabilityFactor.hpp"
-#include "../src/EffectiveOpenness.hpp"
+#include "../src/EffectiveMultipliers.hpp"
 #include "../src/Frame.hpp"
 #include "../src/WindowVision.hpp"
 #include "../src/WholeWindow.hpp"

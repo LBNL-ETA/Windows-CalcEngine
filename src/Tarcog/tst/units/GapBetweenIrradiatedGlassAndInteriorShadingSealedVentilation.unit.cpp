@@ -71,7 +71,7 @@ protected:
         const auto dbot{0.0};
         EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
         EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
-          windowWidth, windowHeight, thickness_31111, geometry, openness};
+          thickness_31111, geometry, openness};
 
         auto Ef = 0.640892;
         auto Eb = 0.623812;
