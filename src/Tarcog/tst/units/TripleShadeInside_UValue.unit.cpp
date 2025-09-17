@@ -72,24 +72,20 @@ protected:
         gapThickness = 0.0127;
         auto GapLayer2 = Tarcog::ISO15099::Layers::gap(gapThickness);
 
-        const auto shadeLayerConductance = 160.0;
+        constexpr auto shadeLayerConductance = 160.0;
         // const auto shadeThickness = 1.000000e-04;
-        const auto shadeThickness = 0.0006;
+        constexpr auto shadeThickness = 0.0006;
 
-        const auto dl{0.0};
-        const auto dr{0.0};
-        const auto dtop{0.0};
-        const auto dbot{0.0};
-        const auto PermeabilityFactor = 0.3;   // fraction
+        constexpr auto PermeabilityFactor = 0.3;   // fraction
 
-        EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
+        EffectiveLayers::ShadeOpenness openness{.Dl = 0.0, .Dr = 0.0, .Dtop = 0.0, .Dbot = 0.0};
         EffectiveLayers::EffectiveLayerCommon effLayer{
           shadeThickness, PermeabilityFactor, openness};
 
-        const auto Ef = 0.9;
-        const auto Eb = 0.9;
-        const auto Tirf = 0;
-        const auto Tirb = 0;
+        constexpr auto Ef = 0.9;
+        constexpr auto Eb = 0.9;
+        constexpr auto Tirf = 0;
+        constexpr auto Tirb = 0;
 
         auto aLayer3 = Tarcog::ISO15099::Layers::shading(shadeThickness,
                                                          shadeLayerConductance,
