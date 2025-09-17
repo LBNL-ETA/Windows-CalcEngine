@@ -73,7 +73,7 @@ namespace Tarcog::ISO15099 {
             effectiveMultipliers.Mtop * width,
             effectiveMultipliers.Mbot * width,
             effectiveMultipliers.Mleft * height,
-            effectiveMultipliers.Mrigh * height,
+            effectiveMultipliers.Mright * height,
             effectiveMultipliers.Mfront * width * height,
             effectiveMultipliers.PermeabilityFactor
         };

@@ -41,7 +41,7 @@ namespace EffectiveLayers {
 
         //! \var Mright
         //! \brief Multiplier of the right side openness where the air is flowing between the gaps [-]
-        double Mrigh;
+        double Mright;
 
         //! \var Mtop
         //! \brief Multiplier of the top side openness where the air is flowing between the gaps [-]

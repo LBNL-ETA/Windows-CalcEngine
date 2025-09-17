@@ -5,7 +5,7 @@
 namespace EffectiveLayers {
     bool isClosed(const EffectiveMultipliers &effectiveOpenness) {
         return effectiveOpenness.Mfront == 0.0
-               && effectiveOpenness.Mleft == 0.0 && effectiveOpenness.Mrigh == 0.0
+               && effectiveOpenness.Mleft == 0.0 && effectiveOpenness.Mright == 0.0
                && effectiveOpenness.Mtop == 0.0 && effectiveOpenness.Mbot == 0.0
                && effectiveOpenness.PermeabilityFactor == 0.0;
     }
