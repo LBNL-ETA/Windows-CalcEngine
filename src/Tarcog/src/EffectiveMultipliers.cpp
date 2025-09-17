@@ -14,9 +14,9 @@ namespace EffectiveLayers {
                                    const ShadeOpenness &openness,
                                    const Coefficients &coefficients,
                                    double permeabilityFactor) : m_Thickness(thickness),
-                                                                m_ShadeOpenness(
+                                                                m_ShadeOpenness{
                                                                     openness.Dl, openness.Dr, openness.Dtop,
-                                                                    openness.Dbot),
+                                                                    openness.Dbot},
                                                                 coefficients(coefficients),
                                                                 m_PermeabilityFactor(permeabilityFactor) {
     }
