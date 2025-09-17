@@ -7,26 +7,27 @@ using Tarcog::ISO15099::CIGUSolidLayer;
 using Tarcog::ISO15099::CIGUGapLayer;
 using Tarcog::ISO15099::CSingleSystem;
 
-class TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap : public testing::Test {
-private:
+class TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap : public testing::Test
+{
     std::unique_ptr<CSingleSystem> m_TarcogSystem;
 
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
 
-        auto outdoorAirTemperature = 298.15; // Kelvins
-        auto outdoorAirSpeed = 2.75; // meters per second
-        auto tSky = outdoorAirTemperature; // Kelvins
-        auto solarRadiation = 1000.0;
+        constexpr auto outdoorAirTemperature = 298.15;   // Kelvins
+        constexpr auto outdoorAirSpeed = 2.75;           // meters per second
+        constexpr auto tSky = outdoorAirTemperature;     // Kelvins
+        constexpr auto solarRadiation = 1000.0;
         auto Outdoor =
-                Tarcog::ISO15099::Environments::outdoor(outdoorAirTemperature,
-                                                        outdoorAirSpeed,
-                                                        solarRadiation,
-                                                        tSky,
-                                                        Tarcog::ISO15099::SkyModel::AllSpecified);
+          Tarcog::ISO15099::Environments::outdoor(outdoorAirTemperature,
+                                                  outdoorAirSpeed,
+                                                  solarRadiation,
+                                                  tSky,
+                                                  Tarcog::ISO15099::SkyModel::AllSpecified);
         ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
@@ -34,7 +35,7 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 298.15;
+        constexpr auto roomTemperature = 298.15;
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
@@ -42,49 +43,46 @@ protected:
         /// IGU
         /////////////////////////////////////////////////////////
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
+        constexpr auto windowWidth = 1.0;
+        constexpr auto windowHeight = 1.0;
 
-        const auto solidLayerThickness = 0.003048; // [m]
-        const auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.003048;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
         auto solidLayer =
-                Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         solidLayer->setSolarHeatGain(0.04, solarRadiation);
         ASSERT_TRUE(solidLayer != nullptr);
 
-        auto gapThickness = 0.001;
+        constexpr auto gapThickness = 0.001;
         auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gapLayer != nullptr);
 
-        auto shadeLayerConductance = 0.12;
+        constexpr auto shadeLayerConductance = 0.12;
         // make cell geometry
-        const auto thickness_31111{0.00023};
+        constexpr auto thickness_31111{0.00023};
 
-        const FenestrationCommon::Perforated::Geometry geometry{
-            FenestrationCommon::Perforated::Type::Circular, 0.00169, 0.00169, 0.00116, 0.00116
-        };
+        constexpr FenestrationCommon::Perforated::Geometry geometry{
+          .type = FenestrationCommon::Perforated::Type::Circular,
+          .SpacingX = 0.00169,
+          .SpacingY = 0.00169,
+          .DimensionX = 0.00116,
+          .DimensionY = 0.00116};
 
-        const auto dl{0.0};
-        const auto dr{0.0};
-        const auto dtop{0.0};
-        const auto dbot{0.0};
-        EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
-        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
-            thickness_31111, geometry, openness
-        };
+        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{thickness_31111,
+                                                                           geometry};
 
-        auto Ef = 0.640892;
-        auto Eb = 0.623812;
-        auto Tirf = 0.257367;
-        auto Tirb = 0.257367;
+        constexpr auto Ef = 0.640892;
+        constexpr auto Eb = 0.623812;
+        constexpr auto Tirf = 0.257367;
+        constexpr auto Tirb = 0.257367;
         auto shadeLayer =
-                Tarcog::ISO15099::Layers::shading(effectiveLayerPerforated.effectiveThickness(),
-                                                  shadeLayerConductance,
-                                                  effectiveLayerPerforated.getEffectiveOpenness(),
-                                                  Ef,
-                                                  Tirf,
-                                                  Eb,
-                                                  Tirb);
+          Tarcog::ISO15099::Layers::shading(effectiveLayerPerforated.effectiveThickness(),
+                                            shadeLayerConductance,
+                                            effectiveLayerPerforated.getEffectiveOpenness(),
+                                            Ef,
+                                            Tirf,
+                                            Eb,
+                                            Tirb);
         shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 
@@ -102,73 +100,80 @@ protected:
     }
 
 public:
-    [[nodiscard]] CIGUSolidLayer *GetFirstLayer() const {
+    [[nodiscard]] CIGUSolidLayer * GetFirstLayer() const
+    {
         return m_TarcogSystem->getSolidLayers()[0].get();
-    };
+    }
 
-    [[nodiscard]] CIGUGapLayer *GetGap() const {
+    [[nodiscard]] CIGUGapLayer * GetGap() const
+    {
         return m_TarcogSystem->getGapLayers()[0].get();
-    };
+    }
 
-    [[nodiscard]] CIGUSolidLayer *GetSecondLayer() const {
+    [[nodiscard]] CIGUSolidLayer * GetSecondLayer() const
+    {
         return m_TarcogSystem->getSolidLayers()[1].get();
-    };
+    }
 };
 
 TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
-       GapLayerSurfaceIRFlow) {
+       GapLayerSurfaceIRFlow)
+{
     SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
 
-    auto aLayer = GetGap();
+    auto *const aLayer = GetGap();
 
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
+    // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Front);
-    auto backIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Back);
+    const auto frontIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Front);
+    const auto backIRRadiationFlow = aLayer->J(FenestrationCommon::Side::Back);
     EXPECT_NEAR(527.30128845962918, frontIRRadiationFlow, 1e-4);
     EXPECT_NEAR(536.27659224846661, backIRRadiationFlow, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, GainEnergy) {
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, GainEnergy)
+{
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy");
 
-    auto aLayer = GetGap();
+    auto *const aLayer = GetGap();
 
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
+    // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto gainEnergy = aLayer->getGainFlow();
+    const auto gainEnergy = aLayer->getGainFlow();
     EXPECT_NEAR(-0.043906661052657385, gainEnergy, 1e-4);
 }
 
 TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
-       FirstLayerSurfaceTemperatures) {
+       FirstLayerSurfaceTemperatures)
+{
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
-    auto aLayer = GetFirstLayer();
+    auto *const aLayer = GetFirstLayer();
 
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
+    // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
+    const auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
+    const auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(309.64133477058732, frontTemperature, 1e-4);
     EXPECT_NEAR(310.29309127306482, backTemperature, 1e-4);
 }
 
-TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, GapTemperatures) {
+TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, GapTemperatures)
+{
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures");
 
-    auto aLayer = GetGap();
+    auto *const aLayer = GetGap();
 
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
+    // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
-    auto layerTemperature = aLayer->averageLayerTemperature();
-    auto averageTemperature = aLayer->averageSurfaceTemperature();
+    const auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
+    const auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
+    const auto layerTemperature = aLayer->averageLayerTemperature();
+    const auto averageTemperature = aLayer->averageSurfaceTemperature();
     EXPECT_NEAR(310.29309127306482, frontTemperature, 1e-4);
     EXPECT_NEAR(317.08493410641256, backTemperature, 1e-4);
     EXPECT_NEAR(313.68860944014904, layerTemperature, 1e-4);
@@ -176,16 +181,17 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, G
 }
 
 TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
-       SecondLayerSurfaceTemperatures) {
+       SecondLayerSurfaceTemperatures)
+{
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
-    auto aLayer = GetSecondLayer();
+    auto *const aLayer = GetSecondLayer();
 
-    // Airflow iterations are set to 1e-4 and it cannot exceed that precision
+    // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
     ASSERT_TRUE(aLayer != nullptr);
-    auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
-    auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
+    const auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
+    const auto backTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Back);
     EXPECT_NEAR(317.08493410641256, frontTemperature, 1e-4);
     EXPECT_NEAR(317.19026784285921, backTemperature, 1e-4);
 }
