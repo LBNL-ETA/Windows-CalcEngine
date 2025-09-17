@@ -7,7 +7,6 @@
 
 class TestDoubleClearIndoorShadeAir : public testing::Test
 {
-private:
     std::unique_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
@@ -16,10 +15,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 255.15;   // Kelvins
-        auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;             // Kelvins
-        auto solarRadiation = 0.0;
+        constexpr auto airTemperature = 255.15;   // Kelvins
+        constexpr auto airSpeed = 5.5;            // meters per second
+        constexpr auto tSky = 255.15;             // Kelvins
+        constexpr auto solarRadiation = 0.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -30,7 +29,7 @@ protected:
         /// Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 295.15;
+        constexpr auto roomTemperature = 295.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
@@ -38,23 +37,19 @@ protected:
         /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.005715;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.005715;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
 
         auto layer1 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(layer1 != nullptr);
 
         auto layer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
-        auto shadeLayerThickness = 0.01;
-        auto shadeLayerConductance = 160.0;
-        auto dtop = 0.1;
-        auto dbot = 0.1;
-        auto dleft = 0.1;
-        auto dright = 0.1;
-        auto PermeabilityFactor = 0.2;
+        constexpr auto shadeLayerThickness = 0.01;
+        constexpr auto shadeLayerConductance = 160.0;
+        constexpr auto PermeabilityFactor = 0.2;
 
-        EffectiveLayers::ShadeOpenness openness{dleft, dright, dtop, dbot};
+        EffectiveLayers::ShadeOpenness openness{.Dl = 0.1, .Dr = 0.1, .Dtop = 0.1, .Dbot = 0.1};
 
         EffectiveLayers::EffectiveLayerCommon effectiveLayer{
           shadeLayerThickness, PermeabilityFactor, openness};
@@ -64,7 +59,7 @@ protected:
 
         ASSERT_TRUE(layer3 != nullptr);
 
-        auto gapThickness = 0.0127;
+        constexpr auto gapThickness = 0.0127;
         auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gap1 != nullptr);
 
