@@ -2,13 +2,12 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "WCEGases.hpp"
-#include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+#include <WCEGases.hpp>
+#include <WCETarcog.hpp>
+#include <WCECommon.hpp>
 
 class TestDoubleOutsidePerforatedShade_SHGC : public testing::Test
 {
-private:
     std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
 
 protected:
@@ -17,10 +16,10 @@ protected:
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 305.15;   // Kelvins
-        auto airSpeed = 2.75;           // meters per second
-        auto tSky = 305.15;             // Kelvins
-        auto solarRadiation = 783.0;
+        constexpr auto airTemperature = 305.15;   // Kelvins
+        constexpr auto airSpeed = 2.75;           // meters per second
+        constexpr auto tSky = 305.15;             // Kelvins
+        constexpr auto solarRadiation = 783.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -30,8 +29,7 @@ protected:
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
-
-        auto roomTemperature = 297.15;
+        constexpr auto roomTemperature = 297.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
@@ -39,29 +37,26 @@ protected:
         /////////////////////////////////////////////////////////
         /// IGU
         /////////////////////////////////////////////////////////
-        auto shadeLayerConductance = 0.12;
+        constexpr auto shadeLayerConductance = 0.12;
 
         // make cell geometry
-        const auto thickness_31111{0.00023};
+        constexpr auto thickness_31111{0.00023};
 
-        const FenestrationCommon::Perforated::Geometry aGeometry{
-          FenestrationCommon::Perforated::Type::Circular, 0.00169, 0.00169, 0.00116, 0.00116};
+        constexpr FenestrationCommon::Perforated::Geometry aGeometry{
+          .type = FenestrationCommon::Perforated::Type::Circular,
+          .SpacingX = 0.00169,
+          .SpacingY = 0.00169,
+          .DimensionX = 0.00116,
+          .DimensionY = 0.00116};
 
-        const auto dl{0.0};
-        const auto dr{0.0};
-        const auto dtop{0.0};
-        const auto dbot{0.0};
-
-        EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
-
-        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
-          thickness_31111, aGeometry, openness};
+        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{thickness_31111,
+                                                                           aGeometry};
 
 
-        auto Ef = 0.640892;
-        auto Eb = 0.623812;
-        auto Tirf = 0.257367;
-        auto Tirb = 0.257367;
+        constexpr auto Ef = 0.640892;
+        constexpr auto Eb = 0.623812;
+        constexpr auto Tirf = 0.257367;
+        constexpr auto Tirb = 0.257367;
 
         auto aLayer1 =
           Tarcog::ISO15099::Layers::shading(effectiveLayerPerforated.effectiveThickness(),
@@ -74,12 +69,12 @@ protected:
 
         aLayer1->setSolarHeatGain(0.106659, solarRadiation);
 
-        auto gapThickness = 0.0127;
+        constexpr auto gapThickness = 0.0127;
         auto GapLayer1 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(GapLayer1 != nullptr);
 
-        auto solidLayerThickness = 0.003048;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.003048;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
         auto aLayer2 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(aLayer2 != nullptr);
 
@@ -92,13 +87,6 @@ protected:
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aLayer1, GapLayer1, aLayer2});
 
-        // Alternative option of adding layers.
-        // aIGU.addLayer(aLayer1);
-        // aIGU.addLayer(GapLayer1);
-        // aIGU.addLayer(aLayer2);
-        // aIGU.addLayer(GapLayer2);
-        // aIGU.addLayer(aLayer3);
-
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
@@ -107,36 +95,36 @@ protected:
     }
 
 public:
-    [[nodiscard]] Tarcog::ISO15099::CSystem * GetSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSystem & GetSystem() const
     {
-        return m_TarcogSystem.get();
-    };
+        return *m_TarcogSystem;
+    }
 };
 
 TEST_F(TestDoubleOutsidePerforatedShade_SHGC, Test1)
 {
     SCOPED_TRACE("Begin Test: Outside perforated shade.");
 
-    const auto aSystem = GetSystem();
+    auto aSystem = GetSystem();
 
-    const auto uval = aSystem->getUValue();
+    const auto uval = aSystem.getUValue();
     EXPECT_NEAR(3.193057, uval, 1e-6);
 
     const auto effectiveLayerConductivities{
-      aSystem->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
+      aSystem.getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue)};
 
-    const std::vector<double> correctEffectConductivites{0.115592, 1};
+    const std::vector correctEffectConductivites{0.115592, 1.0};
     EXPECT_EQ(correctEffectConductivites.size(), effectiveLayerConductivities.size());
     for(size_t i = 0u; i < correctEffectConductivites.size(); ++i)
     {
         EXPECT_NEAR(correctEffectConductivites[i], effectiveLayerConductivities[i], 1e-6);
     }
 
-    const auto totSol{0.315236};
-    const auto shgc{aSystem->getSHGC(totSol)};
+    constexpr auto totSol{0.315236};
+    const auto shgc{aSystem.getSHGC(totSol)};
     EXPECT_NEAR(0.348647, shgc, 1e-6);
 
     const auto heatflow =
-      aSystem->getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
+      aSystem.getHeatFlow(Tarcog::ISO15099::System::SHGC, Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(-51.705046, heatflow, 1e-6);
 }
