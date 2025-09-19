@@ -5,43 +5,39 @@
 namespace Tarcog::ISO15099
 {
     ThermochromicSurfaceProps::ThermochromicSurfaceProps(
-      const std::vector<FenestrationCommon::TableValue> & e,
-      const std::vector<FenestrationCommon::TableValue> & t) :
-        emissivity_curve(e), transmittance_curve(t)
+      const std::vector<FenestrationCommon::TableValue> & emissivity_by_T,
+      const std::vector<FenestrationCommon::TableValue> & transmittance_by_T) :
+        emissivity_curve(emissivity_by_T), transmittance_curve(transmittance_by_T)
     {}
 
-    double emissivity(const SurfaceProps & p, double T)
+    template<auto ConstantMember, auto CurveMember>
+    double eval_prop(const SurfaceProps & props, double temperature)
     {
-        return std::visit(
-          [&](const auto & s) -> double {
-              using S = std::decay_t<decltype(s)>;
-              if constexpr(std::is_same_v<S, ConstantSurfaceProps>)
-              {
-                  return s.emissivity;
-              }
-              else
-              {
-                  return s.emissivity_curve.value(T);
-              }
-          },
-          p);
+        struct Visitor
+        {
+            double operator()(const ConstantSurfaceProps & constant) const
+            {
+                return constant.*ConstantMember;
+            }
+            double operator()(const ThermochromicSurfaceProps & thermo) const
+            {
+                return (thermo.*CurveMember).value(temperature);
+            }
+            double temperature;
+        };
+        return std::visit(Visitor{temperature}, props);
     }
 
-    double transmittance(const SurfaceProps & p, double T)
+    double emissivity(const SurfaceProps & props, double temperature)
     {
-        return std::visit(
-          [&](const auto & s) -> double {
-              using S = std::decay_t<decltype(s)>;
-              if constexpr(std::is_same_v<S, ConstantSurfaceProps>)
-              {
-                  return s.transmittance;
-              }
-              else
-              {
-                  return s.transmittance_curve.value(T);
-              }
-          },
-          p);
+        return eval_prop<&ConstantSurfaceProps::emissivity,
+                         &ThermochromicSurfaceProps::emissivity_curve>(props, temperature);
+    }
+
+    double transmittance(const SurfaceProps & props, double temperature)
+    {
+        return eval_prop<&ConstantSurfaceProps::transmittance,
+                         &ThermochromicSurfaceProps::transmittance_curve>(props, temperature);
     }
 
 }   // namespace Tarcog::ISO15099

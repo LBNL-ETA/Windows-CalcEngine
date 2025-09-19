@@ -24,7 +24,7 @@ namespace Tarcog::ISO15099
 
     using SurfaceProps = std::variant<ConstantSurfaceProps, ThermochromicSurfaceProps>;
 
-    double emissivity(const SurfaceProps & p, double T);
-    double transmittance(const SurfaceProps & p, double T);
+    double emissivity(const SurfaceProps & props, double temperature);
+    double transmittance(const SurfaceProps & props, double temperature);
 
 }   // namespace Tarcog::ISO15099
