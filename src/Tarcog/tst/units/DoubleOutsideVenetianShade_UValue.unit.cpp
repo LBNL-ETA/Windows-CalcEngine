@@ -48,7 +48,8 @@ protected:
                                                                    .CurvatureRadius =
                                                                      0.0331305656433105};
 
-        EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{matThickness, aGeometry};
+        const auto effectiveVenetian{
+          EffectiveLayers::makeHorizontalVenetianValues(matThickness, aGeometry)};
 
         constexpr auto Ef = 0.5564947806702053;
         constexpr auto Eb = 0.5564947806702053;

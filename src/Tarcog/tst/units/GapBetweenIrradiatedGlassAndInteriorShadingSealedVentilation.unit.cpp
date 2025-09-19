@@ -65,13 +65,8 @@ protected:
         const FenestrationCommon::Perforated::Geometry geometry{
           FenestrationCommon::Perforated::Type::Circular, 0.00169, 0.00169, 0.00116, 0.00116};
 
-        const auto dl{0.0};
-        const auto dr{0.0};
-        const auto dtop{0.0};
-        const auto dbot{0.0};
-        EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
-        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{
-          thickness_31111, geometry, openness};
+        const auto effectiveLayerPerforated{
+          EffectiveLayers::makePerforatedValues(thickness_31111, geometry)};
 
         auto Ef = 0.640892;
         auto Eb = 0.623812;

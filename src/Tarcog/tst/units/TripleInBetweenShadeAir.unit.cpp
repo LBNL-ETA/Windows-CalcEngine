@@ -58,11 +58,12 @@ protected:
 
         EffectiveLayers::ShadeOpenness openness{Aleft, Aright, Atop, Abot};
 
-        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
-          shadeLayerThickness, PermeabilityFactor, openness};
+        const auto effectiveLayer{
+          EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor, openness)};
 
-        auto aLayer2 = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
+        auto aLayer2 = Tarcog::ISO15099::Layers::shading(effectiveLayer.effectiveThickness(),
+                                                         shadeLayerConductance,
+                                                         effectiveLayer.getEffectiveOpenness());
 
         ASSERT_TRUE(aLayer2 != nullptr);
 

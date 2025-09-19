@@ -50,11 +50,8 @@ protected:
         constexpr auto tir = 0.10916;
         constexpr auto PermeabilityFactor = 0.049855;
 
-        constexpr EffectiveLayers::ShadeOpenness openness{
-          .Dl = 0.0, .Dr = 0.0, .Dtop = 0.0, .Dbot = 0.0};
-
-        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
-          shadeLayerThickness, PermeabilityFactor, openness};
+        const auto effectiveLayer{
+          EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor)};
 
         const auto layer2 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
                                                               shadeLayerConductance,

@@ -50,10 +50,12 @@ protected:
 
         EffectiveLayers::ShadeOpenness openness{dleft, dright, dtop, dbot};
 
-        EffectiveLayers::EffectiveLayerCommon effectiveLayer{shadeLayerThickness, PermeabilityFactor, openness};
+        const auto effectiveLayer{
+          EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor, openness)};
 
-        auto layer1 = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
+        auto layer1 = Tarcog::ISO15099::Layers::shading(effectiveLayer.effectiveThickness(),
+                                                        shadeLayerConductance,
+                                                        effectiveLayer.getEffectiveOpenness());
 
         ASSERT_TRUE(layer1 != nullptr);
 

@@ -60,11 +60,13 @@ protected:
         constexpr auto PermeabilityFactor = 0.2;
 
         EffectiveLayers::ShadeOpenness openness{.Dl = 0.1, .Dr = 0.1, .Dtop = 0.1, .Dbot = 0.1};
-        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
-          shadeLayerThickness, PermeabilityFactor, openness};
+        const auto effectiveLayer{
+          EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor, openness)};
 
-        auto shadeLayer = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
+
+        auto shadeLayer = Tarcog::ISO15099::Layers::shading(effectiveLayer.effectiveThickness(),
+                                                            shadeLayerConductance,
+                                                            effectiveLayer.getEffectiveOpenness());
         shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 
@@ -125,7 +127,7 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
 {
     SCOPED_TRACE("Begin Test: Test Ventilated Gap Layer - Intial Airflow");
 
-    auto *aLayer = GetGap1();
+    auto * aLayer = GetGap1();
 
     ASSERT_TRUE(aLayer != nullptr);
     auto gainEnergy = aLayer->getGainFlow();
@@ -142,7 +144,7 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
-    const auto *aLayer = GetFirstLayer();
+    const auto * aLayer = GetFirstLayer();
 
     // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
@@ -158,7 +160,7 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
-    const auto *aLayer = GetSecondLayer();
+    const auto * aLayer = GetSecondLayer();
 
     ASSERT_TRUE(aLayer != nullptr);
     const auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
@@ -172,7 +174,7 @@ TEST_F(TestGapBetweenIrradiatedGlassPanesWithIntegratedShadingForcedVentilation,
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
-    const auto *aLayer = GetThirdLayer();
+    const auto * aLayer = GetThirdLayer();
 
     ASSERT_TRUE(aLayer != nullptr);
     const auto frontTemperature = aLayer->surfaceTemperature(FenestrationCommon::Side::Front);
