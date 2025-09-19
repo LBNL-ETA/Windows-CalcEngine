@@ -100,7 +100,7 @@ namespace EffectiveLayers {
         const FenestrationCommon::LouveredShutter::Geometry &geometry,
         const ShadeOpenness &openness) : EffectiveLayer(geometry.SlatThickness,
                                                         openness,
-                                                        {1.385e-01, 8.805e-01, 0.0580255, 1.225e-01},
+                                                        {0.12, 0.82, 0.059, 0.11},
                                                         ThermalPermeability::LouveredShutter::permeabilityFactor(
                                                             geometry)),
                                          m_Geometry(geometry) {

@@ -71,6 +71,11 @@ namespace EffectiveLayers {
     public:
         virtual ~EffectiveLayer() = default;
 
+        EffectiveLayer(const EffectiveLayer&) = default;
+        EffectiveLayer& operator=(const EffectiveLayer&) = default;
+        EffectiveLayer(EffectiveLayer&&) = default;
+        EffectiveLayer& operator=(EffectiveLayer&&) = default;
+
         EffectiveLayer(
             double thickness,
             const ShadeOpenness &openness,
