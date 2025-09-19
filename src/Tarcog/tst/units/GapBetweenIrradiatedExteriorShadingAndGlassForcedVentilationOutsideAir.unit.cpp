@@ -20,7 +20,7 @@ protected:
         /////////////////////////////////////////////////////////
 
         constexpr auto outdoorAirTemperature = 298.15;   // Kelvins
-        constexpr auto outdoorAirSpeed = 2.75;            // meters per second
+        constexpr auto outdoorAirSpeed = 2.75;           // meters per second
         constexpr auto tSky = outdoorAirTemperature;     // Kelvins
         constexpr auto solarRadiation = 1000.0;
         auto Outdoor =
@@ -58,8 +58,8 @@ protected:
           .DimensionX = 0.00116,
           .DimensionY = 0.00116};
 
-        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{thickness_31111,
-                                                                           geometry};
+        const auto effectiveLayerPerforated{
+          EffectiveLayers::makePerforatedValues(thickness_31111, geometry)};
 
         constexpr auto Ef = 0.640892;
         constexpr auto Eb = 0.623812;

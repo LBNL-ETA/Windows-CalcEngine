@@ -48,15 +48,15 @@ protected:
         auto shadeLayerConductance = 160.0;
         auto PermeabilityFactor = 0.15;
 
-        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
-          shadeLayerThickness, PermeabilityFactor};
+        const auto effectiveLayer{
+          EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor)};
 
         constexpr auto frontEmissivity = 0.9;
         constexpr auto frontIRTransmittance = 0.0;
         constexpr auto backEmissivity = 0.9;
         constexpr auto backIRTransmittance = 0.0;
 
-        auto layer2 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
+        auto layer2 = Tarcog::ISO15099::Layers::shading(effectiveLayer.effectiveThickness(),
                                                         shadeLayerConductance,
                                                         effectiveLayer.getEffectiveOpenness(),
                                                         frontEmissivity,

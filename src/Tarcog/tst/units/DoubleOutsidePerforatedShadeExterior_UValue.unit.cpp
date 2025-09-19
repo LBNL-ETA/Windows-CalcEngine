@@ -50,8 +50,8 @@ protected:
           .DimensionX = 0.00116,
           .DimensionY = 0.00116};
 
-        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{thickness_31006,
-                                                                           aGeometry};
+        const auto effectiveLayerPerforated{
+          EffectiveLayers::makePerforatedValues(thickness_31006, aGeometry)};
 
         constexpr auto Ef = 0.752239525318;
         constexpr auto Eb = 0.752239525318;

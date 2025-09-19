@@ -11,7 +11,8 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer)
 
     const FenestrationCommon::Venetian::Geometry geometry{0.0508, 0.012, 0.0, 0.0};
 
-    EffectiveLayers::EffectiveHorizontalVenetian venetian{materialThickness, geometry};
+    const auto venetian =
+      EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry);
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
@@ -31,7 +32,8 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer1)
 
     const FenestrationCommon::Venetian::Geometry geometry{0.0508, 0.012, 0.0, 0.0};
 
-    EffectiveLayers::EffectiveHorizontalVenetian venetian{materialThickness, geometry};
+    const auto venetian =
+      EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry);
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
@@ -50,9 +52,10 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayerWithTopAndBotOpenn
     constexpr auto materialThickness{0.0001};   // m
     constexpr FenestrationCommon::Venetian::Geometry geometry{0.0148, 0.012, 0.0, 0.0};
 
-    EffectiveLayers::ShadeOpenness openness{0, 0, 0.01, 0.008};
+    const EffectiveLayers::ShadeOpenness openness{0, 0, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveHorizontalVenetian venetian{materialThickness, geometry, openness};
+    const auto venetian =
+      EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry, openness);
 
     EXPECT_NEAR(6.364e-4, venetian.effectiveThickness(), 1e-9);
 
@@ -68,9 +71,10 @@ TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpennes
     constexpr auto materialThickness{0.0001};   // m
     const FenestrationCommon::Venetian::Geometry geometry{0.0762, 0.012, 0.0, 0.0};
 
-    EffectiveLayers::ShadeOpenness openness{0, 0, 0.01, 0.008};
+    const EffectiveLayers::ShadeOpenness openness{0, 0, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveVerticalVenetian venetian{materialThickness, geometry, openness};
+    const auto venetian =
+      EffectiveLayers::makeVerticalVenetianValues(materialThickness, geometry, openness);
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
@@ -85,10 +89,10 @@ TEST(TestEffectiveLayers, TestEffectiveLayerCommon)
     SCOPED_TRACE("Begin Test: Effective layer common.");
 
     constexpr auto materialThickness{0.0001};   // m
-
     const auto permeabilityFactor{0.15};
 
-    EffectiveLayers::EffectiveLayerCommon common{materialThickness, permeabilityFactor};
+    const auto common = EffectiveLayers::makeCommonValues(
+      materialThickness, permeabilityFactor, EffectiveLayers::ShadeOpenness{0, 0, 0, 0});
 
     const auto effectiveThickness{common.effectiveThickness()};
 
@@ -105,9 +109,10 @@ TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpennes
     constexpr auto materialThickness{0.0001};   // m
     const FenestrationCommon::Venetian::Geometry geometry{0.0762, 0.012, 45.0, 0.0};
 
-    EffectiveLayers::ShadeOpenness openness{0, 0, 0.01, 0.008};
+    const EffectiveLayers::ShadeOpenness openness{0, 0, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveVerticalVenetian venetian{materialThickness, geometry, openness};
+    const auto venetian =
+      EffectiveLayers::makeVerticalVenetianValues(materialThickness, geometry, openness);
 
     const auto effectiveThickness{venetian.effectiveThickness()};
 
@@ -127,7 +132,8 @@ TEST(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
 
     const EffectiveLayers::ShadeOpenness openness{0.005, 0.004, 0.01, 0.008};
 
-    EffectiveLayers::EffectiveLayerPerforated perforated{materialThickness, geometry, openness};
+    const auto perforated =
+      EffectiveLayers::makePerforatedValues(materialThickness, geometry, openness);
 
     EXPECT_NEAR(6e-4, perforated.effectiveThickness(), 1e-9);
 
@@ -141,7 +147,7 @@ TEST(TestEffectiveLayer, TestLouveredShutterEffectiveOpenness)
     FenestrationCommon::LouveredShutter::Geometry geometry{
       .SlatWidth = 0.0889, .SlatThickness = 0.01, .SlatAngle = 87.0, .SlatSpacing = 0.0762};
 
-    EffectiveLayers::EffectiveLayerLouveredShutter louveredShutter{geometry};
+    const auto louveredShutter = EffectiveLayers::makeLouveredShutterValues(geometry);
 
     EXPECT_NEAR(0.00161029, louveredShutter.effectiveThickness(), 1e-8);
 
@@ -152,8 +158,8 @@ TEST(TestEffectiveLayer, TestLouveredShutterEffectiveOpenness)
 
 TEST(TestEffectiveLayers, RadiusFromRise)
 {
-    double curvature{23.88962765};
-    double slatWidth{14.8};
+    constexpr double curvature{23.88962765};
+    constexpr double slatWidth{14.8};
     auto test{ThermalPermeability::Venetian::calculateRise(curvature, slatWidth)};
     EXPECT_NEAR(1.175, test, 1e-6);
 }

@@ -36,8 +36,8 @@ protected:
         auto materialConductance = 160.0;
 
         FenestrationCommon::Venetian::Geometry geometry{0.05, 0.07, 45, 0.00};
-        EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
-          materialThickness, geometry};
+        const auto effectiveVenetian{
+          EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry)};
 
         auto shadingLayer = Layers::shading(effectiveVenetian.effectiveThickness(),
                                             materialConductance,

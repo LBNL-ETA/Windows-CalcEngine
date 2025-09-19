@@ -58,8 +58,8 @@ class DoubleClear_UValueEnvironmentVenetianInside : public testing::Test
         constexpr FenestrationCommon::Venetian::Geometry venetianGeometry{
           .SlatWidth = 0.0508, .SlatSpacing = 0.012, .SlatTiltAngle = 0.0, .CurvatureRadius = 0.0};
 
-        EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{matThickness,
-                                                                       venetianGeometry};
+        const auto effectiveVenetian{
+          EffectiveLayers::makeHorizontalVenetianValues(matThickness, venetianGeometry)};
 
         // From window
         constexpr auto Ef = 0.762609422207;

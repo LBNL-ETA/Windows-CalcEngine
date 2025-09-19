@@ -78,16 +78,14 @@ protected:
 
         constexpr auto PermeabilityFactor = 0.3;   // fraction
 
-        EffectiveLayers::ShadeOpenness openness{.Dl = 0.0, .Dr = 0.0, .Dtop = 0.0, .Dbot = 0.0};
-        EffectiveLayers::EffectiveLayerCommon effLayer{
-          shadeThickness, PermeabilityFactor, openness};
+        const auto effLayer{EffectiveLayers::makeCommonValues(shadeThickness, PermeabilityFactor)};
 
         constexpr auto Ef = 0.9;
         constexpr auto Eb = 0.9;
         constexpr auto Tirf = 0;
         constexpr auto Tirb = 0;
 
-        auto aLayer3 = Tarcog::ISO15099::Layers::shading(shadeThickness,
+        auto aLayer3 = Tarcog::ISO15099::Layers::shading(effLayer.effectiveThickness(),
                                                          shadeLayerConductance,
                                                          effLayer.getEffectiveOpenness(),
                                                          Ef,

@@ -53,8 +53,7 @@ protected:
 
         EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
 
-        EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
-          matThickness, geometry, openness};
+        const auto effectiveVenetian{EffectiveLayers::makeHorizontalVenetianValues(matThickness, geometry, openness)};
 
         // From unit test
         auto Ef = 0.5564947806702053;

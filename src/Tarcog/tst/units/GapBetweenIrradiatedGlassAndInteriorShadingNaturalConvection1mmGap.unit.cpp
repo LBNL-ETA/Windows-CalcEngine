@@ -68,8 +68,8 @@ protected:
           .DimensionX = 0.00116,
           .DimensionY = 0.00116};
 
-        EffectiveLayers::EffectiveLayerPerforated effectiveLayerPerforated{thickness_31111,
-                                                                           geometry};
+        const auto effectiveLayerPerforated{
+          EffectiveLayers::makePerforatedValues(thickness_31111, geometry)};
 
         constexpr auto Ef = 0.640892;
         constexpr auto Eb = 0.623812;
@@ -121,7 +121,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
 {
     SCOPED_TRACE("Begin Test: Test gap layer surface temperatures");
 
-    auto *const aLayer = GetGap();
+    auto * const aLayer = GetGap();
 
     // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
@@ -136,7 +136,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, G
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gain Energy");
 
-    auto *const aLayer = GetGap();
+    auto * const aLayer = GetGap();
 
     // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
@@ -150,7 +150,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Solid Temperatures");
 
-    auto *const aLayer = GetFirstLayer();
+    auto * const aLayer = GetFirstLayer();
 
     // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
@@ -165,7 +165,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap, G
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Gap Temperatures");
 
-    auto *const aLayer = GetGap();
+    auto * const aLayer = GetGap();
 
     // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 
@@ -185,7 +185,7 @@ TEST_F(TestGapBetweenIrradiatedGlassAndInteriorShadingNaturalConvection1mmGap,
 {
     SCOPED_TRACE("Begin Test: Test Forced Ventilated Gap Layer At Edge - Shade Temperatures");
 
-    auto *const aLayer = GetSecondLayer();
+    auto * const aLayer = GetSecondLayer();
 
     // Airflow iterations are set to 1e-4, and it cannot exceed that precision
 

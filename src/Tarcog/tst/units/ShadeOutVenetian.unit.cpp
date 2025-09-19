@@ -38,7 +38,8 @@ protected:
         FenestrationCommon::Venetian::Geometry geometry{
           .SlatWidth = 0.05, .SlatSpacing = 0.07, .SlatTiltAngle = 45, .CurvatureRadius = 0.00};
 
-        EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{materialThickness, geometry};
+        const auto effectiveVenetian{
+          EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry)};
 
         auto shadingLayer = Layers::shading(effectiveVenetian.effectiveThickness(),
                                             materialConductance,

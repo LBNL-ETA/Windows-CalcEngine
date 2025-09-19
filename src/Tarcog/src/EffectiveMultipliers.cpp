@@ -1,179 +1,154 @@
 #include <cmath>
+#include <algorithm>
 #include <WCECommon.hpp>
+
 #include "EffectiveMultipliers.hpp"
+#include "PermeabilityFactor.hpp"
 
-namespace EffectiveLayers {
-    bool isClosed(const EffectiveMultipliers &effectiveOpenness) {
-        return effectiveOpenness.Mfront == 0.0
-               && effectiveOpenness.Mleft == 0.0 && effectiveOpenness.Mright == 0.0
-               && effectiveOpenness.Mtop == 0.0 && effectiveOpenness.Mbot == 0.0
-               && effectiveOpenness.PermeabilityFactor == 0.0;
+namespace EffectiveLayers
+{
+    bool isClosed(const EffectiveMultipliers & effectiveOpenness)
+    {
+        using FenestrationCommon::isEqual;
+        return isEqual(effectiveOpenness.Mfront, 0.0) && isEqual(effectiveOpenness.Mleft, 0.0)
+               && isEqual(effectiveOpenness.Mright, 0.0) && isEqual(effectiveOpenness.Mtop, 0.0)
+               && isEqual(effectiveOpenness.Mbot, 0.0)
+               && isEqual(effectiveOpenness.PermeabilityFactor, 0.0);
     }
 
-    EffectiveLayer::EffectiveLayer(double thickness,
-                                   const ShadeOpenness &openness,
-                                   const Coefficients &coefficients,
-                                   double permeabilityFactor) : m_Thickness(thickness),
-                                                                m_ShadeOpenness{
-                                                                    openness.Dl, openness.Dr, openness.Dtop,
-                                                                    openness.Dbot},
-                                                                coefficients(coefficients),
-                                                                m_PermeabilityFactor(permeabilityFactor) {
+    EffectiveLayerProperties::EffectiveLayerProperties(const double thickness,
+                                                       const EffectiveMultipliers & openness,
+                                                       const Coefficients & coeffs) :
+        m_Thickness(thickness), m_Openness(openness), m_Coeffs(coeffs)
+    {}
+
+    EffectiveLayerProperties makeCommonValues(const double thickness,
+                                              const double permeabilityFactor,
+                                              const ShadeOpenness & openness) noexcept
+    {
+        constexpr Coefficients coeff{.C1 = 0.078, .C2 = 1.2, .C3 = 1.0, .C4 = 1.0};
+        const double Ah_eff = coeff.C1 * std::pow(permeabilityFactor, coeff.C2);
+        const EffectiveMultipliers mult{.Mfront = Ah_eff,
+                                        .Mleft = openness.Dl * coeff.C3,
+                                        .Mright = openness.Dr * coeff.C3,
+                                        .Mtop = openness.Dtop * coeff.C4,
+                                        .Mbot = openness.Dbot * coeff.C4,
+                                        .PermeabilityFactor = permeabilityFactor};
+        return {thickness, mult, coeff};
     }
 
-    double EffectiveLayer::permeabilityFactor() const {
-        return m_PermeabilityFactor;
+    EffectiveLayerProperties
+      makeHorizontalVenetianValues(const double thickness,
+                                   const FenestrationCommon::Venetian::Geometry & geometry,
+                                   const ShadeOpenness & openness) noexcept
+    {
+        constexpr Coefficients coeff{.C1 = 0.016, .C2 = -0.63, .C3 = 0.53, .C4 = 0.043};
+        const double permeabilityFactor =
+          ThermalPermeability::Venetian::permeabilityFactor(thickness, geometry);
+
+        const double tilt = FenestrationCommon::radians(geometry.SlatTiltAngle);
+        const double Ah_eff =
+          coeff.C1 * std::pow(permeabilityFactor * std::pow(std::cos(tilt), coeff.C2), coeff.C3);
+
+        const EffectiveMultipliers mult{.Mfront = Ah_eff,
+                                        .Mleft = 0.0,
+                                        .Mright = 0.0,
+                                        .Mtop = openness.Dtop,
+                                        .Mbot = openness.Dbot,
+                                        .PermeabilityFactor = permeabilityFactor};
+        const double t_eff =
+          coeff.C4 * (geometry.SlatWidth * std::cos(tilt) + thickness * std::sin(tilt));
+        return {t_eff, mult, coeff};
     }
 
-    EffectiveVenetian::EffectiveVenetian(double thickness,
-                                         const FenestrationCommon::Venetian::Geometry &geometry,
-                                         const ShadeOpenness &openness,
-                                         const Coefficients &coefficients) : EffectiveLayer(thickness,
-                                                                                 openness,
-                                                                                 coefficients,
-                                                                                 ThermalPermeability::Venetian::permeabilityFactor(
-                                                                                     thickness, geometry)),
-                                                                             m_Geometry(geometry) {
+    EffectiveLayerProperties
+      makeVerticalVenetianValues(const double thickness,
+                                 const FenestrationCommon::Venetian::Geometry & geometry,
+                                 const ShadeOpenness & openness) noexcept
+    {
+        constexpr Coefficients coeff{.C1 = 0.041, .C2 = 0.0, .C3 = 0.27, .C4 = 0.012};
+        const double permeabilityFactor =
+          ThermalPermeability::Venetian::permeabilityFactor(thickness, geometry);
+
+        const double tilt = FenestrationCommon::radians(geometry.SlatTiltAngle);
+        const double Ah_eff =
+          coeff.C1 * std::pow(permeabilityFactor * std::pow(std::cos(tilt), coeff.C2), coeff.C3);
+
+        const EffectiveMultipliers mult{.Mfront = Ah_eff,
+                                        .Mleft = 0.0,
+                                        .Mright = 0.0,
+                                        .Mtop = openness.Dtop,
+                                        .Mbot = openness.Dbot,
+                                        .PermeabilityFactor = permeabilityFactor};
+
+        const double t_eff =
+          coeff.C4 * (geometry.SlatWidth * std::cos(tilt) + thickness * std::sin(tilt));
+        return {t_eff, mult, coeff};
     }
 
-    EffectiveMultipliers EffectiveVenetian::getEffectiveOpenness() {
-        const auto Ah_eff{
-            coefficients.C1
-            * std::pow(m_PermeabilityFactor
-                       * std::pow(std::cos(FenestrationCommon::radians(m_Geometry.SlatTiltAngle)),
-                                  coefficients.C2),
-                       coefficients.C3)
-        };
-
-        return {
-            Ah_eff,
-            0,
-            0,
-            m_ShadeOpenness.Dtop,
-            m_ShadeOpenness.Dbot,
-            m_PermeabilityFactor
-        };
+    EffectiveLayerProperties
+      makePerforatedValues(const double thickness,
+                           const FenestrationCommon::Perforated::Geometry & geometry,
+                           const ShadeOpenness & openness) noexcept
+    {
+        const double permeabilityFactor =
+          ThermalPermeability::Perforated::permeabilityFactor(geometry);
+        return makeCommonValues(thickness, permeabilityFactor, openness);
     }
 
-    double EffectiveVenetian::effectiveThickness() {
-        return coefficients.C4
-               * (m_Geometry.SlatWidth
-                  * std::cos(FenestrationCommon::radians(m_Geometry.SlatTiltAngle))
-                  + m_Thickness * std::sin(FenestrationCommon::radians(m_Geometry.SlatTiltAngle)));
+    EffectiveLayerProperties makeWovenValues(const double thickness,
+                                             const FenestrationCommon::Woven::Geometry & geometry,
+                                             const ShadeOpenness & openness) noexcept
+    {
+        const double permeabilityFactor = ThermalPermeability::Woven::permeabilityFactor(geometry);
+        return makeCommonValues(thickness, permeabilityFactor, openness);
     }
 
-    EffectiveHorizontalVenetian::EffectiveHorizontalVenetian(
-        double thickness,
-        const FenestrationCommon::Venetian::Geometry &geometry,
-        const ShadeOpenness &openness) : EffectiveVenetian(thickness, geometry, openness, {0.016, -0.63, 0.53, 0.043}) {
+    EffectiveLayerProperties
+      makeLouveredShutterValues(const FenestrationCommon::LouveredShutter::Geometry & geometry,
+                                const ShadeOpenness & openness) noexcept
+    {
+        constexpr Coefficients coeff{.C1 = 0.12, .C2 = 0.82, .C3 = 0.059, .C4 = 0.11};
+        const double permeabilityFactor =
+          ThermalPermeability::LouveredShutter::permeabilityFactor(geometry);
+
+        const double ang = FenestrationCommon::radians(geometry.SlatAngle);
+        const double openness_factor =
+          std::max(0.0, 1.0 - std::pow(2.0 / FenestrationCommon::WCE_PI * ang, 4));
+        const double Ah_eff =
+          std::max(0.0,
+                   (coeff.C1 * std::pow(permeabilityFactor * openness_factor, coeff.C2))
+                     - (coeff.C3 * std::cos(ang)));
+
+        (void)openness;
+        const EffectiveMultipliers mult{.Mfront = Ah_eff,
+                                        .Mleft = 0.0,
+                                        .Mright = 0.0,
+                                        .Mtop = 0.0,
+                                        .Mbot = 0.0,
+                                        .PermeabilityFactor = permeabilityFactor};
+
+        const double t_eff =
+          coeff.C4
+          * (geometry.SlatWidth * std::cos(ang) + geometry.SlatThickness * std::abs(std::sin(ang)));
+
+        return {t_eff, mult, coeff};
     }
 
-    EffectiveVerticalVenetian::EffectiveVerticalVenetian(
-        double thickness,
-        const FenestrationCommon::Venetian::Geometry &geometry,
-        const ShadeOpenness &openness) : EffectiveVenetian(thickness, geometry, openness, {0.041, 0.0, 0.27, 0.012}) {
-    }
-
-    EffectiveLayerCommon::EffectiveLayerCommon(double thickness,
-                                               double permeabilityFactor,
-                                               const ShadeOpenness &openness) : EffectiveLayer(
-        thickness, openness, {0.078, 1.2, 1.0, 1.0}, permeabilityFactor) {
-    }
-
-    EffectiveMultipliers EffectiveLayerCommon::getEffectiveOpenness() {
-        const auto Ah_eff{
-            coefficients.C1
-            * (std::pow(m_PermeabilityFactor, coefficients.C2))
-        };
-        const auto Al_eff{m_ShadeOpenness.Dl * coefficients.C3};
-        const auto Ar_eff{m_ShadeOpenness.Dr * coefficients.C3};
-        const auto Atop_eff{m_ShadeOpenness.Dtop * coefficients.C4};
-        const auto Abot_eff{m_ShadeOpenness.Dbot * coefficients.C4};
-        return {Ah_eff, Al_eff, Ar_eff, Atop_eff, Abot_eff, m_PermeabilityFactor};
-    }
-
-    double EffectiveLayerCommon::effectiveThickness() {
-        return m_Thickness;
-    }
-
-    EffectiveLayerLouveredShutter::EffectiveLayerLouveredShutter(
-        const FenestrationCommon::LouveredShutter::Geometry &geometry,
-        const ShadeOpenness &openness) : EffectiveLayer(geometry.SlatThickness,
-                                                        openness,
-                                                        {0.12, 0.82, 0.059, 0.11},
-                                                        ThermalPermeability::LouveredShutter::permeabilityFactor(
-                                                            geometry)),
-                                         m_Geometry(geometry) {
-    }
-
-    EffectiveMultipliers EffectiveLayerLouveredShutter::getEffectiveOpenness() {
-        const auto openness_factor{
-            std::max(0.0,
-                     1
-                     - std::pow(2 / FenestrationCommon::WCE_PI
-                                * FenestrationCommon::radians(m_Geometry.SlatAngle),
-                                4))
-        };
-        const auto Ah_eff{
-            std::max(
-                0.0,
-                coefficients.C1
-                * (std::pow(m_PermeabilityFactor * openness_factor, coefficients.C2))
-                - coefficients.C3 * std::cos(FenestrationCommon::radians(m_Geometry.SlatAngle)))
-        };
-
-        // Side openings are forbidden for louvered shutters for now
-        return {Ah_eff, 0.0, 0.0, 0.0, 0.0, m_PermeabilityFactor};
-    }
-
-    double EffectiveLayerLouveredShutter::effectiveThickness() {
-        return coefficients.C4
-               * (m_Geometry.SlatWidth * std::cos(FenestrationCommon::radians(m_Geometry.SlatAngle))
-                  + m_Geometry.SlatThickness
-                  * std::abs(std::sin(FenestrationCommon::radians(m_Geometry.SlatAngle))));
-    }
-
-    EffectiveLayerPerforated::EffectiveLayerPerforated(
-        double thickness,
-        const FenestrationCommon::Perforated::Geometry &geometry,
-        const ShadeOpenness &openness) : EffectiveLayerCommon(thickness,
-                                                              ThermalPermeability::Perforated::permeabilityFactor(
-                                                                  geometry),
-                                                              openness) {
-    }
-
-    EffectiveLayerWoven::EffectiveLayerWoven(double thickness,
-                                             const FenestrationCommon::Woven::Geometry &geometry,
-                                             const ShadeOpenness &openness) : EffectiveLayerCommon(thickness,
-        ThermalPermeability::Woven::permeabilityFactor(geometry),
-        openness) {
+    EffectiveLayerProperties makeUserDefinedValues(const double thickness,
+                                                   const double permeabilityFactor,
+                                                   const double effectiveFrontThermalOpennessArea,
+                                                   const ShadeOpenness & openness) noexcept
+    {
+        constexpr Coefficients coeff{.C1 = 0, .C2 = 0, .C3 = 0, .C4 = 0};
+        const EffectiveMultipliers mult{.Mfront = effectiveFrontThermalOpennessArea,
+                                        .Mleft = openness.Dl,
+                                        .Mright = openness.Dr,
+                                        .Mtop = openness.Dtop,
+                                        .Mbot = openness.Dbot,
+                                        .PermeabilityFactor = permeabilityFactor};
+        return {thickness, mult, coeff};
     }
 
 
-    EffectiveLayerUserDefined::EffectiveLayerUserDefined(double thickness,
-                                                         double permeabilityFactor,
-                                                         double effectiveFrontThermalOpennessArea,
-                                                         const ShadeOpenness &openness) : EffectiveLayer(
-            thickness, openness, {0, 0, 0, 0}, permeabilityFactor),
-        m_EffectiveFrontThermalOpennessMultiplier(effectiveFrontThermalOpennessArea) {
-    }
-
-    EffectiveMultipliers EffectiveLayerUserDefined::getEffectiveOpenness() {
-        const auto Al_eff{m_ShadeOpenness.Dl};
-        const auto Ar_eff{m_ShadeOpenness.Dr};
-        const auto Atop_eff{m_ShadeOpenness.Dtop};
-        const auto Abot_eff{m_ShadeOpenness.Dbot};
-        return {
-            m_EffectiveFrontThermalOpennessMultiplier,
-            Al_eff,
-            Ar_eff,
-            Atop_eff,
-            Abot_eff,
-            m_PermeabilityFactor
-        };
-    }
-
-    double EffectiveLayerUserDefined::effectiveThickness() {
-        return m_Thickness;
-    }
-} // namespace EffectiveLayers
+}   // namespace EffectiveLayers
