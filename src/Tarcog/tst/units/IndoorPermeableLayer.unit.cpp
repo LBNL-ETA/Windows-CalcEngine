@@ -56,9 +56,9 @@ protected:
         constexpr auto backEmissivity = 0.9;
         constexpr auto backIRTransmittance = 0.0;
 
-        auto layer2 = Tarcog::ISO15099::Layers::shading(effectiveLayer.effectiveThickness(),
+        auto layer2 = Tarcog::ISO15099::Layers::shading(effectiveLayer.thickness,
                                                         shadeLayerConductance,
-                                                        effectiveLayer.getEffectiveOpenness(),
+                                                        effectiveLayer.openness,
                                                         frontEmissivity,
                                                         frontIRTransmittance,
                                                         backEmissivity,

@@ -57,7 +57,7 @@ protected:
           EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor, openness)};
 
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
+          shadeLayerThickness, shadeLayerConductance, effectiveLayer.openness);
 
         ASSERT_TRUE(shadeLayer != nullptr);
 

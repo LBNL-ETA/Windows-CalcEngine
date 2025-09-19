@@ -14,11 +14,11 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer)
     const auto venetian =
       EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry);
 
-    const auto effectiveThickness{venetian.effectiveThickness()};
+    const auto effectiveThickness{venetian.thickness};
 
     EXPECT_NEAR(0.0021844, effectiveThickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.014265839, effectiveOpenness.Mfront, 1e-8);
 
     EXPECT_NEAR(0.805369, effectiveOpenness.PermeabilityFactor, 1e-6);
@@ -35,11 +35,11 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer1)
     const auto venetian =
       EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry);
 
-    const auto effectiveThickness{venetian.effectiveThickness()};
+    const auto effectiveThickness{venetian.thickness};
 
     EXPECT_NEAR(0.0021844, effectiveThickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.014265839, effectiveOpenness.Mfront, 1e-8);
 
     EXPECT_NEAR(0.805369, effectiveOpenness.PermeabilityFactor, 1e-6);
@@ -57,9 +57,9 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayerWithTopAndBotOpenn
     const auto venetian =
       EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry, openness);
 
-    EXPECT_NEAR(6.364e-4, venetian.effectiveThickness(), 1e-9);
+    EXPECT_NEAR(6.364e-4, venetian.thickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.015930, effectiveOpenness.Mfront, 1e-6);
     EXPECT_NEAR(0.991736, effectiveOpenness.PermeabilityFactor, 1e-6);
 }
@@ -76,11 +76,11 @@ TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpennes
     const auto venetian =
       EffectiveLayers::makeVerticalVenetianValues(materialThickness, geometry, openness);
 
-    const auto effectiveThickness{venetian.effectiveThickness()};
+    const auto effectiveThickness{venetian.thickness};
 
     EXPECT_NEAR(9.144e-4, effectiveThickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.040908, effectiveOpenness.Mfront, 1e-6);
 }
 
@@ -94,11 +94,11 @@ TEST(TestEffectiveLayers, TestEffectiveLayerCommon)
     const auto common = EffectiveLayers::makeCommonValues(
       materialThickness, permeabilityFactor, EffectiveLayers::ShadeOpenness{0, 0, 0, 0});
 
-    const auto effectiveThickness{common.effectiveThickness()};
+    const auto effectiveThickness{common.thickness};
 
     EXPECT_NEAR(0.0001, effectiveThickness, 1e-6);
 
-    const auto effectiveOpenness{common.getEffectiveOpenness()};
+    const auto effectiveOpenness{common.openness};
     EXPECT_NEAR(8.0057885183479893e-3, effectiveOpenness.Mfront, 1e-8);
 }
 
@@ -114,11 +114,11 @@ TEST(TestEffectiveLayers, TestVenetianVerticalEffectiveLayerWithTopAndBotOpennes
     const auto venetian =
       EffectiveLayers::makeVerticalVenetianValues(materialThickness, geometry, openness);
 
-    const auto effectiveThickness{venetian.effectiveThickness()};
+    const auto effectiveThickness{venetian.thickness};
 
     EXPECT_NEAR(6.474269e-4, effectiveThickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.040870, effectiveOpenness.Mfront, 1e-6);
 }
 
@@ -135,9 +135,9 @@ TEST(TestEffectiveLayers, TestPerforatedEffectiveOpenness)
     const auto perforated =
       EffectiveLayers::makePerforatedValues(materialThickness, geometry, openness);
 
-    EXPECT_NEAR(6e-4, perforated.effectiveThickness(), 1e-9);
+    EXPECT_NEAR(6e-4, perforated.thickness, 1e-9);
 
-    const auto effectiveOpenness{perforated.getEffectiveOpenness()};
+    const auto effectiveOpenness{perforated.openness};
     EXPECT_NEAR(0.035287, effectiveOpenness.Mfront, 1e-6);
     EXPECT_NEAR(0.516332, effectiveOpenness.PermeabilityFactor, 1e-6);
 }
@@ -149,9 +149,9 @@ TEST(TestEffectiveLayer, TestLouveredShutterEffectiveOpenness)
 
     const auto louveredShutter = EffectiveLayers::makeLouveredShutterValues(geometry);
 
-    EXPECT_NEAR(0.00161029, louveredShutter.effectiveThickness(), 1e-8);
+    EXPECT_NEAR(0.00161029, louveredShutter.thickness, 1e-8);
 
-    const auto effectiveOpenness{louveredShutter.getEffectiveOpenness()};
+    const auto effectiveOpenness{louveredShutter.openness};
     EXPECT_NEAR(0.00503352, effectiveOpenness.Mfront, 1e-8);
     EXPECT_NEAR(0.295495, effectiveOpenness.PermeabilityFactor, 1e-6);
 }

@@ -61,9 +61,9 @@ protected:
         auto Tirf = 0.42293224373137134;
         auto Tirb = 0.42293224373137134;
 
-        auto aLayer1 = Tarcog::ISO15099::Layers::shading(effectiveVenetian.effectiveThickness(),
+        auto aLayer1 = Tarcog::ISO15099::Layers::shading(effectiveVenetian.thickness,
                                                          shadeLayerConductance,
-                                                         effectiveVenetian.getEffectiveOpenness(),
+                                                         effectiveVenetian.openness,
                                                          Ef,
                                                          Tirf,
                                                          Eb,

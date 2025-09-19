@@ -70,31 +70,12 @@ namespace EffectiveLayers
         double C4{0.0};
     };
 
-    class EffectiveLayerProperties
+    // This is the output for the effective layer properties
+    struct EffectiveLayerProperties
     {
-    public:
-        EffectiveLayerProperties() = default;
-        EffectiveLayerProperties(double thickness,
-                                 const EffectiveMultipliers & openness,
-                                 const Coefficients & coeffs);
-
-        [[nodiscard]] double effectiveThickness() const noexcept
-        {
-            return m_Thickness;
-        }
-        [[nodiscard]] EffectiveMultipliers getEffectiveOpenness() const noexcept
-        {
-            return m_Openness;
-        }
-        [[nodiscard]] Coefficients coefficients() const noexcept
-        {
-            return m_Coeffs;
-        }
-
-    private:
-        double m_Thickness{0.0};
-        EffectiveMultipliers m_Openness{0, 0, 0, 0, 0, 0};
-        Coefficients m_Coeffs{0, 0, 0, 0};
+        double thickness{0.0};
+        EffectiveMultipliers openness{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        Coefficients coeffs{0.0, 0.0, 0.0, 0.0};
     };
 
     [[nodiscard]] EffectiveLayerProperties makeCommonValues(double thickness,

@@ -73,7 +73,7 @@ protected:
         auto Tirf = 0.257367;
         auto Tirb = 0.257367;
         auto shadeLayer = Tarcog::ISO15099::Layers::sealedLayer(
-          effectiveLayerPerforated.effectiveThickness(), shadeLayerConductance, Ef, Tirf, Eb, Tirb);
+          effectiveLayerPerforated.thickness, shadeLayerConductance, Ef, Tirf, Eb, Tirb);
         shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 

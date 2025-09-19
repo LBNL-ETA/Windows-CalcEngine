@@ -61,7 +61,7 @@ protected:
 
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(shadeThickness,
                                                             shadeLayerConductance,
-                                                            effLayer.getEffectiveOpenness(),
+                                                            effLayer.openness,
                                                             Ef,
                                                             Tirf,
                                                             Eb,

@@ -85,9 +85,9 @@ protected:
         constexpr auto Tirf = 0;
         constexpr auto Tirb = 0;
 
-        auto aLayer3 = Tarcog::ISO15099::Layers::shading(effLayer.effectiveThickness(),
+        auto aLayer3 = Tarcog::ISO15099::Layers::shading(effLayer.thickness,
                                                          shadeLayerConductance,
-                                                         effLayer.getEffectiveOpenness(),
+                                                         effLayer.openness,
                                                          Ef,
                                                          Tirf,
                                                          Eb,

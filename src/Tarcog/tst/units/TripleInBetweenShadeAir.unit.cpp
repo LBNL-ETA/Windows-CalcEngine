@@ -61,9 +61,9 @@ protected:
         const auto effectiveLayer{
           EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor, openness)};
 
-        auto aLayer2 = Tarcog::ISO15099::Layers::shading(effectiveLayer.effectiveThickness(),
+        auto aLayer2 = Tarcog::ISO15099::Layers::shading(effectiveLayer.thickness,
                                                          shadeLayerConductance,
-                                                         effectiveLayer.getEffectiveOpenness());
+                                                         effectiveLayer.openness);
 
         ASSERT_TRUE(aLayer2 != nullptr);
 

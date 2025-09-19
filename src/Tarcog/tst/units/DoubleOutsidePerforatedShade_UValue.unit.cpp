@@ -57,9 +57,9 @@ protected:
         constexpr auto Tirb = 0.257367;
 
         auto aLayer1 =
-          Tarcog::ISO15099::Layers::shading(effectiveLayerPerforated.effectiveThickness(),
+          Tarcog::ISO15099::Layers::shading(effectiveLayerPerforated.thickness,
                                             shadeLayerConductance,
-                                            effectiveLayerPerforated.getEffectiveOpenness(),
+                                            effectiveLayerPerforated.openness,
                                             Ef,
                                             Tirf,
                                             Eb,

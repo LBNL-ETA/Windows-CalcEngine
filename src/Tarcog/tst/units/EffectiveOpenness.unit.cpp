@@ -19,11 +19,11 @@ TEST(TestEffectiveOpenness, Venetian0DegFrontOpenness)
 
     const auto venetian{EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry)};
 
-    const auto effectiveThickness{venetian.effectiveThickness()};
+    const auto effectiveThickness{venetian.thickness};
 
     EXPECT_NEAR(0.05375e-03, effectiveThickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.01521184, effectiveOpenness.Mfront, 1e-8);
 }
 
@@ -42,11 +42,11 @@ TEST(TestEffectiveOpenness, Venetian0DegFrontOpenness1)
 
     const auto venetian{EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry)};
 
-    const auto effectiveThickness{venetian.effectiveThickness()};
+    const auto effectiveThickness{venetian.thickness};
 
     EXPECT_NEAR(0.688e-3, effectiveThickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.015570892, effectiveOpenness.Mfront, 1e-8);
 }
 
@@ -65,11 +65,11 @@ TEST(TestEffectiveOpenness, Venetian45DegFrontOpenness1)
 
     const auto venetian{EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry)};
 
-    const auto effectiveThickness{venetian.effectiveThickness()};
+    const auto effectiveThickness{venetian.thickness};
 
     EXPECT_NEAR(0.504733e-3, effectiveThickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.01730331, effectiveOpenness.Mfront, 1e-8);
 }
 
@@ -90,10 +90,10 @@ TEST(TestEffectiveOpenness, Venetian0DegWithRise)
 
     const auto venetian{EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry)};
 
-    const auto effectiveThickness{venetian.effectiveThickness()};
+    const auto effectiveThickness{venetian.thickness};
 
     EXPECT_NEAR(0.688e-3, effectiveThickness, 1e-9);
 
-    const auto effectiveOpenness{venetian.getEffectiveOpenness()};
+    const auto effectiveOpenness{venetian.openness};
     EXPECT_NEAR(0.015570892, effectiveOpenness.Mfront, 1e-8);
 }

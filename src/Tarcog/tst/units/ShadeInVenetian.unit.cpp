@@ -39,9 +39,9 @@ protected:
         const auto effectiveVenetian{
           EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry)};
 
-        auto shadingLayer = Layers::shading(effectiveVenetian.effectiveThickness(),
+        auto shadingLayer = Layers::shading(effectiveVenetian.thickness,
                                             materialConductance,
-                                            effectiveVenetian.getEffectiveOpenness(),
+                                            effectiveVenetian.openness,
                                             emissivityFront,
                                             transmittanceFront,
                                             emissivityBack,

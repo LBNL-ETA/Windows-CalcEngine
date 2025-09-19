@@ -68,9 +68,9 @@ class DoubleClear_UValueEnvironmentVenetianInside : public testing::Test
         constexpr auto Tirb = 0.224916040897;
 
         auto venetianLayer =
-          Tarcog::ISO15099::Layers::shading(effectiveVenetian.effectiveThickness(),
+          Tarcog::ISO15099::Layers::shading(effectiveVenetian.thickness,
                                             shadeLayerConductance,
-                                            effectiveVenetian.getEffectiveOpenness(),
+                                            effectiveVenetian.openness,
                                             Ef,
                                             Tirf,
                                             Eb,

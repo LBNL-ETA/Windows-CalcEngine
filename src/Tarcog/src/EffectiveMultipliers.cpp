@@ -16,12 +16,6 @@ namespace EffectiveLayers
                && isEqual(effectiveOpenness.PermeabilityFactor, 0.0);
     }
 
-    EffectiveLayerProperties::EffectiveLayerProperties(const double thickness,
-                                                       const EffectiveMultipliers & openness,
-                                                       const Coefficients & coeffs) :
-        m_Thickness(thickness), m_Openness(openness), m_Coeffs(coeffs)
-    {}
-
     EffectiveLayerProperties makeCommonValues(const double thickness,
                                               const double permeabilityFactor,
                                               const ShadeOpenness & openness) noexcept

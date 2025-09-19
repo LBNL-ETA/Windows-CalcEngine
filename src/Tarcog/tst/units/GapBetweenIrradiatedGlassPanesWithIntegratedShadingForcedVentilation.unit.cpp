@@ -64,9 +64,9 @@ protected:
           EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor, openness)};
 
 
-        auto shadeLayer = Tarcog::ISO15099::Layers::shading(effectiveLayer.effectiveThickness(),
+        auto shadeLayer = Tarcog::ISO15099::Layers::shading(effectiveLayer.thickness,
                                                             shadeLayerConductance,
-                                                            effectiveLayer.getEffectiveOpenness());
+                                                            effectiveLayer.openness);
         shadeLayer->setSolarHeatGain(0.35, solarRadiation);
         ASSERT_TRUE(shadeLayer != nullptr);
 

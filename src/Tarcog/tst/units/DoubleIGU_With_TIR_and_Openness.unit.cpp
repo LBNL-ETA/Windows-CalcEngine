@@ -55,7 +55,7 @@ protected:
 
         const auto layer2 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
                                                               shadeLayerConductance,
-                                                              effectiveLayer.getEffectiveOpenness(),
+                                                              effectiveLayer.openness,
                                                               emissivity,
                                                               tir,
                                                               emissivity,
