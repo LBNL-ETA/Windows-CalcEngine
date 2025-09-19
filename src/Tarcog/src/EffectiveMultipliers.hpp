@@ -75,8 +75,8 @@ namespace EffectiveLayers
     public:
         EffectiveLayerProperties() = default;
         EffectiveLayerProperties(double thickness,
-                             const EffectiveMultipliers & openness,
-                             const Coefficients & coeffs);
+                                 const EffectiveMultipliers & openness,
+                                 const Coefficients & coeffs);
 
         [[nodiscard]] double effectiveThickness() const noexcept
         {
@@ -97,35 +97,37 @@ namespace EffectiveLayers
         Coefficients m_Coeffs{0, 0, 0, 0};
     };
 
-    EffectiveLayerProperties
-      makeCommonValues(double thickness, double PF, const ShadeOpenness & openness = {0, 0, 0, 0});
+    EffectiveLayerProperties makeCommonValues(
+      double thickness, double permeabilityFactor, const ShadeOpenness & openness = {0, 0, 0, 0}) noexcept;
 
     EffectiveLayerProperties
       makeHorizontalVenetianValues(double thickness,
                                    const FenestrationCommon::Venetian::Geometry & geometry,
-                                   const ShadeOpenness & openness = {0, 0, 0, 0});
+                                   const ShadeOpenness & openness = {0, 0, 0, 0}) noexcept;
 
     EffectiveLayerProperties
       makeVerticalVenetianValues(double thickness,
                                  const FenestrationCommon::Venetian::Geometry & geometry,
-                                 const ShadeOpenness & openness = {0, 0, 0, 0});
+                                 const ShadeOpenness & openness = {0, 0, 0, 0}) noexcept;
 
     EffectiveLayerProperties
       makePerforatedValues(double thickness,
                            const FenestrationCommon::Perforated::Geometry & geometry,
-                           const ShadeOpenness & openness = {0, 0, 0, 0});
+                           const ShadeOpenness & openness = {0, 0, 0, 0}) noexcept;
 
     EffectiveLayerProperties makeWovenValues(double thickness,
-                                         const FenestrationCommon::Woven::Geometry & geometry,
-                                         const ShadeOpenness & openness = {0, 0, 0, 0});
+                                             const FenestrationCommon::Woven::Geometry & geometry,
+                                             const ShadeOpenness & openness = {
+                                               0, 0, 0, 0}) noexcept;
 
     EffectiveLayerProperties
       makeLouveredShutterValues(const FenestrationCommon::LouveredShutter::Geometry & geometry,
-                                const ShadeOpenness & openness = {0, 0, 0, 0});
+                                const ShadeOpenness & openness = {0, 0, 0, 0}) noexcept;
 
     EffectiveLayerProperties makeUserDefinedValues(double thickness,
-                                               double permeabilityFactor,
-                                               double effectiveFrontThermalOpennessArea,
-                                               const ShadeOpenness & openness = {0, 0, 0, 0});
+                                                   double permeabilityFactor,
+                                                   double effectiveFrontThermalOpennessArea,
+                                                   const ShadeOpenness & openness = {
+                                                     0, 0, 0, 0}) noexcept;
 
 }   // namespace EffectiveLayers
