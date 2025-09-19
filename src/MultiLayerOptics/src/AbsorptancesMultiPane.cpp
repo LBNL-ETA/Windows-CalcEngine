@@ -8,12 +8,6 @@ namespace MultiLayerOptics
     CAbsorptancesMultiPane::CAbsorptancesMultiPane(const CSeries & t_T,
                                                    const CSeries & t_Rf,
                                                    const CSeries & t_Rb) :
-        m_R({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
-        m_Abs({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
-        m_rCoeffs({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
-        m_tCoeffs({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
-        Iplus({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
-        Iminus({{Side::Front, std::vector<CSeries>()}, {Side::Back, std::vector<CSeries>()}}),
         m_StateCalculated(false)
     {
         m_T.push_back(t_T);
