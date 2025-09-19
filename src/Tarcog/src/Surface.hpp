@@ -2,16 +2,9 @@
 
 #include <memory>
 #include <vector>
+#include <variant>
 
-namespace FenestrationCommon
-{
-    struct TableValue;
-}
-
-namespace Tarcog::ISO15099
-{
-    class ISurfaceProperties;
-}
+#include "SurfaceProps.hpp"
 
 namespace Tarcog::ISO15099
 {
@@ -20,17 +13,12 @@ namespace Tarcog::ISO15099
     {
     public:
         Surface();
-        ~Surface();
         Surface(double t_Emissivity, double t_Transmittance);
         Surface(const std::vector<FenestrationCommon::TableValue> & t_Emissivity,
                 const std::vector<FenestrationCommon::TableValue> & t_Transmittance);
 
         Surface(Surface const & t_Surface);
         Surface & operator=(Surface const & t_Surface);
-
-        Surface(Surface&&) noexcept = default;
-        Surface & operator=(Surface&&) noexcept = default;
-
 
         [[nodiscard]] std::shared_ptr<Surface> clone() const;
 
@@ -65,6 +53,6 @@ namespace Tarcog::ISO15099
         double m_MeanDeflection{0.0};
         double m_MaxDeflection{0.0};
 
-        std::unique_ptr<ISurfaceProperties> m_SurfaceProperties;
+        SurfaceProps m_SurfaceProperties;
     };
 }   // namespace Tarcog::ISO15099
