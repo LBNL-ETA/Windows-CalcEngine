@@ -3,7 +3,15 @@
 #include <memory>
 #include <vector>
 
-#include "SurfaceProperties.hpp"
+namespace FenestrationCommon
+{
+    struct TableValue;
+}
+
+namespace Tarcog::ISO15099
+{
+    class ISurfaceProperties;
+}
 
 namespace Tarcog::ISO15099
 {
@@ -12,12 +20,17 @@ namespace Tarcog::ISO15099
     {
     public:
         Surface();
+        ~Surface();
         Surface(double t_Emissivity, double t_Transmittance);
         Surface(const std::vector<FenestrationCommon::TableValue> & t_Emissivity,
                 const std::vector<FenestrationCommon::TableValue> & t_Transmittance);
 
         Surface(Surface const & t_Surface);
         Surface & operator=(Surface const & t_Surface);
+
+        Surface(Surface&&) noexcept = default;
+        Surface & operator=(Surface&&) noexcept = default;
+
 
         [[nodiscard]] std::shared_ptr<Surface> clone() const;
 
@@ -37,7 +50,7 @@ namespace Tarcog::ISO15099
         void initializeStart(double t_Temperature);
         void initializeStart(double t_Temperature, double t_Radiation);
 
-    protected:
+    private:
         void calculateReflectance();
 
         double m_Temperature{273.15};

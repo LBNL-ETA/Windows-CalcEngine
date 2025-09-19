@@ -1,8 +1,8 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "BaseLayer.hpp"
 #include "Surface.hpp"
+#include "SurfaceProperties.hpp"
 
 
 namespace Tarcog::ISO15099
@@ -14,6 +14,8 @@ namespace Tarcog::ISO15099
     {
         calculateReflectance();
     }
+
+    Surface::~Surface() = default;
 
     Surface::Surface(double const t_Emissivity, double const t_Transmittance) :
         m_Emissivity(t_Emissivity),
