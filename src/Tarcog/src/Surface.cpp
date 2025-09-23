@@ -9,7 +9,7 @@ namespace Tarcog::ISO15099
     //////////////////////////////////////////////////////////////////////////////
     /// Surface
     //////////////////////////////////////////////////////////////////////////////
-    Surface::Surface() : m_SurfaceProperties(ConstantSurfaceProps(0.84, 0))
+    Surface::Surface() : m_SurfaceProperties(ConstantSurfaceProps{0.84, 0})
     {
         calculateReflectance();
     }
