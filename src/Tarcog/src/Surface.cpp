@@ -17,7 +17,7 @@ namespace Tarcog::ISO15099
     Surface::Surface(double const t_Emissivity, double const t_Transmittance) :
         m_Emissivity(t_Emissivity),
         m_Transmittance(t_Transmittance),
-        m_SurfaceProperties(ConstantSurfaceProps(m_Emissivity, m_Transmittance))
+        m_SurfaceProperties(ConstantSurfaceProps{m_Emissivity, m_Transmittance})
     {
         if(m_Emissivity < 0.0)
         {
