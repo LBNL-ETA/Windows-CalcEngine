@@ -188,6 +188,26 @@ namespace SingleLayerOptics
         return lambdaMatrix;
     }
 
+    std::vector<BSDFDefinition> bsdfDefinition(const BSDFBasis basis)
+    {
+        static const std::map<BSDFBasis, std::vector<BSDFDefinition>> defs = {
+          {BSDFBasis::Small, {{0, 1}, {13, 1}, {26, 1}, {39, 1}, {52, 1}, {65, 1}, {80.75, 1}}},
+          {BSDFBasis::Quarter, {{0, 1}, {18, 8}, {36, 12}, {54, 12}, {76.5, 8}}},
+          {BSDFBasis::Half, {{0, 1}, {13, 8}, {26, 12}, {39, 16}, {52, 20}, {65, 12}, {80.75, 8}}},
+          {BSDFBasis::Full,
+           {{0, 1},
+            {10, 8},
+            {20, 16},
+            {30, 20},
+            {40, 24},
+            {50, 24},
+            {60, 24},
+            {70, 16},
+            {82.5, 12}}}};
+
+        return defs.at(basis);
+    }
+
     std::vector<double> BSDFDirections::profileAngles() const
     {
         std::vector<double> angles;
@@ -202,15 +222,8 @@ namespace SingleLayerOptics
     ///  BSDFHemisphere
     /////////////////////////////////////////////////////////////////
 
-    const std::map<BSDFBasis, std::vector<BSDFDefinition>> BSDFHemisphere::bsdfDefinition = {
-      {BSDFBasis::Small, {{0, 1}, {13, 1}, {26, 1}, {39, 1}, {52, 1}, {65, 1}, {80.75, 1}}},
-      {BSDFBasis::Quarter, {{0, 1}, {18, 8}, {36, 12}, {54, 12}, {76.5, 8}}},
-      {BSDFBasis::Half, {{0, 1}, {13, 8}, {26, 12}, {39, 16}, {52, 20}, {65, 12}, {80.75, 8}}},
-      {BSDFBasis::Full,
-       {{0, 1}, {10, 8}, {20, 16}, {30, 20}, {40, 24}, {50, 24}, {60, 24}, {70, 16}, {82.5, 12}}}};
-
     BSDFHemisphere::BSDFHemisphere(const BSDFBasis t_Basis) :
-        m_Directions(generateBSDFDirections(bsdfDefinition.at(t_Basis)))
+        m_Directions(generateBSDFDirections(bsdfDefinition(t_Basis)))
     {}
 
     BSDFHemisphere::BSDFHemisphere(const std::vector<BSDFDefinition> & t_Definitions) :
