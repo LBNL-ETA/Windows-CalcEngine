@@ -1,7 +1,6 @@
 #ifndef AbsorptancesMultiPane_H
 #define AbsorptancesMultiPane_H
 
-#include <memory>
 #include <vector>
 #include <WCECommon.hpp>
 
@@ -43,16 +42,19 @@ namespace MultiLayerOptics
 
         // This are measured values
         std::vector<FenestrationCommon::CSeries> m_T;
-        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_R;
+
+        util::EnumArray<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_R;
 
         // Calculated values are stored here
-        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_Abs;
+        util::EnumArray<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_Abs;
 
-        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_rCoeffs;
-        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> m_tCoeffs;
+        util::EnumArray<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>>
+          m_rCoeffs;
+        util::EnumArray<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>>
+          m_tCoeffs;
 
-        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> Iplus;
-        std::map<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> Iminus;
+        util::EnumArray<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> Iplus;
+        util::EnumArray<FenestrationCommon::Side, std::vector<FenestrationCommon::CSeries>> Iminus;
 
         bool m_StateCalculated;
     };

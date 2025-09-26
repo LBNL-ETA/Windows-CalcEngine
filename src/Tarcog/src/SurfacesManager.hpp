@@ -9,44 +9,6 @@ namespace Tarcog::ISO15099
 {
     class Surface;
 
-    // Small wrapper that maps FenestrationCommon::Side → std::array index
-    struct SideSurfaceArray
-    {
-        std::array<std::shared_ptr<Surface>, 2> data{{nullptr, nullptr}};
-
-        static constexpr std::size_t index(FenestrationCommon::Side side) noexcept
-        {
-            switch(side)
-            {
-                case FenestrationCommon::Side::Front:
-                    return 0;
-                case FenestrationCommon::Side::Back:
-                    return 1;
-            }
-            return 0;   // defensive
-        }
-
-        std::shared_ptr<Surface> & at(FenestrationCommon::Side side)
-        {
-            return data.at(index(side));
-        }
-
-        [[nodiscard]] const std::shared_ptr<Surface> & at(FenestrationCommon::Side side) const
-        {
-            return data.at(index(side));
-        }
-
-        // Keep existing syntax: m_Surface[Side::Front]
-        std::shared_ptr<Surface> & operator[](FenestrationCommon::Side side)
-        {
-            return data.at(index(side));   // .at() keeps clang-tidy happy
-        }
-        const std::shared_ptr<Surface> & operator[](FenestrationCommon::Side side) const
-        {
-            return data.at(index(side));
-        }
-    };
-
     class SurfacesManager
     {
     public:
@@ -77,6 +39,6 @@ namespace Tarcog::ISO15099
     protected:
         void setSurfaceState(double t_Temperature, double t_J, FenestrationCommon::Side t_Position);
 
-        SideSurfaceArray m_Surface;
+        util::EnumArray<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface;
     };
 }   // namespace Tarcog::ISO15099
