@@ -7,7 +7,7 @@ namespace Tarcog::ISO15099
 {
     // Enum representing the positions of a single vision frame in a window.
     // These positions include Top, Bottom, Left, and Right.
-    enum class SingleVisionFramePosition
+    enum class SingleVisionFramePosition : uint8_t
     {
         Top,
         Bottom,

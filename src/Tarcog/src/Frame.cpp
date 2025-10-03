@@ -85,7 +85,9 @@ namespace Tarcog::ISO15099
               frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
 
             if(!maybeNeighbor)
+            {
                 return;
+            }
 
             const auto & neighbor = maybeNeighbor->get();
             length -= neighbor.frameData.ProjectedFrameDimension;

@@ -30,7 +30,7 @@ namespace Tarcog::ISO15099
     };
 
     //! Data structure for window frame properties.
-    //! Contains thermal, dimensional, and optical characteristics of a window frame.
+    //! Contains thermal and dimensional characteristics of a window frame.
     struct FrameData
     {
         double UValue{0};       //! Thermal transmittance of the frame [W/(m²·K)]
@@ -38,8 +38,8 @@ namespace Tarcog::ISO15099
         double ProjectedFrameDimension{0};   //! Projected width/dimension of the frame [m]
         double WettedLength{0};              //! Length of frame in contact with other materials [m]
         double Absorptance{0.3};             //! Solar absorptance of the frame (0-1)
-        std::optional<IGUData> iguData{};   //! Optional data for the IGU associated with this frame
-        std::variant<std::monostate, GenericFrame, GenericDivider> Class{};
+        std::optional<IGUData> iguData;   //! Optional data for the IGU associated with this frame
+        std::variant<std::monostate, GenericFrame, GenericDivider> Class;
     };
 
     double dividerUValue(const DividerBodyPoly & poly, double uCenter, double gap);
@@ -49,7 +49,7 @@ namespace Tarcog::ISO15099
     double dividerEdgeUValue(const DividerEdgePoly & poly, double uCenter, double gap);
 
     //! Each frame can have frame attached to either left or right side of it.
-    enum class FrameSide
+    enum class FrameSide : uint8_t
     {
         Left,
         Right
@@ -58,7 +58,7 @@ namespace Tarcog::ISO15099
     //! When building window, frame will be inserted differently which is based on what the
     //! frame type is. This is important factor when calculating frame area as well as edge of
     //! glass area since interior frames will take less space
-    enum class FrameType
+    enum class FrameType : uint8_t
     {
         Interior,
         Exterior
@@ -73,9 +73,9 @@ namespace Tarcog::ISO15099
         //! Keeping frame information on both sides of the frame. This is needed for geometry
         //! calculations. Optional must be used or infinite loop will be created withing Frame
         //! constructor (Frame calling itself over and over again)
-        std::map<FrameSide, std::optional<std::reference_wrapper<const Frame>>> frame{};
+        std::map<FrameSide, std::optional<std::reference_wrapper<const Frame>>> frame;
 
         double dividerArea{0};
-        size_t numberOfDividers{0u};
+        size_t numberOfDividers{0U};
     };
 }   // namespace Tarcog::ISO15099
