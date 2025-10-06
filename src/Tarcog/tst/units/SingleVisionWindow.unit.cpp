@@ -608,6 +608,9 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithFixedDividers)
     constexpr size_t nVertical{2U};
     window.setDividers(Frame::genericDividerAluminumHollow(), nHorizontal, nVertical);
 
+    // Numbers when window include dividers will not match with WINDOW because results
+    // in WINDOW are incorrect. Still would like to see additional validation on this. (Simon)
+
     const double uvalue{window.uValue()};
     EXPECT_NEAR(3.530437, uvalue, 1e-6);
 
@@ -638,8 +641,11 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithFixedDividers)
 
     constexpr size_t nHorizontal{2U};
     constexpr size_t nVertical{2U};
+
     window.setDividers(Frame::genericDividerAluminumHollow(), nHorizontal, nVertical);
 
+    // Numbers when window include dividers will not match with WINDOW because results
+    // in WINDOW are incorrect. Still would like to see additional validation on this. (Simon)
     const double uvalue{window.uValue()};
     EXPECT_NEAR(3.635180, uvalue, 1e-6);
 
@@ -669,6 +675,9 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithAutoDividers)
        {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
 
     window.setDividersAuto(Frame::genericDividerAluminumHollow());
+
+    // Numbers when window include dividers will not match with WINDOW because results
+    // in WINDOW are incorrect. Still would like to see additional validation on this. (Simon)
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(3.709885, uvalue, 1e-6);
