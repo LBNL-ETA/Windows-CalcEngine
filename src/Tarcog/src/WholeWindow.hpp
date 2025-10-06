@@ -196,6 +196,16 @@ namespace Tarcog::ISO15099
             vision2().setThicknessIGUTolerance(thickness);
         }
 
+        [[nodiscard]] double getDividerArea() const
+        {
+            return vision1().dividerArea() + vision2().dividerArea();
+        }
+
+        [[nodiscard]] double getDividerEdgeOfGlassArea() const
+        {
+            return vision1().dividerEdgeArea() + vision2().dividerEdgeArea();
+        }
+
     protected:
         [[nodiscard]] double visionPercentage() const override
         {
@@ -330,6 +340,9 @@ namespace Tarcog::ISO15099
 
         void setFrameData(DualVerticalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualVerticalFrameMap & frames);
+
+        [[nodiscard]] double getFrameArea(DualVerticalFramePosition position) const;
+        [[nodiscard]] double getFrameEdgeOfGlassArea(DualVerticalFramePosition position) const;
 
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);

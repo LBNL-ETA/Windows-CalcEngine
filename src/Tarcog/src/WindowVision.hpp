@@ -57,7 +57,7 @@ namespace Tarcog::ISO15099
 
         //! Returns total area of dividers assigned to this window vision area
         [[nodiscard]] double dividerArea() const;
-        [[nodiscard]] double dividerEdgeArea() const;
+        [[nodiscard]] double dividerEdgeOfGlassArea() const;
 
         void setInteriorAndExteriorSurfaceHeight(double height);
 
