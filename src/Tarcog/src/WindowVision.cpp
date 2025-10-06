@@ -153,7 +153,7 @@ namespace Tarcog::ISO15099
         // COG weighted U-value
         const double cogWU =
           m_IGUUvalue
-          * (area() - frameProjectedArea() - edgeOfGlassArea() - dividerArea() - dividerEdgeArea());
+          * (area() - frameProjectedArea() - totalEdgeOfGlassArea() - dividerArea() - dividerEdgeArea());
 
         // Divider contributions
         const double divWU =
@@ -513,7 +513,7 @@ namespace Tarcog::ISO15099
         return area;
     }
 
-    double WindowVision::edgeOfGlassArea() const
+    double WindowVision::totalEdgeOfGlassArea() const
     {
         auto area{0.0};
 

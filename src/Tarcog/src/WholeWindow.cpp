@@ -374,7 +374,9 @@ namespace Tarcog::ISO15099
         });
     }
 
-    void DualVisionVertical::setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical)
+    void DualVisionVertical::setDividers(const FrameData & frameData,
+                                         const size_t nHorizontal,
+                                         const size_t nVertical)
     {
         vision1().setDividers(frameData, nHorizontal, nVertical);
         vision2().setDividers(frameData, nHorizontal, nVertical);
@@ -386,9 +388,9 @@ namespace Tarcog::ISO15099
         vision2().setDividersAuto(frameData);
     }
 
-    void DualVisionVertical::setDividersTopVision(FrameData frameData,
-                                                  size_t nHorizontal,
-                                                  size_t nVertical)
+    void DualVisionVertical::setDividersTopVision(const FrameData & frameData,
+                                                  const size_t nHorizontal,
+                                                  const size_t nVertical)
     {
         vision1().setDividers(frameData, nHorizontal, nVertical);
     }
@@ -398,9 +400,9 @@ namespace Tarcog::ISO15099
         vision1().setDividersAuto(frameData);
     }
 
-    void DualVisionVertical::setDividersBottomVision(FrameData frameData,
-                                                     size_t nHorizontal,
-                                                     size_t nVertical)
+    void DualVisionVertical::setDividersBottomVision(const FrameData & frameData,
+                                                     const size_t nHorizontal,
+                                                     const size_t nVertical)
     {
         vision2().setDividers(frameData, nHorizontal, nVertical);
     }

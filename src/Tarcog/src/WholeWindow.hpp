@@ -92,6 +92,7 @@ namespace Tarcog::ISO15099
         {
             return static_cast<Derived &>(*this).vision1();
         }
+
         virtual WindowVision & vision2()   // NOLINT(*-member-function-hidden)
         {
             return static_cast<Derived &>(*this).vision2();
@@ -134,14 +135,14 @@ namespace Tarcog::ISO15099
                    / area();
         }
 
-        [[nodiscard]] double shgc(double tSol1, double tSol2) const
+        [[nodiscard]] double shgc(const double tSol1, const double tSol2) const
         {
             return (vision1().shgc(tSol1) * vision1().area()
                     + vision2().shgc(tSol2) * vision2().area())
                    / area();
         }
 
-        [[nodiscard]] double shgc(double tSol) const override
+        [[nodiscard]] double shgc(const double tSol) const override
         {
             return shgc(tSol, tSol);
         }
@@ -151,13 +152,13 @@ namespace Tarcog::ISO15099
             return (vision1().vt() * vision1().area() + vision2().vt() * vision2().area()) / area();
         }
 
-        [[nodiscard]] double vt(double tVis1, double tVis2) const
+        [[nodiscard]] double vt(const double tVis1, const double tVis2) const
         {
             return (vision1().vt(tVis1) * vision1().area() + vision2().vt(tVis2) * vision2().area())
                    / area();
         }
 
-        [[nodiscard]] double vt(double tVis) const override
+        [[nodiscard]] double vt(const double tVis) const override
         {
             return vt(tVis, tVis);
         }
@@ -180,13 +181,13 @@ namespace Tarcog::ISO15099
             return {vision1().getIGUWidth(), vision1().getIGUHeight()};
         }
 
-        void setUValueIGUTolerance(double uValue) override
+        void setUValueIGUTolerance(const double uValue) override
         {
             vision1().setUValueIGUTolerance(uValue);
             vision2().setUValueIGUTolerance(uValue);
         }
 
-        void setThicknessIGUTolerance(double thickness) override
+        void setThicknessIGUTolerance(const double thickness) override
         {
             vision1().setThicknessIGUTolerance(thickness);
             vision2().setThicknessIGUTolerance(thickness);
@@ -324,12 +325,12 @@ namespace Tarcog::ISO15099
         void setFrameData(DualVerticalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualVerticalFrameMap & frames);
 
-        void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
-        void setDividersTopVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersTopVision(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersTopVisionAuto(const FrameData & frameData);
-        void setDividersBottomVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersBottomVision(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersBottomVisionAuto(const FrameData & frameData);
 
         [[nodiscard]] IGUMismatch iguMissmatch(double topGeometricalThickness,
