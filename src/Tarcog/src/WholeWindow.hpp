@@ -54,6 +54,9 @@ namespace Tarcog::ISO15099
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
+        [[nodiscard]] double getDividerArea() const;
+        [[nodiscard]] double getDividerEdgeOfGlassArea() const;
+
         [[nodiscard]] IGUDimensions getIGUDimensions() const override;
 
         void setUValueIGUTolerance(double uValue) override;
@@ -243,6 +246,9 @@ namespace Tarcog::ISO15099
 
         void setFrameData(DualHorizontalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualHorizontalFrameMap & frames);
+
+        [[nodiscard]] double getFrameArea(DualHorizontalFramePosition position) const;
+        [[nodiscard]] double getFrameEdgeOfGlassArea(DualHorizontalFramePosition position) const;
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);

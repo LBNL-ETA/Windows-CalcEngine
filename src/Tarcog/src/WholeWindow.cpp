@@ -125,6 +125,16 @@ namespace Tarcog::ISO15099
         vision.setDividersAuto(frameData);
     }
 
+    double WindowSingleVision::getDividerArea() const
+    {
+        return vision.dividerArea();
+    }
+
+    double WindowSingleVision::getDividerEdgeOfGlassArea() const
+    {
+        return vision.dividerEdgeArea();
+    }
+
     IGUDimensions WindowSingleVision::getIGUDimensions() const
     {
         return {vision.getIGUWidth(), vision.getIGUHeight()};
@@ -148,6 +158,77 @@ namespace Tarcog::ISO15099
     ////////////////////////////////////////////////
     /// DualVisionHorizontal
     ////////////////////////////////////////////////
+
+    namespace
+    {
+
+        struct FrameRef
+        {
+            int vision;               // 1 or 2
+            FramePosition position;   // Top/Bottom/Left/Right
+        };
+
+        using FrameRefPair = std::array<std::optional<FrameRef>, 2>;
+
+        // Map dual-horizontal positions to 1 or 2 underlying frame references.
+        // MeetingRail maps to BOTH: vision1.Right and vision2.Left.
+        const std::map<DualHorizontalFramePosition, FrameRefPair> kDualHPosToFrames = {
+          {DualHorizontalFramePosition::TopLeft,
+           FrameRefPair{FrameRef{1, FramePosition::Top}, std::nullopt}},
+          {DualHorizontalFramePosition::TopRight,
+           FrameRefPair{FrameRef{2, FramePosition::Top}, std::nullopt}},
+          {DualHorizontalFramePosition::BottomLeft,
+           FrameRefPair{FrameRef{1, FramePosition::Bottom}, std::nullopt}},
+          {DualHorizontalFramePosition::BottomRight,
+           FrameRefPair{FrameRef{2, FramePosition::Bottom}, std::nullopt}},
+          {DualHorizontalFramePosition::Left,
+           FrameRefPair{FrameRef{1, FramePosition::Left}, std::nullopt}},
+          {DualHorizontalFramePosition::Right,
+           FrameRefPair{FrameRef{2, FramePosition::Right}, std::nullopt}},
+          {DualHorizontalFramePosition::MeetingRail,
+           FrameRefPair{FrameRef{1, FramePosition::Right}, FrameRef{2, FramePosition::Left}}},
+        };
+
+        // Pull the concrete Frame& from a FrameRef
+        const Frame & getFrameFromRef(const DualVisionHorizontal & self, const FrameRef & ref)
+        {
+            if(ref.vision == 1)
+            {
+                return self.vision1().frame(ref.position);
+            }
+            if(ref.vision == 2)
+            {
+                return self.vision2().frame(ref.position);
+            }
+            throw std::invalid_argument("Invalid vision index in FrameRef (expected 1 or 2).");
+        }
+
+        // Generic accumulator for a frame metric (e.g., frameArea or edgeOfGlassArea)
+        template<typename MetricFn>
+        double accumulateFor(const DualVisionHorizontal & self,
+                             DualHorizontalFramePosition where,
+                             MetricFn && metric)
+        {
+            const auto it = kDualHPosToFrames.find(where);
+            if(it == kDualHPosToFrames.end())
+            {
+                throw std::invalid_argument("Invalid dual-horizontal frame position");
+            }
+
+            double sum = 0.0;
+            for(const auto & maybeRef : it->second)
+            {
+                if(!maybeRef)
+                {
+                    continue;
+                }
+                const Frame & frame = getFrameFromRef(self, *maybeRef);
+                sum += metric(frame);
+            }
+            return sum;
+        }
+    }   // anonymous namespace
+
 
     DualVisionHorizontal::DualVisionHorizontal(double width,
                                                double height,
@@ -233,6 +314,16 @@ namespace Tarcog::ISO15099
             auto [position, frameData] = pair;
             setFrameData(position, frameData);
         });
+    }
+
+    double DualVisionHorizontal::getFrameArea(const DualHorizontalFramePosition position) const
+    {
+        return accumulateFor(*this, position, [](const Frame& f) { return frameArea(f); });
+    }
+
+    double DualVisionHorizontal::getFrameEdgeOfGlassArea(DualHorizontalFramePosition position) const
+    {
+        return accumulateFor(*this, position, [](const Frame& f) { return edgeOfGlassArea(f); });
     }
 
     void
