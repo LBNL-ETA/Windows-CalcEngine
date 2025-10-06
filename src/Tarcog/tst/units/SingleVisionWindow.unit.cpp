@@ -248,6 +248,59 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
     EXPECT_NEAR(0.792299, windowSHGC, 1e-6);
 }
 
+TEST_F(TestSingleVisionWindow, PredefinedCOGWithDividersValues)
+{
+    SCOPED_TRACE("Begin Test: Single vision window with predefined COG values.");
+
+    constexpr double uValue{5.68};
+    constexpr double edgeUValue{5.575};
+    constexpr double projectedFrameDimension{0.05715};
+    constexpr double wettedLength{0.05715};
+    constexpr double absorptance{0.9};
+
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
+                                                    .EdgeUValue = edgeUValue,
+                                                    .ProjectedFrameDimension =
+                                                      projectedFrameDimension,
+                                                    .WettedLength = wettedLength,
+                                                    .Absorptance = absorptance};
+
+    constexpr auto width{2.0};
+    constexpr auto height{2.0};
+    constexpr auto iguUValue{5.575};
+    constexpr auto shgc{0.86};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+    constexpr auto hout{20.42635};
+
+    auto window = Tarcog::ISO15099::WindowSingleVision(
+      width,
+      height,
+      tVis,
+      tSol,
+      std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hout));
+
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData}});
+
+
+    constexpr size_t nHorizontal{2};
+    constexpr size_t nVertical{2};
+    window.setDividers(frameData, nHorizontal, nVertical);
+
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.705234, vt, 1e-6);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(5.597631, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.728580, windowSHGC, 1e-6);
+}
+
 TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
 {
     SCOPED_TRACE(
