@@ -22,7 +22,12 @@ namespace Tarcog::ISO15099
     {
     public:
         WindowVision() = default;
-        WindowVision(const WindowVision & vision) = default;
+        ~WindowVision() override = default;
+        WindowVision(const WindowVision&) = default;
+        WindowVision& operator=(const WindowVision&) = default;
+        WindowVision(WindowVision&&) noexcept = default;
+        WindowVision& operator=(WindowVision&&) noexcept = default;
+
         WindowVision(double width,
                      double height,
                      double tvis,
