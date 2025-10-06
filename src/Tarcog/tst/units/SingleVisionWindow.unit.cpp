@@ -246,6 +246,9 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
 
     const double windowSHGC{window.shgc()};
     EXPECT_NEAR(0.792299, windowSHGC, 1e-6);
+
+    const double totalFrameArea{window.getFrameArea()};
+    EXPECT_NEAR(0.444136, totalFrameArea, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindow, PredefinedCOGWithDividersValues)
@@ -333,6 +336,22 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.787038, vt, 1e-6);
+
+    // Frame areas are validated vs WINDOWs FrameList table in the database for given record
+    const double sillFrameArea{window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
+    EXPECT_NEAR(0.049612, sillFrameArea, 1e-6);
+
+    const double leftJambFrameArea{window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Left)};
+    EXPECT_NEAR(0.062474, leftJambFrameArea, 1e-6);
+
+    const double rightJambFrameArea{window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Right)};
+    EXPECT_NEAR(0.062474, rightJambFrameArea, 1e-6);
+
+    const double headFrameArea{window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Bottom)};
+    EXPECT_NEAR(0.049612, headFrameArea, 1e-6);
+
+    const double totalFrameArea{window.getFrameArea()};
+    EXPECT_NEAR(0.224173, totalFrameArea, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindow, CalculatedSingleLayerSHGC)
