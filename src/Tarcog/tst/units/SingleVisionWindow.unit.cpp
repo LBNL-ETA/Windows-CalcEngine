@@ -319,10 +319,11 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
     auto window =
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValueBC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
 
     // Values in this test are validated against WINDOW 7.8.80.
@@ -338,20 +339,45 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
     EXPECT_NEAR(0.787038, vt, 1e-6);
 
     // Frame areas are validated vs WINDOWs FrameList table in the database for given record
-    const double sillFrameArea{window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
-    EXPECT_NEAR(0.049612, sillFrameArea, 1e-6);
+    const double headFrameArea{
+      window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
+    EXPECT_NEAR(0.049612, headFrameArea, 1e-6);
 
-    const double leftJambFrameArea{window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Left)};
+    const double leftJambFrameArea{
+      window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Left)};
     EXPECT_NEAR(0.062474, leftJambFrameArea, 1e-6);
 
-    const double rightJambFrameArea{window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Right)};
+    const double rightJambFrameArea{
+      window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Right)};
     EXPECT_NEAR(0.062474, rightJambFrameArea, 1e-6);
 
-    const double headFrameArea{window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Bottom)};
-    EXPECT_NEAR(0.049612, headFrameArea, 1e-6);
+    const double sillFrameArea{
+      window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Bottom)};
+    EXPECT_NEAR(0.049612, sillFrameArea, 1e-6);
 
     const double totalFrameArea{window.getFrameArea()};
     EXPECT_NEAR(0.224173, totalFrameArea, 1e-6);
+
+    // Edge of glass areas are validated vs WINDOWs FrameList table in the database for given record
+
+    const double headEdgeOfGlassFrameArea{
+      window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
+    EXPECT_NEAR(0.066723, headEdgeOfGlassFrameArea, 1e-6);
+
+    const double leftEdgeOfGlassJambFrameArea{
+      window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Left)};
+    EXPECT_NEAR(0.085773, leftEdgeOfGlassJambFrameArea, 1e-6);
+
+    const double rightEdgeOfGlassJambFrameArea{
+      window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Right)};
+    EXPECT_NEAR(0.085773, rightEdgeOfGlassJambFrameArea, 1e-6);
+
+    const double sillEdgeOfGlassFrameArea{
+      window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Bottom)};
+    EXPECT_NEAR(0.066723, sillEdgeOfGlassFrameArea, 1e-6);
+
+    const double totalEdgeOfGlassFrameArea{window.getFrameEdgeOfGlassArea()};
+    EXPECT_NEAR(0.304990, totalEdgeOfGlassFrameArea, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindow, CalculatedSingleLayerSHGC)
@@ -369,10 +395,11 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerSHGC)
     auto window =
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGCBC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
 
     // Values in this test are validated against WINDOW 7.8.80.
@@ -542,10 +569,11 @@ TEST_F(TestSingleVisionWindow, CalculatedDoubleLayerUValue)
     auto window =
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValueBC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
     // Values in this test are validated against WINDOW 7.8.80.
     // If this test fails make sure that changes are expected to do so.
@@ -572,10 +600,11 @@ TEST_F(TestSingleVisionWindow, CalculatedDoubleLayerSHGC)
     auto window =
       Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGCBC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
     // Values in this test are validated against WINDOW 7.8.80.
     // If this test fails make sure that changes are expected to do so.
