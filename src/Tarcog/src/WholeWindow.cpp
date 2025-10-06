@@ -6,6 +6,7 @@
 #include <ranges>
 #include <algorithm>
 #include <optional>
+#include <numeric>
 #include <stdexcept>
 
 namespace Tarcog::ISO15099
@@ -21,6 +22,13 @@ namespace Tarcog::ISO15099
 
         inline const std::map kFrameMapping{std::begin(kFrameMappingPairs),
                                             std::end(kFrameMappingPairs)};
+
+        inline constexpr std::array kAllSinglePositions{
+          SingleVisionFramePosition::Top,
+          SingleVisionFramePosition::Bottom,
+          SingleVisionFramePosition::Left,
+          SingleVisionFramePosition::Right,
+        };
     }   // namespace Helper
 
     ////////////////////////////////////////////////
@@ -112,6 +120,26 @@ namespace Tarcog::ISO15099
       WindowSingleVision::getFrameEdgeOfGlassArea(const SingleVisionFramePosition position) const
     {
         return edgeOfGlassArea(vision.frame(Helper::kFrameMapping.at(position)));
+    }
+
+    double WindowSingleVision::getFrameArea() const
+    {
+        double total = 0.0;
+        for(const auto pos : Helper::kAllSinglePositions)
+        {
+            total += getFrameArea(pos);
+        }
+        return total;
+    }
+
+    double WindowSingleVision::getFrameEdgeOfGlassArea() const
+    {
+        double total = 0.0;
+        for(const auto pos : Helper::kAllSinglePositions)
+        {
+            total += getFrameEdgeOfGlassArea(pos);
+        }
+        return total;
     }
 
     void WindowSingleVision::setDividers(const FrameData & frameData,
@@ -228,6 +256,14 @@ namespace Tarcog::ISO15099
             }
             return sum;
         }
+
+        inline constexpr std::array kAllDualHPositions{DualHorizontalFramePosition::TopLeft,
+                                                       DualHorizontalFramePosition::TopRight,
+                                                       DualHorizontalFramePosition::BottomLeft,
+                                                       DualHorizontalFramePosition::BottomRight,
+                                                       DualHorizontalFramePosition::Left,
+                                                       DualHorizontalFramePosition::Right,
+                                                       DualHorizontalFramePosition::MeetingRail};
     }   // anonymous namespace
 
 
@@ -325,6 +361,26 @@ namespace Tarcog::ISO15099
     double DualVisionHorizontal::getFrameEdgeOfGlassArea(DualHorizontalFramePosition position) const
     {
         return accumulateFor(*this, position, [](const Frame & f) { return edgeOfGlassArea(f); });
+    }
+
+    double DualVisionHorizontal::getFrameArea() const
+    {
+        double total = 0.0;
+        for(const auto p : kAllDualHPositions)
+        {
+            total += getFrameArea(p);
+        }
+        return total;
+    }
+
+    double DualVisionHorizontal::getFrameEdgeOfGlassArea() const
+    {
+        double total = 0.0;
+        for(const auto p : kAllDualHPositions)
+        {
+            total += getFrameEdgeOfGlassArea(p);
+        }
+        return total;
     }
 
     void
@@ -436,6 +492,14 @@ namespace Tarcog::ISO15099
             }
             return sum;
         }
+
+        inline constexpr std::array kAllDualVPositions{DualVerticalFramePosition::Top,
+                                                       DualVerticalFramePosition::Bottom,
+                                                       DualVerticalFramePosition::TopLeft,
+                                                       DualVerticalFramePosition::TopRight,
+                                                       DualVerticalFramePosition::BottomLeft,
+                                                       DualVerticalFramePosition::BottomRight,
+                                                       DualVerticalFramePosition::MeetingRail};
     }   // anonymous namespace
 
 
@@ -544,6 +608,26 @@ namespace Tarcog::ISO15099
     double DualVisionVertical::getFrameEdgeOfGlassArea(DualVerticalFramePosition position) const
     {
         return accumulateForV(*this, position, [](const Frame & f) { return edgeOfGlassArea(f); });
+    }
+
+    double DualVisionVertical::getFrameArea() const
+    {
+        double total = 0.0;
+        for(const auto p : kAllDualVPositions)
+        {
+            total += getFrameArea(p);
+        }
+        return total;
+    }
+
+    double DualVisionVertical::getFrameEdgeOfGlassArea() const
+    {
+        double total = 0.0;
+        for(const auto p : kAllDualVPositions)
+        {
+            total += getFrameEdgeOfGlassArea(p);
+        }
+        return total;
     }
 
     void DualVisionVertical::setDividers(const FrameData & frameData,

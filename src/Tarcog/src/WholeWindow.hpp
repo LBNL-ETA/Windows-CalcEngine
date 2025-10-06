@@ -51,6 +51,10 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double getFrameArea(SingleVisionFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(SingleVisionFramePosition position) const;
 
+        [[nodiscard]] double getFrameArea() const;
+        [[nodiscard]] double getFrameEdgeOfGlassArea() const;
+
+
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
@@ -203,7 +207,7 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] double getDividerEdgeOfGlassArea() const
         {
-            return vision1().dividerEdgeArea() + vision2().dividerEdgeArea();
+            return vision1().dividerEdgeOfGlassArea() + vision2().dividerEdgeOfGlassArea();
         }
 
     protected:
@@ -259,6 +263,9 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] double getFrameArea(DualHorizontalFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(DualHorizontalFramePosition position) const;
+
+        [[nodiscard]] double getFrameArea() const;
+        [[nodiscard]] double getFrameEdgeOfGlassArea() const;
 
         void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
@@ -343,6 +350,9 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] double getFrameArea(DualVerticalFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(DualVerticalFramePosition position) const;
+
+        [[nodiscard]] double getFrameArea() const;
+        [[nodiscard]] double getFrameEdgeOfGlassArea() const;
 
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
