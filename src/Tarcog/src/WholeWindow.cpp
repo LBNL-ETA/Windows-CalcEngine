@@ -1,12 +1,27 @@
 #include "WholeWindow.hpp"
 
 #include <utility>
+#include <array>
+#include <map>
 #include <ranges>
 #include <algorithm>
 #include <stdexcept>
 
 namespace Tarcog::ISO15099
 {
+    namespace Helper
+    {
+        inline constexpr std::array kFrameMappingPairs{
+          std::pair{SingleVisionFramePosition::Top, FramePosition::Top},
+          std::pair{SingleVisionFramePosition::Bottom, FramePosition::Bottom},
+          std::pair{SingleVisionFramePosition::Left, FramePosition::Left},
+          std::pair{SingleVisionFramePosition::Right, FramePosition::Right},
+        };
+
+        inline const std::map kFrameMapping{std::begin(kFrameMappingPairs),
+                                            std::end(kFrameMappingPairs)};
+    }   // namespace Helper
+
     ////////////////////////////////////////////////
     /// WindowSingleVision
     ////////////////////////////////////////////////
@@ -76,13 +91,7 @@ namespace Tarcog::ISO15099
     void WindowSingleVision::setFrameData(SingleVisionFramePosition position,
                                           const FrameData & frameData)
     {
-        static const std::map<SingleVisionFramePosition, FramePosition> frameMap = {
-          {SingleVisionFramePosition::Top, FramePosition::Top},
-          {SingleVisionFramePosition::Bottom, FramePosition::Bottom},
-          {SingleVisionFramePosition::Left, FramePosition::Left},
-          {SingleVisionFramePosition::Right, FramePosition::Right}};
-
-        vision.setFrameData(frameMap.at(position), frameData);
+        vision.setFrameData(Helper::kFrameMapping.at(position), frameData);
     }
 
     void WindowSingleVision::setFrameData(const SingleVisionFrameMap & frames)
@@ -91,6 +100,17 @@ namespace Tarcog::ISO15099
             auto [position, frameData] = pair;
             setFrameData(position, frameData);
         });
+    }
+
+    double WindowSingleVision::getFrameArea(const SingleVisionFramePosition position) const
+    {
+        return frameArea(vision.frame(Helper::kFrameMapping.at(position)));
+    }
+
+    double
+      WindowSingleVision::getFrameEdgeOfGlassArea(const SingleVisionFramePosition position) const
+    {
+        return edgeOfGlassArea(vision.frame(Helper::kFrameMapping.at(position)));
     }
 
     void WindowSingleVision::setDividers(const FrameData & frameData,

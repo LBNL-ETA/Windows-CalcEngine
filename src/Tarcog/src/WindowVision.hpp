@@ -48,8 +48,9 @@ namespace Tarcog::ISO15099
         void setHc(double hc) override;
 
         void setFrameData(FramePosition position, FrameData frameData);
-
         void setFrameTypes(const std::map<FramePosition, FrameType>& frameTypes);
+
+        const Frame& frame(FramePosition position) const;
 
         void setDividers(FrameData divider, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & divider);

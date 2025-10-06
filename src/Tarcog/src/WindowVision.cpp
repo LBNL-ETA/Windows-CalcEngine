@@ -261,6 +261,11 @@ namespace Tarcog::ISO15099
         connectFrames();
     }
 
+    const Frame & WindowVision::frame(const FramePosition position) const
+    {
+        return m_Frame.at(position);
+    }
+
     void WindowVision::setDividers(FrameData divider, size_t nHorizontal, size_t nVertical)
     {
         m_Divider = divider;

@@ -48,6 +48,9 @@ namespace Tarcog::ISO15099
         void setFrameData(SingleVisionFramePosition position, const FrameData & frameData);
         void setFrameData(const SingleVisionFrameMap & frames);
 
+        [[nodiscard]] double getFrameArea(SingleVisionFramePosition position) const;
+        [[nodiscard]] double getFrameEdgeOfGlassArea(SingleVisionFramePosition position) const;
+
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
