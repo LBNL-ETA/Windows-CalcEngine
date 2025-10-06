@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
 #include <memory>
-#include <stdexcept>
 
-#include "WCETarcog.hpp"
+#include <WCETarcog.hpp>
 
 class TestSingleVisionWindow : public testing::Test
 {
