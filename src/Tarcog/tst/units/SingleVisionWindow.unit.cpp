@@ -8,7 +8,8 @@
 /// FrameToleranceGlazingSystemThickness=0.2500
 /// FrameToleranceGlazingSystemUcenter=0.250000
 ///
-/// These two can be increased so that WINDOW will not complain and test will pass
+/// These two can be increased so that WINDOW will not complain and calculations will perform
+/// with the results
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <gtest/gtest.h>
@@ -304,15 +305,14 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGWithDividersValues)
     EXPECT_NEAR(0.728580, windowSHGC, 1e-6);
 }
 
-TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
+// cpp
+TEST_F(TestSingleVisionWindow, CalculatedSingleLayerThermalNumbers)
 {
-    SCOPED_TRACE(
-      "Uvalue environmental conditions (single layer Sample-sill, sample-head and sample-jamb).");
+    SCOPED_TRACE("Uvalue environmental conditions (single layer Sample-sill, sample-head and "
+                 "sample-jamb) - thermal numbers.");
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
-
-    // Optical data correspond to NFRC 102 sample
     constexpr auto tVis{0.899};
     constexpr auto tSol{0.8338};
 
@@ -325,10 +325,6 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
        {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
        {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
-
-    // Values in this test are validated against WINDOW 7.8.80.
-    // If this test fails make sure that changes are expected to do so.
-
     const double uvalue{window.uValue()};
     EXPECT_NEAR(4.676005, uvalue, 1e-6);
 
@@ -337,8 +333,27 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.787038, vt, 1e-6);
+}
 
-    // Frame areas are validated vs WINDOWs FrameList table in the database for given record
+TEST_F(TestSingleVisionWindow, FrameAreas)
+{
+    SCOPED_TRACE("Uvalue environmental conditions (single layer Sample-sill, sample-head and "
+                 "sample-jamb) - frame areas.");
+
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValueBC());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+
     const double headFrameArea{
       window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
     EXPECT_NEAR(0.049612, headFrameArea, 1e-6);
@@ -357,8 +372,26 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
 
     const double totalFrameArea{window.getFrameArea()};
     EXPECT_NEAR(0.224173, totalFrameArea, 1e-6);
+}
 
-    // Edge of glass areas are validated vs WINDOWs FrameList table in the database for given record
+TEST_F(TestSingleVisionWindow, FrameEdgeOfGlassAreas)
+{
+    SCOPED_TRACE("Uvalue environmental conditions (single layer Sample-sill, sample-head and "
+                 "sample-jamb) - edge of glass areas.");
+
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValueBC());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
     const double headEdgeOfGlassFrameArea{
       window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
