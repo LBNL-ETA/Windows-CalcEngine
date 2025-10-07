@@ -848,23 +848,19 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
 {
     SCOPED_TRACE("Begin Test: Mismatch detection for single vision window.");
 
-    // Frame physical parameters
-    constexpr double frameUValue{5.68};
-    constexpr double edgeUValue{5.575};
-    constexpr double projectedFrameDimension{0.05715};
-    constexpr double wettedLength{0.05715};
-    constexpr double absorptance{0.9};
-
     // Frame expected IGU values
     constexpr double designIGUFrameUValue{5.575};
     constexpr double designIGUFrameThickness{0.006};   // deliberately smaller than real thickness
 
     // Add spec to frame data
-    Tarcog::ISO15099::FrameData frameData{.UValue = frameUValue,
-                                          .EdgeUValue = edgeUValue,
-                                          .ProjectedFrameDimension = projectedFrameDimension,
-                                          .WettedLength = wettedLength,
-                                          .Absorptance = absorptance};
+    Tarcog::ISO15099::FrameData frameData{
+        .UValue = 5.68,
+        .EdgeUValue = 5.575,
+        .ProjectedFrameDimension = 0.05715,
+        .WettedLength = 0.05715,
+        .Absorptance = 0.9
+    };
+    
     frameData.iguData = Tarcog::ISO15099::IGUData{designIGUFrameUValue, designIGUFrameThickness};
 
     // IGU under test (from getCOG) has different uValue and thickness
