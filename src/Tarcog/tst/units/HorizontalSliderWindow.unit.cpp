@@ -2,7 +2,6 @@
 
 #include <WCETarcog.hpp>
 
-#include "thermal/commonFrames.hpp"
 #include "thermal/commonThermal.hpp"
 
 namespace
@@ -101,6 +100,23 @@ TEST(TestHorizontalSliderWindow, FrameAreas)
     EXPECT_NEAR(0.031237, window.getFrameArea(FP::BottomRight), 1e-6);
 
     EXPECT_NEAR(0.271946, window.getFrameArea(), 1e-6);
+}
+
+TEST(TestHorizontalSliderWindow, FrameEdgeOfGlassAreas)
+{
+    auto window{createWindow(makeWinterSystem, makeWinterSystem)};
+
+    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
+
+    EXPECT_NEAR(0.041525, window.getFrameEdgeOfGlassArea(FP::TopLeft), 1e-6);
+    EXPECT_NEAR(0.066723, window.getFrameEdgeOfGlassArea(FP::Left), 1e-6);
+    EXPECT_NEAR(0.041525, window.getFrameEdgeOfGlassArea(FP::TopRight), 1e-6);
+    EXPECT_NEAR(0.125381, window.getFrameEdgeOfGlassArea(FP::MeetingRail), 1e-6);
+    EXPECT_NEAR(0.066723, window.getFrameEdgeOfGlassArea(FP::Right), 1e-6);
+    EXPECT_NEAR(0.041525, window.getFrameEdgeOfGlassArea(FP::BottomLeft), 1e-6);
+    EXPECT_NEAR(0.041525, window.getFrameEdgeOfGlassArea(FP::BottomRight), 1e-6);
+
+    EXPECT_NEAR(0.424926, window.getFrameEdgeOfGlassArea(), 1e-6);
 }
 
 TEST(TestHorizontalSliderWindow, DoubleClearAirWinter)

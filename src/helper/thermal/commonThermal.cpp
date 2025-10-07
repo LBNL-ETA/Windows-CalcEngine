@@ -1,7 +1,6 @@
 // commonThermal.cpp
 
 #include "commonThermal.hpp"
-#include "commonFrames.hpp"
 
 namespace Environment::NFRC::Winter
 {
@@ -94,7 +93,6 @@ namespace System
 
 namespace Window
 {
-
     Tarcog::ISO15099::DualVisionHorizontal
       makeDualVisionHorizontal(double width,
                                double height,
@@ -113,21 +111,21 @@ namespace Window
                 right};
     }
 
-    Tarcog::ISO15099::DualVisionHorizontal
-      withDefaultDualHorizontalFrames(const Tarcog::ISO15099::DualVisionHorizontal & window)
+    Tarcog::ISO15099::DualVisionVertical
+      makeDualVisionVertical(double width,
+                             double height,
+                             const std::shared_ptr<Tarcog::ISO15099::CSystem> & top,
+                             const IGU::NFRC::Optics & topOptics,
+                             const std::shared_ptr<Tarcog::ISO15099::CSystem> & bottom,
+                             const IGU::NFRC::Optics & bottomOptics)
     {
-        auto copy = window;
-        using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
-        copy.setFrameData({
-          {FP::Left, Frame::sampleJamb()},
-          {FP::Right, Frame::sampleJamb()},
-          {FP::BottomLeft, Frame::sampleSill()},
-          {FP::BottomRight, Frame::sampleSill()},
-          {FP::TopLeft, Frame::sampleHead()},
-          {FP::TopRight, Frame::sampleHead()},
-          {FP::MeetingRail, Frame::sampleSill()},
-        });
-        return copy;   // return the mutated rvalue
+        return {width,
+                height,
+                topOptics.tVis,
+                topOptics.tSol,
+                top,
+                bottomOptics.tSol,
+                bottomOptics.tVis,
+                bottom};
     }
-
 }   // namespace Window
