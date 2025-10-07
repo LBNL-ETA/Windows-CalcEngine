@@ -59,6 +59,12 @@ namespace Tarcog::ISO15099
         return m_SolarAbsorptance;
     }
 
+    void CIGUSolidLayer::setSolarAbsorptance(double const t_SolarAbsorptance)
+    {
+        m_SolarAbsorptance = t_SolarAbsorptance;
+        resetCalculated();
+    }
+
     void CIGUSolidLayer::calculateConvectionOrConductionFlow()
     {
         if(m_Thickness == 0)

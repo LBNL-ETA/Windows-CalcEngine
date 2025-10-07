@@ -860,7 +860,7 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
         .WettedLength = 0.05715,
         .Absorptance = 0.9
     };
-    
+
     frameData.iguData = Tarcog::ISO15099::IGUData{designIGUFrameUValue, designIGUFrameThickness};
 
     // IGU under test (from getCOG) has different uValue and thickness

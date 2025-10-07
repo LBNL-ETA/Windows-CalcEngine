@@ -1,22 +1,23 @@
 #include <gtest/gtest.h>
 
-#include "WCETarcog.hpp"
+#include <WCETarcog.hpp>
+
+#include "commonFrames.hpp"
+#include "commonThermal.hpp"
 
 class TestHorizontalSliderWindow : public testing::Test
 {
 protected:
-    void SetUp() override
-    {}
-
-    static std::shared_ptr<Tarcog::ISO15099::CSystem> getCOG()
+    // Double Clear Air (NFRC_103-NFRC_103) - Winter conditions
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerUValueBC()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 300.0;   // Kelvins
-        auto airSpeed = 5.5;           // meters per second
-        auto tSky = 270.0;             // Kelvins
-        auto solarRadiation = 789.0;
+        constexpr auto airTemperature = 255.15;   // Kelvins
+        constexpr auto airSpeed = 5.5;            // meters per second
+        constexpr auto tSky = 255.15;             // Kelvins
+        constexpr auto solarRadiation = 0.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -25,29 +26,58 @@ protected:
         /////////////////////////////////////////////////////////
         /// Indoor
         /////////////////////////////////////////////////////////
-
-        auto roomTemperature = 294.15;
+        constexpr auto roomTemperature = 294.15;
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
 
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.003048;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.005715;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
 
-        auto aSolidLayer =
+        auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer->setSolarHeatGain(0.094189159572, solarRadiation);
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
+        auto aSolidLayer2 =
+          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
+
+        constexpr auto gapThickness = 0.012;
+        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
+
+        constexpr auto windowWidth = 1.2;
+        constexpr auto windowHeight = 1.5;
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer);
+        aIGU.addLayers({aSolidLayer1, gapLayer, aSolidLayer2});
 
         /////////////////////////////////////////////////////////
         // System
         /////////////////////////////////////////////////////////
         return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+    }
+
+    // Double Clear Air (NFRC_103-NFRC_103) - Summer conditions
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerSHGCBC()
+    {
+        /////////////////////////////////////////////////////////
+        /// Outdoor
+        /////////////////////////////////////////////////////////
+        constexpr auto airTemperature = 305.15;   // Kelvins
+        constexpr auto airSpeed = 2.75;           // meters per second
+        constexpr auto tSky = 305.15;             // Kelvins
+        constexpr auto solarRadiation = 783.0;
+
+        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
+          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
+        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
+
+        /////////////////////////////////////////////////////////
+        /// Indoor
+        /////////////////////////////////////////////////////////
+        constexpr auto roomTemperature = 297.15;
+        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
+
+        auto igu{IGU::NFRC::doubleClearAir()};
+        return std::make_shared<Tarcog::ISO15099::CSystem>(igu, Indoor, Outdoor);
     }
 };
 
@@ -55,18 +85,11 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
 {
     SCOPED_TRACE("Begin Test: Horizontal slider window predefined COG.");
 
-    constexpr double uValue{2.134059};
-    constexpr double edgeUValue{2.251039};
-    constexpr double projectedFrameDimension{0.050813};
-    constexpr double wettedLength{0.05633282};
-    constexpr double absorptance{0.3};
-
-    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = 2.134059,
+                                                    .EdgeUValue = 2.251039,
+                                                    .ProjectedFrameDimension = 0.050813,
+                                                    .WettedLength = 0.05633282,
+                                                    .Absorptance = 0.3};
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
@@ -86,15 +109,15 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout));
 
-    using Tarcog::ISO15099::DualHorizontalFramePosition;
+    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
 
-    window.setFrameData({{DualHorizontalFramePosition::Left, frameData},
-                         {DualHorizontalFramePosition::Right, frameData},
-                         {DualHorizontalFramePosition::BottomLeft, frameData},
-                         {DualHorizontalFramePosition::BottomRight, frameData},
-                         {DualHorizontalFramePosition::TopLeft, frameData},
-                         {DualHorizontalFramePosition::TopRight, frameData},
-                         {DualHorizontalFramePosition::MeetingRail, frameData}});
+    window.setFrameData({{FP::Left, frameData},
+                         {FP::Right, frameData},
+                         {FP::BottomLeft, frameData},
+                         {FP::BottomRight, frameData},
+                         {FP::TopLeft, frameData},
+                         {FP::TopRight, frameData},
+                         {FP::MeetingRail, frameData}});
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.519647, vt, 1e-6);
@@ -106,47 +129,67 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
     EXPECT_NEAR(0.357692, windowSHGC, 1e-6);
 }
 
-TEST_F(TestHorizontalSliderWindow, CalculatedCOG)
+TEST_F(TestHorizontalSliderWindow, FrameAreas)
 {
-    SCOPED_TRACE("Begin Test: Horizontal slider window calculated COG.");
+    constexpr auto width{1.5};
+    constexpr auto height{1.2};
 
-    constexpr double uValue{2.134059};
-    constexpr double edgeUValue{2.251039};
-    constexpr double projectedFrameDimension{0.050813};
-    constexpr double wettedLength{0.05633282};
-    constexpr double absorptance{0.3};
-
-    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
-
-    constexpr auto width{1.2};
-    constexpr auto height{1.5};
-    constexpr auto tVis{0.638525};
-    constexpr auto tSol{0.3716};
+    // These values correspond to double clear (NFRC-103; NFRC-103)
+    constexpr auto tVis{0.7861};
+    constexpr auto tSol{0.6069};
 
     auto window = Tarcog::ISO15099::DualVisionHorizontal(
-      width, height, tVis, tSol, getCOG(), tVis, tSol, getCOG());
+      width, height, tVis, tSol, getDoubleLayerUValueBC(), tVis, tSol, getDoubleLayerUValueBC());
 
-    using Tarcog::ISO15099::DualHorizontalFramePosition;
+    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
 
-    window.setFrameData({{DualHorizontalFramePosition::Left, frameData},
-                         {DualHorizontalFramePosition::Right, frameData},
-                         {DualHorizontalFramePosition::BottomLeft, frameData},
-                         {DualHorizontalFramePosition::BottomRight, frameData},
-                         {DualHorizontalFramePosition::TopLeft, frameData},
-                         {DualHorizontalFramePosition::TopRight, frameData},
-                         {DualHorizontalFramePosition::MeetingRail, frameData}});
+    window.setFrameData({{FP::Left, Frame::sampleJamb()},
+                         {FP::Right, Frame::sampleJamb()},
+                         {FP::BottomLeft, Frame::sampleSill()},
+                         {FP::BottomRight, Frame::sampleSill()},
+                         {FP::TopLeft, Frame::sampleHead()},
+                         {FP::TopRight, Frame::sampleHead()},
+                         {FP::MeetingRail, Frame::sampleSill()}});
+
+    EXPECT_NEAR(0.031237, window.getFrameArea(FP::TopLeft), 1e-6);
+    EXPECT_NEAR(0.049612, window.getFrameArea(FP::Left), 1e-6);
+    EXPECT_NEAR(0.031237, window.getFrameArea(FP::TopRight), 1e-6);
+    EXPECT_NEAR(0.047774, window.getFrameArea(FP::MeetingRail), 1e-6);
+    EXPECT_NEAR(0.049612, window.getFrameArea(FP::Right), 1e-6);
+    EXPECT_NEAR(0.031237, window.getFrameArea(FP::BottomLeft), 1e-6);
+    EXPECT_NEAR(0.031237, window.getFrameArea(FP::BottomRight), 1e-6);
+
+    EXPECT_NEAR(0.271946, window.getFrameArea(), 1e-6);
+}
+
+TEST_F(TestHorizontalSliderWindow, DoubleClearAirWinter)
+{
+    constexpr auto width{1.5};
+    constexpr auto height{1.2};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
+    constexpr auto tVis{0.7861};
+    constexpr auto tSol{0.6069};
+
+    auto window = Tarcog::ISO15099::DualVisionHorizontal(
+      width, height, tVis, tSol, getDoubleLayerUValueBC(), tVis, tSol, getDoubleLayerUValueBC());
+
+    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
+
+    window.setFrameData({{FP::Left, Frame::sampleJamb()},
+                         {FP::Right, Frame::sampleJamb()},
+                         {FP::BottomLeft, Frame::sampleSill()},
+                         {FP::BottomRight, Frame::sampleSill()},
+                         {FP::TopLeft, Frame::sampleHead()},
+                         {FP::TopRight, Frame::sampleHead()},
+                         {FP::MeetingRail, Frame::sampleSill()}});
 
     const double vt{window.vt()};
-    EXPECT_NEAR(0.519647, vt, 1e-6);
+    EXPECT_NEAR(0.667335, vt, 1e-6);
 
     const double uvalue{window.uValue()};
-    EXPECT_NEAR(3.980813, uvalue, 1e-6);
+    EXPECT_NEAR(2.500568, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.321015, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.002654, windowSHGC, 1e-6);
 }

@@ -4,7 +4,7 @@ macro(ADD_GOOGLE_TESTS_WCE executable)
         string(REGEX MATCH .*cpp|.*cc source "${source}")
         if (source)
             file(READ "${source}" contents)
-            string(REGEX MATCHALL "TEST_?F?\\(([A-Za-z_0-9 ,]+)\\)" found_tests ${contents})
+            string(REGEX MATCHALL "TEST_?F?\\(([A-Za-z_0-9 ,]+)\\)" found_tests "${contents}")
             foreach (hit ${found_tests})
                 string(REGEX REPLACE ".*\\(( )*([A-Za-z_0-9]+)( )*,( )*([A-Za-z_0-9]+)( )*\\).*" "\\2.\\5" test_name ${hit})
                 add_test(NAME ${test_name}

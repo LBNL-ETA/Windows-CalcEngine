@@ -1,8 +1,12 @@
 #pragma once
 
+#include "IGU.hpp"
+
+
 #include <memory>
 #include <vector>
 #include <map>
+
 #include "IGUConfigurations.hpp"
 #include "IGUGapLayer.hpp"
 #include "ShadingModifiers.hpp"
@@ -11,8 +15,6 @@
 namespace Tarcog::ISO15099
 {
     enum class Environment;
-
-    class CIGU;
 
     class CEnvironment;
 
@@ -24,7 +26,7 @@ namespace Tarcog::ISO15099
     {
     public:
         virtual ~CSystem() = default;
-        CSystem(CIGU & t_IGU,
+        CSystem(CIGU t_IGU,
                 const std::shared_ptr<CEnvironment> & t_Indoor,
                 const std::shared_ptr<CEnvironment> & t_Outdoor);
 
@@ -83,6 +85,8 @@ namespace Tarcog::ISO15099
         [[nodiscard]] ShadingModifier getShadingModifier(System t_System, Environment env) const;
 
     private:
+        CIGU m_igu;
+
         void solve();
         void checkSolved();
 

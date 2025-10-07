@@ -2,7 +2,6 @@
 #include "OutdoorEnvironment.hpp"
 #include "IndoorEnvironment.hpp"
 
-
 namespace Tarcog::ISO15099
 {
     std::shared_ptr<CIndoorEnvironment> Environments::indoor(double roomAirTemperature,
