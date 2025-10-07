@@ -11,73 +11,17 @@ protected:
     // Double Clear Air (NFRC_103-NFRC_103) - Winter conditions
     static std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerUValueBC()
     {
-        /////////////////////////////////////////////////////////
-        /// Outdoor
-        /////////////////////////////////////////////////////////
-        constexpr auto airTemperature = 255.15;   // Kelvins
-        constexpr auto airSpeed = 5.5;            // meters per second
-        constexpr auto tSky = 255.15;             // Kelvins
-        constexpr auto solarRadiation = 0.0;
-
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
-          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
-
-        /////////////////////////////////////////////////////////
-        /// Indoor
-        /////////////////////////////////////////////////////////
-        constexpr auto roomTemperature = 294.15;
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-
-        /////////////////////////////////////////////////////////
-        // IGU
-        /////////////////////////////////////////////////////////
-        constexpr auto solidLayerThickness = 0.005715;   // [m]
-        constexpr auto solidLayerConductance = 1.0;
-
-        auto aSolidLayer1 =
-          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-
-        auto aSolidLayer2 =
-          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-
-        constexpr auto gapThickness = 0.012;
-        auto gapLayer = Tarcog::ISO15099::Layers::gap(gapThickness);
-
-        constexpr auto windowWidth = 1.2;
-        constexpr auto windowHeight = 1.5;
-        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayers({aSolidLayer1, gapLayer, aSolidLayer2});
-
-        /////////////////////////////////////////////////////////
-        // System
-        /////////////////////////////////////////////////////////
-        return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+        return std::make_shared<Tarcog::ISO15099::CSystem>(IGU::NFRC::doubleClearAir(),
+                                                           Environment::NFRC::Winter::indoor(),
+                                                           Environment::NFRC::Winter::outdoor());
     }
 
     // Double Clear Air (NFRC_103-NFRC_103) - Summer conditions
     static std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerSHGCBC()
     {
-        /////////////////////////////////////////////////////////
-        /// Outdoor
-        /////////////////////////////////////////////////////////
-        constexpr auto airTemperature = 305.15;   // Kelvins
-        constexpr auto airSpeed = 2.75;           // meters per second
-        constexpr auto tSky = 305.15;             // Kelvins
-        constexpr auto solarRadiation = 783.0;
-
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
-          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
-
-        /////////////////////////////////////////////////////////
-        /// Indoor
-        /////////////////////////////////////////////////////////
-        constexpr auto roomTemperature = 297.15;
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-
-        auto igu{IGU::NFRC::doubleClearAir()};
-        return std::make_shared<Tarcog::ISO15099::CSystem>(igu, Indoor, Outdoor);
+        return std::make_shared<Tarcog::ISO15099::CSystem>(IGU::NFRC::doubleClearAir(),
+                                                           Environment::NFRC::Summer::indoor(),
+                                                           Environment::NFRC::Summer::outdoor());
     }
 };
 
