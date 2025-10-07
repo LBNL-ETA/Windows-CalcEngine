@@ -172,7 +172,14 @@ else ()
     if (BUILD_WCE_TESTING)
         include_directories(src/helper)
         # Collect helper files
-        file(GLOB helper_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/helper/*.hpp" "src/helper/*.cpp")
+        file(GLOB helper_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+                "src/helper/*.hpp"
+                "src/helper/*.cpp"
+                "src/helper/optical/*.hpp"
+                "src/helper/optical/*.cpp"
+                "src/helper/thermal/*.hpp"
+                "src/helper/thermal/*.cpp"
+        )
         list(APPEND test_src ${helper_test_src})
 
         if (${BUILD_WCE_COMMON})
