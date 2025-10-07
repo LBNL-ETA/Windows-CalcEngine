@@ -205,18 +205,12 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
 {
     SCOPED_TRACE("Begin Test: Single vision window with predefined COG values.");
 
-    constexpr double uValue{5.68};
-    constexpr double edgeUValue{5.575};
-    constexpr double projectedFrameDimension{0.05715};
-    constexpr double wettedLength{0.05715};
-    constexpr double absorptance{0.9};
 
-    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = 5.68,
+                                                    .EdgeUValue = 5.575,
+                                                    .ProjectedFrameDimension = 0.05715,
+                                                    .WettedLength = 0.05715,
+                                                    .Absorptance = 0.9};
 
     constexpr auto width{2.0};
     constexpr auto height{2.0};
@@ -256,18 +250,11 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGWithDividersValues)
 {
     SCOPED_TRACE("Begin Test: Single vision window with predefined COG values.");
 
-    constexpr double uValue{5.68};
-    constexpr double edgeUValue{5.575};
-    constexpr double projectedFrameDimension{0.05715};
-    constexpr double wettedLength{0.05715};
-    constexpr double absorptance{0.9};
-
-    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = 5.68,
+                                                    .EdgeUValue = 5.575,
+                                                    .ProjectedFrameDimension = 0.05715,
+                                                    .WettedLength = 0.05715,
+                                                    .Absorptance = 0.9};
 
     constexpr auto width{2.0};
     constexpr auto height{2.0};
@@ -306,7 +293,7 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGWithDividersValues)
 }
 
 // cpp
-TEST_F(TestSingleVisionWindow, CalculatedSingleLayerThermalNumbers)
+TEST_F(TestSingleVisionWindow, SingleLayer)
 {
     SCOPED_TRACE("Uvalue environmental conditions (single layer Sample-sill, sample-head and "
                  "sample-jamb) - thermal numbers.");
@@ -354,6 +341,8 @@ TEST_F(TestSingleVisionWindow, FrameAreas)
        {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
        {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
+    // Validated vs WINDOW 7.8.80. Values can be read from FrameList table in the database
+
     const double headFrameArea{
       window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
     EXPECT_NEAR(0.049612, headFrameArea, 1e-6);
@@ -392,6 +381,8 @@ TEST_F(TestSingleVisionWindow, FrameEdgeOfGlassAreas)
        {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
        {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
        {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+
+    // Validated vs WINDOW 7.8.80. Values can be read from FrameList table in the database
 
     const double headEdgeOfGlassFrameArea{
       window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
