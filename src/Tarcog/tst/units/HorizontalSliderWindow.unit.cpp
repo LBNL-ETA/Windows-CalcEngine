@@ -128,14 +128,7 @@ TEST(TestHorizontalSliderWindow, DoubleClearAirWinter)
     const auto & optics = kDoubleClear.optics;
 
     auto window = Window::makeDualVisionHorizontal(
-      width,
-      height,
-      System::make(
-        kDoubleClear, Environment::NFRC::Winter::indoor(), Environment::NFRC::Winter::outdoor()),
-      optics,
-      System::make(
-        kDoubleClear, Environment::NFRC::Winter::indoor(), Environment::NFRC::Winter::outdoor()),
-      optics);
+      width, height, makeWinterSystem(), optics, makeWinterSystem(), optics);
 
     window = Window::withDefaultDualHorizontalFrames(window);
 
@@ -158,14 +151,7 @@ TEST(TestHorizontalSliderWindow, DoubleClearAirSummer)
     const auto & optics = kDoubleClear.optics;
 
     auto window = Window::makeDualVisionHorizontal(
-      width,
-      height,
-      System::make(
-        kDoubleClear, Environment::NFRC::Summer::indoor(), Environment::NFRC::Summer::outdoor()),
-      optics,
-      System::make(
-        kDoubleClear, Environment::NFRC::Summer::indoor(), Environment::NFRC::Summer::outdoor()),
-      optics);
+      width, height, makeSummerSystem(), optics, makeSummerSystem(), optics);
 
     window = Window::withDefaultDualHorizontalFrames(window);
 
