@@ -7,52 +7,34 @@
 
 namespace
 {
-    // Double Clear Air (NFRC_103-NFRC_103) - Winter conditions
-    std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerUValueBC()
-    {
-        return std::make_shared<Tarcog::ISO15099::CSystem>(IGU::NFRC::doubleClearAir(),
-                                                           Environment::NFRC::Winter::indoor(),
-                                                           Environment::NFRC::Winter::outdoor());
-    }
+    // IGU preset with optics bound (NFRC_103-NFRC_103)
+    const IGU::NFRC::Preset kDoubleClear = IGU::NFRC::doubleClearAir();
 
-    // Double Clear Air (NFRC_103-NFRC_103) - Summer conditions
-    std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerSHGCBC()
-    {
-        return std::make_shared<Tarcog::ISO15099::CSystem>(IGU::NFRC::doubleClearAir(),
-                                                           Environment::NFRC::Summer::indoor(),
-                                                           Environment::NFRC::Summer::outdoor());
-    }
+    // Callables to build systems with explicit environments
+    const auto makeWinterSystem = [] {
+        return System::make(
+          kDoubleClear, Environment::NFRC::Winter::indoor(), Environment::NFRC::Winter::outdoor());
+    };
 
-    template<typename Fn1, typename Fn2>
-    Tarcog::ISO15099::DualVisionHorizontal createWindow(Fn1 && sys1, Fn2 && sys2)
+    const auto makeSummerSystem = [] {
+        return System::make(
+          kDoubleClear, Environment::NFRC::Summer::indoor(), Environment::NFRC::Summer::outdoor());
+    };
+
+    // Create a window using preset optics (bound to IGU) and user-provided system factories
+    template<typename FnLeft, typename FnRight>
+    Tarcog::ISO15099::DualVisionHorizontal createWindow(FnLeft && mkLeft, FnRight && mkRight)
     {
         constexpr auto width{1.5};
         constexpr auto height{1.2};
 
-        // These values correspond to double clear (NFRC-103; NFRC-103)
-        constexpr auto tVis{0.7861};
-        constexpr auto tSol{0.6069};
+        auto left = std::invoke(std::forward<FnLeft>(mkLeft));
+        auto right = std::invoke(std::forward<FnRight>(mkRight));   // NOTE: FnRight here (bugfix)
 
-        auto window = Tarcog::ISO15099::DualVisionHorizontal(width,
-                                                             height,
-                                                             tVis,
-                                                             tSol,
-                                                             std::invoke(std::forward<Fn1>(sys1)),
-                                                             tVis,
-                                                             tSol,
-                                                             std::invoke(std::forward<Fn1>(sys2)));
+        auto window = Window::makeDualVisionHorizontal(
+          width, height, left, kDoubleClear.optics, right, kDoubleClear.optics);
 
-        using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
-
-        window.setFrameData({{FP::Left, Frame::sampleJamb()},
-                             {FP::Right, Frame::sampleJamb()},
-                             {FP::BottomLeft, Frame::sampleSill()},
-                             {FP::BottomRight, Frame::sampleSill()},
-                             {FP::TopLeft, Frame::sampleHead()},
-                             {FP::TopRight, Frame::sampleHead()},
-                             {FP::MeetingRail, Frame::sampleSill()}});
-
-        return window;
+        return Window::withDefaultDualHorizontalFrames(window);
     }
 }   // namespace
 
@@ -106,7 +88,7 @@ TEST(TestHorizontalSliderWindow, PredefinedCOGValues)
 
 TEST(TestHorizontalSliderWindow, FrameAreas)
 {
-    auto window{createWindow(getDoubleLayerUValueBC, getDoubleLayerUValueBC)};
+    auto window{createWindow(makeWinterSystem, makeWinterSystem)};
 
     using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
 
@@ -126,22 +108,20 @@ TEST(TestHorizontalSliderWindow, DoubleClearAirWinter)
     constexpr auto width{1.5};
     constexpr auto height{1.2};
 
-    // These values correspond to double clear (NFRC-103; NFRC-103)
-    constexpr auto tVis{0.7861};
-    constexpr auto tSol{0.6069};
+    // Optics now come from the IGU preset
+    const auto & optics = kDoubleClear.optics;
 
-    auto window = Tarcog::ISO15099::DualVisionHorizontal(
-      width, height, tVis, tSol, getDoubleLayerUValueBC(), tVis, tSol, getDoubleLayerUValueBC());
+    auto window = Window::makeDualVisionHorizontal(
+      width,
+      height,
+      System::make(
+        kDoubleClear, Environment::NFRC::Winter::indoor(), Environment::NFRC::Winter::outdoor()),
+      optics,
+      System::make(
+        kDoubleClear, Environment::NFRC::Winter::indoor(), Environment::NFRC::Winter::outdoor()),
+      optics);
 
-    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
-
-    window.setFrameData({{FP::Left, Frame::sampleJamb()},
-                         {FP::Right, Frame::sampleJamb()},
-                         {FP::BottomLeft, Frame::sampleSill()},
-                         {FP::BottomRight, Frame::sampleSill()},
-                         {FP::TopLeft, Frame::sampleHead()},
-                         {FP::TopRight, Frame::sampleHead()},
-                         {FP::MeetingRail, Frame::sampleSill()}});
+    window = Window::withDefaultDualHorizontalFrames(window);
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.667335, vt, 1e-6);
@@ -151,4 +131,34 @@ TEST(TestHorizontalSliderWindow, DoubleClearAirWinter)
 
     const double windowSHGC{window.shgc()};
     EXPECT_NEAR(0.002654, windowSHGC, 1e-6);
+}
+
+TEST(TestHorizontalSliderWindow, DoubleClearAirSummer)
+{
+    constexpr auto width{1.5};
+    constexpr auto height{1.2};
+
+    // Optics now come from the IGU preset
+    const auto & optics = kDoubleClear.optics;
+
+    auto window = Window::makeDualVisionHorizontal(
+      width,
+      height,
+      System::make(
+        kDoubleClear, Environment::NFRC::Summer::indoor(), Environment::NFRC::Summer::outdoor()),
+      optics,
+      System::make(
+        kDoubleClear, Environment::NFRC::Summer::indoor(), Environment::NFRC::Summer::outdoor()),
+      optics);
+
+    window = Window::withDefaultDualHorizontalFrames(window);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.667335, vt, 1e-6);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(2.589659, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.601122, windowSHGC, 1e-6);
 }

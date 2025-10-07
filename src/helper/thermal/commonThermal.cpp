@@ -1,6 +1,7 @@
 // commonThermal.cpp
 
 #include "commonThermal.hpp"
+#include "commonFrames.hpp"
 
 namespace Environment::NFRC::Winter
 {
@@ -50,7 +51,7 @@ namespace Environment::NFRC::Summer
 
 namespace IGU::NFRC
 {
-    Tarcog::ISO15099::CIGU doubleClearAir()
+    Preset doubleClearAir()
     {
         /////////////////////////////////////////////////////////
         // IGU
@@ -76,6 +77,57 @@ namespace IGU::NFRC
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({aSolidLayer1, gapLayer, aSolidLayer2});
 
-        return aIGU;
+        return {.igu = aIGU, .optics = {.tVis = 0.7861, .tSol = 0.6069}};
     }
 }   // namespace IGU::NFRC
+
+namespace System
+{
+    std::shared_ptr<Tarcog::ISO15099::CSystem>
+      make(const IGU::NFRC::Preset & preset,
+           const std::shared_ptr<Tarcog::ISO15099::CIndoorEnvironment> & indoor,
+           const std::shared_ptr<Tarcog::ISO15099::COutdoorEnvironment> & outdoor)
+    {
+        return std::make_shared<Tarcog::ISO15099::CSystem>(preset.igu, indoor, outdoor);
+    }
+}   // namespace System
+
+namespace Window
+{
+
+    Tarcog::ISO15099::DualVisionHorizontal
+      makeDualVisionHorizontal(double width,
+                               double height,
+                               const std::shared_ptr<Tarcog::ISO15099::CSystem> & left,
+                               const IGU::NFRC::Optics & leftOptics,
+                               const std::shared_ptr<Tarcog::ISO15099::CSystem> & right,
+                               const IGU::NFRC::Optics & rightOptics)
+    {
+        return {width,
+                height,
+                leftOptics.tVis,
+                leftOptics.tSol,
+                left,
+                rightOptics.tVis,
+                rightOptics.tSol,
+                right};
+    }
+
+    Tarcog::ISO15099::DualVisionHorizontal
+      withDefaultDualHorizontalFrames(const Tarcog::ISO15099::DualVisionHorizontal & window)
+    {
+        auto copy = window;
+        using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
+        copy.setFrameData({
+          {FP::Left, Frame::sampleJamb()},
+          {FP::Right, Frame::sampleJamb()},
+          {FP::BottomLeft, Frame::sampleSill()},
+          {FP::BottomRight, Frame::sampleSill()},
+          {FP::TopLeft, Frame::sampleHead()},
+          {FP::TopRight, Frame::sampleHead()},
+          {FP::MeetingRail, Frame::sampleSill()},
+        });
+        return copy;   // return the mutated rvalue
+    }
+
+}   // namespace Window
