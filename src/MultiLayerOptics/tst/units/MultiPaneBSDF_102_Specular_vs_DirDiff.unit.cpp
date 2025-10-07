@@ -7,8 +7,8 @@
 #include <WCESingleLayerOptics.hpp>
 #include <WCECommon.hpp>
 
-#include "standardData.hpp"
-#include "spectralSampleData.hpp"
+#include "../../../helper/optical/standardData.hpp"
+#include "../../../helper/optical/spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;

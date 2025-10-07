@@ -6,8 +6,8 @@
 #include <WCESingleLayerOptics.hpp>
 #include <WCEMultiLayerOptics.hpp>
 
-#include "standardData.hpp"
-#include "spectralSampleData.hpp"
+#include "../../../helper/optical/standardData.hpp"
+#include "../../../helper/optical/spectralSampleData.hpp"
 
 using MultiLayerOptics::CMultiPaneBSDF;
 using FenestrationCommon::CSeries;

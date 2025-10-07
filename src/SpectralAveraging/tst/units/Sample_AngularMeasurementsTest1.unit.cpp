@@ -4,7 +4,7 @@
 #include <WCESpectralAveraging.hpp>
 #include <WCECommon.hpp>
 
-#include "standardData.hpp"
+#include "../../../helper/optical/standardData.hpp"
 
 using namespace SpectralAveraging;
 using namespace FenestrationCommon;

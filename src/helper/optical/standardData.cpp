@@ -4,8 +4,8 @@ namespace StandardData
 {
     std::vector<double> condensedSpectrumDefault()
     {
-        const auto numberOfVisibleBands{5u};
-        const auto numberOfIRBands{10u};
+        constexpr auto numberOfVisibleBands{5U};
+        constexpr auto numberOfIRBands{10U};
         return FenestrationCommon::generateSpectrum(numberOfVisibleBands, numberOfIRBands);
     }
 

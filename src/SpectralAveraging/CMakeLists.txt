@@ -27,19 +27,18 @@ install(TARGETS ${target_name}
 )
 
 if (BUILD_WCE_TESTING)
-    # common helper files for the testing
     include_directories(../helper)
-
-    # Collect helper files
-    file(GLOB helper_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "../helper/*.hpp" "../helper/*.cpp")
-    list(APPEND test_src ${helper_test_src})
-
-    # Include main test files
     include_directories(include)
-    file(GLOB unit_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "tst/units/*.cpp")
-    list(APPEND test_src ${unit_test_src})
 
-    # Create test targets
+    # Collect helper and unit test sources/headers in one call
+    file(GLOB test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+        "../helper/*.hpp"
+        "../helper/*.cpp"
+        "../helper/optical/*.hpp"
+        "../helper/optical/*.cpp"
+        "tst/units/*.cpp"
+    )
+
     CREATE_TEST_TARGETS_WCE(${target_name} "${test_src}" "")
 endif ()
 

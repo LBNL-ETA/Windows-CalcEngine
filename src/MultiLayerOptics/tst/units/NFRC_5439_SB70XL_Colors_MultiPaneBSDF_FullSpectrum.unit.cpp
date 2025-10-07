@@ -5,8 +5,8 @@
 #include <WCESingleLayerOptics.hpp>
 #include <WCESpectralAveraging.hpp>
 
-#include "standardData.hpp"
-#include "spectralSampleData.hpp"
+#include "../../../helper/optical/standardData.hpp"
+#include "../../../helper/optical/spectralSampleData.hpp"
 
 using FenestrationCommon::CSeries;
 

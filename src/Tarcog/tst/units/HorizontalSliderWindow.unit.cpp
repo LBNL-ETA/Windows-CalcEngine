@@ -2,8 +2,8 @@
 
 #include <WCETarcog.hpp>
 
-#include "commonFrames.hpp"
-#include "commonThermal.hpp"
+#include "thermal/commonFrames.hpp"
+#include "thermal/commonThermal.hpp"
 
 class TestHorizontalSliderWindow : public testing::Test
 {

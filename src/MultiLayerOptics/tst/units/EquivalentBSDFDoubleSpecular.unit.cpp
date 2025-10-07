@@ -9,8 +9,8 @@ using namespace SpectralAveraging;
 using namespace SingleLayerOptics;
 using namespace MultiLayerOptics;
 
-#include "standardData.hpp"
-#include "spectralSampleData.hpp"
+#include "../../../helper/optical/standardData.hpp"
+#include "../../../helper/optical/spectralSampleData.hpp"
 
 // Example that tests inter-reflectance between two adjacent layers. This procedure will be used to
 // calculate other multilayer properties
