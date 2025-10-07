@@ -78,4 +78,4 @@ namespace IGU::NFRC
 
         return aIGU;
     }
-}
+}   // namespace IGU::NFRC
