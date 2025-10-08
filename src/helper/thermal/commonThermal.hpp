@@ -83,7 +83,7 @@ namespace Window
           {FP::MeetingRail, Frame::sampleSill()},
         });
 
-        return std::forward<T>(window);   // lvalue -> lvalue&, rvalue -> rvalue
+        return std::forward<T>(window);
     }
 
     Tarcog::ISO15099::DualVisionVertical

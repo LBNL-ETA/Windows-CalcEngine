@@ -9,6 +9,89 @@
 
 namespace Tarcog::ISO15099
 {
+    WindowVision::WindowVision(const WindowVision & other) :
+        IVision(other),
+        m_IGUSystem(other.m_IGUSystem),
+        m_Width(other.m_Width),
+        m_Height(other.m_Height),
+        m_IGUUvalue(other.m_IGUUvalue),
+        m_VT(other.m_VT),
+        m_Tsol(other.m_Tsol),
+        m_HExterior(other.m_HExterior),
+        m_ExteriorSurfaceHeight(other.m_ExteriorSurfaceHeight),
+        m_Frame(other.m_Frame),
+        m_NumOfVerticalDividers(other.m_NumOfVerticalDividers),
+        m_NumOfHorizontalDividers(other.m_NumOfHorizontalDividers),
+        m_Divider(other.m_Divider),
+        m_IGUErrorTolerance(other.m_IGUErrorTolerance)
+    {
+        connectFrames();
+    }
+
+    WindowVision & WindowVision::operator=(const WindowVision & other)
+    {
+        if(this != &other)
+        {
+            m_IGUSystem = other.m_IGUSystem;
+            m_Width = other.m_Width;
+            m_Height = other.m_Height;
+            m_IGUUvalue = other.m_IGUUvalue;
+            m_VT = other.m_VT;
+            m_Tsol = other.m_Tsol;
+            m_HExterior = other.m_HExterior;
+            m_ExteriorSurfaceHeight = other.m_ExteriorSurfaceHeight;
+            m_Frame = other.m_Frame;
+            m_NumOfVerticalDividers = other.m_NumOfVerticalDividers;
+            m_NumOfHorizontalDividers = other.m_NumOfHorizontalDividers;
+            m_Divider = other.m_Divider;
+            m_IGUErrorTolerance = other.m_IGUErrorTolerance;
+            connectFrames();
+        }
+        return *this;
+    }
+
+    WindowVision::WindowVision(WindowVision && other) noexcept :
+        IVision(std::move(other)),
+        m_IGUSystem(std::move(other.m_IGUSystem)),
+        m_Width(other.m_Width),
+        m_Height(other.m_Height),
+        m_IGUUvalue(other.m_IGUUvalue),
+        m_VT(other.m_VT),
+        m_Tsol(other.m_Tsol),
+        m_HExterior(other.m_HExterior),
+        m_ExteriorSurfaceHeight(other.m_ExteriorSurfaceHeight),
+        m_Frame(std::move(other.m_Frame)),
+        m_NumOfVerticalDividers(other.m_NumOfVerticalDividers),
+        m_NumOfHorizontalDividers(other.m_NumOfHorizontalDividers),
+        m_Divider(other.m_Divider),
+        m_IGUErrorTolerance(other.m_IGUErrorTolerance)
+    {
+        connectFrames();
+    }
+
+    WindowVision & WindowVision::operator=(WindowVision && other) noexcept
+    {
+        if(this != &other)
+        {
+            IVision::operator=(std::move(other));
+            m_IGUSystem = std::move(other.m_IGUSystem);
+            m_Width = other.m_Width;
+            m_Height = other.m_Height;
+            m_IGUUvalue = other.m_IGUUvalue;
+            m_VT = other.m_VT;
+            m_Tsol = other.m_Tsol;
+            m_HExterior = other.m_HExterior;
+            m_ExteriorSurfaceHeight = other.m_ExteriorSurfaceHeight;
+            m_Frame = std::move(other.m_Frame);
+            m_NumOfVerticalDividers = other.m_NumOfVerticalDividers;
+            m_NumOfHorizontalDividers = other.m_NumOfHorizontalDividers;
+            m_Divider = other.m_Divider;
+            m_IGUErrorTolerance = other.m_IGUErrorTolerance;
+            connectFrames();
+        }
+        return *this;
+    }
+
     WindowVision::WindowVision(double width,
                                double height,
                                double tvis,

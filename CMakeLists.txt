@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(Windows-CalcEngine VERSION 1.0.61 LANGUAGES CXX)
+project(Windows-CalcEngine VERSION 1.0.62 LANGUAGES CXX)
 
 set(target_name ${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD 20)
 
 # Add a new option to force single project compilation
-option(FORCE_SINGLE_PROJECT "Force compilation as a single project, regardless of parent" OFF)
+option(FORCE_SINGLE_PROJECT "Force compilation as a single project, regardless of parent" ON)
 option(USE_PARALLEL_ALGORITHMS "Use parallel algorithms for STL operations" ON)
 
 if (USE_PARALLEL_ALGORITHMS)
