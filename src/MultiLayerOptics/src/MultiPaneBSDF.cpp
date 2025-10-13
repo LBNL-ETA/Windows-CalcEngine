@@ -30,14 +30,11 @@ namespace SingleLayerOptics
 namespace MultiLayerOptics
 {
     CMultiPaneBSDF::CMultiPaneBSDF(const std::vector<std::shared_ptr<CBSDFLayer>> & t_Layer,
-                                   const std::optional<std::vector<double>> & matrixWavelengths,
-                                   const FenestrationCommon::ProgressCallback & callback) :
+                                   const std::optional<std::vector<double>> & matrixWavelengths) :
         m_EquivalentLayer(t_Layer, matrixWavelengths),
         m_Results(t_Layer[0]->getDirections(BSDFDirection::Incoming)),
         m_BSDFDirections(t_Layer[0]->getDirections(BSDFDirection::Incoming))
-    {
-        m_EquivalentLayer.calculate(callback);
-    }
+    {}
 
     std::vector<std::vector<double>>
       CMultiPaneBSDF::calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,
@@ -420,10 +417,11 @@ namespace MultiLayerOptics
     std::unique_ptr<CMultiPaneBSDF> CMultiPaneBSDF::create(
       const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
       const std::optional<std::vector<double>> & matrixWavelengths,
-      const FenestrationCommon::ProgressCallback & callback)
+      const FenestrationCommon::ProgressCallback &)
     {
+        // Good place to assign callback. Need seperate function for it
         return std::unique_ptr<CMultiPaneBSDF>(
-          new CMultiPaneBSDF(t_Layer, matrixWavelengths, callback));
+          new CMultiPaneBSDF(t_Layer, matrixWavelengths));
     }
 
     double CMultiPaneBSDF::getPropertySurface(const double minLambda,
@@ -477,6 +475,15 @@ namespace MultiLayerOptics
     void CMultiPaneBSDF::setCalculationProperties(
       const SingleLayerOptics::CalculationProperties & calcProperties)
     {
+        // Reducing number of wavelengths only if user provided common wavelengths are less
+        // than the ones calculated based on layers
+        if(calcProperties.CommonWavelengths.has_value()
+           && calcProperties.CommonWavelengths.value().size()
+                < m_EquivalentLayer.getCommonWavelengths().size())
+        {
+            m_EquivalentLayer.setCommonBandWavelengths(calcProperties.CommonWavelengths.value());
+        }
+
         m_CalculationProperties = calcProperties;
 
         const auto directionsSize{m_BSDFDirections.size()};

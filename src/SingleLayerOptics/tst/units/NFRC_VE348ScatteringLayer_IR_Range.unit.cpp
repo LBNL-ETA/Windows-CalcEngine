@@ -4,7 +4,7 @@
 #include <WCESingleLayerOptics.hpp>
 #include <WCESpectralAveraging.hpp>
 
-#include "../../../helper/optical/spectralSampleData.hpp"
+#include "optical/spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace SpectralAveraging;

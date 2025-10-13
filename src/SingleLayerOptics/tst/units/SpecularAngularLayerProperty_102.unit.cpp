@@ -5,7 +5,7 @@
 #include <WCESingleLayerOptics.hpp>
 #include <WCECommon.hpp>
 
-#include "../../../helper/optical/standardData.hpp"
+#include "optical/standardData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
