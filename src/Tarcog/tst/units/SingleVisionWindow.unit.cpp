@@ -17,7 +17,7 @@
 
 #include <WCETarcog.hpp>
 
-#include "../../../helper/thermal/commonFrames.hpp"
+#include "thermal/commonFrames.hpp"
 
 class TestSingleVisionWindow : public testing::Test
 {

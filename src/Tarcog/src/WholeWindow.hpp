@@ -54,7 +54,6 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double getFrameArea() const;
         [[nodiscard]] double getFrameEdgeOfGlassArea() const;
 
-
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
