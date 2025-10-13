@@ -3,8 +3,8 @@
 
 #include <WCEMultiLayerOptics.hpp>
 
-#include "../../../helper/optical/standardData.hpp"
-#include "../../../helper/optical/spectralSampleData.hpp"
+#include "optical/standardData.hpp"
+#include "optical/spectralSampleData.hpp"
 
 
 using namespace SingleLayerOptics;

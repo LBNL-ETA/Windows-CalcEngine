@@ -111,6 +111,16 @@ namespace MultiLayerOptics
         calculateWavelengthByWavelengthProperties(callback);
     }
 
+    void CEquivalentBSDFLayer::setCommonBandWavelengths(const std::vector<double> & value)
+    {
+        m_CombinedLayerWavelengths = value;
+        for(const auto & layer : m_Layer)
+        {
+            layer->setBandWavelengths(m_CombinedLayerWavelengths);
+        }
+        invalidateCache();
+    }
+
     bool CEquivalentBSDFLayer::hasCache() const
     {
         return !m_Tot.empty();

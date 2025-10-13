@@ -4,8 +4,8 @@
 #include <WCEMultiLayerOptics.hpp>
 #include <WCESingleLayerOptics.hpp>
 
-#include "../../../helper/optical/standardData.hpp"
-#include "../../../helper/optical/spectralSampleData.hpp"
+#include "optical/standardData.hpp"
+#include "optical/spectralSampleData.hpp"
 
 using FenestrationCommon::CSeries;
 

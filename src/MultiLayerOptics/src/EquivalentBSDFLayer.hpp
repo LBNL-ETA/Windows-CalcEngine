@@ -50,6 +50,7 @@ namespace MultiLayerOptics
         [[nodiscard]] size_t numberOfLayers() const;
 
         void calculate(const FenestrationCommon::ProgressCallback & callback = nullptr);
+        void setCommonBandWavelengths(const std::vector<double> & value);
 
     private:
         [[nodiscard]] CEquivalentBSDFLayerSingleBand
