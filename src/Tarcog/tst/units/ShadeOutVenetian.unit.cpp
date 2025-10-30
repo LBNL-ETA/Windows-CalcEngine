@@ -14,34 +14,36 @@ protected:
     {
         using namespace Tarcog::ISO15099;
 
-        auto roomTemperature = 294.15;
+        constexpr auto roomTemperature = 294.15;
         auto Indoor = Environments::indoor(roomTemperature);
         assert(Indoor != nullptr);
 
-        auto airTemperature = 255.15;
-        auto airSpeed = 5.5;
-        auto tSky = 255.15;
-        auto solarRadiation = 0.0;
+        constexpr auto airTemperature = 255.15;
+        constexpr auto airSpeed = 5.5;
+        constexpr auto tSky = 255.15;
+        constexpr auto solarRadiation = 0.0;
         auto Outdoor = Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, SkyModel::AllSpecified);
         assert(Outdoor != nullptr);
         Outdoor->setHCoeffModel(BoundaryConditionsCoeffModel::CalculateH);
 
-        auto emissivityFront = 0.52204944036998135;
-        auto emissivityBack = 0.52204944036998102;
-        auto transmittanceFront = 0.44074853220969445;
-        auto transmittanceBack = 0.44074853220969445;
+        constexpr auto emissivityFront = 0.52204944036998135;
+        constexpr auto emissivityBack = 0.52204944036998102;
+        constexpr auto transmittanceFront = 0.44074853220969445;
+        constexpr auto transmittanceBack = 0.44074853220969445;
 
-        auto materialThickness = 0.0001;
-        auto materialConductance = 160.0;
+        constexpr auto materialThickness = 0.0001;
+        constexpr auto materialConductance = 160.0;
 
-        FenestrationCommon::Venetian::Geometry geometry{0.05, 0.07, 45, 0.00};
-        EffectiveLayers::EffectiveHorizontalVenetian effectiveVenetian{
-          1.0, 1.0, materialThickness, geometry};
+        FenestrationCommon::Venetian::Geometry geometry{
+          .SlatWidth = 0.05, .SlatSpacing = 0.07, .SlatTiltAngle = 45, .CurvatureRadius = 0.00};
 
-        auto shadingLayer = Layers::shading(effectiveVenetian.effectiveThickness(),
+        const auto effectiveVenetian{
+          EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry)};
+
+        auto shadingLayer = Layers::shading(effectiveVenetian.thickness,
                                             materialConductance,
-                                            effectiveVenetian.getEffectiveOpenness(),
+                                            effectiveVenetian.openness,
                                             emissivityFront,
                                             transmittanceFront,
                                             emissivityBack,
@@ -64,14 +66,14 @@ protected:
     {
         using namespace Tarcog::ISO15099;
 
-        auto roomTemperature = 294.15;
+        constexpr auto roomTemperature = 294.15;
         auto Indoor = Environments::indoor(roomTemperature);
         assert(Indoor != nullptr);
 
-        auto airTemperature = 255.15;
-        auto airSpeed = 5.5;
-        auto tSky = 255.15;
-        auto solarRadiation = 0.0;
+        constexpr auto airTemperature = 255.15;
+        constexpr auto airSpeed = 5.5;
+        constexpr auto tSky = 255.15;
+        constexpr auto solarRadiation = 0.0;
         auto Outdoor = Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, SkyModel::AllSpecified);
         assert(Outdoor != nullptr);

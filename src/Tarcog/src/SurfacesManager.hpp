@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <array>
 #include <memory>
 
 #include <WCECommon.hpp>
@@ -39,7 +39,6 @@ namespace Tarcog::ISO15099
     protected:
         void setSurfaceState(double t_Temperature, double t_J, FenestrationCommon::Side t_Position);
 
-        std::map<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface{
-          {FenestrationCommon::Side::Front, nullptr}, {FenestrationCommon::Side::Back, nullptr}};
+        util::EnumArray<FenestrationCommon::Side, std::shared_ptr<Surface>> m_Surface;
     };
 }   // namespace Tarcog::ISO15099

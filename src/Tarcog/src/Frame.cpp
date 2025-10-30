@@ -28,18 +28,20 @@ namespace Tarcog::ISO15099
         return absorptance * uValue / hc * projectedFrameDimension / wettedLength;
     }
 
-    [[nodiscard]] double projectedArea(const Frame & frame)
+    [[nodiscard]] double frameArea(const Frame & frame)
     {
         double area = frame.length * frame.frameData.ProjectedFrameDimension;
 
         const double scaleFactor = frame.frameType == FrameType::Interior ? 1.0 : 0.5;
 
-        const auto subtractSideArea = [&](FrameSide side) {
+        const auto subtractSideArea = [&](const FrameSide side) {
             const auto & maybeNeighbor =
               frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
 
             if(!maybeNeighbor || maybeNeighbor->get().frameType != FrameType::Exterior)
+            {
                 return;
+            }
 
             const auto & neighbor = maybeNeighbor->get();
             area -= frame.frameData.ProjectedFrameDimension
@@ -63,7 +65,9 @@ namespace Tarcog::ISO15099
               frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
 
             if(!maybeNeighbor || maybeNeighbor->get().frameType != FrameType::Exterior)
+            {
                 return;
+            }
 
             const auto & neighbor = maybeNeighbor->get();
             area -= frame.frameData.WettedLength * neighbor.frameData.ProjectedFrameDimension
@@ -85,7 +89,9 @@ namespace Tarcog::ISO15099
               frame.frame.contains(side) ? frame.frame.at(side) : std::nullopt;
 
             if(!maybeNeighbor)
+            {
                 return;
+            }
 
             const auto & neighbor = maybeNeighbor->get();
             length -= neighbor.frameData.ProjectedFrameDimension;

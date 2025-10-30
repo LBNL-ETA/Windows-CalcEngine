@@ -5,8 +5,8 @@
 #include <WCEMultiLayerOptics.hpp>
 #include <WCESingleLayerOptics.hpp>
 
-#include "standardData.hpp"
-#include "spectralSampleData.hpp"
+#include "optical/standardData.hpp"
+#include "optical/spectralSampleData.hpp"
 
 
 using namespace SingleLayerOptics;

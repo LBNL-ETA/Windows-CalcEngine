@@ -23,7 +23,8 @@ namespace common::views
         constexpr std::size_t min_size(const Rs &... rs)
         {
             using std::ranges::size;
-            return std::min({static_cast<std::size_t>(size(rs))...});
+            // Brackets around std::min are because of MFC library used by THERM and WINDOW
+            return (std::min)({static_cast<std::size_t>(size(rs))...});
         }
 
         // access by index via random-access iterator

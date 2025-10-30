@@ -89,6 +89,8 @@ namespace SingleLayerOptics
         Full
     };
 
+    [[nodiscard]] std::vector<BSDFDefinition> bsdfDefinition(BSDFBasis basis);
+
     class BSDFHemisphere
     {
     public:
@@ -100,8 +102,6 @@ namespace SingleLayerOptics
         [[nodiscard]] std::vector<double> profileAngles(BSDFDirection t_Side) const;
 
     private:
-        static const std::map<BSDFBasis, std::vector<BSDFDefinition>> bsdfDefinition;
-
         // Construction for pre-defined basis
         explicit BSDFHemisphere(BSDFBasis t_Basis);
         // Construction for custom basis

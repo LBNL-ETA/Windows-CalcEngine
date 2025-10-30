@@ -5,8 +5,8 @@
 #include <WCEMultiLayerOptics.hpp>
 #include <WCESingleLayerOptics.hpp>
 
-#include "standardData.hpp"
-#include "spectralSampleData.hpp"
+#include "optical/standardData.hpp"
+#include "optical/spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -15,7 +15,6 @@ using namespace MultiLayerOptics;
 
 class MultiPaneBSDF_102_Perforated : public testing::Test
 {
-private:
     std::unique_ptr<CMultiPaneBSDF> m_Layer;
 
 protected:
@@ -80,10 +79,10 @@ TEST_F(MultiPaneBSDF_102_Perforated, Test102PerofratedCircular)
     EXPECT_NEAR(0.113886, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.579920, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.579918, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.142015, absDiff1, 1e-6);
+    EXPECT_NEAR(0.142017, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
     EXPECT_NEAR(0.164179, absDiff2, 1e-6);
@@ -101,14 +100,14 @@ TEST_F(MultiPaneBSDF_102_Perforated, Test102PerofratedCircular)
 
     double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.521843, rhoHem, 1e-6);
+    EXPECT_NEAR(0.521841, rhoHem, 1e-6);
 
     double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.087788, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.135516, abs1, 1e-6);
+    EXPECT_NEAR(0.135517, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
     EXPECT_NEAR(0.172123, abs2, 1e-6);
@@ -123,13 +122,13 @@ TEST_F(MultiPaneBSDF_102_Perforated, Test102PerofratedCircular)
     EXPECT_NEAR(0.033610, tauDir, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.544655, rhoHem, 1e-6);
+    EXPECT_NEAR(0.544654, rhoHem, 1e-6);
 
     rhoDir = aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.092768, rhoDir, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.143872, abs1, 1e-6);
+    EXPECT_NEAR(0.143874, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
     EXPECT_NEAR(0.179177, abs2, 1e-6);

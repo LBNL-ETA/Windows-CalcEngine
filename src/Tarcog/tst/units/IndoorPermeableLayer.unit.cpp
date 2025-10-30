@@ -48,20 +48,17 @@ protected:
         auto shadeLayerConductance = 160.0;
         auto PermeabilityFactor = 0.15;
 
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
-
-        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor};
+        const auto effectiveLayer{
+          EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor)};
 
         constexpr auto frontEmissivity = 0.9;
         constexpr auto frontIRTransmittance = 0.0;
         constexpr auto backEmissivity = 0.9;
         constexpr auto backIRTransmittance = 0.0;
 
-        auto layer2 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
+        auto layer2 = Tarcog::ISO15099::Layers::shading(effectiveLayer.thickness,
                                                         shadeLayerConductance,
-                                                        effectiveLayer.getEffectiveOpenness(),
+                                                        effectiveLayer.openness,
                                                         frontEmissivity,
                                                         frontIRTransmittance,
                                                         backEmissivity,
@@ -72,6 +69,9 @@ protected:
         auto gapThickness = 0.0127;
         auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gap1 != nullptr);
+
+        auto windowWidth = 1.0;
+        auto windowHeight = 1.0;
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, layer2});

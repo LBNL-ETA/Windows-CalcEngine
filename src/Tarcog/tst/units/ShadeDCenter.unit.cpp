@@ -50,15 +50,9 @@ protected:
         const auto shadeLayerConductance = 5.0;
         const auto shadeThickness = 0.06;
 
-        const auto dl{0.0};
-        const auto dr{0.0};
-        const auto dtop{0.0};
-        const auto dbot{0.0};
         const auto PermeabilityFactor = 0.3;   // fraction
 
-        EffectiveLayers::ShadeOpenness openness{dl, dr, dtop, dbot};
-        EffectiveLayers::EffectiveLayerCommon effLayer{
-          windowWidth, windowHeight, shadeThickness, PermeabilityFactor, openness};
+        const auto effLayer{EffectiveLayers::makeCommonValues(shadeThickness, PermeabilityFactor)};
 
         const auto Ef = 0.9;
         const auto Eb = 0.9;
@@ -67,7 +61,7 @@ protected:
 
         auto shadeLayer = Tarcog::ISO15099::Layers::shading(shadeThickness,
                                                             shadeLayerConductance,
-                                                            effLayer.getEffectiveOpenness(),
+                                                            effLayer.openness,
                                                             Ef,
                                                             Tirf,
                                                             Eb,

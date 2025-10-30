@@ -4,8 +4,8 @@
 #include <WCESpectralAveraging.hpp>
 #include <WCEMultiLayerOptics.hpp>
 
-#include "standardData.hpp"
-#include "spectralSampleData.hpp"
+#include "optical/standardData.hpp"
+#include "optical/spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;

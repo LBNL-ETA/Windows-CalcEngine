@@ -9,6 +9,89 @@
 
 namespace Tarcog::ISO15099
 {
+    WindowVision::WindowVision(const WindowVision & other) :
+        IVision(other),
+        m_IGUSystem(other.m_IGUSystem),
+        m_Width(other.m_Width),
+        m_Height(other.m_Height),
+        m_IGUUvalue(other.m_IGUUvalue),
+        m_VT(other.m_VT),
+        m_Tsol(other.m_Tsol),
+        m_HExterior(other.m_HExterior),
+        m_ExteriorSurfaceHeight(other.m_ExteriorSurfaceHeight),
+        m_Frame(other.m_Frame),
+        m_NumOfVerticalDividers(other.m_NumOfVerticalDividers),
+        m_NumOfHorizontalDividers(other.m_NumOfHorizontalDividers),
+        m_Divider(other.m_Divider),
+        m_IGUErrorTolerance(other.m_IGUErrorTolerance)
+    {
+        connectFrames();
+    }
+
+    WindowVision & WindowVision::operator=(const WindowVision & other)
+    {
+        if(this != &other)
+        {
+            m_IGUSystem = other.m_IGUSystem;
+            m_Width = other.m_Width;
+            m_Height = other.m_Height;
+            m_IGUUvalue = other.m_IGUUvalue;
+            m_VT = other.m_VT;
+            m_Tsol = other.m_Tsol;
+            m_HExterior = other.m_HExterior;
+            m_ExteriorSurfaceHeight = other.m_ExteriorSurfaceHeight;
+            m_Frame = other.m_Frame;
+            m_NumOfVerticalDividers = other.m_NumOfVerticalDividers;
+            m_NumOfHorizontalDividers = other.m_NumOfHorizontalDividers;
+            m_Divider = other.m_Divider;
+            m_IGUErrorTolerance = other.m_IGUErrorTolerance;
+            connectFrames();
+        }
+        return *this;
+    }
+
+    WindowVision::WindowVision(WindowVision && other) noexcept :
+        IVision(std::move(other)),
+        m_IGUSystem(std::move(other.m_IGUSystem)),
+        m_Width(other.m_Width),
+        m_Height(other.m_Height),
+        m_IGUUvalue(other.m_IGUUvalue),
+        m_VT(other.m_VT),
+        m_Tsol(other.m_Tsol),
+        m_HExterior(other.m_HExterior),
+        m_ExteriorSurfaceHeight(other.m_ExteriorSurfaceHeight),
+        m_Frame(std::move(other.m_Frame)),
+        m_NumOfVerticalDividers(other.m_NumOfVerticalDividers),
+        m_NumOfHorizontalDividers(other.m_NumOfHorizontalDividers),
+        m_Divider(other.m_Divider),
+        m_IGUErrorTolerance(other.m_IGUErrorTolerance)
+    {
+        connectFrames();
+    }
+
+    WindowVision & WindowVision::operator=(WindowVision && other) noexcept
+    {
+        if(this != &other)
+        {
+            IVision::operator=(std::move(other));
+            m_IGUSystem = std::move(other.m_IGUSystem);
+            m_Width = other.m_Width;
+            m_Height = other.m_Height;
+            m_IGUUvalue = other.m_IGUUvalue;
+            m_VT = other.m_VT;
+            m_Tsol = other.m_Tsol;
+            m_HExterior = other.m_HExterior;
+            m_ExteriorSurfaceHeight = other.m_ExteriorSurfaceHeight;
+            m_Frame = std::move(other.m_Frame);
+            m_NumOfVerticalDividers = other.m_NumOfVerticalDividers;
+            m_NumOfHorizontalDividers = other.m_NumOfHorizontalDividers;
+            m_Divider = other.m_Divider;
+            m_IGUErrorTolerance = other.m_IGUErrorTolerance;
+            connectFrames();
+        }
+        return *this;
+    }
+
     WindowVision::WindowVision(double width,
                                double height,
                                double tvis,
@@ -140,26 +223,26 @@ namespace Tarcog::ISO15099
 
         const double frameWU =
           std::accumulate(frames.begin(), frames.end(), 0.0, [](double acc, const auto & frame) {
-              return acc + projectedArea(frame) * frame.frameData.UValue;
+              return acc + (frameArea(frame) * frame.frameData.UValue);
           });
 
         const double edgeWU = std::accumulate(
           frames.begin(), frames.end(), 0.0, [this](double acc, const auto & frame) {
               return acc
-                     + Tarcog::ISO15099::edgeOfGlassArea(frame)
-                         * Helper::frameEdgeUValue(*m_IGUSystem, frame.frameData);
+                     + (ISO15099::edgeOfGlassArea(frame)
+                        * Helper::frameEdgeUValue(*m_IGUSystem, frame.frameData));
           });
 
         // COG weighted U-value
         const double cogWU =
           m_IGUUvalue
-          * (area() - frameProjectedArea() - edgeOfGlassArea() - dividerArea() - dividerEdgeArea());
+          * (area() - frameProjectedArea() - totalEdgeOfGlassArea() - dividerArea() - dividerEdgeOfGlassArea());
 
         // Divider contributions
         const double divWU =
           m_Divider ? dividerArea() * Helper::dividerUValue(*m_IGUSystem, *m_Divider) : 0.0;
         const double divEdgeWU =
-          m_Divider ? dividerEdgeArea() * Helper::dividerEdgeUValue(*m_IGUSystem, *m_Divider) : 0.0;
+          m_Divider ? dividerEdgeOfGlassArea() * Helper::dividerEdgeUValue(*m_IGUSystem, *m_Divider) : 0.0;
 
         return (cogWU + frameWU + edgeWU + divWU + divEdgeWU) / area();
     }
@@ -175,7 +258,7 @@ namespace Tarcog::ISO15099
 
         for(const auto & frame : m_Frame | std::views::values)
         {
-            frameWeightedSHGC += projectedArea(frame)
+            frameWeightedSHGC += frameArea(frame)
                                  * frameSHGC(frame.frameData.Absorptance,
                                              frame.frameData.UValue,
                                              frame.frameData.ProjectedFrameDimension,
@@ -248,7 +331,7 @@ namespace Tarcog::ISO15099
         resizeIGU();
     }
 
-    void WindowVision::setFrameTypes(std::map<FramePosition, FrameType> frameTypes)
+    void WindowVision::setFrameTypes(const std::map<FramePosition, FrameType> & frameTypes)
     {
         for(const auto & [position, type] : frameTypes)
         {
@@ -259,6 +342,11 @@ namespace Tarcog::ISO15099
         }
 
         connectFrames();
+    }
+
+    const Frame & WindowVision::frame(const FramePosition position) const
+    {
+        return m_Frame.at(position);
     }
 
     void WindowVision::setDividers(FrameData divider, size_t nHorizontal, size_t nVertical)
@@ -281,10 +369,11 @@ namespace Tarcog::ISO15099
 
     namespace Helper
     {
-        inline std::pair<size_t, size_t> autoCalculateDividers(double width, double height)
+        inline std::pair<size_t, size_t> autoCalculateDividers(const double width,
+                                                               const double height)
         {
-            int nHor = static_cast<int>(width / 0.305);
-            int nVer = static_cast<int>(height / 0.305);
+            const int nHor = static_cast<int>(width / 0.305);
+            const int nVer = static_cast<int>(height / 0.305);
             return {static_cast<size_t>(std::max(0, nHor)), static_cast<size_t>(std::max(0, nVer))};
         }
     }   // namespace Helper
@@ -336,7 +425,7 @@ namespace Tarcog::ISO15099
             double rel{0.0};   // fractional tolerance (0.0 means unused)
         };
 
-        [[nodiscard]] inline bool nearlyEqual(double a, double b, Tol t)
+        [[nodiscard]] inline bool nearlyEqual(const double a, const double b, const Tol t)
         {
             const double scale = std::max(std::abs(a), std::abs(b));
             return std::abs(a - b) <= t.abs + t.rel * scale;
@@ -371,14 +460,18 @@ namespace Tarcog::ISO15099
         IGUMismatch result;
 
         if(!m_IGUSystem)
+        {
             return result;   // No IGU assigned ⇒ nothing to check
+        }
 
         const IGUData reference{.UValue = m_IGUSystem->getUValue(),
                                 .Thickness = geometricalThickness};
 
         auto accumulateMismatch = [&](const std::optional<IGUData> & igu) {
             if(!igu)
+            {
                 return IGUMismatch{};
+            }
 
             return checkFrameMismatch(IGUData{.UValue = igu->UValue, .Thickness = igu->Thickness},
                                       reference,
@@ -392,7 +485,9 @@ namespace Tarcog::ISO15099
             result.thicknessMissmatch |= mismatch.thicknessMissmatch;
 
             if(result.any())
+            {
                 break;   // early out
+            }
         }
 
         if(m_Divider)
@@ -459,7 +554,7 @@ namespace Tarcog::ISO15099
         return result;
     }
 
-    double WindowVision::dividerEdgeArea() const
+    double WindowVision::dividerEdgeOfGlassArea() const
     {
         auto result{0.0};
 
@@ -495,13 +590,13 @@ namespace Tarcog::ISO15099
 
         for(const auto & val : m_Frame | std::views::values)
         {
-            area += projectedArea(val);
+            area += frameArea(val);
         }
 
         return area;
     }
 
-    double WindowVision::edgeOfGlassArea() const
+    double WindowVision::totalEdgeOfGlassArea() const
     {
         auto area{0.0};
 

@@ -7,7 +7,6 @@
 
 class TestDoubleClearOutdoorShadeAir : public testing::Test
 {
-private:
     std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
@@ -16,10 +15,10 @@ protected:
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 255.15;   // Kelvins
-        auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;             // Kelvins
-        auto solarRadiation = 0.0;
+        constexpr auto airTemperature = 255.15;   // Kelvins
+        constexpr auto airSpeed = 5.5;            // meters per second
+        constexpr auto tSky = 255.15;             // Kelvins
+        constexpr auto solarRadiation = 0.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -30,7 +29,7 @@ protected:
         // Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 295.15;
+        constexpr auto roomTemperature = 295.15;
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
@@ -38,27 +37,25 @@ protected:
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.005715;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.005715;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
 
-        auto shadeLayerThickness = 0.01;
-        auto shadeLayerConductance = 160.0;
-        auto dtop = 0.1;
-        auto dbot = 0.1;
-        auto dleft = 0.1;
-        auto dright = 0.1;
-        auto PermeabilityFactor = 0.2;
+        constexpr auto shadeLayerThickness = 0.01;
+        constexpr auto shadeLayerConductance = 160.0;
+        constexpr auto dtop = 0.1;
+        constexpr auto dbot = 0.1;
+        constexpr auto dleft = 0.1;
+        constexpr auto dright = 0.1;
+        constexpr auto PermeabilityFactor = 0.2;
 
         EffectiveLayers::ShadeOpenness openness{dleft, dright, dtop, dbot};
 
-        double windowWidth = 1;
-        double windowHeight = 1;
+        const auto effectiveLayer{
+          EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor, openness)};
 
-        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor, openness};
-
-        auto layer1 = Tarcog::ISO15099::Layers::shading(
-          shadeLayerThickness, shadeLayerConductance, effectiveLayer.getEffectiveOpenness());
+        auto layer1 = Tarcog::ISO15099::Layers::shading(effectiveLayer.thickness,
+                                                        shadeLayerConductance,
+                                                        effectiveLayer.openness);
 
         ASSERT_TRUE(layer1 != nullptr);
 
@@ -67,12 +64,15 @@ protected:
 
         auto layer3 = Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
-        auto gapThickness = 0.0127;
+        constexpr auto gapThickness = 0.0127;
         auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gap1 != nullptr);
 
         auto gap2 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gap2 != nullptr);
+
+        constexpr double windowWidth = 1;
+        constexpr double windowHeight = 1;
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, layer2, gap2, layer3});
@@ -87,20 +87,20 @@ protected:
     }
 
 public:
-    std::shared_ptr<Tarcog::ISO15099::CSingleSystem> getSystem() const
+    Tarcog::ISO15099::CSingleSystem & getSystem() const
     {
-        return m_TarcogSystem;
-    };
+        return *m_TarcogSystem;
+    }
 };
 
 TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
 {
     SCOPED_TRACE("Begin Test: Outdoor Shade - Air");
 
-    auto aSystem = getSystem();
+    const auto aSystem = getSystem();
 
-    auto temperature = aSystem->getTemperatures();
-    auto radiosity = aSystem->getRadiosities();
+    const auto temperature = aSystem.getTemperatures();
+    const auto radiosity = aSystem.getRadiosities();
 
     const std::vector<double> correctTemp = {
       256.947912, 256.952013, 269.280883, 269.726307, 283.977613, 284.423038};
@@ -110,9 +110,9 @@ TEST_F(TestDoubleClearOutdoorShadeAir, Test1)
     Helper::testVectors("Temperature", correctTemp, temperature, 1e-6);
     Helper::testVectors("Radiosity", correctJ, radiosity, 1e-6);
 
-    const auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem.getNumberOfIterations();
     EXPECT_EQ(70u, numOfIter);
 
-    const auto ventilatedFlow = aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
+    const auto ventilatedFlow = aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
     EXPECT_NEAR(-25.444198, ventilatedFlow, 1e-6);
 }

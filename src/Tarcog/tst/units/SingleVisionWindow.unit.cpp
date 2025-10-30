@@ -1,76 +1,28 @@
+// SingleVisionWindow.unit.cpp
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Some tests in this module are validated vs WINDOW 7.8
+/// Note that WINDOW will report frame incompatibility when trying to combine some frames with
+/// certain IGUs. This however can be controlled through INI file settings:
+///
+/// FrameToleranceGlazingSystemThickness=0.2500
+/// FrameToleranceGlazingSystemUcenter=0.250000
+///
+/// These two can be increased so that WINDOW will not complain and calculations will perform
+/// with the results
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include <gtest/gtest.h>
 #include <memory>
-#include <stdexcept>
 
-#include "WCETarcog.hpp"
+#include <WCETarcog.hpp>
+
+#include "thermal/commonFrames.hpp"
 
 class TestSingleVisionWindow : public testing::Test
 {
 protected:
-    void SetUp() override
-    {}
-
-    // NOLINTBEGIN
-
-    //! Data are picked up from WINDOW database frame table (imported from THMZ file)
-    static Tarcog::ISO15099::FrameData sampleSill()
-    {
-        return {.UValue = 2.017913,
-                .EdgeUValue = 2.339592,
-                .ProjectedFrameDimension = 0.04287518,
-                .WettedLength = 0.05633283,
-                .Absorptance = 0.3};
-    }
-
-    static Tarcog::ISO15099::FrameData sampleHead()
-    {
-        return {.UValue = 2.024318,
-                .EdgeUValue = 2.34355,
-                .ProjectedFrameDimension = 0.04287518,
-                .WettedLength = 0.05674332,
-                .Absorptance = 0.3};
-    }
-
-    static Tarcog::ISO15099::FrameData sampleJamb()
-    {
-        return {.UValue = 1.943306,
-                .EdgeUValue = 2.358972,
-                .ProjectedFrameDimension = 0.04287518,
-                .WettedLength = 0.04122826,
-                .Absorptance = 0.3};
-    }
-
-    static Tarcog::ISO15099::FrameData genericFrameClass1()
-    {
-        constexpr double projectedFrameDimension{0.05715};
-
-        //! This is class 1 generic frame (as defined in WINDOW database)
-        return {.UValue = 5.68,
-                .EdgeUValue = 0.0,
-                .ProjectedFrameDimension = projectedFrameDimension,
-                .WettedLength = projectedFrameDimension,
-                .Absorptance = 0.9,
-                .Class = Tarcog::ISO15099::GenericFrame{{2.33, -0.01, 0.138, 0, 0}}};
-    }
-
-    static Tarcog::ISO15099::FrameData genericDividerAluminumHollow()
-    {
-        constexpr double projectedFrameDimension{0.01588};
-
-        // Data pulled from WINDOW database, record 1
-        return {.UValue = 0.18,
-                .EdgeUValue = 3.0,
-                .ProjectedFrameDimension = projectedFrameDimension,
-                .WettedLength = projectedFrameDimension,
-                .Absorptance = 0.9,
-                .Class = Tarcog::ISO15099::GenericDivider{
-                  .EdgePoly = {1.19, 0.0, 0.73, 0.009},
-                  .BodyPoly = {5.56, 0.0004, -0.00003, 0.042, -0.003}}};
-    }
-
-    // NOLINTEND
-
-    static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerUValue()
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerUValueBC()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -110,7 +62,7 @@ protected:
         return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
     }
 
-    static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerSHGC()
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getSingleLayerSHGCBC()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -152,7 +104,7 @@ protected:
         return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
     }
 
-    static std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerUValue()
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerUValueBC()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -198,7 +150,7 @@ protected:
         return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
     }
 
-    static std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerSHGC()
+    static std::shared_ptr<Tarcog::ISO15099::CSystem> getDoubleLayerSHGCBC()
     {
         /////////////////////////////////////////////////////////
         /// Outdoor
@@ -253,18 +205,12 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
 {
     SCOPED_TRACE("Begin Test: Single vision window with predefined COG values.");
 
-    constexpr double uValue{5.68};
-    constexpr double edgeUValue{5.575};
-    constexpr double projectedFrameDimension{0.05715};
-    constexpr double wettedLength{0.05715};
-    constexpr double absorptance{0.9};
 
-    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = 5.68,
+                                                    .EdgeUValue = 5.575,
+                                                    .ProjectedFrameDimension = 0.05715,
+                                                    .WettedLength = 0.05715,
+                                                    .Absorptance = 0.9};
 
     constexpr auto width{2.0};
     constexpr auto height{2.0};
@@ -295,12 +241,62 @@ TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
 
     const double windowSHGC{window.shgc()};
     EXPECT_NEAR(0.792299, windowSHGC, 1e-6);
+
+    const double totalFrameArea{window.getFrameArea()};
+    EXPECT_NEAR(0.444136, totalFrameArea, 1e-6);
 }
 
-TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
+TEST_F(TestSingleVisionWindow, PredefinedCOGWithDividersValues)
 {
-    SCOPED_TRACE(
-      "Uvalue environmental conditions (single layer Sample-sill, sample-head and sample-jamb).");
+    SCOPED_TRACE("Begin Test: Single vision window with predefined COG values.");
+
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = 5.68,
+                                                    .EdgeUValue = 5.575,
+                                                    .ProjectedFrameDimension = 0.05715,
+                                                    .WettedLength = 0.05715,
+                                                    .Absorptance = 0.9};
+
+    constexpr auto width{2.0};
+    constexpr auto height{2.0};
+    constexpr auto iguUValue{5.575};
+    constexpr auto shgc{0.86};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+    constexpr auto hout{20.42635};
+
+    auto window = Tarcog::ISO15099::WindowSingleVision(
+      width,
+      height,
+      tVis,
+      tSol,
+      std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hout));
+
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData}});
+
+
+    constexpr size_t nHorizontal{2};
+    constexpr size_t nVertical{2};
+    window.setDividers(frameData, nHorizontal, nVertical);
+
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.705234, vt, 1e-6);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(5.597631, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.728580, windowSHGC, 1e-6);
+}
+
+// cpp
+TEST_F(TestSingleVisionWindow, SingleLayer)
+{
+    SCOPED_TRACE("Uvalue environmental conditions (single layer Sample-sill, sample-head and "
+                 "sample-jamb) - thermal numbers.");
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
@@ -308,13 +304,13 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
     constexpr auto tSol{0.8338};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValue());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValueBC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
-
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(4.676005, uvalue, 1e-6);
@@ -326,10 +322,10 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerUValue)
     EXPECT_NEAR(0.787038, vt, 1e-6);
 }
 
-TEST_F(TestSingleVisionWindow, CalculatedSingleLayerSHGC)
+TEST_F(TestSingleVisionWindow, FrameAreas)
 {
-    SCOPED_TRACE(
-      "SHGC environmental conditions (single layer Sample-sill, sample-head and sample-jamb).");
+    SCOPED_TRACE("Uvalue environmental conditions (single layer Sample-sill, sample-head and "
+                 "sample-jamb) - frame areas.");
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
@@ -337,13 +333,101 @@ TEST_F(TestSingleVisionWindow, CalculatedSingleLayerSHGC)
     constexpr auto tSol{0.8338};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGC());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValueBC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
 
+    // Validated vs WINDOW 7.8.80. Values can be read from FrameList table in the database
+
+    const double headFrameArea{
+      window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
+    EXPECT_NEAR(0.049612, headFrameArea, 1e-6);
+
+    const double leftJambFrameArea{
+      window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Left)};
+    EXPECT_NEAR(0.062474, leftJambFrameArea, 1e-6);
+
+    const double rightJambFrameArea{
+      window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Right)};
+    EXPECT_NEAR(0.062474, rightJambFrameArea, 1e-6);
+
+    const double sillFrameArea{
+      window.getFrameArea(Tarcog::ISO15099::SingleVisionFramePosition::Bottom)};
+    EXPECT_NEAR(0.049612, sillFrameArea, 1e-6);
+
+    const double totalFrameArea{window.getFrameArea()};
+    EXPECT_NEAR(0.224173, totalFrameArea, 1e-6);
+}
+
+TEST_F(TestSingleVisionWindow, FrameEdgeOfGlassAreas)
+{
+    SCOPED_TRACE("Uvalue environmental conditions (single layer Sample-sill, sample-head and "
+                 "sample-jamb) - edge of glass areas.");
+
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValueBC());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+
+    // Validated vs WINDOW 7.8.80. Values can be read from FrameList table in the database
+
+    const double headEdgeOfGlassFrameArea{
+      window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Top)};
+    EXPECT_NEAR(0.066723, headEdgeOfGlassFrameArea, 1e-6);
+
+    const double leftEdgeOfGlassJambFrameArea{
+      window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Left)};
+    EXPECT_NEAR(0.085773, leftEdgeOfGlassJambFrameArea, 1e-6);
+
+    const double rightEdgeOfGlassJambFrameArea{
+      window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Right)};
+    EXPECT_NEAR(0.085773, rightEdgeOfGlassJambFrameArea, 1e-6);
+
+    const double sillEdgeOfGlassFrameArea{
+      window.getFrameEdgeOfGlassArea(Tarcog::ISO15099::SingleVisionFramePosition::Bottom)};
+    EXPECT_NEAR(0.066723, sillEdgeOfGlassFrameArea, 1e-6);
+
+    const double totalEdgeOfGlassFrameArea{window.getFrameEdgeOfGlassArea()};
+    EXPECT_NEAR(0.304990, totalEdgeOfGlassFrameArea, 1e-6);
+}
+
+TEST_F(TestSingleVisionWindow, CalculatedSingleLayerSHGC)
+{
+    SCOPED_TRACE(
+      "SHGC environmental conditions (single layer Sample-sill, sample-head and sample-jamb).");
+
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+
+    // Optical data correspond to NFRC 102 sample
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+
+    auto window =
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGCBC());
+
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+
+
+    // Values in this test are validated against WINDOW 7.8.80.
+    // If this test fails make sure that changes are expected to do so.
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(4.330241, uvalue, 1e-6);
@@ -361,17 +445,22 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerUValue)
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // Optical data correspond to NFRC 102 sample
     constexpr auto tVis{0.899};
     constexpr auto tSol{0.8338};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValue());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValueBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
+
+    // Values in this test are validated against WINDOW 7.8.80.
+    // If this test fails make sure that changes are expected to do so.
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(5.704964, uvalue, 1e-6);
@@ -389,17 +478,22 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerSHGC)
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // Optical data correspond to NFRC 102 sample
     constexpr auto tVis{0.899};
     constexpr auto tSol{0.8338};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGC());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGCBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
+
+    // Values in this test are validated against WINDOW 7.8.80.
+    // If this test fails make sure that changes are expected to do so.
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(5.295638, uvalue, 1e-6);
@@ -417,21 +511,26 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerUValueWithDividers)
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // Optical data correspond to NFRC 102 sample
     constexpr auto tVis{0.899};
     constexpr auto tSol{0.8338};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValue());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerUValueBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
 
     constexpr size_t nHorizontal{2};
     constexpr size_t nVertical{2};
-    window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
+    window.setDividers(Frame::genericDividerAluminumHollow(), nHorizontal, nVertical);
+
+    // In this case WINDOW gives an error message:
+    // LBL Dividers and Correlations not valid for single glazing
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(5.689011, uvalue, 1e-6);
@@ -449,21 +548,26 @@ TEST_F(TestSingleVisionWindow, GenericFramesSingleLayerSHGCWithDividers)
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // Optical data correspond to NFRC 102 sample
     constexpr auto tVis{0.899};
     constexpr auto tSol{0.8338};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGC());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGCBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
 
     constexpr size_t nHorizontal{2};
     constexpr size_t nVertical{2};
-    window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
+    window.setDividers(Frame::genericDividerAluminumHollow(), nHorizontal, nVertical);
+
+    // In this case WINDOW gives an error message:
+    // LBL Dividers and Correlations not valid for single glazing
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(5.323107, uvalue, 1e-6);
@@ -481,16 +585,22 @@ TEST_F(TestSingleVisionWindow, CalculatedDoubleLayerUValue)
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
     constexpr auto tVis{0.7861};
     constexpr auto tSol{0.6069};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValue());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValueBC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+
+    // Values in this test are validated against WINDOW 7.8.80.
+    // If this test fails make sure that changes are expected to do so.
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(2.525314, uvalue, 1e-6);
@@ -506,18 +616,25 @@ TEST_F(TestSingleVisionWindow, CalculatedDoubleLayerSHGC)
 {
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
     constexpr auto tVis{0.7861};
     constexpr auto tSol{0.6069};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGC());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGCBC());
 
-    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, sampleHead()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, sampleSill()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, sampleJamb()},
-                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, sampleJamb()}});
+    window.setFrameData(
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::sampleHead()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sampleSill()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::sampleJamb()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::sampleJamb()}});
+
+    // Values in this test are validated against WINDOW 7.8.80.
+    // If this test fails make sure that changes are expected to do so.
 
     const double uvalue{window.uValue()};
+    // This value should be read from the database (UvalSummer) and not from the screen
     EXPECT_NEAR(2.631899, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
@@ -529,21 +646,26 @@ TEST_F(TestSingleVisionWindow, CalculatedDoubleLayerSHGC)
 
 TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValue)
 {
-    SCOPED_TRACE("Begin Test: Single vision window with calculated COG values.");
+    SCOPED_TRACE("Begin Test: Double clear window with winter boundary conditions.");
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
     constexpr auto tVis{0.7861};
     constexpr auto tSol{0.6069};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValue());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValueBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
+
+    // Values in this test are validated against WINDOW 7.8.80.
+    // If this test fails make sure that changes are expected to do so.
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(3.261272, uvalue, 1e-6);
@@ -561,19 +683,25 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGC)
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
     constexpr auto tVis{0.7861};
     constexpr auto tSol{0.6069};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGC());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGCBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
+
+    // Values in this test are validated against WINDOW 7.8.80.
+    // If this test fails make sure that changes are expected to do so.
 
     const double uvalue{window.uValue()};
+    // This value should be read from the database (UvalSummer) and not from the screen
     EXPECT_NEAR(3.381108, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
@@ -587,21 +715,26 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithFixedDividers)
 {
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
     constexpr auto tVis{0.7861};
     constexpr auto tSol{0.6069};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValue());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValueBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
 
-    constexpr size_t nHorizontal{2u};
-    constexpr size_t nVertical{2u};
-    window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
+    constexpr size_t nHorizontal{2U};
+    constexpr size_t nVertical{2U};
+    window.setDividers(Frame::genericDividerAluminumHollow(), nHorizontal, nVertical);
+
+    // Numbers when window include dividers will not match with WINDOW because results
+    // in WINDOW are incorrect. Still would like to see additional validation on this. (Simon)
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(3.530437, uvalue, 1e-6);
@@ -617,22 +750,27 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithFixedDividers)
 {
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
     constexpr auto tVis{0.7861};
     constexpr auto tSol{0.6069};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGC());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGCBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
 
-    constexpr size_t nHorizontal{2u};
-    constexpr size_t nVertical{2u};
-    window.setDividers(genericDividerAluminumHollow(), nHorizontal, nVertical);
+    constexpr size_t nHorizontal{2U};
+    constexpr size_t nVertical{2U};
 
+    window.setDividers(Frame::genericDividerAluminumHollow(), nHorizontal, nVertical);
+
+    // Numbers when window include dividers will not match with WINDOW because results
+    // in WINDOW are incorrect. Still would like to see additional validation on this. (Simon)
     const double uvalue{window.uValue()};
     EXPECT_NEAR(3.635180, uvalue, 1e-6);
 
@@ -647,19 +785,24 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerUValueWithAutoDividers)
 {
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
     constexpr auto tVis{0.7861};
     constexpr auto tSol{0.6069};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValue());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerUValueBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
 
-    window.setDividersAuto(genericDividerAluminumHollow());
+    window.setDividersAuto(Frame::genericDividerAluminumHollow());
+
+    // Numbers when window include dividers will not match with WINDOW because results
+    // in WINDOW are incorrect. Still would like to see additional validation on this. (Simon)
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(3.709885, uvalue, 1e-6);
@@ -675,19 +818,21 @@ TEST_F(TestSingleVisionWindow, GenericFramesDoubleLayerSHGCWithAutoDividers)
 {
     constexpr auto width{1.2};
     constexpr auto height{1.5};
+
+    // These values correspond to double clear (NFRC-103; NFRC-103)
     constexpr auto tVis{0.7861};
     constexpr auto tSol{0.6069};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGC());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getDoubleLayerSHGCBC());
 
     window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, genericFrameClass1()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, genericFrameClass1()}});
+      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::genericFrameClass1()},
+       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::genericFrameClass1()}});
 
-    window.setDividersAuto(genericDividerAluminumHollow());
+    window.setDividersAuto(Frame::genericDividerAluminumHollow());
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(3.804730, uvalue, 1e-6);
@@ -703,23 +848,19 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
 {
     SCOPED_TRACE("Begin Test: Mismatch detection for single vision window.");
 
-    // Frame physical parameters
-    constexpr double frameUValue{5.68};
-    constexpr double edgeUValue{5.575};
-    constexpr double projectedFrameDimension{0.05715};
-    constexpr double wettedLength{0.05715};
-    constexpr double absorptance{0.9};
-
     // Frame expected IGU values
     constexpr double designIGUFrameUValue{5.575};
     constexpr double designIGUFrameThickness{0.006};   // deliberately smaller than real thickness
 
     // Add spec to frame data
-    Tarcog::ISO15099::FrameData frameData{.UValue = frameUValue,
-                                          .EdgeUValue = edgeUValue,
-                                          .ProjectedFrameDimension = projectedFrameDimension,
-                                          .WettedLength = wettedLength,
-                                          .Absorptance = absorptance};
+    Tarcog::ISO15099::FrameData frameData{
+        .UValue = 5.68,
+        .EdgeUValue = 5.575,
+        .ProjectedFrameDimension = 0.05715,
+        .WettedLength = 0.05715,
+        .Absorptance = 0.9
+    };
+
     frameData.iguData = Tarcog::ISO15099::IGUData{designIGUFrameUValue, designIGUFrameThickness};
 
     // IGU under test (from getCOG) has different uValue and thickness
@@ -729,7 +870,7 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     constexpr auto tSol{0.8338};
 
     auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGC());
+      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, getSingleLayerSHGCBC());
 
     // Set tight tolerance to force mismatch
     constexpr double tightTolerance{0.0001};   // very tight to guarantee mismatch

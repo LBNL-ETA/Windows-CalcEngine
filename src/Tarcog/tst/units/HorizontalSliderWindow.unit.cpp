@@ -1,72 +1,51 @@
 #include <gtest/gtest.h>
 
-#include "WCETarcog.hpp"
+#include <WCETarcog.hpp>
 
-class TestHorizontalSliderWindow : public testing::Test
+#include "thermal/commonThermal.hpp"
+
+namespace
 {
-protected:
-    void SetUp() override
-    {}
+    // IGU preset with optics bound (NFRC_103-NFRC_103)
+    const IGU::NFRC::Preset kDoubleClear = IGU::NFRC::doubleClearAir();
 
-    static std::shared_ptr<Tarcog::ISO15099::CSystem> getCOG()
+    // Callables to build systems with explicit environments
+    const auto makeWinterSystem = [] {
+        return System::make(
+          kDoubleClear, Environment::NFRC::Winter::indoor(), Environment::NFRC::Winter::outdoor());
+    };
+
+    const auto makeSummerSystem = [] {
+        return System::make(
+          kDoubleClear, Environment::NFRC::Summer::indoor(), Environment::NFRC::Summer::outdoor());
+    };
+
+    // Create a window using preset optics (bound to IGU) and user-provided system factories
+    template<typename FnLeft, typename FnRight>
+    Tarcog::ISO15099::DualVisionHorizontal createWindow(FnLeft && mkLeft, FnRight && mkRight)
     {
-        /////////////////////////////////////////////////////////
-        /// Outdoor
-        /////////////////////////////////////////////////////////
-        auto airTemperature = 300.0;   // Kelvins
-        auto airSpeed = 5.5;           // meters per second
-        auto tSky = 270.0;             // Kelvins
-        auto solarRadiation = 789.0;
+        constexpr auto width{1.5};
+        constexpr auto height{1.2};
 
-        auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
-          airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
+        auto left = std::invoke(std::forward<FnLeft>(mkLeft));
+        auto right = std::invoke(std::forward<FnRight>(mkRight));   // NOTE: FnRight here (bugfix)
 
-        /////////////////////////////////////////////////////////
-        /// Indoor
-        /////////////////////////////////////////////////////////
+        auto window = Window::makeDualVisionHorizontal(
+          width, height, left, kDoubleClear.optics, right, kDoubleClear.optics);
 
-        auto roomTemperature = 294.15;
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-
-        /////////////////////////////////////////////////////////
-        // IGU
-        /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.003048;   // [m]
-        auto solidLayerConductance = 1.0;
-
-        auto aSolidLayer =
-          Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-        aSolidLayer->setSolarHeatGain(0.094189159572, solarRadiation);
-
-        auto windowWidth = 1.0;
-        auto windowHeight = 1.0;
-        Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
-        aIGU.addLayer(aSolidLayer);
-
-        /////////////////////////////////////////////////////////
-        // System
-        /////////////////////////////////////////////////////////
-        return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
+        return Window::withDefaultDualHorizontalFrames(window);
     }
-};
+}   // namespace
 
-TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
+TEST(TestHorizontalSliderWindow, PredefinedCOGValues)
 {
     SCOPED_TRACE("Begin Test: Horizontal slider window predefined COG.");
 
-    constexpr double uValue{2.134059};
-    constexpr double edgeUValue{2.251039};
-    constexpr double projectedFrameDimension{0.050813};
-    constexpr double wettedLength{0.05633282};
-    constexpr double absorptance{0.3};
-
-    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = 2.134059,
+                                                    .EdgeUValue = 2.251039,
+                                                    .ProjectedFrameDimension = 0.050813,
+                                                    .WettedLength = 0.05633282,
+                                                    .Absorptance = 0.3};
 
     constexpr auto width{1.2};
     constexpr auto height{1.5};
@@ -86,15 +65,15 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
       tSol,
       std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout));
 
-    using Tarcog::ISO15099::DualHorizontalFramePosition;
+    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
 
-    window.setFrameData({{DualHorizontalFramePosition::Left, frameData},
-                         {DualHorizontalFramePosition::Right, frameData},
-                         {DualHorizontalFramePosition::BottomLeft, frameData},
-                         {DualHorizontalFramePosition::BottomRight, frameData},
-                         {DualHorizontalFramePosition::TopLeft, frameData},
-                         {DualHorizontalFramePosition::TopRight, frameData},
-                         {DualHorizontalFramePosition::MeetingRail, frameData}});
+    window.setFrameData({{FP::Left, frameData},
+                         {FP::Right, frameData},
+                         {FP::BottomLeft, frameData},
+                         {FP::BottomRight, frameData},
+                         {FP::TopLeft, frameData},
+                         {FP::TopRight, frameData},
+                         {FP::MeetingRail, frameData}});
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.519647, vt, 1e-6);
@@ -106,47 +85,82 @@ TEST_F(TestHorizontalSliderWindow, PredefinedCOGValues)
     EXPECT_NEAR(0.357692, windowSHGC, 1e-6);
 }
 
-TEST_F(TestHorizontalSliderWindow, CalculatedCOG)
+TEST(TestHorizontalSliderWindow, FrameAreas)
 {
-    SCOPED_TRACE("Begin Test: Horizontal slider window calculated COG.");
+    auto window{createWindow(makeWinterSystem, makeWinterSystem)};
 
-    constexpr double uValue{2.134059};
-    constexpr double edgeUValue{2.251039};
-    constexpr double projectedFrameDimension{0.050813};
-    constexpr double wettedLength{0.05633282};
-    constexpr double absorptance{0.3};
+    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
 
-    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = uValue,
-                                                    .EdgeUValue = edgeUValue,
-                                                    .ProjectedFrameDimension =
-                                                      projectedFrameDimension,
-                                                    .WettedLength = wettedLength,
-                                                    .Absorptance = absorptance};
+    EXPECT_NEAR(0.031237, window.getFrameArea(FP::TopLeft), 1e-6);
+    EXPECT_NEAR(0.049612, window.getFrameArea(FP::Left), 1e-6);
+    EXPECT_NEAR(0.031237, window.getFrameArea(FP::TopRight), 1e-6);
+    EXPECT_NEAR(0.047774, window.getFrameArea(FP::MeetingRail), 1e-6);
+    EXPECT_NEAR(0.049612, window.getFrameArea(FP::Right), 1e-6);
+    EXPECT_NEAR(0.031237, window.getFrameArea(FP::BottomLeft), 1e-6);
+    EXPECT_NEAR(0.031237, window.getFrameArea(FP::BottomRight), 1e-6);
 
-    constexpr auto width{1.2};
-    constexpr auto height{1.5};
-    constexpr auto tVis{0.638525};
-    constexpr auto tSol{0.3716};
+    EXPECT_NEAR(0.271946, window.getFrameArea(), 1e-6);
+}
 
-    auto window = Tarcog::ISO15099::DualVisionHorizontal(
-      width, height, tVis, tSol, getCOG(), tVis, tSol, getCOG());
+TEST(TestHorizontalSliderWindow, FrameEdgeOfGlassAreas)
+{
+    auto window{createWindow(makeWinterSystem, makeWinterSystem)};
 
-    using Tarcog::ISO15099::DualHorizontalFramePosition;
+    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
 
-    window.setFrameData({{DualHorizontalFramePosition::Left, frameData},
-                         {DualHorizontalFramePosition::Right, frameData},
-                         {DualHorizontalFramePosition::BottomLeft, frameData},
-                         {DualHorizontalFramePosition::BottomRight, frameData},
-                         {DualHorizontalFramePosition::TopLeft, frameData},
-                         {DualHorizontalFramePosition::TopRight, frameData},
-                         {DualHorizontalFramePosition::MeetingRail, frameData}});
+    EXPECT_NEAR(0.041525, window.getFrameEdgeOfGlassArea(FP::TopLeft), 1e-6);
+    EXPECT_NEAR(0.066723, window.getFrameEdgeOfGlassArea(FP::Left), 1e-6);
+    EXPECT_NEAR(0.041525, window.getFrameEdgeOfGlassArea(FP::TopRight), 1e-6);
+    EXPECT_NEAR(0.125381, window.getFrameEdgeOfGlassArea(FP::MeetingRail), 1e-6);
+    EXPECT_NEAR(0.066723, window.getFrameEdgeOfGlassArea(FP::Right), 1e-6);
+    EXPECT_NEAR(0.041525, window.getFrameEdgeOfGlassArea(FP::BottomLeft), 1e-6);
+    EXPECT_NEAR(0.041525, window.getFrameEdgeOfGlassArea(FP::BottomRight), 1e-6);
+
+    EXPECT_NEAR(0.424926, window.getFrameEdgeOfGlassArea(), 1e-6);
+}
+
+TEST(TestHorizontalSliderWindow, DoubleClearAirWinter)
+{
+    constexpr auto width{1.5};
+    constexpr auto height{1.2};
+
+    // Optics now come from the IGU preset
+    const auto & optics = kDoubleClear.optics;
+
+    auto window = Window::makeDualVisionHorizontal(
+      width, height, makeWinterSystem(), optics, makeWinterSystem(), optics);
+
+    window = Window::withDefaultDualHorizontalFrames(window);
 
     const double vt{window.vt()};
-    EXPECT_NEAR(0.519647, vt, 1e-6);
+    EXPECT_NEAR(0.667335, vt, 1e-6);
 
     const double uvalue{window.uValue()};
-    EXPECT_NEAR(3.980813, uvalue, 1e-6);
+    EXPECT_NEAR(2.500568, uvalue, 1e-6);
 
     const double windowSHGC{window.shgc()};
-    EXPECT_NEAR(0.321015, windowSHGC, 1e-6);
+    EXPECT_NEAR(0.002654, windowSHGC, 1e-6);
+}
+
+TEST(TestHorizontalSliderWindow, DoubleClearAirSummer)
+{
+    constexpr auto width{1.5};
+    constexpr auto height{1.2};
+
+    // Optics now come from the IGU preset
+    const auto & optics = kDoubleClear.optics;
+
+    auto window = Window::makeDualVisionHorizontal(
+      width, height, makeSummerSystem(), optics, makeSummerSystem(), optics);
+
+    window = Window::withDefaultDualHorizontalFrames(window);
+
+    const double vt{window.vt()};
+    EXPECT_NEAR(0.667335, vt, 1e-6);
+
+    const double uvalue{window.uValue()};
+    EXPECT_NEAR(2.589659, uvalue, 1e-6);
+
+    const double windowSHGC{window.shgc()};
+    EXPECT_NEAR(0.601122, windowSHGC, 1e-6);
 }

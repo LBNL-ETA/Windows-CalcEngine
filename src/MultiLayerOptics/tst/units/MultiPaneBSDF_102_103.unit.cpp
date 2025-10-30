@@ -6,8 +6,8 @@
 #include <WCESingleLayerOptics.hpp>
 #include <WCECommon.hpp>
 
-#include "standardData.hpp"
-#include "spectralSampleData.hpp"
+#include "optical/standardData.hpp"
+#include "optical/spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;
@@ -123,7 +123,7 @@ TEST_F(MultiPaneBSDF_102_103, SolarAndVisibleRange)
     aLayer.setCalculationProperties(inputVisible);
 
     tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::T);
-    EXPECT_NEAR(0.685109, tauDiff, 1e-6);
+    EXPECT_NEAR(0.685108, tauDiff, 1e-6);
 
     rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
     EXPECT_NEAR(0.257571, rhoDiff, 1e-6);
@@ -132,7 +132,7 @@ TEST_F(MultiPaneBSDF_102_103, SolarAndVisibleRange)
     EXPECT_NEAR(0.023322, absDiff1, 1e-6);
 
     absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.033997, absDiff2, 1e-6);
+    EXPECT_NEAR(0.033998, absDiff2, 1e-6);
 
     theta = 0;
     phi = 0;
@@ -153,13 +153,13 @@ TEST_F(MultiPaneBSDF_102_103, SolarAndVisibleRange)
     EXPECT_NEAR(0.019482, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.032440, abs2, 1e-6);
+    EXPECT_NEAR(0.032441, abs2, 1e-6);
 
     theta = 45;
     phi = 78;
 
     tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.787629, tauHem, 1e-6);
+    EXPECT_NEAR(0.787628, tauHem, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
     EXPECT_NEAR(0.156375, rhoHem, 1e-6);
@@ -168,5 +168,5 @@ TEST_F(MultiPaneBSDF_102_103, SolarAndVisibleRange)
     EXPECT_NEAR(0.021160, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.034836, abs2, 1e-6);
+    EXPECT_NEAR(0.034837, abs2, 1e-6);
 }

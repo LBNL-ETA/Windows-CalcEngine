@@ -12,7 +12,7 @@ namespace Helper
     {
         ASSERT_EQ(correct.size(), test.size());
 
-        for(auto i = 0u; i < correct.size(); ++i)
+        for(auto i = 0U; i < correct.size(); ++i)
         {
             EXPECT_NEAR(correct[i], test[i], tol)
               << testName << ": vector element " << i << " is not correct.";

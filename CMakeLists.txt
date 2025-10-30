@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(Windows-CalcEngine VERSION 1.0.61 LANGUAGES CXX)
+project(Windows-CalcEngine VERSION 1.0.62 LANGUAGES CXX)
 
 set(target_name ${PROJECT_NAME})
 
@@ -103,6 +103,15 @@ endif ()
 if (NOT ${SINGLE_PROJECT})
     if (${BUILD_WCE_TESTING})
         include_directories(src/helper)
+
+        # Define the macro only for test builds
+        set(TEST_DATA_DIR_SINGLE_LAYER_OPTICS
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/SingleLayerOptics/tst")
+        file(TO_CMAKE_PATH "${TEST_DATA_DIR_SINGLE_LAYER_OPTICS}"
+                TEST_DATA_DIR_SINGLE_LAYER_OPTICS)
+
+        # CMake 3.5-friendly (directory-scope) define for everything in src/
+        add_definitions(-DTEST_DATA_DIR_SINGLE_LAYER_OPTICS=\"${TEST_DATA_DIR_SINGLE_LAYER_OPTICS}\")
     endif ()
     add_subdirectory(src)
 else ()
@@ -172,7 +181,14 @@ else ()
     if (BUILD_WCE_TESTING)
         include_directories(src/helper)
         # Collect helper files
-        file(GLOB helper_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/helper/*.hpp" "src/helper/*.cpp")
+        file(GLOB helper_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+                "src/helper/*.hpp"
+                "src/helper/*.cpp"
+                "src/helper/optical/*.hpp"
+                "src/helper/optical/*.cpp"
+                "src/helper/thermal/*.hpp"
+                "src/helper/thermal/*.cpp"
+        )
         list(APPEND test_src ${helper_test_src})
 
         if (${BUILD_WCE_COMMON})
@@ -221,9 +237,13 @@ else ()
 
         CREATE_TEST_TARGETS_WCE(${target_name} "${test_src}" "")
 
-        # Set test data directory
-        set(TEST_DATA_DIR_SINGLE_LAYER_OPTICS "${CMAKE_CURRENT_SOURCE_DIR}/src/SingleLayerOptics/tst")
-        target_compile_definitions(${target_name}_tests PRIVATE TEST_DATA_DIR_SINGLE_LAYER_OPTICS="${TEST_DATA_DIR_SINGLE_LAYER_OPTICS}")
+        # Define the macro ONLY for test builds; target-scoped for the tests exe
+        set(TEST_DATA_DIR_SINGLE_LAYER_OPTICS
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/SingleLayerOptics/tst")
+        file(TO_CMAKE_PATH "${TEST_DATA_DIR_SINGLE_LAYER_OPTICS}"
+                TEST_DATA_DIR_SINGLE_LAYER_OPTICS)
+        target_compile_definitions(${target_name}_tests PRIVATE
+                TEST_DATA_DIR_SINGLE_LAYER_OPTICS="${TEST_DATA_DIR_SINGLE_LAYER_OPTICS}")
     endif ()
 
 endif ()

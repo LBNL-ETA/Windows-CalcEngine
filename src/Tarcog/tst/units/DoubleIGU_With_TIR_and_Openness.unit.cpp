@@ -2,12 +2,11 @@
 #include <stdexcept>
 #include <gtest/gtest.h>
 
-#include "WCETarcog.hpp"
-#include "WCECommon.hpp"
+#include <WCETarcog.hpp>
+#include <WCECommon.hpp>
 
 class DoubleIGU_With_TIR_and_Openness : public testing::Test
 {
-private:
     std::shared_ptr<Tarcog::ISO15099::CSingleSystem> m_TarcogSystem;
 
 protected:
@@ -16,10 +15,10 @@ protected:
         /////////////////////////////////////////////////////////
         // Outdoor
         /////////////////////////////////////////////////////////
-        auto airTemperature = 255.15;   // Kelvins
-        auto airSpeed = 5.5;            // meters per second
-        auto tSky = 255.15;             // Kelvins
-        auto solarRadiation = 0.0;
+        constexpr auto airTemperature = 255.15;   // Kelvins
+        constexpr auto airSpeed = 5.5;            // meters per second
+        constexpr auto tSky = 255.15;             // Kelvins
+        constexpr auto solarRadiation = 0.0;
 
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
@@ -30,51 +29,46 @@ protected:
         // Indoor
         /////////////////////////////////////////////////////////
 
-        auto roomTemperature = 294.15;
+        constexpr auto roomTemperature = 294.15;
 
-        auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
+        const auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
         ASSERT_TRUE(Indoor != nullptr);
 
         /////////////////////////////////////////////////////////
         // IGU
         /////////////////////////////////////////////////////////
-        auto solidLayerThickness = 0.003048;   // [m]
-        auto solidLayerConductance = 1.0;
+        constexpr auto solidLayerThickness = 0.003048;   // [m]
+        constexpr auto solidLayerConductance = 1.0;
 
-        auto layer1 = Tarcog::ISO15099::Layers::shading(solidLayerThickness, solidLayerConductance);
+        const auto layer1 =
+          Tarcog::ISO15099::Layers::shading(solidLayerThickness, solidLayerConductance);
         ASSERT_TRUE(layer1 != nullptr);
 
-        auto shadeLayerThickness = 0.001;
-        auto shadeLayerConductance = 0.15;
-        auto emissivity = 0.796259999275;
-        auto tir = 0.10916;
-        auto dtop = 0.0;
-        auto dbot = 0.0;
-        auto dleft = 0.0;
-        auto dright = 0.0;
-        auto PermeabilityFactor = 0.049855;
+        constexpr auto shadeLayerThickness = 0.001;
+        constexpr auto shadeLayerConductance = 0.15;
+        constexpr auto emissivity = 0.796259999275;
+        constexpr auto tir = 0.10916;
+        constexpr auto PermeabilityFactor = 0.049855;
 
-        EffectiveLayers::ShadeOpenness openness{dleft, dright, dtop, dbot};
+        const auto effectiveLayer{
+          EffectiveLayers::makeCommonValues(shadeLayerThickness, PermeabilityFactor)};
 
-        double windowWidth = 1;
-        double windowHeight = 1;
-
-        EffectiveLayers::EffectiveLayerCommon effectiveLayer{
-          windowWidth, windowHeight, shadeLayerThickness, PermeabilityFactor, openness};
-
-        auto layer2 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
-                                                        shadeLayerConductance,
-                                                        effectiveLayer.getEffectiveOpenness(),
-                                                        emissivity,
-                                                        tir,
-                                                        emissivity,
-                                                        tir);
+        const auto layer2 = Tarcog::ISO15099::Layers::shading(shadeLayerThickness,
+                                                              shadeLayerConductance,
+                                                              effectiveLayer.openness,
+                                                              emissivity,
+                                                              tir,
+                                                              emissivity,
+                                                              tir);
 
         ASSERT_TRUE(layer2 != nullptr);
 
-        auto gapThickness = 0.0127;
-        auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness);
+        constexpr auto gapThickness = 0.0127;
+        const auto gap1 = Tarcog::ISO15099::Layers::gap(gapThickness);
         ASSERT_TRUE(gap1 != nullptr);
+
+        constexpr double windowWidth = 1;
+        constexpr double windowHeight = 1;
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight);
         aIGU.addLayers({layer1, gap1, layer2});
@@ -89,9 +83,9 @@ protected:
     }
 
 public:
-    [[nodiscard]] std::shared_ptr<Tarcog::ISO15099::CSingleSystem> getSystem() const
+    [[nodiscard]] Tarcog::ISO15099::CSingleSystem getSystem() const
     {
-        return m_TarcogSystem;
+        return *m_TarcogSystem;
     }
 };
 
@@ -101,8 +95,8 @@ TEST_F(DoubleIGU_With_TIR_and_Openness, Test1)
 
     const auto aSystem = getSystem();
 
-    const auto temperature = aSystem->getTemperatures();
-    const auto radiosity = aSystem->getRadiosities();
+    const auto temperature = aSystem.getTemperatures();
+    const auto radiosity = aSystem.getRadiosities();
 
     const std::vector correctTemp{259.350462, 259.724865, 279.767733, 280.443187};
     const std::vector correctJ{253.917317, 272.505694, 348.677765, 349.142912};
@@ -116,17 +110,17 @@ TEST_F(DoubleIGU_With_TIR_and_Openness, Test1)
         EXPECT_NEAR(correctJ[i], radiosity[i], 1e-6);
     }
 
-    const auto numOfIter = aSystem->getNumberOfIterations();
+    const auto numOfIter = aSystem.getNumberOfIterations();
     EXPECT_EQ(24u, numOfIter);
 
     const auto ventilatedFlowOutdoor =
-      aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
+      aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Outdoor);
     EXPECT_NEAR(0.0, ventilatedFlowOutdoor, 1e-6);
 
     const auto ventilatedFlowIndoor =
-      aSystem->getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
+      aSystem.getVentilationFlow(Tarcog::ISO15099::Environment::Indoor);
     EXPECT_NEAR(9.152949, ventilatedFlowIndoor, 1e-6);
 
-    const auto uValue = aSystem->getUValue();
+    const auto uValue = aSystem.getUValue();
     EXPECT_NEAR(3.149632, uValue, 1e-6);
 }

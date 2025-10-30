@@ -18,11 +18,18 @@ namespace Tarcog::ISO15099
         double Thickness{0.25e-3};
     };
 
-    class WindowVision : public IVision
+    class WindowVision final : public IVision
     {
     public:
         WindowVision() = default;
-        WindowVision(const WindowVision & vision) = default;
+        ~WindowVision() override = default;
+        WindowVision(const WindowVision & other);
+
+        WindowVision & operator=(const WindowVision & other);
+
+        WindowVision(WindowVision && other) noexcept;
+        WindowVision & operator=(WindowVision && other) noexcept;
+
         WindowVision(double width,
                      double height,
                      double tvis,
@@ -43,11 +50,16 @@ namespace Tarcog::ISO15099
         void setHc(double hc) override;
 
         void setFrameData(FramePosition position, FrameData frameData);
+        void setFrameTypes(const std::map<FramePosition, FrameType> & frameTypes);
 
-        void setFrameTypes(std::map<FramePosition, FrameType> frameTypes);
+        [[nodiscard]] const Frame & frame(FramePosition position) const;
 
         void setDividers(FrameData divider, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & divider);
+
+        //! Returns total area of dividers assigned to this window vision area
+        [[nodiscard]] double dividerArea() const;
+        [[nodiscard]] double dividerEdgeOfGlassArea() const;
 
         void setInteriorAndExteriorSurfaceHeight(double height);
 
@@ -66,12 +78,8 @@ namespace Tarcog::ISO15099
         //! Resizes IGU according to frames that are currently set in the vision
         void resizeIGU();
 
-        //! Returns total area of dividers assigned to this window vision area
-        [[nodiscard]] double dividerArea() const;
-        [[nodiscard]] double dividerEdgeArea() const;
-
         [[nodiscard]] double frameProjectedArea() const;
-        [[nodiscard]] double edgeOfGlassArea() const;
+        [[nodiscard]] double totalEdgeOfGlassArea() const;
 
         std::shared_ptr<IIGUSystem> m_IGUSystem;
 
@@ -88,8 +96,8 @@ namespace Tarcog::ISO15099
 
         std::map<FramePosition, Frame> m_Frame;
 
-        size_t m_NumOfVerticalDividers{0u};
-        size_t m_NumOfHorizontalDividers{0u};
+        size_t m_NumOfVerticalDividers{0U};
+        size_t m_NumOfHorizontalDividers{0U};
         std::optional<FrameData> m_Divider;
 
         IGUErrorTolerance m_IGUErrorTolerance;

@@ -1,7 +1,6 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "BaseLayer.hpp"
 #include "Surface.hpp"
 
 
@@ -10,7 +9,7 @@ namespace Tarcog::ISO15099
     //////////////////////////////////////////////////////////////////////////////
     /// Surface
     //////////////////////////////////////////////////////////////////////////////
-    Surface::Surface() : m_SurfaceProperties(std::make_unique<ConstantSurfaceProperties>(0.84, 0))
+    Surface::Surface() : m_SurfaceProperties(ConstantSurfaceProps{0.84, 0})
     {
         calculateReflectance();
     }
@@ -18,8 +17,7 @@ namespace Tarcog::ISO15099
     Surface::Surface(double const t_Emissivity, double const t_Transmittance) :
         m_Emissivity(t_Emissivity),
         m_Transmittance(t_Transmittance),
-        m_SurfaceProperties(
-          std::make_unique<ConstantSurfaceProperties>(m_Emissivity, m_Transmittance))
+        m_SurfaceProperties(ConstantSurfaceProps{m_Emissivity, m_Transmittance})
     {
         if(m_Emissivity < 0.0)
         {
@@ -51,7 +49,7 @@ namespace Tarcog::ISO15099
         m_J = t_Surface.m_J;
         m_MaxDeflection = t_Surface.m_MaxDeflection;
         m_MeanDeflection = t_Surface.m_MeanDeflection;
-        m_SurfaceProperties = t_Surface.m_SurfaceProperties->clone();
+        m_SurfaceProperties = t_Surface.m_SurfaceProperties;
         calculateReflectance();
 
         return *this;
@@ -80,7 +78,7 @@ namespace Tarcog::ISO15099
 
     double Surface::getEmissivity() const
     {
-        return m_SurfaceProperties->emissivity(m_Temperature);
+        return emissivity(m_SurfaceProperties, m_Temperature);
     }
 
     double Surface::getReflectance() const
@@ -90,7 +88,7 @@ namespace Tarcog::ISO15099
 
     double Surface::getTransmittance() const
     {
-        return m_SurfaceProperties->transmittance(m_Temperature);
+        return transmittance(m_SurfaceProperties, m_Temperature);
     }
 
     double Surface::J() const
@@ -151,8 +149,7 @@ namespace Tarcog::ISO15099
 
     Surface::Surface(const std::vector<FenestrationCommon::TableValue> & t_Emissivity,
                      const std::vector<FenestrationCommon::TableValue> & t_Transmittance) :
-        m_SurfaceProperties(
-          std::make_unique<ThermochromicSurfaceProperties>(t_Emissivity, t_Transmittance))
+        m_SurfaceProperties(ThermochromicSurfaceProps(t_Emissivity, t_Transmittance))
     {}
 
 }   // namespace Tarcog::ISO15099

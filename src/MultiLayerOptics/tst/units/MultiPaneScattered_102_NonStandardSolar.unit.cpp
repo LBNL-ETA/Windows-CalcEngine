@@ -6,7 +6,7 @@
 #include <WCESingleLayerOptics.hpp>
 #include <WCECommon.hpp>
 
-#include "spectralSampleData.hpp"
+#include "optical/spectralSampleData.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;

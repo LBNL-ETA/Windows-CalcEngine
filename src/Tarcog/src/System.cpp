@@ -7,13 +7,15 @@
 
 namespace Tarcog::ISO15099
 {
-    CSystem::CSystem(CIGU & t_IGU,
-                     std::shared_ptr<CEnvironment> const & t_Indoor,
-                     std::shared_ptr<CEnvironment> const & t_Outdoor)
+    CSystem::CSystem(CIGU t_IGU,
+                     const std::shared_ptr<CEnvironment> & t_Indoor,
+                     const std::shared_ptr<CEnvironment> & t_Outdoor)
+                         : m_igu(std::move(t_IGU))
     {
-        m_System[System::SHGC] = std::make_shared<CSingleSystem>(t_IGU, t_Indoor, t_Outdoor);
+        m_System[System::SHGC] = std::make_shared<CSingleSystem>(m_igu, t_Indoor, t_Outdoor);
+        m_System.at(System::SHGC)->setSolarRadiation(t_Outdoor->getDirectSolarRadiation());
         m_System[System::Uvalue] = std::make_shared<CSingleSystem>(
-          t_IGU, t_Indoor->cloneEnvironment(), t_Outdoor->cloneEnvironment());
+          m_igu, t_Indoor->cloneEnvironment(), t_Outdoor->cloneEnvironment());
         m_System.at(System::Uvalue)->setSolarRadiation(0);
 
         solve();

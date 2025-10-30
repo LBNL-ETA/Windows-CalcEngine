@@ -195,8 +195,7 @@ namespace MultiLayerOptics
     protected:
         explicit CMultiPaneBSDF(
           const std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> & t_Layer,
-          const std::optional<std::vector<double>> & matrixWavelengths,
-          const FenestrationCommon::ProgressCallback & callback = nullptr);
+          const std::optional<std::vector<double>> & matrixWavelengths);
 
         std::vector<std::vector<double>>
           calcPVLayersElectricity(const std::vector<std::vector<double>> & jsc,

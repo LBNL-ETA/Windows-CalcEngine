@@ -2,8 +2,9 @@
 
 #include <memory>
 #include <vector>
+#include <variant>
 
-#include "SurfaceProperties.hpp"
+#include "SurfaceProps.hpp"
 
 namespace Tarcog::ISO15099
 {
@@ -37,7 +38,7 @@ namespace Tarcog::ISO15099
         void initializeStart(double t_Temperature);
         void initializeStart(double t_Temperature, double t_Radiation);
 
-    protected:
+    private:
         void calculateReflectance();
 
         double m_Temperature{273.15};
@@ -52,6 +53,6 @@ namespace Tarcog::ISO15099
         double m_MeanDeflection{0.0};
         double m_MaxDeflection{0.0};
 
-        std::unique_ptr<ISurfaceProperties> m_SurfaceProperties;
+        SurfaceProps m_SurfaceProperties;
     };
 }   // namespace Tarcog::ISO15099

@@ -28,7 +28,15 @@ namespace Tarcog
     class IVision
     {
     public:
+        // Polymorphic base must have a virtual dtor
         virtual ~IVision() = default;
+
+        // Special members
+        IVision() = default;
+        IVision(const IVision&) = default;
+        IVision& operator=(const IVision&) = default;
+        IVision(IVision&&) = default;
+        IVision& operator=(IVision&&) = default;
 
         [[nodiscard]] virtual double uValue() const = 0;
         [[nodiscard]] virtual double shgc() const = 0;
@@ -59,7 +67,15 @@ namespace Tarcog
     class IWindow
     {
     public:
+        // Virtual destructor (polymorphic base)
         virtual ~IWindow() = default;
+
+        // Constructors & assignment
+        IWindow() = default;
+        IWindow(const IWindow&) = default;
+        IWindow& operator=(const IWindow&) = default;
+        IWindow(IWindow&&) noexcept = default;
+        IWindow& operator=(IWindow&&) noexcept = default;
 
         [[nodiscard]] virtual double area() const = 0;
         [[nodiscard]] virtual double uValue() const = 0;

@@ -34,7 +34,7 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameExterior)
 
     frame.frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
 
-    const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
+    const double projectedArea{Tarcog::ISO15099::frameArea(frame)};
     EXPECT_NEAR(0.18, projectedArea, 1e-6);
 
     const double eogArea{Tarcog::ISO15099::edgeOfGlassArea(frame)};
@@ -69,7 +69,7 @@ TEST_F(TestFrameISO15099, ExteriorFrameLeftSideFrameInterior)
 
     frame.frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
 
-    const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
+    const double projectedArea{Tarcog::ISO15099::frameArea(frame)};
     EXPECT_NEAR(0.2, projectedArea, 1e-6);
 
     const double eogArea{Tarcog::ISO15099::edgeOfGlassArea(frame)};
@@ -107,7 +107,7 @@ TEST_F(TestFrameISO15099, InteriorFrameLeftandRightSideFramesExterior)
     frame.frame[Tarcog::ISO15099::FrameSide::Left] = leftFrame;
     frame.frame[Tarcog::ISO15099::FrameSide::Right] = rightFrame;
 
-    const double projectedArea{Tarcog::ISO15099::projectedArea(frame)};
+    const double projectedArea{Tarcog::ISO15099::frameArea(frame)};
     EXPECT_NEAR(0.12, projectedArea, 1e-6);
 
     const double eogArea{Tarcog::ISO15099::edgeOfGlassArea(frame)};
