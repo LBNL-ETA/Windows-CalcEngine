@@ -5,11 +5,11 @@
 
 namespace Tarcog::ISO15099
 {
-    CBaseLayer::CBaseLayer() : HeatFlowLayer(), SurfacesManager()
+    CBaseLayer::CBaseLayer() : HeatFlowLayer()
     {}
 
-    CBaseLayer::CBaseLayer(double thickness) :
-        HeatFlowLayer(), SurfacesManager(), m_Thickness(thickness)
+    CBaseLayer::CBaseLayer(const double thickness) :
+        HeatFlowLayer(), m_Thickness(thickness)
     {
         if(thickness <= 0)
         {
