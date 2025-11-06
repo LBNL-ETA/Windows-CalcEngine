@@ -8,6 +8,8 @@
 #include "DeflectionInterface.hpp"
 #include "GasSpecification.hpp"
 
+#include <iostream>
+
 namespace Tarcog
 {
     double const ReferenceTemperature = 273.15;
