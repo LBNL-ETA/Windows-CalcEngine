@@ -1,20 +1,48 @@
 #include "BaseLayer.hpp"
-
 #include "Surface.hpp"
-
 
 namespace Tarcog::ISO15099
 {
-    CBaseLayer::CBaseLayer() : HeatFlowLayer()
-    {}
+    CBaseLayer::CBaseLayer() : HeatFlowLayer() {}
 
-    CBaseLayer::CBaseLayer(const double thickness) :
-        HeatFlowLayer(), m_Thickness(thickness)
+    CBaseLayer::CBaseLayer(double thickness)
+        : HeatFlowLayer(), m_Thickness(thickness)
     {
-        if(thickness <= 0)
-        {
+        if (thickness <= 0)
             throw std::runtime_error("Layer thickness must be greater than zero.");
+    }
+
+    CBaseLayer::~CBaseLayer()
+    {
+        tearDownConnections();
+    }
+
+    std::shared_ptr<CBaseLayer> CBaseLayer::getPreviousLayer() const
+    {
+        return m_PreviousLayer.lock();
+    }
+
+    std::shared_ptr<CBaseLayer> CBaseLayer::getNextLayer() const
+    {
+        return m_NextLayer.lock();
+    }
+
+    void CBaseLayer::connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer)
+    {
+        m_NextLayer = t_Layer;
+        try {
+            auto self = shared_from_this();
+            t_Layer->m_PreviousLayer = self;
+        } catch (const std::bad_weak_ptr&) {
+            // Defensive: if this layer isn't managed by shared_ptr yet.
+            t_Layer->m_PreviousLayer.reset();
         }
+    }
+
+    void CBaseLayer::tearDownConnections()
+    {
+        m_NextLayer.reset();
+        m_PreviousLayer.reset();
     }
 
     double CBaseLayer::getHeatFlow()
@@ -35,30 +63,7 @@ namespace Tarcog::ISO15099
                * getConductionConvectionCoefficient();
     }
 
-    std::shared_ptr<CBaseLayer> CBaseLayer::getPreviousLayer() const
-    {
-        return m_PreviousLayer;
-    }
-
-    std::shared_ptr<CBaseLayer> CBaseLayer::getNextLayer() const
-    {
-        return m_NextLayer;
-    }
-
-    void CBaseLayer::tearDownConnections()
-    {
-        m_PreviousLayer = nullptr;
-        m_NextLayer = nullptr;
-    }
-
-    void CBaseLayer::connectToBackSide(const std::shared_ptr<CBaseLayer> & t_Layer)
-    {
-        m_NextLayer = t_Layer;
-        t_Layer->m_PreviousLayer = shared_from_this();
-    }
-
-    void CBaseLayer::calculateRadiationFlow()
-    {}
+    void CBaseLayer::calculateRadiationFlow() {}
 
     double CBaseLayer::getThickness() const
     {
@@ -66,30 +71,13 @@ namespace Tarcog::ISO15099
                - surfaceDeflectionMean(FenestrationCommon::Side::Back);
     }
 
-    bool CBaseLayer::isPermeable() const
-    {
-        return false;
-    }
+    bool CBaseLayer::isPermeable() const { return false; }
 
-    double CBaseLayer::getSurfaceArea() const
-    {
-        return m_Width * m_Height;
-    }
+    double CBaseLayer::getSurfaceArea() const { return m_Width * m_Height; }
 
-    void CBaseLayer::setWidth(const double width)
-    {
-        m_Width = width;
-    }
-
-    void CBaseLayer::setHeight(const double height)
-    {
-        m_Height = height;
-    }
-
-    void CBaseLayer::setTilt(const double tilt)
-    {
-        m_Tilt = tilt;
-    }
+    void CBaseLayer::setWidth(double width) { m_Width = width; }
+    void CBaseLayer::setHeight(double height) { m_Height = height; }
+    void CBaseLayer::setTilt(double tilt) { m_Tilt = tilt; }
 
     double CBaseLayer::getConductivity()
     {
@@ -102,4 +90,4 @@ namespace Tarcog::ISO15099
                         / (surfaceTemperature(FenestrationCommon::Side::Front)
                            - surfaceTemperature(FenestrationCommon::Side::Back)));
     }
-}   // namespace Tarcog::ISO15099
+}
