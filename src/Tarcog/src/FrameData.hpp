@@ -43,6 +43,14 @@ namespace Tarcog::ISO15099
         std::variant<std::monostate, GenericFrame, GenericDivider> Class;
     };
 
+    // Encapsulates divider data so the data is not stored outside
+    struct DividerData
+    {
+        FrameData frame;
+        size_t numberOfHorizontal{0U};
+        size_t numberOfVertical{0U};
+    };
+
     double dividerUValue(const DividerBodyPoly & poly, double uCenter, double gap);
 
     //! Calculates frame edge uValue based on FrameData type

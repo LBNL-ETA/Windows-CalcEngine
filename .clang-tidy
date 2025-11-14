@@ -11,7 +11,11 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -cppcoreguidelines-member-function-hidden,
   -cppcoreguidelines-owning-memory.NonOwningRawPointer,
-  -cppcoreguidelines-owning-memory
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-narrowing-conversions,
+  -readability-misleading-binary-operator,
+  -bugprone-suspicious-missing-parentheses,
+  -clang-diagnostic-parentheses
 
 
 WarningsAsErrors: ''

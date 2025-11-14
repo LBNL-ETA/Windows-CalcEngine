@@ -96,9 +96,7 @@ namespace Tarcog::ISO15099
 
         std::map<FramePosition, Frame> m_Frame;
 
-        size_t m_NumOfVerticalDividers{0U};
-        size_t m_NumOfHorizontalDividers{0U};
-        std::optional<FrameData> m_Divider;
+        std::optional<DividerData> m_Divider;
 
         IGUErrorTolerance m_IGUErrorTolerance;
     };

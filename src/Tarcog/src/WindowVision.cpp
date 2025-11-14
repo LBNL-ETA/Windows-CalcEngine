@@ -20,8 +20,6 @@ namespace Tarcog::ISO15099
         m_HExterior(other.m_HExterior),
         m_ExteriorSurfaceHeight(other.m_ExteriorSurfaceHeight),
         m_Frame(other.m_Frame),
-        m_NumOfVerticalDividers(other.m_NumOfVerticalDividers),
-        m_NumOfHorizontalDividers(other.m_NumOfHorizontalDividers),
         m_Divider(other.m_Divider),
         m_IGUErrorTolerance(other.m_IGUErrorTolerance)
     {
@@ -41,8 +39,6 @@ namespace Tarcog::ISO15099
             m_HExterior = other.m_HExterior;
             m_ExteriorSurfaceHeight = other.m_ExteriorSurfaceHeight;
             m_Frame = other.m_Frame;
-            m_NumOfVerticalDividers = other.m_NumOfVerticalDividers;
-            m_NumOfHorizontalDividers = other.m_NumOfHorizontalDividers;
             m_Divider = other.m_Divider;
             m_IGUErrorTolerance = other.m_IGUErrorTolerance;
             connectFrames();
@@ -61,8 +57,6 @@ namespace Tarcog::ISO15099
         m_HExterior(other.m_HExterior),
         m_ExteriorSurfaceHeight(other.m_ExteriorSurfaceHeight),
         m_Frame(std::move(other.m_Frame)),
-        m_NumOfVerticalDividers(other.m_NumOfVerticalDividers),
-        m_NumOfHorizontalDividers(other.m_NumOfHorizontalDividers),
         m_Divider(other.m_Divider),
         m_IGUErrorTolerance(other.m_IGUErrorTolerance)
     {
@@ -83,8 +77,6 @@ namespace Tarcog::ISO15099
             m_HExterior = other.m_HExterior;
             m_ExteriorSurfaceHeight = other.m_ExteriorSurfaceHeight;
             m_Frame = std::move(other.m_Frame);
-            m_NumOfVerticalDividers = other.m_NumOfVerticalDividers;
-            m_NumOfHorizontalDividers = other.m_NumOfHorizontalDividers;
             m_Divider = other.m_Divider;
             m_IGUErrorTolerance = other.m_IGUErrorTolerance;
             connectFrames();
@@ -234,15 +226,17 @@ namespace Tarcog::ISO15099
           });
 
         // COG weighted U-value
-        const double cogWU =
-          m_IGUUvalue
-          * (area() - frameProjectedArea() - totalEdgeOfGlassArea() - dividerArea() - dividerEdgeOfGlassArea());
+        const double cogWU = m_IGUUvalue
+                             * (area() - frameProjectedArea() - totalEdgeOfGlassArea()
+                                - dividerArea() - dividerEdgeOfGlassArea());
 
         // Divider contributions
         const double divWU =
-          m_Divider ? dividerArea() * Helper::dividerUValue(*m_IGUSystem, *m_Divider) : 0.0;
+          m_Divider ? dividerArea() * Helper::dividerUValue(*m_IGUSystem, m_Divider->frame) : 0.0;
         const double divEdgeWU =
-          m_Divider ? dividerEdgeOfGlassArea() * Helper::dividerEdgeUValue(*m_IGUSystem, *m_Divider) : 0.0;
+          m_Divider
+            ? dividerEdgeOfGlassArea() * Helper::dividerEdgeUValue(*m_IGUSystem, m_Divider->frame)
+            : 0.0;
 
         return (cogWU + frameWU + edgeWU + divWU + divEdgeWU) / area();
     }
@@ -272,12 +266,13 @@ namespace Tarcog::ISO15099
         auto dividerWeightedSHGC{0.0};
         if(m_Divider.has_value())
         {
-            dividerWeightedSHGC += dividerArea()
-                                   * frameSHGC(m_Divider->Absorptance,
-                                               Helper::dividerUValue(*m_IGUSystem, *m_Divider),
-                                               m_Divider->ProjectedFrameDimension,
-                                               m_Divider->WettedLength,
-                                               m_HExterior);
+            dividerWeightedSHGC +=
+              dividerArea()
+              * frameSHGC(m_Divider->frame.Absorptance,
+                          Helper::dividerUValue(*m_IGUSystem, m_Divider->frame),
+                          m_Divider->frame.ProjectedFrameDimension,
+                          m_Divider->frame.WettedLength,
+                          m_HExterior);
         }
 
         return (COGWeightedSHGC + frameWeightedSHGC + dividerWeightedSHGC) / area();
@@ -351,18 +346,25 @@ namespace Tarcog::ISO15099
 
     void WindowVision::setDividers(FrameData divider, size_t nHorizontal, size_t nVertical)
     {
-        m_Divider = divider;
-        m_NumOfHorizontalDividers = nHorizontal;
-        m_NumOfVerticalDividers = nVertical;
+        if(!m_Divider.has_value())
+        {
+            m_Divider.emplace();
+        }
+
+        m_Divider->frame = divider;
+        m_Divider->numberOfHorizontal = nHorizontal;
+        m_Divider->numberOfVertical = nVertical;
+
+        // TODO: Do not cache precalculated divider areas, calculate on demand
         std::map<FramePosition, size_t> numOfDivs{
-          {FramePosition::Top, m_NumOfVerticalDividers},
-          {FramePosition::Bottom, m_NumOfVerticalDividers},
-          {FramePosition::Left, m_NumOfHorizontalDividers},
-          {FramePosition::Right, m_NumOfHorizontalDividers}};
+          {FramePosition::Top, m_Divider->numberOfVertical},
+          {FramePosition::Bottom, m_Divider->numberOfVertical},
+          {FramePosition::Left, m_Divider->numberOfHorizontal},
+          {FramePosition::Right, m_Divider->numberOfHorizontal}};
 
         for(auto & [key, frame] : m_Frame)
         {
-            frame.dividerArea = m_Divider->ProjectedFrameDimension * ConstantsData::EOGHeight;
+            frame.dividerArea = m_Divider->frame.ProjectedFrameDimension * ConstantsData::EOGHeight;
             frame.numberOfDividers = numOfDivs.at(key);
         }
     }
@@ -492,7 +494,7 @@ namespace Tarcog::ISO15099
 
         if(m_Divider)
         {
-            const IGUMismatch mismatch = accumulateMismatch(m_Divider->iguData);
+            const IGUMismatch mismatch = accumulateMismatch(m_Divider->frame.iguData);
             result.uCenterMissmatch |= mismatch.uCenterMissmatch;
             result.thicknessMissmatch |= mismatch.thicknessMissmatch;
         }
@@ -542,12 +544,12 @@ namespace Tarcog::ISO15099
             const auto dividersHeight{
               m_Height - m_Frame.at(FramePosition::Top).frameData.ProjectedFrameDimension
               - m_Frame.at(FramePosition::Bottom).frameData.ProjectedFrameDimension};
-            const auto areaVertical{m_NumOfVerticalDividers * dividersHeight
-                                    * m_Divider->ProjectedFrameDimension};
-            const auto areaHorizontal{m_NumOfHorizontalDividers * dividersWidth
-                                      * m_Divider->ProjectedFrameDimension};
-            const auto areaDoubleCounted{m_NumOfHorizontalDividers * m_NumOfVerticalDividers
-                                         * std::pow(m_Divider->ProjectedFrameDimension, 2)};
+            const auto areaVertical{m_Divider->numberOfVertical * dividersHeight
+                                    * m_Divider->frame.ProjectedFrameDimension};
+            const auto areaHorizontal{m_Divider->numberOfHorizontal * dividersWidth
+                                      * m_Divider->frame.ProjectedFrameDimension};
+            const auto areaDoubleCounted{m_Divider->numberOfHorizontal * m_Divider->numberOfVertical
+                                         * std::pow(m_Divider->frame.ProjectedFrameDimension, 2)};
             result = areaVertical + areaHorizontal - areaDoubleCounted;
         }
 
@@ -568,15 +570,16 @@ namespace Tarcog::ISO15099
               m_Height - m_Frame.at(FramePosition::Top).frameData.ProjectedFrameDimension
               - m_Frame.at(FramePosition::Bottom).frameData.ProjectedFrameDimension
               - 2 * ConstantsData::EOGHeight};
-            const auto areaVertical{m_NumOfVerticalDividers * 2 * ConstantsData::EOGHeight
+            const auto areaVertical{m_Divider->numberOfVertical * 2 * ConstantsData::EOGHeight
                                     * eogHeight};
-            const auto areaHorizontal{m_NumOfHorizontalDividers * 2 * ConstantsData::EOGHeight
+            const auto areaHorizontal{m_Divider->numberOfHorizontal * 2 * ConstantsData::EOGHeight
                                       * eogWidth};
-            const auto dividerAreaSubtract{4 * m_NumOfVerticalDividers * m_NumOfHorizontalDividers
-                                           * m_Divider->ProjectedFrameDimension
-                                           * ConstantsData::EOGHeight};
-            const auto eogAreaSubtract{4 * m_NumOfVerticalDividers * m_NumOfHorizontalDividers
-                                       * ConstantsData::EOGHeight * ConstantsData::EOGHeight};
+            const auto dividerAreaSubtract{
+              4 * m_Divider->numberOfVertical * m_Divider->numberOfHorizontal
+              * m_Divider->frame.ProjectedFrameDimension * ConstantsData::EOGHeight};
+            const auto eogAreaSubtract{4 * m_Divider->numberOfVertical
+                                       * m_Divider->numberOfHorizontal * ConstantsData::EOGHeight
+                                       * ConstantsData::EOGHeight};
 
             result = areaVertical + areaHorizontal - dividerAreaSubtract - eogAreaSubtract;
         }
