@@ -3,41 +3,46 @@
 #include "IGUConfigurations.hpp"
 
 
-namespace Tarcog
+namespace Tarcog::ISO15099
 {
-    namespace ISO15099
+    class SimpleIGU : public IIGUSystem
     {
-        class SimpleIGU : public IIGUSystem
-        {
-        public:
-            virtual ~SimpleIGU() = default;
-            SimpleIGU(double uValue,
-                      double shgc,
-                      double h,
-                      double thickness = 0,
-                      std::vector<double> gapLayerThicknesses = {});
+    public:
+        virtual ~SimpleIGU() = default;
 
-            double getUValue() override;
-            double getSHGC(double t_TotSol) override;
-            [[nodiscard]] double getHc(System system, Environment environment) const override;
-            [[nodiscard]] double getHr(System system, Environment environment) const override;
-            [[nodiscard]] double getH(System system, Environment environment) const override;
+        // Fule of five
+        SimpleIGU() = default;
+        SimpleIGU(const SimpleIGU &) = default;
+        SimpleIGU & operator=(const SimpleIGU &) = default;
+        SimpleIGU(SimpleIGU &&) noexcept = default;
+        SimpleIGU & operator=(SimpleIGU &&) noexcept = default;
 
-            void setWidth(double width) override;
-            void setHeight(double height) override;
-            void setTilt(double tilt) override;
-            void setWidthAndHeight(double width, double height) override;
-            void setInteriorAndExteriorSurfacesHeight(double height) override;
+        SimpleIGU(double uValue,
+                  double shgc,
+                  double h,
+                  double thickness = 0,
+                  std::vector<double> gapLayerThicknesses = {});
 
-            [[nodiscard]] double thickness() const override;
-            [[nodiscard]] std::vector<double> gapLayerThicknesses() const override;
+        double getUValue() override;
+        double getSHGC(double t_TotSol) override;
+        [[nodiscard]] double getHc(System system, Environment environment) const override;
+        [[nodiscard]] double getHr(System system, Environment environment) const override;
+        [[nodiscard]] double getH(System system, Environment environment) const override;
 
-        private:
-            double m_UValue;
-            double m_SHGC;
-            double m_H;
-            double m_Thickness{0};
-            std::vector<double> m_gapLayerThicknesses;
-        };
-    }   // namespace ISO15099
-}   // namespace Tarcog
+        void setWidth(double width) override;
+        void setHeight(double height) override;
+        void setTilt(double tilt) override;
+        void setWidthAndHeight(double width, double height) override;
+        void setInteriorAndExteriorSurfacesHeight(double height) override;
+
+        [[nodiscard]] double thickness() const override;
+        [[nodiscard]] std::vector<double> gapLayerThicknesses() const override;
+
+    private:
+        double m_UValue{0};
+        double m_SHGC{0};
+        double m_H{0};
+        double m_Thickness{0};
+        std::vector<double> m_gapLayerThicknesses;
+    };
+}   // namespace Tarcog::ISO15099

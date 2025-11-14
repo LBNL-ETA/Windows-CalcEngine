@@ -17,4 +17,12 @@ namespace Frame
     Tarcog::ISO15099::FrameData sampleJamb();
     Tarcog::ISO15099::FrameData genericFrameClass1();
     Tarcog::ISO15099::FrameData genericDividerAluminumHollow();
+
+    Tarcog::ISO15099::FrameData sillTRR97();
+    Tarcog::ISO15099::FrameData headTRR97();
+    Tarcog::ISO15099::FrameData jambTRR97();
+
+    //! This is a sample divider imported from THERM into WINDOW database. This can be found in
+    //! Samples directory in THERM installation.
+    Tarcog::ISO15099::FrameData sampleDivider();
 }   // namespace Frames
