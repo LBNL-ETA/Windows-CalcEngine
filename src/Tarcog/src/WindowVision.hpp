@@ -40,9 +40,16 @@ namespace Tarcog::ISO15099
         //! Returns solar transmittance for the default IGU solar transmittance.
         [[nodiscard]] double shgc() const override;
         [[nodiscard]] double shgc(double tSol) const override;
+        [[nodiscard]] double shgc0() const override;
+        [[nodiscard]] double shgc1() const override;
+
         //! Returns visible transmittance for the default IGU visible transmittance
         [[nodiscard]] double vt() const override;
         [[nodiscard]] double vt(double tVis) const override;
+        [[nodiscard]] double vt0() const override;
+        [[nodiscard]] double vt1() const override;
+
+
         [[nodiscard]] double visionPercentage() const override;
         [[nodiscard]] double hc() const override;
         [[nodiscard]] double uValueCOG() const;
@@ -54,7 +61,7 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] const Frame & frame(FramePosition position) const;
 
-        void setDividers(FrameData divider, size_t nHorizontal, size_t nVertical);
+        void setDividers(const FrameData& divider, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & divider);
 
         //! Returns total area of dividers assigned to this window vision area
@@ -77,6 +84,8 @@ namespace Tarcog::ISO15099
 
         //! Resizes IGU according to frames that are currently set in the vision
         void resizeIGU();
+
+        [[nodiscard]] double shgcCommon(double cogSHGC) const;
 
         [[nodiscard]] double frameProjectedArea() const;
         [[nodiscard]] double totalEdgeOfGlassArea() const;

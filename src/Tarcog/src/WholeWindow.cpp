@@ -62,6 +62,16 @@ namespace Tarcog::ISO15099
         return vision.shgc(tSol);
     }
 
+    double WindowSingleVision::shgc0() const
+    {
+        return vision.shgc0();
+    }
+
+    double WindowSingleVision::shgc1() const
+    {
+        return vision.shgc1();
+    }
+
     double WindowSingleVision::vt() const
     {
         return vision.vt();
@@ -70,6 +80,16 @@ namespace Tarcog::ISO15099
     double WindowSingleVision::vt(const double tVis) const
     {
         return vision.vt(tVis);
+    }
+
+    double WindowSingleVision::vt0() const
+    {
+        return vision.vt0();
+    }
+
+    double WindowSingleVision::vt1() const
+    {
+        return vision.vt1();
     }
 
     double WindowSingleVision::uValueCOG() const

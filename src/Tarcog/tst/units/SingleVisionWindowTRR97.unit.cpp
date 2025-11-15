@@ -133,7 +133,6 @@ protected:
         /////////////////////////////////////////////////////////
         return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
     }
-
 };
 
 TEST_F(TestSingleVisionWindowTRR97, UValueRun)
@@ -143,14 +142,12 @@ TEST_F(TestSingleVisionWindowTRR97, UValueRun)
     constexpr auto tVis{0.707};
     constexpr auto tSol{0.3614};
 
-    auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, trr97IGUUvalue());
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, trr97IGUUvalue());
 
-    window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(1.952351, uvalue, 1e-6);
@@ -169,14 +166,12 @@ TEST_F(TestSingleVisionWindowTRR97, SHGCRun)
     constexpr auto tVis{0.707};
     constexpr auto tSol{0.3614};
 
-    auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, trr97IGUSHGC());
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, trr97IGUSHGC());
 
-    window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
 
     const double uvalue{window.uValue()};
     EXPECT_NEAR(1.725743, uvalue, 1e-6);
@@ -186,6 +181,18 @@ TEST_F(TestSingleVisionWindowTRR97, SHGCRun)
 
     const double vt{window.vt()};
     EXPECT_NEAR(0.595731, vt, 1e-6);
+
+    const double shgc0{window.shgc0()};
+    EXPECT_NEAR(0.003346, shgc0, 1e-6);
+
+    const double shgc1{window.shgc1()};
+    EXPECT_NEAR(0.845964, shgc1, 1e-6);
+
+    const double vt0{window.vt0()};
+    EXPECT_NEAR(0.0, vt0, 1e-6);
+
+    const double vt1{window.vt1()};
+    EXPECT_NEAR(0.842619, vt1, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindowTRR97, UValueRunWithDividers)
@@ -195,14 +202,12 @@ TEST_F(TestSingleVisionWindowTRR97, UValueRunWithDividers)
     constexpr auto tVis{0.707};
     constexpr auto tSol{0.3614};
 
-    auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, trr97IGUUvalue());
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, trr97IGUUvalue());
 
-    window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
 
     window.setDividersAuto(Frame::sampleDivider());
 
@@ -223,14 +228,12 @@ TEST_F(TestSingleVisionWindowTRR97, SHGCRunWithDividers)
     constexpr auto tVis{0.707};
     constexpr auto tSol{0.3614};
 
-    auto window =
-      Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, trr97IGUSHGC());
+    auto window = Tarcog::ISO15099::WindowSingleVision(width, height, tVis, tSol, trr97IGUSHGC());
 
-    window.setFrameData(
-      {{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
-       {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
 
     window.setDividersAuto(Frame::sampleDivider());
 

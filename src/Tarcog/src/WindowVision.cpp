@@ -248,34 +248,24 @@ namespace Tarcog::ISO15099
 
     double WindowVision::shgc(const double tSol) const
     {
-        auto frameWeightedSHGC{0.0};
+        const double cogWeighted =
+          m_IGUSystem->getSHGC(tSol) * (area() - frameProjectedArea() - dividerArea());
 
-        for(const auto & frame : m_Frame | std::views::values)
-        {
-            frameWeightedSHGC += frameArea(frame)
-                                 * frameSHGC(frame.frameData.Absorptance,
-                                             frame.frameData.UValue,
-                                             frame.frameData.ProjectedFrameDimension,
-                                             frame.frameData.WettedLength,
-                                             m_HExterior);
-        }
+        return shgcCommon(cogWeighted);
+    }
 
-        const auto COGWeightedSHGC{m_IGUSystem->getSHGC(tSol)
-                                   * (area() - frameProjectedArea() - dividerArea())};
+    double WindowVision::shgc0() const
+    {
+        constexpr double cogWeighted = 0.0;
 
-        auto dividerWeightedSHGC{0.0};
-        if(m_Divider.has_value())
-        {
-            dividerWeightedSHGC +=
-              dividerArea()
-              * frameSHGC(m_Divider->frame.Absorptance,
-                          Helper::dividerUValue(*m_IGUSystem, m_Divider->frame),
-                          m_Divider->frame.ProjectedFrameDimension,
-                          m_Divider->frame.WettedLength,
-                          m_HExterior);
-        }
+        return shgcCommon(cogWeighted);
+    }
 
-        return (COGWeightedSHGC + frameWeightedSHGC + dividerWeightedSHGC) / area();
+    double WindowVision::shgc1() const
+    {
+        const double cogWeighted = area() - frameProjectedArea() - dividerArea();
+
+        return shgcCommon(cogWeighted);
     }
 
     double WindowVision::area() const
@@ -291,6 +281,16 @@ namespace Tarcog::ISO15099
     double WindowVision::vt(const double tVis) const
     {
         return visionPercentage() * tVis;
+    }
+
+    double WindowVision::vt0() const
+    {
+        return vt(0);
+    }
+
+    double WindowVision::vt1() const
+    {
+        return vt(1);
     }
 
     double WindowVision::visionPercentage() const
@@ -344,7 +344,7 @@ namespace Tarcog::ISO15099
         return m_Frame.at(position);
     }
 
-    void WindowVision::setDividers(FrameData divider, size_t nHorizontal, size_t nVertical)
+    void WindowVision::setDividers(const FrameData & divider, size_t nHorizontal, size_t nVertical)
     {
         if(!m_Divider.has_value())
         {
@@ -355,7 +355,7 @@ namespace Tarcog::ISO15099
         m_Divider->numberOfHorizontal = nHorizontal;
         m_Divider->numberOfVertical = nVertical;
 
-        // TODO: Do not cache precalculated divider areas, calculate on demand
+        // TODO: Do not cache precalculated divider areas, calculate on demand. Try to refactor this
         std::map<FramePosition, size_t> numOfDivs{
           {FramePosition::Top, m_Divider->numberOfVertical},
           {FramePosition::Bottom, m_Divider->numberOfVertical},
@@ -530,6 +530,40 @@ namespace Tarcog::ISO15099
         m_IGUSystem->setInteriorAndExteriorSurfacesHeight(m_ExteriorSurfaceHeight);
         m_IGUUvalue = m_IGUSystem->getUValue();
         m_HExterior = m_IGUSystem->getH(System::SHGC, Environment::Outdoor);
+    }
+
+    double WindowVision::shgcCommon(double cogSHGC) const
+    {
+        double frameWeighted = 0.0;
+
+        // Frame contribution
+        for(const auto & frame : m_Frame | std::views::values)
+        {
+            frameWeighted += frameArea(frame)
+                             * frameSHGC(frame.frameData.Absorptance,
+                                         frame.frameData.UValue,
+                                         frame.frameData.ProjectedFrameDimension,
+                                         frame.frameData.WettedLength,
+                                         m_HExterior);
+        }
+
+        // Divider contribution
+        double dividerWeighted = 0.0;
+
+        if(m_Divider)
+        {
+            const auto & d = m_Divider->frame;
+
+            dividerWeighted += dividerArea()
+                               * frameSHGC(d.Absorptance,
+                                           Helper::dividerUValue(*m_IGUSystem, d),
+                                           d.ProjectedFrameDimension,
+                                           d.WettedLength,
+                                           m_HExterior);
+        }
+
+        // Combine COG + frames + dividers
+        return (cogSHGC + frameWeighted + dividerWeighted) / area();
     }
 
     double WindowVision::dividerArea() const

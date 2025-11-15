@@ -35,10 +35,17 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] double area() const override;
         [[nodiscard]] double uValue() const override;
+
         [[nodiscard]] double shgc() const override;
         [[nodiscard]] double shgc(double tSol) const override;
+        [[nodiscard]] double shgc0() const override;
+        [[nodiscard]] double shgc1() const override;
+
         [[nodiscard]] double vt() const override;
         [[nodiscard]] double vt(double tVis) const override;
+        [[nodiscard]] double vt0() const override;
+        [[nodiscard]] double vt1() const override;
+
         [[nodiscard]] double uValueCOG() const;
         [[nodiscard]] double shgcCOG() const;
 
@@ -148,6 +155,18 @@ namespace Tarcog::ISO15099
                    / area();
         }
 
+        [[nodiscard]] double shgc0() const override
+        {
+            return (vision1().shgc0() * vision1().area() + vision2().shgc0() * vision2().area())
+                   / area();
+        }
+
+        [[nodiscard]] double shgc1() const override
+        {
+            return (vision1().shgc1() * vision1().area() + vision2().shgc1() * vision2().area())
+                   / area();
+        }
+
         [[nodiscard]] double shgc(const double tSol) const override
         {
             return shgc(tSol, tSol);
@@ -167,6 +186,18 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double vt(const double tVis) const override
         {
             return vt(tVis, tVis);
+        }
+
+        [[nodiscard]] double vt0() const override
+        {
+            return (vision1().vt0() * vision1().area() + vision2().vt0() * vision2().area())
+                   / area();
+        }
+
+        [[nodiscard]] double vt1() const override
+        {
+            return (vision1().vt1() * vision1().area() + vision2().vt1() * vision2().area())
+                   / area();
         }
 
         [[nodiscard]] double uValueCOGAverage() const override
