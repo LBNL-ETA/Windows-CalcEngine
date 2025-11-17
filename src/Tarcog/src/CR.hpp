@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <array>
 
 namespace Tarcog
 {
@@ -29,7 +28,6 @@ namespace Tarcog
 
     struct CRResult
     {
-        // NOTE: you can later switch to std::map<Humidity, double> as well.
         std::map<Humidity, double /*CR*/> values;
         double average{0.0};
     };

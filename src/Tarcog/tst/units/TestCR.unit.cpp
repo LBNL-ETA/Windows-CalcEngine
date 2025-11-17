@@ -4,6 +4,8 @@
 
 #include <WCETarcog.hpp>
 
+#include "thermal/commonFrames.hpp"
+
 using namespace Tarcog;
 
 // -----------------------------------------------------------------------------
@@ -33,7 +35,7 @@ TEST(Humidity, RejectsInvalidValues)
     EXPECT_THROW(Humidity::fromFixed(22.0), std::invalid_argument);
     EXPECT_THROW(Humidity::fromFixed(46.0), std::invalid_argument);
     EXPECT_THROW(Humidity::fromFixed(101.0), std::invalid_argument);
-    EXPECT_THROW(Humidity::fromFixed(55.0), std::invalid_argument);  // good edge case
+    EXPECT_THROW(Humidity::fromFixed(55.0), std::invalid_argument);   // good edge case
 }
 
 TEST(Humidity, AsDoubleReturnsCorrectValue)
@@ -49,7 +51,7 @@ TEST(Humidity, HumidityComparisonWorks)
 {
     auto h30a = Humidity::fromFixed(30.0);
     auto h30b = Humidity::H30();
-    auto h50  = Humidity::H50();
+    auto h50 = Humidity::H50();
 
     // Operator==
     EXPECT_TRUE(h30a == h30b);
@@ -88,4 +90,56 @@ TEST(Humidity, DistinctKeysRemainDistinct)
 
     ASSERT_EQ(m.size(), 1);
     EXPECT_NEAR(m[h30], 1.0, eps);
+}
+
+TEST(CR, ComputesCRfCorrectlyForTRR97)
+{
+    using namespace Tarcog;
+
+    // -------------------------------------------------------------
+    // 1. Construct a WindowVision with your TRR97 samples
+    // -------------------------------------------------------------
+    constexpr auto width{1.219};
+    constexpr auto height{1.219};
+    constexpr auto tVis{0.707};
+    constexpr auto tSol{0.3614};
+
+    constexpr auto iguUValue{5.575};
+    constexpr auto shgc{0.86};
+    constexpr auto hout{20.42635};
+
+    ISO15099::WindowVision vision = ISO15099::WindowVision(
+      width, height, tVis, tSol, std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout));
+
+    vision.setFrameData(FramePosition::Bottom, Frame::sillTRR97());
+    vision.setFrameData(FramePosition::Top, Frame::headTRR97());
+    vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
+    vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
+
+    // -------------------------------------------------------------
+    // 2. Default dew point table (matches your Python tests)
+    // -------------------------------------------------------------
+    CR::DewPointTable dewPoints = {
+      {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
+
+    // -------------------------------------------------------------
+    // 3. Perform CRf calculation
+    // -------------------------------------------------------------
+    CRResult crf_result = crf(vision, dewPoints);
+
+    // For convenience
+    auto & v = crf_result.values;
+
+    // -------------------------------------------------------------
+    // 4. Expected CRf values (from your Python test_cr.py)
+    // -------------------------------------------------------------
+
+    ASSERT_EQ(v.size(), 3);
+
+    EXPECT_NEAR(v.at(Humidity::H30()), 0.004108, eps);
+    EXPECT_NEAR(v.at(Humidity::H50()), 0.034773, eps);
+    EXPECT_NEAR(v.at(Humidity::H70()), 0.088343, eps);
+
+    // Check the area-weighted total average CR
+    EXPECT_NEAR(crf_result.average, 0.042408, eps);
 }

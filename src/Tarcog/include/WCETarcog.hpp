@@ -5,6 +5,7 @@
 #include "../src/BaseLayer.hpp"
 #include "../src/BaseShade.hpp"
 #include "../src/CR.hpp"
+#include "../src/CRCalculations.hpp"
 #include "../src/DeflectionInterface.hpp"
 #include "../src/Environment.hpp"
 #include "../src/Environments.hpp"

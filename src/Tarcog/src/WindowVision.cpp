@@ -273,6 +273,17 @@ namespace Tarcog::ISO15099
         return m_Width * m_Height;
     }
 
+    double WindowVision::area(const FramePosition position) const
+    {
+        const auto it = m_Frame.find(position);
+        if(it == m_Frame.end())
+        {
+            throw std::logic_error("Requesting area for a frame position that is not set.");
+        }
+
+        return frameArea(it->second);
+    }
+
     double WindowVision::vt() const
     {
         return vt(m_VT);
@@ -318,7 +329,7 @@ namespace Tarcog::ISO15099
         m_HExterior = hc;
     }
 
-    void WindowVision::setFrameData(FramePosition position, FrameData frameData)
+    void WindowVision::setFrameData(FramePosition position, const FrameData & frameData)
     {
         m_Frame.at(position).frameData = frameData;
 
@@ -342,6 +353,11 @@ namespace Tarcog::ISO15099
     const Frame & WindowVision::frame(const FramePosition position) const
     {
         return m_Frame.at(position);
+    }
+
+    const std::map<FramePosition, Frame> & WindowVision::frames() const
+    {
+        return m_Frame;
     }
 
     void WindowVision::setDividers(const FrameData & divider, size_t nHorizontal, size_t nVertical)
