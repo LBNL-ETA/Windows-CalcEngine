@@ -51,7 +51,7 @@ namespace Tarcog::ISO15099
         double Absorptance{0.3};             //! Solar absorptance of the frame (0-1)
         std::optional<IGUData> iguData;   //! Optional data for the IGU associated with this frame
         std::variant<std::monostate, GenericFrame, GenericDivider> Class;
-        std::optional<std::vector<CondensationData>> CondensationData;
+        std::optional<std::vector<CondensationData>> condensationData;
     };
 
     // Encapsulates divider data so the data is not stored outside
