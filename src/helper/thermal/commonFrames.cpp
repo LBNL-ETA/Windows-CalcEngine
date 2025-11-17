@@ -10,7 +10,13 @@ namespace Frame
                 .EdgeUValue = 2.339592,
                 .ProjectedFrameDimension = 0.04287518,
                 .WettedLength = 0.05633283,
-                .Absorptance = 0.3};
+                .Absorptance = 0.3,
+                .iguData = Tarcog::ISO15099::IGUData{1.93760597705841, 0.0259333992004395},
+                .Class = std::monostate{},
+                .CondensationData = std::vector<Tarcog::ISO15099::CondensationData>{
+                  {Tarcog::Humidity::H30(), 0.00343803339637816, 0.0279021728783846},
+                  {Tarcog::Humidity::H50(), 0.0242167804390192, 0.201349034905434},
+                  {Tarcog::Humidity::H70(), 0.0629861354827881, 0.322213172912598}}};
     }
 
     Tarcog::ISO15099::FrameData sampleHead()
@@ -19,7 +25,13 @@ namespace Frame
                 .EdgeUValue = 2.34355,
                 .ProjectedFrameDimension = 0.04287518,
                 .WettedLength = 0.05674332,
-                .Absorptance = 0.3};
+                .Absorptance = 0.3,
+                .iguData = Tarcog::ISO15099::IGUData{1.93760597705841, 0.0259333992004395},
+                .Class = std::monostate{},
+                .CondensationData = std::vector<Tarcog::ISO15099::CondensationData>{
+                  {Tarcog::Humidity::H30(), 0.000103866099379957, 0.000388619169825688},
+                  {Tarcog::Humidity::H50(), 0.0118469642475247, 0.0527924969792366},
+                  {Tarcog::Humidity::H70(), 0.0370814986526966, 0.171886697411537}}};
     }
 
     Tarcog::ISO15099::FrameData sampleJamb()
@@ -28,7 +40,13 @@ namespace Frame
                 .EdgeUValue = 2.358972,
                 .ProjectedFrameDimension = 0.04287518,
                 .WettedLength = 0.04122826,
-                .Absorptance = 0.3};
+                .Absorptance = 0.3,
+                .iguData = Tarcog::ISO15099::IGUData{1.93760597705841, 0.0259333992004395},
+                .Class = std::monostate{},
+                .CondensationData = std::vector<Tarcog::ISO15099::CondensationData>{
+                  {Tarcog::Humidity::H30(), 0.00172775331884623, 0.00770217319950461},
+                  {Tarcog::Humidity::H50(), 0.018262030556798, 0.132169187068939},
+                  {Tarcog::Humidity::H70(), 0.0539303459227085, 0.263502657413483}}};
     }
 
     Tarcog::ISO15099::FrameData genericFrameClass1()
