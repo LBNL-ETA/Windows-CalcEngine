@@ -128,17 +128,17 @@ TEST(CR, ComputesCRfCorrectlyForTRR97)
     CRResult crf_result = crf(vision, dewPoints);
 
     // For convenience
-    auto & v = crf_result.values;
+    auto & result = crf_result.values;
 
     // -------------------------------------------------------------
     // 4. Expected CRf values (from your Python test_cr.py)
     // -------------------------------------------------------------
 
-    ASSERT_EQ(v.size(), 3);
+    ASSERT_EQ(result.size(), 3);
 
-    EXPECT_NEAR(v.at(Humidity::H30()), 0.004108, eps);
-    EXPECT_NEAR(v.at(Humidity::H50()), 0.034773, eps);
-    EXPECT_NEAR(v.at(Humidity::H70()), 0.088343, eps);
+    EXPECT_NEAR(result.at(Humidity::H30()), 0.004108, eps);
+    EXPECT_NEAR(result.at(Humidity::H50()), 0.034773, eps);
+    EXPECT_NEAR(result.at(Humidity::H70()), 0.088343, eps);
 
     // Check the area-weighted total average CR
     EXPECT_NEAR(crf_result.average, 0.042408, eps);
