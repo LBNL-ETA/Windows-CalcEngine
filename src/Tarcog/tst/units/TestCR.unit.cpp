@@ -92,7 +92,7 @@ TEST(Humidity, DistinctKeysRemainDistinct)
     EXPECT_NEAR(m[h30], 1.0, eps);
 }
 
-TEST(CR, ComputesCRfCorrectlyForTRR97)
+TEST(CR, ComputesCRfForTRR97)
 {
     using namespace Tarcog;
 
@@ -116,7 +116,7 @@ TEST(CR, ComputesCRfCorrectlyForTRR97)
     CR::DewPointTable dewPoints = {
       {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
 
-    CRResult crf_result = crf(vision, dewPoints);
+    CRResult crf_result = CR::crf(vision);
 
     auto & result = crf_result.values;
 
@@ -128,4 +128,42 @@ TEST(CR, ComputesCRfCorrectlyForTRR97)
 
     // Check the area-weighted total average CR
     EXPECT_NEAR(crf_result.average, 65.173843, eps);
+}
+
+TEST(CR, ComputesCReForTRR97)
+{
+    using namespace Tarcog;
+
+    constexpr auto width{1.219};
+    constexpr auto height{1.219};
+    constexpr auto tVis{0.707};
+    constexpr auto tSol{0.3614};
+
+    constexpr auto iguUValue{5.575};
+    constexpr auto shgc{0.86};
+    constexpr auto hout{20.42635};
+
+    ISO15099::WindowVision vision = ISO15099::WindowVision(
+      width, height, tVis, tSol, std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout));
+
+    vision.setFrameData(FramePosition::Bottom, Frame::sillTRR97());
+    vision.setFrameData(FramePosition::Top, Frame::headTRR97());
+    vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
+    vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
+
+    CR::DewPointTable dewPoints = {
+        {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
+
+    CRResult cre_result = CR::cre(vision);
+
+    auto & result = cre_result.values;
+
+    ASSERT_EQ(result.size(), 3);
+
+    EXPECT_NEAR(result.at(Humidity::H30()), 71.035203038841516, eps);
+    EXPECT_NEAR(result.at(Humidity::H50()), 47.234265274930252, eps);
+    EXPECT_NEAR(result.at(Humidity::H70()), 35.275083816086294, eps);
+
+    // Check the area-weighted total average CR
+    EXPECT_NEAR(cre_result.average, 47.169287513342574, eps);
 }

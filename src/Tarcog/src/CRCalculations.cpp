@@ -1,7 +1,10 @@
 #include <ranges>
 #include <algorithm>
 #include <cmath>
+#include <numeric>
 #include <stdexcept>
+
+#include <WCECommon.hpp>
 
 #include "CRCalculations.hpp"
 #include "CR.hpp"
@@ -13,44 +16,9 @@ namespace Tarcog::CR
     //   Helpers
     // =============================================================
 
-    // -------------------------------------------------------------
-    // Lookup dew point by humidity (vector scan)
-    // -------------------------------------------------------------
-    double lookupDewPoint(const Humidity & h, const DewPointTable & table)
-    {
-        auto it =
-          std::ranges::find_if(table, [&](const auto & entry) { return entry.humidity == h; });
-
-        if(it != table.end())
-        {
-            return it->temperature;
-        }
-
-        throw std::runtime_error("Missing dew point for humidity");
-    }
-
-    // -------------------------------------------------------------
-    // Total frame area
-    // -------------------------------------------------------------
-    double totalFrameArea(const ISO15099::WindowVision & vision)
-    {
-        double Area = 0.0;
-        for(auto pos : vision.frames() | std::views::keys)
-        {
-            Area += vision.area(pos);
-        }
-        return Area;
-    }
-
-    // -------------------------------------------------------------
-    // Weighted deltas:   Σ ( area_i * CR_i(h) )
-    //
-    // Produces:
-    //    map<Humidity, double>    raw weighted totals
-    //
-    // Python: "_weighted_cr_total"
-    // -------------------------------------------------------------
-    std::map<Humidity, double> weightedDeltas(const ISO15099::WindowVision & vision)
+    template<typename Getter>
+    std::map<Humidity, double> weightedDeltasGeneric(const ISO15099::WindowVision & vision,
+                                                     Getter getValue)
     {
         std::map<Humidity, double> acc;
 
@@ -61,15 +29,63 @@ namespace Tarcog::CR
                 continue;
             }
 
-            const double Area = vision.area(pos);
+            const double area = vision.area(pos);
             const auto & cds = frame.frameData.condensationData.value();
 
-            std::ranges::for_each(cds, [&acc, Area](const auto & c) {
-                acc[c.humidity] += Area * c.frame;   // CRf uses c.frame contribution
-            });
+            for(const auto & val : cds)
+            {
+                acc[val.humidity] += area * getValue(val);
+            }
         }
 
         return acc;
+    }
+
+    // -------------------------------------------------------------
+    // Lookup dew point by humidity (vector scan)
+    // -------------------------------------------------------------
+    double lookupDewPoint(const Humidity & hum, const DewPointTable & table)
+    {
+        const auto itr =
+          std::ranges::find_if(table, [&](const auto & entry) { return entry.humidity == hum; });
+
+        if(itr != table.end())
+        {
+            return itr->temperature;
+        }
+
+        throw std::runtime_error("Missing dew point for humidity: " + std::to_string(hum.asDouble()));
+    }
+
+    // -------------------------------------------------------------
+    // Total frame area
+    // -------------------------------------------------------------
+    double totalFrameArea(const ISO15099::WindowVision & vision)
+    {
+        auto keysView = vision.frames() | std::views::keys;
+        return std::accumulate(
+          std::ranges::begin(keysView),
+          std::ranges::end(keysView),
+          0.0,
+          [&vision](double sum, const auto & pos) { return sum + vision.area(pos); });
+    }
+
+    // -------------------------------------------------------------
+    // Weighted deltas:   Σ ( area_i * CR_i(h) )
+    //
+    // Produces:
+    //    map<Humidity, double>    raw weighted totals
+    //
+    // Python: "_weighted_cr_total"
+    // -------------------------------------------------------------
+    inline std::map<Humidity, double> weightedDeltas(const ISO15099::WindowVision & vision)
+    {
+        return weightedDeltasGeneric(vision, [](const auto & val) { return val.frame; });
+    }
+
+    inline std::map<Humidity, double> weightedDeltasEdge(const ISO15099::WindowVision & vision)
+    {
+        return weightedDeltasGeneric(vision, [](const auto & val) { return val.edge; });
     }
 
     // -------------------------------------------------------------
@@ -87,8 +103,12 @@ namespace Tarcog::CR
     //
     // Python:   _cr_formula(raw_delta, total_area)
     // -------------------------------------------------------------
-    inline double normalizeCR(double rawDelta, double totalArea)
+    inline double normalizeCR(const double rawDelta, const double totalArea)
     {
+        if(totalArea <= 0.0)
+        {
+            throw std::invalid_argument("normalizeCR: totalArea must be positive and nonzero");
+        }
         const double ratio = rawDelta / totalArea;
         return 100.0 * (1.0 - std::pow(ratio, CR_EXPONENT));
     }
@@ -97,14 +117,13 @@ namespace Tarcog::CR
     // Normalize each humidity key (pure functional)
     // -------------------------------------------------------------
     std::map<Humidity, double> applyDewPointNormalization(const std::map<Humidity, double> & deltas,
-                                                          double totalArea)
+                                                          const double totalArea)
     {
         std::map<Humidity, double> out;
 
-        for(const auto & [h, raw] : deltas)
-        {
-            out[h] = normalizeCR(raw, totalArea);
-        }
+        std::ranges::transform(deltas, std::inserter(out, out.end()), [totalArea](const auto & kv) {
+            return std::make_pair(kv.first, normalizeCR(kv.second, totalArea));
+        });
 
         return out;
     }
@@ -120,49 +139,58 @@ namespace Tarcog::CR
     //
     // NOTE:
     //   This is NOT mean of per-humidity CR values!
-    //   Python applies CR formula to the average *raw delta*.
     // -------------------------------------------------------------
-    double computeCRfAverage(const std::map<Humidity, double> & rawDeltas, double totalArea)
+    double computeCRfAverage(const std::map<Humidity, double> & rawDeltas, const double totalArea)
     {
-        double sum = 0.0;
-        for(const auto & [h, raw] : rawDeltas)
-            sum += raw;
+        if(rawDeltas.empty())
+        {
+            throw std::runtime_error("No raw deltas available to compute CRf average");
+        }
 
-        const double avgRaw = sum / rawDeltas.size();
+        const double sum = std::accumulate(
+          std::ranges::begin(rawDeltas | std::views::values),
+          std::ranges::end(rawDeltas | std::views::values),
+          0.0);
+
+        const double avgRaw = sum / static_cast<double>(rawDeltas.size());
         return normalizeCR(avgRaw, totalArea);
     }
 
     // =============================================================
     //   PUBLIC API: Frame condensation resistance (CRf)
     // =============================================================
-    CRResult crf(const ISO15099::WindowVision & vision, const DewPointTable & /*dewPoints*/)
+    CRResult crf(const ISO15099::WindowVision & vision)
     {
-        CRResult out;
-
         // ---------------------------------------------------------
         // 1. Total area
         // ---------------------------------------------------------
         const double totalArea = totalFrameArea(vision);
         if(totalArea <= 0.0)
+        {
             throw std::runtime_error("Total frame area is zero");
+        }
 
         // ---------------------------------------------------------
         // 2. Raw weighted sums:   Σ(A_i * CR_i(h))
         // ---------------------------------------------------------
-        auto rawDeltas = weightedDeltas(vision);
+        const auto rawDeltas = weightedDeltas(vision);
 
-        // ---------------------------------------------------------
-        // 3. Normalize each humidity using CR formula
-        // ---------------------------------------------------------
-        out.values = applyDewPointNormalization(rawDeltas, totalArea);
+        return {applyDewPointNormalization(rawDeltas, totalArea),
+                computeCRfAverage(rawDeltas, totalArea)};
+    }
 
-        // ---------------------------------------------------------
-        // 4. Python-style average:
-        //      CR_avg = normalizeCR(avg_raw_delta, totalArea)
-        // ---------------------------------------------------------
-        out.average = computeCRfAverage(rawDeltas, totalArea);
+    CRResult cre(const ISO15099::WindowVision & vision)
+    {
+        const double totalArea = totalFrameArea(vision);
+        if(totalArea <= 0.0)
+        {
+            throw std::runtime_error("Total frame area is zero");
+        }
 
-        return out;
+        const auto rawDeltas = weightedDeltasEdge(vision);
+
+        return {applyDewPointNormalization(rawDeltas, totalArea),
+                computeCRfAverage(rawDeltas, totalArea)};
     }
 
 }   // namespace Tarcog::CR

@@ -18,6 +18,6 @@ namespace Tarcog::CR
       {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
 
     //! Frame-only condensation resistance
-    CRResult crf(const ISO15099::WindowVision & vision,
-                 const DewPointTable & dewPoints = DefaultDewPoints);
+    CRResult crf(const ISO15099::WindowVision & vision);
+    CRResult cre(const ISO15099::WindowVision & vision);
 }   // namespace Tarcog::CR
