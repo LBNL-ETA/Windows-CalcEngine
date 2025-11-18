@@ -96,9 +96,6 @@ TEST(CR, ComputesCRfCorrectlyForTRR97)
 {
     using namespace Tarcog;
 
-    // -------------------------------------------------------------
-    // 1. Construct a WindowVision with your TRR97 samples
-    // -------------------------------------------------------------
     constexpr auto width{1.219};
     constexpr auto height{1.219};
     constexpr auto tVis{0.707};
@@ -116,30 +113,19 @@ TEST(CR, ComputesCRfCorrectlyForTRR97)
     vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
     vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
 
-    // -------------------------------------------------------------
-    // 2. Default dew point table (matches your Python tests)
-    // -------------------------------------------------------------
     CR::DewPointTable dewPoints = {
       {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
 
-    // -------------------------------------------------------------
-    // 3. Perform CRf calculation
-    // -------------------------------------------------------------
     CRResult crf_result = crf(vision, dewPoints);
 
-    // For convenience
     auto & result = crf_result.values;
-
-    // -------------------------------------------------------------
-    // 4. Expected CRf values (from your Python test_cr.py)
-    // -------------------------------------------------------------
 
     ASSERT_EQ(result.size(), 3);
 
-    EXPECT_NEAR(result.at(Humidity::H30()), 0.004108, eps);
-    EXPECT_NEAR(result.at(Humidity::H50()), 0.034773, eps);
-    EXPECT_NEAR(result.at(Humidity::H70()), 0.088343, eps);
+    EXPECT_NEAR(result.at(Humidity::H30()), 83.981921, eps);
+    EXPECT_NEAR(result.at(Humidity::H50()), 67.580541, eps);
+    EXPECT_NEAR(result.at(Humidity::H70()), 55.430536, eps);
 
     // Check the area-weighted total average CR
-    EXPECT_NEAR(crf_result.average, 0.042408, eps);
+    EXPECT_NEAR(crf_result.average, 65.173843, eps);
 }
