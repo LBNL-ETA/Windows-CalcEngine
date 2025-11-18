@@ -30,7 +30,7 @@ namespace Tarcog::ISO15099
                 const std::shared_ptr<CEnvironment> & t_Indoor,
                 const std::shared_ptr<CEnvironment> & t_Outdoor);
 
-        [[nodiscard]] std::vector<double> getTemperatures(System t_System);
+        [[nodiscard]] std::vector<double> getTemperatures(System t_System) override;
         [[nodiscard]] std::vector<double> getRadiosities(System t_System);
 
         [[nodiscard]] std::vector<double> getMaxLayerDeflections(System t_System);

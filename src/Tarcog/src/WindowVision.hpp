@@ -35,9 +35,11 @@ namespace Tarcog::ISO15099
                      double tvis,
                      double tsol,
                      std::shared_ptr<IIGUSystem> iguSystem);
+
         [[nodiscard]] double area() const override;
         [[nodiscard]] double area(FramePosition position) const;
         [[nodiscard]] double uValue() const override;
+
         //! Returns solar transmittance for the default IGU solar transmittance.
         [[nodiscard]] double shgc() const override;
         [[nodiscard]] double shgc(double tSol) const override;
@@ -61,7 +63,7 @@ namespace Tarcog::ISO15099
         void setFrameTypes(const std::map<FramePosition, FrameType> & frameTypes);
 
         [[nodiscard]] const Frame & frame(FramePosition position) const;
-        const std::map<FramePosition, Frame>& frames() const;
+        [[nodiscard]] const std::map<FramePosition, Frame>& frames() const;
 
         void setDividers(const FrameData& divider, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & divider);
@@ -77,6 +79,9 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] double getIGUWidth() const;
         [[nodiscard]] double getIGUHeight() const;
+        [[nodiscard]] std::vector<double> getTemperatures(System system) const;
+
+        [[nodiscard]] double edgeOfGlassArea() const;
 
         [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const override;
 
@@ -90,7 +95,6 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double shgcCommon(double cogSHGC) const;
 
         [[nodiscard]] double frameProjectedArea() const;
-        [[nodiscard]] double totalEdgeOfGlassArea() const;
 
         std::shared_ptr<IIGUSystem> m_IGUSystem;
 

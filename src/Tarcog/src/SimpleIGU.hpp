@@ -34,8 +34,10 @@ namespace Tarcog::ISO15099
         void setTilt(double tilt) override;
         void setWidthAndHeight(double width, double height) override;
         void setInteriorAndExteriorSurfacesHeight(double height) override;
+        void setTemperatures(std::vector<double> temperatures);
 
         [[nodiscard]] double thickness() const override;
+        [[nodiscard]] std::vector<double> getTemperatures(System t_System) override;
         [[nodiscard]] std::vector<double> gapLayerThicknesses() const override;
 
     private:
@@ -44,5 +46,6 @@ namespace Tarcog::ISO15099
         double m_H{0};
         double m_Thickness{0};
         std::vector<double> m_gapLayerThicknesses;
+        std::vector<double> m_Temperatures;
     };
 }   // namespace Tarcog::ISO15099

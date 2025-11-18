@@ -53,9 +53,19 @@ namespace Tarcog::ISO15099
     void SimpleIGU::setInteriorAndExteriorSurfacesHeight(double)
     {}
 
+    void SimpleIGU::setTemperatures(std::vector<double> temperatures)
+    {
+        m_Temperatures = std::move(temperatures);
+    }
+
     double SimpleIGU::thickness() const
     {
         return m_Thickness;
+    }
+
+    std::vector<double> SimpleIGU::getTemperatures(System)
+    {
+        return m_Temperatures;
     }
 
     std::vector<double> SimpleIGU::gapLayerThicknesses() const

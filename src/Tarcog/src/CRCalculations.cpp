@@ -8,6 +8,7 @@
 
 #include "CRCalculations.hpp"
 #include "CR.hpp"
+#include "thermal/commonThermal.hpp"
 
 namespace Tarcog::CR
 {
@@ -54,7 +55,8 @@ namespace Tarcog::CR
             return itr->temperature;
         }
 
-        throw std::runtime_error("Missing dew point for humidity: " + std::to_string(hum.asDouble()));
+        throw std::runtime_error("Missing dew point for humidity: "
+                                 + std::to_string(hum.asDouble()));
     }
 
     // -------------------------------------------------------------
@@ -86,6 +88,25 @@ namespace Tarcog::CR
     inline std::map<Humidity, double> weightedDeltasEdge(const ISO15099::WindowVision & vision)
     {
         return weightedDeltasGeneric(vision, [](const auto & val) { return val.edge; });
+    }
+
+    std::map<Humidity, double> rawGlassDeltas(const double insideGlassTemp,
+                                              const double DewPointTemperature,
+                                              const DewPointTable & dp)
+    {
+        constexpr double tOutside{-18.0};
+        std::map<Humidity, double> out;
+
+        for(const auto & entry : dp)
+        {
+            const double delta =
+              std::max(0.0,
+                       (entry.temperature - insideGlassTemp + DewPointTemperature)
+                         / (entry.temperature + DewPointTemperature - tOutside));
+            out.emplace(entry.humidity, delta);
+        }
+
+        return out;
     }
 
     // -------------------------------------------------------------
@@ -147,10 +168,9 @@ namespace Tarcog::CR
             throw std::runtime_error("No raw deltas available to compute CRf average");
         }
 
-        const double sum = std::accumulate(
-          std::ranges::begin(rawDeltas | std::views::values),
-          std::ranges::end(rawDeltas | std::views::values),
-          0.0);
+        const double sum = std::accumulate(std::ranges::begin(rawDeltas | std::views::values),
+                                           std::ranges::end(rawDeltas | std::views::values),
+                                           0.0);
 
         const double avgRaw = sum / static_cast<double>(rawDeltas.size());
         return normalizeCR(avgRaw, totalArea);
@@ -191,6 +211,29 @@ namespace Tarcog::CR
 
         return {applyDewPointNormalization(rawDeltas, totalArea),
                 computeCRfAverage(rawDeltas, totalArea)};
+    }
+
+    CRResult crg(const ISO15099::WindowVision & vision,
+                 const double DewPointTemperature,
+                 const DewPointTable & dpt)
+    {
+        // 1. Extract inside glass temperature from IGU system
+        const double Tinside =
+          vision.getTemperatures(ISO15099::System::SHGC).back() - ConstantsData::KELVINCONV;
+
+        // 2. Compute center-of-glass area from WindowVision
+        // Note that this is strictly COG area and that edge of glass area should NOT be included
+        const double area = vision.visionPercentage() * vision.area() - vision.edgeOfGlassArea();
+
+        // 3. Compute deltas
+        const auto raw = rawGlassDeltas(Tinside, DewPointTemperature, dpt);
+
+        // 4. Normalize and average
+        CRResult res;
+        res.values = applyDewPointNormalization(raw, area);
+        res.average = computeCRfAverage(raw, area);
+
+        return res;
     }
 
 }   // namespace Tarcog::CR

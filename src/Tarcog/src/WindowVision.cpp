@@ -227,7 +227,7 @@ namespace Tarcog::ISO15099
 
         // COG weighted U-value
         const double cogWU = m_IGUUvalue
-                             * (area() - frameProjectedArea() - totalEdgeOfGlassArea()
+                             * (area() - frameProjectedArea() - edgeOfGlassArea()
                                 - dividerArea() - dividerEdgeOfGlassArea());
 
         // Divider contributions
@@ -433,6 +433,11 @@ namespace Tarcog::ISO15099
     {
         return m_Height - m_Frame.at(FramePosition::Top).frameData.ProjectedFrameDimension
                - m_Frame.at(FramePosition::Bottom).frameData.ProjectedFrameDimension;
+    }
+
+    std::vector<double> WindowVision::getTemperatures(const System system) const
+    {
+        return m_IGUSystem->getTemperatures(system);
     }
 
     namespace
@@ -649,7 +654,7 @@ namespace Tarcog::ISO15099
         return area;
     }
 
-    double WindowVision::totalEdgeOfGlassArea() const
+    double WindowVision::edgeOfGlassArea() const
     {
         auto area{0.0};
 
