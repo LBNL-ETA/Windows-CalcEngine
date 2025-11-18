@@ -152,7 +152,7 @@ TEST(CR, ComputesCReForTRR97)
     vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
 
     CR::DewPointTable dewPoints = {
-        {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
+      {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
 
     CRResult cre_result = CR::cre(vision);
 
@@ -181,18 +181,19 @@ TEST(CR, ComputesCRgForTRR97)
     constexpr auto shgc{0.86};
     constexpr auto hout{20.42635};
 
-    auto igu = std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout);
-    igu->setTemperatures({284.79001}); // No need to set other temperatures. They are not used.
+    constexpr auto outsideTemperature{255.15};
 
-    ISO15099::WindowVision vision = ISO15099::WindowVision(
-      width, height, tVis, tSol, igu);
+    auto igu = std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout);
+    igu->setTemperatures({284.79001});   // No need to set other temperatures. They are not used.
+
+    ISO15099::WindowVision vision = ISO15099::WindowVision(width, height, tVis, tSol, igu);
 
     vision.setFrameData(FramePosition::Bottom, Frame::sillTRR97());
     vision.setFrameData(FramePosition::Top, Frame::headTRR97());
     vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
     vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
 
-    CRResult crg_result = CR::crg(vision, CR::defaultDewPointSettings());
+    CRResult crg_result = CR::crg(vision, CR::defaultDewPointSettings(), outsideTemperature);
 
     auto & result = crg_result.values;
 

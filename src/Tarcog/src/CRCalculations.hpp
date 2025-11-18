@@ -25,6 +25,8 @@ namespace Tarcog::CR
     //! Frame-only condensation resistance
     CRResult crf(const ISO15099::WindowVision & vision);
     CRResult cre(const ISO15099::WindowVision & vision);
-    CRResult crg(const ISO15099::WindowVision & vision, const DewPointSettings & dewPointSettings);
+    CRResult crg(const ISO15099::WindowVision & vision,
+                 const DewPointSettings & dewPointSettings,
+                 double outsideTemperature);
 
 }   // namespace Tarcog::CR

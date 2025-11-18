@@ -1,6 +1,5 @@
 #include <ranges>
 #include <algorithm>
-#include <cmath>
 #include <numeric>
 #include <stdexcept>
 
@@ -48,6 +47,14 @@ namespace Tarcog::CR
         }
 
         return acc;
+    }
+
+    // Core CR formula (shared by CRf, CRe and CRg)
+    // Equivalent to Python _cr_formula(value, area)
+    inline double crFormula(const double ratio)
+    {
+        static constexpr double CR_EXPONENT = 1.0 / 3.0;
+        return 100.0 * (1.0 - std::pow(ratio, CR_EXPONENT));
     }
 
     // -------------------------------------------------------------
@@ -98,28 +105,24 @@ namespace Tarcog::CR
         return weightedDeltasGeneric(vision, [](const auto & val) { return val.edge; });
     }
 
-    std::map<Humidity, double> rawGlassDeltas(const double insideGlassTemp,
+    std::map<Humidity, double> rawGlassDeltas(const double outsideTemperature,
+                                              const double insideGlassTemp,
                                               const DewPointSettings & dps)
     {
         std::map<Humidity, double> out;
 
         for(const auto & entry : dps.dewPoints)
         {
-            constexpr double tOutside{-18.0};
             const double delta =
               std::max(0.0,
                        (entry.temperature - insideGlassTemp + dps.dewPointTemperature)
-                         / (entry.temperature + dps.dewPointTemperature - tOutside));
+                         / (entry.temperature + dps.dewPointTemperature - outsideTemperature
+                            + ConstantsData::KELVINCONV));
             out.emplace(entry.humidity, delta);
         }
 
         return out;
     }
-
-    // -------------------------------------------------------------
-    // CR exponent (Python CR_EXPONENT = 1/3)
-    // -------------------------------------------------------------
-    static constexpr double CR_EXPONENT = 1.0 / 3.0;
 
     // -------------------------------------------------------------
     // Function to apply the CR_f formula (pure)
@@ -137,8 +140,8 @@ namespace Tarcog::CR
         {
             throw std::invalid_argument("normalizeCR: totalArea must be positive and nonzero");
         }
-        const double ratio = rawDelta / totalArea;
-        return 100.0 * (1.0 - std::pow(ratio, CR_EXPONENT));
+
+        return crFormula(rawDelta / totalArea);
     }
 
     // -------------------------------------------------------------
@@ -193,18 +196,12 @@ namespace Tarcog::CR
     // =============================================================
     CRResult crf(const ISO15099::WindowVision & vision)
     {
-        // ---------------------------------------------------------
-        // 1. Total area
-        // ---------------------------------------------------------
         const double totalArea = totalFrameArea(vision);
         if(totalArea <= 0.0)
         {
             throw std::runtime_error("Total frame area is zero");
         }
 
-        // ---------------------------------------------------------
-        // 2. Raw weighted sums:   Σ(A_i * CR_i(h))
-        // ---------------------------------------------------------
         const auto rawDeltas = weightedDeltas(vision);
 
         return {applyDewPointNormalization(rawDeltas, totalArea),
@@ -225,10 +222,12 @@ namespace Tarcog::CR
                 computeCRfAverage(rawDeltas, totalArea)};
     }
 
-    CRResult crg(const ISO15099::WindowVision & vision, const DewPointSettings & dewPointSettings)
+    CRResult crg(const ISO15099::WindowVision & vision,
+                 const DewPointSettings & dewPointSettings,
+                 const double outsideTemperature)
     {
         // 1. Extract inside glass temperature from IGU system
-        const double Tinside =
+        const double tInside =
           vision.getTemperatures(ISO15099::System::SHGC).back() - ConstantsData::KELVINCONV;
 
         // 2. Compute center-of-glass area from WindowVision
@@ -236,7 +235,7 @@ namespace Tarcog::CR
         const double area = vision.visionPercentage() * vision.area() - vision.edgeOfGlassArea();
 
         // 3. Compute deltas
-        const auto raw = rawGlassDeltas(Tinside, dewPointSettings);
+        const auto raw = rawGlassDeltas(outsideTemperature, tInside, dewPointSettings);
 
         // 4. Normalize and average
         CRResult res;
