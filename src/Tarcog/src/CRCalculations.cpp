@@ -13,6 +13,14 @@
 namespace Tarcog::CR
 {
 
+    // Hidden defaults - internal linkage
+    namespace
+    {
+        constexpr double kDefaultDewPointTemperature = 0.3;
+        const DewPointTable kDefaultDewPoints = {
+          {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
+    }   // namespace
+
     // =============================================================
     //   Helpers
     // =============================================================
@@ -91,18 +99,17 @@ namespace Tarcog::CR
     }
 
     std::map<Humidity, double> rawGlassDeltas(const double insideGlassTemp,
-                                              const double DewPointTemperature,
-                                              const DewPointTable & dp)
+                                              const DewPointSettings & dps)
     {
-        constexpr double tOutside{-18.0};
         std::map<Humidity, double> out;
 
-        for(const auto & entry : dp)
+        for(const auto & entry : dps.dewPoints)
         {
+            constexpr double tOutside{-18.0};
             const double delta =
               std::max(0.0,
-                       (entry.temperature - insideGlassTemp + DewPointTemperature)
-                         / (entry.temperature + DewPointTemperature - tOutside));
+                       (entry.temperature - insideGlassTemp + dps.dewPointTemperature)
+                         / (entry.temperature + dps.dewPointTemperature - tOutside));
             out.emplace(entry.humidity, delta);
         }
 
@@ -176,6 +183,11 @@ namespace Tarcog::CR
         return normalizeCR(avgRaw, totalArea);
     }
 
+    DewPointSettings defaultDewPointSettings() noexcept
+    {
+        return {kDefaultDewPointTemperature, kDefaultDewPoints};
+    }
+
     // =============================================================
     //   PUBLIC API: Frame condensation resistance (CRf)
     // =============================================================
@@ -213,9 +225,7 @@ namespace Tarcog::CR
                 computeCRfAverage(rawDeltas, totalArea)};
     }
 
-    CRResult crg(const ISO15099::WindowVision & vision,
-                 const double DewPointTemperature,
-                 const DewPointTable & dpt)
+    CRResult crg(const ISO15099::WindowVision & vision, const DewPointSettings & dewPointSettings)
     {
         // 1. Extract inside glass temperature from IGU system
         const double Tinside =
@@ -226,7 +236,7 @@ namespace Tarcog::CR
         const double area = vision.visionPercentage() * vision.area() - vision.edgeOfGlassArea();
 
         // 3. Compute deltas
-        const auto raw = rawGlassDeltas(Tinside, DewPointTemperature, dpt);
+        const auto raw = rawGlassDeltas(Tinside, dewPointSettings);
 
         // 4. Normalize and average
         CRResult res;

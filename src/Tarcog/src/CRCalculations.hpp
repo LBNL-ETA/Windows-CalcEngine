@@ -14,16 +14,17 @@ namespace Tarcog::CR
 
     using DewPointTable = std::vector<DewPoint>;
 
-    inline const DewPointTable DefaultDewPoints = {
-      {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
+    struct DewPointSettings
+    {
+        double dewPointTemperature;
+        DewPointTable dewPoints;
+    };
 
-    constexpr double DefaultDewPointTemperature = 0.3;
+    DewPointSettings defaultDewPointSettings() noexcept;
 
     //! Frame-only condensation resistance
     CRResult crf(const ISO15099::WindowVision & vision);
     CRResult cre(const ISO15099::WindowVision & vision);
-    CRResult crg(const ISO15099::WindowVision & vision,
-                 double DewPointTemperature,
-                 const DewPointTable & dpt);
+    CRResult crg(const ISO15099::WindowVision & vision, const DewPointSettings & dewPointSettings);
 
 }   // namespace Tarcog::CR

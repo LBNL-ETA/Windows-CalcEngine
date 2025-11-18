@@ -192,7 +192,7 @@ TEST(CR, ComputesCRgForTRR97)
     vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
     vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
 
-    CRResult crg_result = CR::crg(vision, CR::DefaultDewPointTemperature, CR::DefaultDewPoints);
+    CRResult crg_result = CR::crg(vision, CR::defaultDewPointSettings());
 
     auto & result = crg_result.values;
 
