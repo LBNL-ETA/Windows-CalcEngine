@@ -2,8 +2,15 @@
 
 #include <map>
 
+#include "WholeWindowConfigurations.hpp"
+#include "BaseShade.hpp"
+
 namespace Tarcog
 {
+    namespace ISO15099
+    {
+        struct CondensationData;
+    }
     class Humidity
     {
     public:
@@ -24,6 +31,20 @@ namespace Tarcog
         explicit Humidity(double humidity_value);
 
         static bool isAllowed(double AllowedHumidities);
+    };
+
+    struct CRFrameContributionAverage
+    {
+        double frame;
+        double edge;
+    };
+
+    struct CRFrameContribution
+    {
+        FramePosition pos;
+        double area;
+        std::vector<ISO15099::CondensationData> data;
+        std::optional<CRFrameContributionAverage> average;
     };
 
     struct CRResult
