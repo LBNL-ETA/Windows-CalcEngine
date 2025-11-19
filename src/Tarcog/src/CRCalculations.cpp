@@ -50,7 +50,7 @@ namespace Tarcog::CR
         return acc;
     }
 
-    CRResult combineMin(const CRResult & a, const CRResult & b)
+    CRResult combineMin2(const CRResult & a, const CRResult & b)
     {
         CRResult out;
 
@@ -65,6 +65,14 @@ namespace Tarcog::CR
 
         out.average = std::min(a.average, b.average);
 
+        return out;
+    }
+
+    template<typename First, typename... Rest>
+    CRResult combineMin(const First & first, const Rest &... rest)
+    {
+        CRResult out = first;
+        ((out = combineMin2(out, rest)), ...);
         return out;
     }
 
@@ -136,9 +144,7 @@ namespace Tarcog::CR
 
     inline std::map<Humidity, double> weightedDeltasEdge(const ISO15099::WindowVision & vision)
     {
-        auto edgeAreaGetter = [&](auto pos, const auto &) {
-            return vision.edgeOfGlassArea(pos);
-        };
+        auto edgeAreaGetter = [&](auto pos, const auto &) { return vision.edgeOfGlassArea(pos); };
 
         return weightedDeltasGeneric(
           vision, [](const auto & val) { return val.edge; }, edgeAreaGetter);
@@ -294,6 +300,17 @@ namespace Tarcog::CR
 
 
         return combineMin(crFrame, crGlassEdge);
+    }
+    CRResult crb(const ISO15099::WindowVision & vision,
+                 const DewPointSettings & dewPointSettings,
+                 const double outsideTemperature)
+    {
+        const CRResult frame = crf(vision);
+        const CRResult edge = cre(vision);
+        const CRResult glass = crg(vision, dewPointSettings, outsideTemperature);
+
+        // Element-wise minimum of all three
+        return combineMin(frame, edge, glass);
     }
 
 
