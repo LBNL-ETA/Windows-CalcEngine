@@ -238,12 +238,12 @@ TEST(CR, ComputesCRForTRR97)
 
     ASSERT_EQ(result.size(), 3);
 
-    EXPECT_NEAR(result.at(Humidity::H30()), 82.671891709331533, eps);
-    EXPECT_NEAR(result.at(Humidity::H50()), 67.580541099606009, eps);
-    EXPECT_NEAR(result.at(Humidity::H70()), 46.366992436714582, eps);
+    EXPECT_NEAR(result.at(Humidity::H30()), 82.671892, eps);
+    EXPECT_NEAR(result.at(Humidity::H50()), 67.580541, eps);
+    EXPECT_NEAR(result.at(Humidity::H70()), 46.366992, eps);
 
     // Check the area-weighted total average CR
-    EXPECT_NEAR(cr_result.average, 60.074171173185675, eps);
+    EXPECT_NEAR(cr_result.average, 60.074171, eps);
 }
 
 TEST(CR, ComputesCRbForTRR97)
@@ -277,10 +277,10 @@ TEST(CR, ComputesCRbForTRR97)
 
     ASSERT_EQ(result.size(), 3);
 
-    EXPECT_NEAR(result.at(Humidity::H30()), 71.035203038841516, eps);
-    EXPECT_NEAR(result.at(Humidity::H50()), 47.234265274930252, eps);
-    EXPECT_NEAR(result.at(Humidity::H70()), 35.275083816086294, eps);
+    EXPECT_NEAR(result.at(Humidity::H30()), 71.035203, eps);
+    EXPECT_NEAR(result.at(Humidity::H50()), 47.234265, eps);
+    EXPECT_NEAR(result.at(Humidity::H70()), 35.275084, eps);
 
     // Check the area-weighted total average CR
-    EXPECT_NEAR(crb_result.average, 47.169287513342574, eps);
+    EXPECT_NEAR(crb_result.average, 47.169288, eps);
 }
