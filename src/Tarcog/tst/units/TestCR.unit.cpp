@@ -206,3 +206,42 @@ TEST(CR, ComputesCRgForTRR97)
     // Check the area-weighted total average CR
     EXPECT_NEAR(crg_result.average, 65.570954, eps);
 }
+
+TEST(CR, ComputesCRForTRR97)
+{
+    using namespace Tarcog;
+
+    constexpr auto width{1.219};
+    constexpr auto height{1.219};
+    constexpr auto tVis{0.707};
+    constexpr auto tSol{0.3614};
+
+    constexpr auto iguUValue{5.575};
+    constexpr auto shgc{0.86};
+    constexpr auto hout{20.42635};
+
+    constexpr auto outsideTemperature{255.15};
+
+    auto igu = std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout);
+    igu->setTemperatures({284.79001});   // No need to set other temperatures. They are not used.
+
+    ISO15099::WindowVision vision = ISO15099::WindowVision(width, height, tVis, tSol, igu);
+
+    vision.setFrameData(FramePosition::Bottom, Frame::sillTRR97());
+    vision.setFrameData(FramePosition::Top, Frame::headTRR97());
+    vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
+    vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
+
+    const auto cr_result = CR::cr(vision, CR::defaultDewPointSettings(), outsideTemperature);
+
+    auto & result = cr_result.values;
+
+    ASSERT_EQ(result.size(), 3);
+
+    EXPECT_NEAR(result.at(Humidity::H30()), 82.671891709331533, eps);
+    EXPECT_NEAR(result.at(Humidity::H50()), 67.580541099606009, eps);
+    EXPECT_NEAR(result.at(Humidity::H70()), 46.366992436714582, eps);
+
+    // Check the area-weighted total average CR
+    EXPECT_NEAR(cr_result.average, 60.074171173185675, eps);
+}

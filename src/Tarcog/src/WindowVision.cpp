@@ -215,7 +215,7 @@ namespace Tarcog::ISO15099
 
         const double frameWU =
           std::accumulate(frames.begin(), frames.end(), 0.0, [](double acc, const auto & frame) {
-              return acc + (frameArea(frame) * frame.frameData.UValue);
+              return acc + (ISO15099::frameArea(frame) * frame.frameData.UValue);
           });
 
         const double edgeWU = std::accumulate(
@@ -273,7 +273,7 @@ namespace Tarcog::ISO15099
         return m_Width * m_Height;
     }
 
-    double WindowVision::area(const FramePosition position) const
+    double WindowVision::frameArea(const FramePosition position) const
     {
         const auto it = m_Frame.find(position);
         if(it == m_Frame.end())
@@ -281,7 +281,7 @@ namespace Tarcog::ISO15099
             throw std::logic_error("Requesting area for a frame position that is not set.");
         }
 
-        return frameArea(it->second);
+        return ISO15099::frameArea(it->second);
     }
 
     double WindowVision::vt() const
@@ -560,7 +560,7 @@ namespace Tarcog::ISO15099
         // Frame contribution
         for(const auto & frame : m_Frame | std::views::values)
         {
-            frameWeighted += frameArea(frame)
+            frameWeighted += ISO15099::frameArea(frame)
                              * frameSHGC(frame.frameData.Absorptance,
                                          frame.frameData.UValue,
                                          frame.frameData.ProjectedFrameDimension,
@@ -648,7 +648,7 @@ namespace Tarcog::ISO15099
 
         for(const auto & val : m_Frame | std::views::values)
         {
-            area += frameArea(val);
+            area += ISO15099::frameArea(val);
         }
 
         return area;
@@ -664,5 +664,16 @@ namespace Tarcog::ISO15099
         }
 
         return area;
+    }
+
+    double WindowVision::edgeOfGlassArea(const FramePosition position) const
+    {
+        const auto it = m_Frame.find(position);
+        if(it == m_Frame.end())
+        {
+            throw std::logic_error("Requesting area for a frame position that is not set.");
+        }
+
+        return ISO15099::edgeOfGlassArea(it->second);
     }
 }   // namespace Tarcog::ISO15099

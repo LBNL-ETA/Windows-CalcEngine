@@ -37,7 +37,7 @@ namespace Tarcog::ISO15099
                      std::shared_ptr<IIGUSystem> iguSystem);
 
         [[nodiscard]] double area() const override;
-        [[nodiscard]] double area(FramePosition position) const;
+        [[nodiscard]] double frameArea(FramePosition position) const;
         [[nodiscard]] double uValue() const override;
 
         //! Returns solar transmittance for the default IGU solar transmittance.
@@ -82,6 +82,7 @@ namespace Tarcog::ISO15099
         [[nodiscard]] std::vector<double> getTemperatures(System system) const;
 
         [[nodiscard]] double edgeOfGlassArea() const;
+        [[nodiscard]] double edgeOfGlassArea(FramePosition position) const;
 
         [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const override;
 

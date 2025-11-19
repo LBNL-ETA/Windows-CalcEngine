@@ -24,9 +24,10 @@ namespace Tarcog::CR
     //   Helpers
     // =============================================================
 
-    template<typename Getter>
+    template<typename Getter, typename AreaGetter>
     std::map<Humidity, double> weightedDeltasGeneric(const ISO15099::WindowVision & vision,
-                                                     Getter getValue)
+                                                     Getter getValue,
+                                                     AreaGetter getArea)
     {
         std::map<Humidity, double> acc;
 
@@ -37,7 +38,7 @@ namespace Tarcog::CR
                 continue;
             }
 
-            const double area = vision.area(pos);
+            const double area = getArea(pos, frame);
             const auto & cds = frame.frameData.condensationData.value();
 
             for(const auto & val : cds)
@@ -48,6 +49,36 @@ namespace Tarcog::CR
 
         return acc;
     }
+
+    CRResult combineMin(const CRResult & a, const CRResult & b)
+    {
+        CRResult out;
+
+        for(const auto & [h, v] : a.values)
+        {
+            auto it = b.values.find(h);
+            if(it != b.values.end())
+            {
+                out.values[h] = std::min(v, it->second);
+            }
+        }
+
+        out.average = std::min(a.average, b.average);
+
+        return out;
+    }
+
+    std::map<Humidity, double> sum(const std::map<Humidity, double> & a,
+                                   const std::map<Humidity, double> & b)
+    {
+        std::map<Humidity, double> out = a;
+        for(const auto & [h, v] : b)
+        {
+            out[h] += v;
+        }
+        return out;
+    }
+
 
     // Core CR formula (shared by CRf, CRe and CRg)
     // Equivalent to Python _cr_formula(value, area)
@@ -84,7 +115,7 @@ namespace Tarcog::CR
           std::ranges::begin(keysView),
           std::ranges::end(keysView),
           0.0,
-          [&vision](double sum, const auto & pos) { return sum + vision.area(pos); });
+          [&vision](double sum, const auto & pos) { return sum + vision.frameArea(pos); });
     }
 
     // -------------------------------------------------------------
@@ -95,45 +126,60 @@ namespace Tarcog::CR
     //
     // Python: "_weighted_cr_total"
     // -------------------------------------------------------------
-    inline std::map<Humidity, double> weightedDeltas(const ISO15099::WindowVision & vision)
+    inline std::map<Humidity, double> weightedDeltasFrame(const ISO15099::WindowVision & vision)
     {
-        return weightedDeltasGeneric(vision, [](const auto & val) { return val.frame; });
+        auto frameAreaGetter = [&](auto pos, const auto &) { return vision.frameArea(pos); };
+
+        return weightedDeltasGeneric(
+          vision, [](const auto & val) { return val.frame; }, frameAreaGetter);
     }
 
     inline std::map<Humidity, double> weightedDeltasEdge(const ISO15099::WindowVision & vision)
     {
-        return weightedDeltasGeneric(vision, [](const auto & val) { return val.edge; });
+        auto edgeAreaGetter = [&](auto pos, const auto &) {
+            return vision.edgeOfGlassArea(pos);
+        };
+
+        return weightedDeltasGeneric(
+          vision, [](const auto & val) { return val.edge; }, edgeAreaGetter);
     }
 
     std::map<Humidity, double> rawGlassDeltas(const double outsideTemperature,
                                               const double insideGlassTemp,
                                               const DewPointSettings & dps)
     {
+        const auto kelvinToCelsius = [](const double temperature) {
+            return temperature - ConstantsData::KELVINCONV;
+        };
         std::map<Humidity, double> out;
 
         for(const auto & entry : dps.dewPoints)
         {
-            const double delta =
-              std::max(0.0,
-                       (entry.temperature - insideGlassTemp + dps.dewPointTemperature)
-                         / (entry.temperature + dps.dewPointTemperature - outsideTemperature
-                            + ConstantsData::KELVINCONV));
+            const double delta = std::max(
+              0.0,
+              (entry.temperature - kelvinToCelsius(insideGlassTemp) + dps.dewPointTemperature)
+                / (entry.temperature + dps.dewPointTemperature
+                   - kelvinToCelsius(outsideTemperature)));
             out.emplace(entry.humidity, delta);
         }
 
         return out;
     }
 
-    // -------------------------------------------------------------
-    // Function to apply the CR_f formula (pure)
-    //
-    //    CR = 100 * (1 - (delta / totalArea)^(1/3))
-    //
-    // where:
-    //    delta = Σ(A_i * CR_i(h))          -- raw weighted total
-    //
-    // Python:   _cr_formula(raw_delta, total_area)
-    // -------------------------------------------------------------
+    std::map<Humidity, double> weightedGlassAndEdge(const ISO15099::WindowVision & vision,
+                                                    const DewPointSettings & dps,
+                                                    const double outsideTemperature)
+    {
+        // glass-only raw
+        const auto glass = rawGlassDeltas(
+          outsideTemperature, vision.getTemperatures(ISO15099::System::SHGC).back(), dps);
+
+        // edge-only raw
+        const auto rawEdges = weightedDeltasEdge(vision);
+
+        return sum(glass, rawEdges);
+    }
+
     inline double normalizeCR(const double rawDelta, const double totalArea)
     {
         if(totalArea <= 0.0)
@@ -160,18 +206,7 @@ namespace Tarcog::CR
     }
 
     // -------------------------------------------------------------
-    // Compute Python-style CR_f average:
-    //
-    //   1. Compute average of raw deltas:
-    //        avg_raw = mean( raw_deltas[h] )
-    //
-    //   2. Apply CR formula to this average:
-    //        CR_avg = normalizeCR(avg_raw, totalArea)
-    //
-    // NOTE:
-    //   This is NOT mean of per-humidity CR values!
-    // -------------------------------------------------------------
-    double computeCRfAverage(const std::map<Humidity, double> & rawDeltas, const double totalArea)
+    double computeCRAverage(const std::map<Humidity, double> & rawDeltas, const double totalArea)
     {
         if(rawDeltas.empty())
         {
@@ -191,6 +226,17 @@ namespace Tarcog::CR
         return {kDefaultDewPointTemperature, kDefaultDewPoints};
     }
 
+    // TODO: Consider making this public
+    CRResult crge(const ISO15099::WindowVision & vision,
+                  const DewPointSettings & dewPointSettings,
+                  double outsideTemperature)
+    {
+        const double area = vision.visionPercentage() * vision.area();
+        const auto totals = weightedGlassAndEdge(vision, dewPointSettings, outsideTemperature);
+
+        return {applyDewPointNormalization(totals, area), computeCRAverage(totals, area)};
+    }
+
     // =============================================================
     //   PUBLIC API: Frame condensation resistance (CRf)
     // =============================================================
@@ -202,15 +248,15 @@ namespace Tarcog::CR
             throw std::runtime_error("Total frame area is zero");
         }
 
-        const auto rawDeltas = weightedDeltas(vision);
+        const auto rawDeltas = weightedDeltasFrame(vision);
 
         return {applyDewPointNormalization(rawDeltas, totalArea),
-                computeCRfAverage(rawDeltas, totalArea)};
+                computeCRAverage(rawDeltas, totalArea)};
     }
 
     CRResult cre(const ISO15099::WindowVision & vision)
     {
-        const double totalArea = totalFrameArea(vision);
+        const double totalArea = vision.edgeOfGlassArea();
         if(totalArea <= 0.0)
         {
             throw std::runtime_error("Total frame area is zero");
@@ -219,30 +265,36 @@ namespace Tarcog::CR
         const auto rawDeltas = weightedDeltasEdge(vision);
 
         return {applyDewPointNormalization(rawDeltas, totalArea),
-                computeCRfAverage(rawDeltas, totalArea)};
+                computeCRAverage(rawDeltas, totalArea)};
     }
 
     CRResult crg(const ISO15099::WindowVision & vision,
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
     {
-        // 1. Extract inside glass temperature from IGU system
-        const double tInside =
-          vision.getTemperatures(ISO15099::System::SHGC).back() - ConstantsData::KELVINCONV;
+        const double tInside = vision.getTemperatures(ISO15099::System::SHGC).back();
 
-        // 2. Compute center-of-glass area from WindowVision
-        // Note that this is strictly COG area and that edge of glass area should NOT be included
         const double area = vision.visionPercentage() * vision.area() - vision.edgeOfGlassArea();
 
-        // 3. Compute deltas
         const auto raw = rawGlassDeltas(outsideTemperature, tInside, dewPointSettings);
 
-        // 4. Normalize and average
         CRResult res;
         res.values = applyDewPointNormalization(raw, area);
-        res.average = computeCRfAverage(raw, area);
+        res.average = computeCRAverage(raw, area);
 
         return res;
     }
+
+    CRResult cr(const ISO15099::WindowVision & vision,
+                const DewPointSettings & dewPointSettings,
+                double outsideTemperature)
+    {
+        const auto crGlassEdge = crge(vision, dewPointSettings, outsideTemperature);
+        const auto crFrame = crf(vision);
+
+
+        return combineMin(crFrame, crGlassEdge);
+    }
+
 
 }   // namespace Tarcog::CR
