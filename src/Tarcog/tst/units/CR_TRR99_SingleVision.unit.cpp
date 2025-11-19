@@ -44,41 +44,53 @@ namespace
 // Tests for TRR97 single vision
 // -----------------------------------------------------------------------------
 
-TEST(CR_TRR97, FrameContributions)
+TEST(CR_TRR97, FramePositions)
 {
-    const auto vision{makeTRR97SingleVision()};
-    const auto v{CR::frameAreaContributions(vision)};
+    const auto vision = makeTRR97SingleVision();
+    const auto v = CR::frameAreaContributions(vision);
 
     ASSERT_EQ(v.size(), 4);
 
-
     std::set<FramePosition> found;
-    std::ranges::transform(
-      v, std::inserter(found, found.end()), [](const auto & c) { return c.pos; });
+    for(const auto & c : v)
+    {
+        found.insert(c.pos);
+    }
 
-    EXPECT_EQ(found.size(), 4);
     EXPECT_TRUE(found.contains(FramePosition::Top));
     EXPECT_TRUE(found.contains(FramePosition::Bottom));
     EXPECT_TRUE(found.contains(FramePosition::Left));
     EXPECT_TRUE(found.contains(FramePosition::Right));
+}
 
-    // ---- AREA ----
+TEST(CR_TRR97, FrameAreas)
+{
+    const auto vision = makeTRR97SingleVision();
+    const auto v = CR::frameAreaContributions(vision);
+
     std::vector<double> areas;
-    areas.reserve(v.size());
-    std::ranges::transform(v, std::back_inserter(areas), [](const auto & c) { return c.area; });
+    for(const auto & c : v)
+    {
+        areas.push_back(c.area);
+    }
 
     const std::vector expectedAreas = {
-      0.0584656658,
-      0.0584656658,
-      0.0584656658,
-      0.0584656658,
+      0.058466,
+      0.058466,
+      0.058466,
+      0.058466,
     };
 
     Helper::testVectors("CR Frame Areas", expectedAreas, areas);
+}
 
-    // ---- FRAME CR VALUES ----
+TEST(CR_TRR97, FrameCRValues)
+{
+    const auto vision = makeTRR97SingleVision();
+    const auto v = CR::frameAreaContributions(vision);
+
     std::vector<double> frameVals;
-    frameVals.reserve(v.size() * 3);
+    frameVals.reserve(12);
 
     for(const auto & c : v)
     {
@@ -88,34 +100,39 @@ TEST(CR_TRR97, FrameContributions)
         }
     }
 
-    // Hard-coded expected values (in the order TRR97 returns them)
     const std::vector expectedFrameVals = {
       // Top
-      0.0020379023626446698,
-      0.0259622453595846402,
-      0.0787044763565056306,
+      0.002038,
+      0.025962,
+      0.078704,
 
       // Bottom
-      0.0058753238990902901,
-      0.039895989000797299,
-      0.095246292650699602,
+      0.005875,
+      0.039896,
+      0.095246,
 
       // Left
-      0.0042631877586245502,
-      0.035217877477407497,
-      0.090093493461608901,
+      0.004263,
+      0.035218,
+      0.090093,
 
       // Right
-      0.0042631877586245502,
-      0.035217877477407497,
-      0.090093493461608901,
+      0.004263,
+      0.035218,
+      0.090093,
     };
 
     Helper::testVectors("CR Frame Values", expectedFrameVals, frameVals);
+}
 
-    // ---- EDGE CONDENSATION VALUES ----
+TEST(CR_TRR97, EdgeCRValues)
+{
+    const auto vision = makeTRR97SingleVision();
+    const auto v = CR::frameAreaContributions(vision);
+
     std::vector<double> edgeVals;
     edgeVals.reserve(12);
+
     for(const auto & c : v)
     {
         for(const auto & cd : c.data)
@@ -124,73 +141,79 @@ TEST(CR_TRR97, FrameContributions)
         }
     }
 
-    const std::vector<double> expectedEdgeVals = {
-      // Top (unchanged)
-      0.0085457945242524094,
-      0.078639589250087696,
-      0.19863036274910001,
+    const std::vector expectedEdgeVals = {
+      // Top
+      0.008546,
+      0.078640,
+      0.198630,
 
       // Bottom
-      0.043410677462816197,
-      0.216304361820221,
-      0.33490517735481301,
+      0.043411,
+      0.216304,
+      0.334905,
 
       // Left
-      0.022622345015406602,
-      0.146351143717766,
-      0.27553832530975297,
+      0.022622,
+      0.146351,
+      0.275538,
 
       // Right
-      0.022622345015406602,
-      0.146351143717766,
-      0.27553832530975297,
+      0.022622,
+      0.146351,
+      0.275538,
     };
 
     Helper::testVectors("CR Edge Values", expectedEdgeVals, edgeVals);
+}
 
-    auto averages{CR::computeAverages(v)};
+TEST(CR_TRR97, AveragesFrame)
+{
+    const auto vision = makeTRR97SingleVision();
+    const auto v = CR::frameAreaContributions(vision);
+    const auto averages = CR::computeAverages(v);
 
-    // ---- AVERAGES ----
     ASSERT_EQ(averages.size(), 4);
 
-    // Extract avg.frame
     std::vector<double> avgFrames;
     avgFrames.reserve(4);
 
-    for (const auto& c : averages)
+    for(const auto & c : averages)
     {
         ASSERT_TRUE(c.average.has_value());
         avgFrames.push_back(c.average->frame);
     }
 
-    const std::vector<double> expectedAvgFrames = {
-        0.03556820736,   // Top
-        0.04700586855,   // Bottom
-        0.04319151956,   // Left
-        0.04319151956    // Right
+    const std::vector expectedAvgFrames = {
+      0.035568,   // Top
+      0.047006,   // Bottom
+      0.043192,   // Left
+      0.043192    // Right
     };
 
-    Helper::testVectors("CR Avg Frame Values", expectedAvgFrames, avgFrames);
+    Helper::testVectors("CR Avg Frame", expectedAvgFrames, avgFrames);
+}
 
+TEST(CR_TRR97, AveragesEdge)
+{
+    const auto vision = makeTRR97SingleVision();
+    const auto v = CR::frameAreaContributions(vision);
+    const auto averages = CR::computeAverages(v);
 
-    // Extract avg.area
+    ASSERT_EQ(averages.size(), 4);
+
     std::vector<double> avgEdges;
     avgEdges.reserve(4);
 
-    for (const auto& c : averages)
+    for(const auto & c : averages)
     {
         avgEdges.push_back(c.average->edge);
     }
 
-    const std::vector expectedAvgEdges = {
-        0.095271915507813373,
-        0.19820673887928342,
-        0.1481706046809752,
-        0.1481706046809752
-    };
+    const std::vector expectedAvgEdges = {0.095272, 0.198207, 0.148171, 0.148171};
 
-    Helper::testVectors("CR Avg Frame Areas", expectedAvgEdges, avgEdges);
+    Helper::testVectors("CR Avg Edge", expectedAvgEdges, avgEdges);
 }
+
 
 TEST(CR_TRR97, CRf)
 {

@@ -4,8 +4,6 @@
 
 #include <WCETarcog.hpp>
 
-#include "thermal/commonFrames.hpp"
-
 using namespace Tarcog;
 
 // -----------------------------------------------------------------------------
@@ -15,28 +13,6 @@ using namespace Tarcog;
 namespace
 {
     constexpr double eps = 1e-6;
-
-    ISO15099::WindowVision makeTRR97SingleVision()
-    {
-        constexpr auto width{1.219};
-        constexpr auto height{1.219};
-        constexpr auto tVis{0.707};
-        constexpr auto tSol{0.3614};
-        constexpr auto iguUValue{5.575};
-        constexpr auto shgc{0.86};
-        constexpr auto hout{20.42635};
-        constexpr auto interiorGlassTemperature{284.79001};
-
-        auto igu = std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout);
-        igu->setTemperatures({interiorGlassTemperature});
-
-        ISO15099::WindowVision vision(width, height, tVis, tSol, igu);
-        vision.setFrameData(FramePosition::Bottom, Frame::sillTRR97());
-        vision.setFrameData(FramePosition::Top, Frame::headTRR97());
-        vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
-        vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
-        return vision;
-    }
 }   // namespace
 
 // -----------------------------------------------------------------------------
