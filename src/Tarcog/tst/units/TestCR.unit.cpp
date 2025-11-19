@@ -12,7 +12,32 @@ using namespace Tarcog;
 // Helpers
 // -----------------------------------------------------------------------------
 
-static constexpr double eps = 1e-6;
+namespace
+{
+    static constexpr double eps = 1e-6;
+    
+    ISO15099::WindowVision makeTRR97SingleVision()
+    {
+        constexpr auto width{1.219};
+        constexpr auto height{1.219};
+        constexpr auto tVis{0.707};
+        constexpr auto tSol{0.3614};
+        constexpr auto iguUValue{5.575};
+        constexpr auto shgc{0.86};
+        constexpr auto hout{20.42635};
+        constexpr auto interiorGlassTemperature{284.79001};
+
+        auto igu = std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout);
+        igu->setTemperatures({interiorGlassTemperature});
+
+        ISO15099::WindowVision vision(width, height, tVis, tSol, igu);
+        vision.setFrameData(FramePosition::Bottom, Frame::sillTRR97());
+        vision.setFrameData(FramePosition::Top, Frame::headTRR97());
+        vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
+        vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
+        return vision;
+    }
+}
 
 // -----------------------------------------------------------------------------
 // Tests for Humidity
@@ -96,22 +121,7 @@ TEST(CR, ComputesCRfForTRR97)
 {
     using namespace Tarcog;
 
-    constexpr auto width{1.219};
-    constexpr auto height{1.219};
-    constexpr auto tVis{0.707};
-    constexpr auto tSol{0.3614};
-
-    constexpr auto iguUValue{5.575};
-    constexpr auto shgc{0.86};
-    constexpr auto hout{20.42635};
-
-    ISO15099::WindowVision vision = ISO15099::WindowVision(
-      width, height, tVis, tSol, std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout));
-
-    vision.setFrameData(FramePosition::Bottom, Frame::sillTRR97());
-    vision.setFrameData(FramePosition::Top, Frame::headTRR97());
-    vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
-    vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
+    const auto vision{makeTRR97SingleVision()};
 
     CR::DewPointTable dewPoints = {
       {Humidity::H30(), 2.9}, {Humidity::H50(), 10.3}, {Humidity::H70(), 15.4}};
