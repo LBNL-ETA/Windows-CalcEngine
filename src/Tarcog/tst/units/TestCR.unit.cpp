@@ -115,6 +115,10 @@ TEST(Humidity, DistinctKeysRemainDistinct)
     EXPECT_NEAR(m[h30], 1.0, eps);
 }
 
+// -----------------------------------------------------------------------------
+// Tests for TRR97 single vision
+// -----------------------------------------------------------------------------
+
 TEST(CR, ComputesCRfForTRR97)
 {
     const auto vision{makeTRR97SingleVision()};
@@ -168,7 +172,8 @@ TEST(CR, ComputesCRForTRR97)
 
     constexpr auto outsideTemperature{255.15};
 
-    const auto [values, average] = CR::cr(vision, CR::defaultDewPointSettings(), outsideTemperature);
+    const auto [values, average] =
+      CR::cr(vision, CR::defaultDewPointSettings(), outsideTemperature);
 
     ASSERT_EQ(values.size(), 3);
 
@@ -185,7 +190,8 @@ TEST(CR, ComputesCRbForTRR97)
 
     constexpr auto outsideTemperature{255.15};
 
-    const auto [values, average] = CR::crb(vision, CR::defaultDewPointSettings(), outsideTemperature);
+    const auto [values, average] =
+      CR::crb(vision, CR::defaultDewPointSettings(), outsideTemperature);
 
     ASSERT_EQ(values.size(), 3);
 
