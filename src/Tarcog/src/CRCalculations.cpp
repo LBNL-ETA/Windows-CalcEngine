@@ -128,9 +128,6 @@ namespace Tarcog::CR
         return out;
     }
 
-
-    // Core CR formula (shared by CRf, CRe and CRg)
-    // Equivalent to Python _cr_formula(value, area)
     inline double crFormula(const double ratio)
     {
         static constexpr double CR_EXPONENT = 1.0 / 3.0;
