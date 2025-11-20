@@ -168,7 +168,7 @@ namespace Tarcog::CR
         return out;
     }
 
-    std::map<Humidity, double> rawDeltsGlassAndEdge(const ISO15099::WindowVision & vision,
+    std::map<Humidity, double> rawDeltasGlassAndEdge(const ISO15099::WindowVision & vision,
                                                     const DewPointSettings & dps,
                                                     const double outsideTemperature)
     {
@@ -231,7 +231,7 @@ namespace Tarcog::CR
                   const double outsideTemperature)
     {
         const double area = vision.visionPercentage() * vision.area();
-        const auto totals = rawDeltsGlassAndEdge(vision, dewPointSettings, outsideTemperature);
+        const auto totals = rawDeltasGlassAndEdge(vision, dewPointSettings, outsideTemperature);
 
         return {applyDewPointNormalization(totals, area), crAverageNormalized(totals, area)};
     }
@@ -259,7 +259,6 @@ namespace Tarcog::CR
         const auto crGlassEdge = crge(vision, dewPointSettings, outsideTemperature);
         const auto crFrame = crf(vision.frames());
 
-
         return combineMin(crFrame, crGlassEdge);
     }
 
@@ -273,6 +272,5 @@ namespace Tarcog::CR
 
         return combineMin(frame, edge, glass);
     }
-
 
 }   // namespace Tarcog::CR
