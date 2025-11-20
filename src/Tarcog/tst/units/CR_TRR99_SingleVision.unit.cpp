@@ -52,9 +52,9 @@ TEST(CR_TRR97, FramePositions)
     ASSERT_EQ(v.size(), 4);
 
     std::set<FramePosition> found;
-    for(const auto & c : v)
+    for(const auto & pos : v | std::views::keys)
     {
-        found.insert(c.pos);
+        found.insert(pos);
     }
 
     EXPECT_TRUE(found.contains(FramePosition::Top));
@@ -69,7 +69,9 @@ TEST(CR_TRR97, FrameAreas)
     const auto v = CR::frameAreaContributions(vision);
 
     std::vector<double> areas;
-    for(const auto & c : v)
+    areas.reserve(v.size());
+
+    for(const auto & c : v | std::views::values)
     {
         areas.push_back(c.area);
     }
@@ -84,6 +86,7 @@ TEST(CR_TRR97, FrameAreas)
     Helper::testVectors("CR Frame Areas", expectedAreas, areas);
 }
 
+
 TEST(CR_TRR97, FrameCRValues)
 {
     const auto vision = makeTRR97SingleVision();
@@ -92,7 +95,7 @@ TEST(CR_TRR97, FrameCRValues)
     std::vector<double> frameVals;
     frameVals.reserve(12);
 
-    for(const auto & c : v)
+    for(const auto & c : v | std::views::values)
     {
         for(const auto & cd : c.data)
         {
@@ -125,6 +128,7 @@ TEST(CR_TRR97, FrameCRValues)
     Helper::testVectors("CR Frame Values", expectedFrameVals, frameVals);
 }
 
+
 TEST(CR_TRR97, EdgeCRValues)
 {
     const auto vision = makeTRR97SingleVision();
@@ -133,7 +137,7 @@ TEST(CR_TRR97, EdgeCRValues)
     std::vector<double> edgeVals;
     edgeVals.reserve(12);
 
-    for(const auto & c : v)
+    for(const auto & [pos, c] : v)
     {
         for(const auto & cd : c.data)
         {
@@ -166,6 +170,7 @@ TEST(CR_TRR97, EdgeCRValues)
     Helper::testVectors("CR Edge Values", expectedEdgeVals, edgeVals);
 }
 
+
 TEST(CR_TRR97, AveragesFrame)
 {
     const auto vision = makeTRR97SingleVision();
@@ -177,21 +182,22 @@ TEST(CR_TRR97, AveragesFrame)
     std::vector<double> avgFrames;
     avgFrames.reserve(4);
 
-    for(const auto & c : averages)
+    for(const auto & [pos, c] : averages)
     {
         ASSERT_TRUE(c.average.has_value());
         avgFrames.push_back(c.average->frame);
     }
 
     const std::vector expectedAvgFrames = {
-      0.035568,   // Top
-      0.047006,   // Bottom
-      0.043192,   // Left
-      0.043192    // Right
+        0.035568,   // Top
+        0.047006,   // Bottom
+        0.043192,   // Left
+        0.043192    // Right
     };
 
     Helper::testVectors("CR Avg Frame", expectedAvgFrames, avgFrames);
 }
+
 
 TEST(CR_TRR97, AveragesEdge)
 {
@@ -204,15 +210,21 @@ TEST(CR_TRR97, AveragesEdge)
     std::vector<double> avgEdges;
     avgEdges.reserve(4);
 
-    for(const auto & c : averages)
+    for(const auto & [pos, c] : averages)
     {
         avgEdges.push_back(c.average->edge);
     }
 
-    const std::vector expectedAvgEdges = {0.095272, 0.198207, 0.148171, 0.148171};
+    const std::vector expectedAvgEdges = {
+        0.095272,
+        0.198207,
+        0.148171,
+        0.148171
+    };
 
     Helper::testVectors("CR Avg Edge", expectedAvgEdges, avgEdges);
 }
+
 
 
 TEST(CR_TRR97, CRf)

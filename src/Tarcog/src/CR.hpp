@@ -41,7 +41,6 @@ namespace Tarcog
 
     struct CRFrameContribution
     {
-        FramePosition pos;
         double area;
         std::vector<ISO15099::CondensationData> data;
         std::optional<CRFrameContributionAverage> average;

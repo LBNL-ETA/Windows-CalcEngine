@@ -31,29 +31,34 @@ namespace Tarcog::CR
     // =============================================================
 
     template<typename AreaGetter>
-    std::vector<CRFrameContribution>
+    std::map<FramePosition, CRFrameContribution>
       collectCRFrameContributions(const ISO15099::WindowVision & vision, AreaGetter getArea)
     {
-        std::vector<CRFrameContribution> out;
+        std::map<FramePosition, CRFrameContribution> out;
 
         for(const auto & [pos, frame] : vision.frames())
         {
             if(!frame.frameData.condensationData)
                 continue;
 
-            out.push_back({pos, getArea(pos, frame), *frame.frameData.condensationData});
+            CRFrameContribution c;
+            c.area = getArea(pos, frame);
+            c.data = *frame.frameData.condensationData;
+
+            out[pos] = c;
         }
 
         return out;
     }
 
     template<typename Getter>
-    std::map<Humidity, double> accumulateCRValues(const std::vector<CRFrameContribution> & items,
-                                                  Getter getValue)
+    std::map<Humidity, double>
+      accumulateCRValues(const std::map<FramePosition, CRFrameContribution> & items,
+                         Getter getValue)
     {
         std::map<Humidity, double> acc;
 
-        for(const auto & item : items)
+        for(const auto & item : items | std::views::values)
         {
             for(const auto & cd : item.data)
             {
@@ -164,7 +169,8 @@ namespace Tarcog::CR
           [&vision](double sum, const auto & pos) { return sum + vision.frameArea(pos); });
     }
 
-    std::vector<CRFrameContribution> frameAreaContributions(const ISO15099::WindowVision & vision)
+    std::map<FramePosition, CRFrameContribution>
+      frameAreaContributions(const ISO15099::WindowVision & vision)
     {
         auto areaGetter = [&](const FramePosition pos, const ISO15099::Frame &) {
             return vision.frameArea(pos);
@@ -173,7 +179,8 @@ namespace Tarcog::CR
         return collectCRFrameContributions(vision, areaGetter);
     }
 
-    std::vector<CRFrameContribution> edgeAreasContributions(const ISO15099::WindowVision & vision)
+    std::map<FramePosition, CRFrameContribution>
+      edgeAreasContributions(const ISO15099::WindowVision & vision)
     {
         auto areaGetter = [&](const FramePosition pos, const ISO15099::Frame &) {
             return vision.edgeOfGlassArea(pos);
@@ -182,12 +189,13 @@ namespace Tarcog::CR
         return collectCRFrameContributions(vision, areaGetter);
     }
 
-    std::vector<CRFrameContribution> computeAverages(const std::vector<CRFrameContribution> & items)
+    std::map<FramePosition, CRFrameContribution>
+      computeAverages(const std::map<FramePosition, CRFrameContribution> & items)
     {
-        std::vector<CRFrameContribution> out;
-        out.reserve(items.size());
+        std::map<FramePosition, CRFrameContribution> out;
 
-        std::ranges::transform(items, std::back_inserter(out), [](const auto & item) {
+        for(const auto & [pos, item] : items)
+        {
             auto copy = item;
             copy.average.reset();
 
@@ -206,8 +214,8 @@ namespace Tarcog::CR
                 copy.average = CRFrameContributionAverage{sumFrame / n, sumEdge / n};
             }
 
-            return copy;
-        });
+            out[pos] = copy;
+        }
 
         return out;
     }
