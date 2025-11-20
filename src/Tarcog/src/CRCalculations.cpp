@@ -290,30 +290,12 @@ namespace Tarcog::CR
     // =============================================================
     CRResult crf(const ISO15099::WindowVision & vision)
     {
-        const double totalArea = totalFrameArea(vision);
-        if(totalArea <= 0.0)
-        {
-            throw std::runtime_error("Total frame area is zero");
-        }
-
-        const auto rawDeltas = rawDeltasFrame(vision);
-
-        return {applyDewPointNormalization(rawDeltas, totalArea),
-                crAverageNormalized(rawDeltas, totalArea)};
+        return crf<FramePosition>(vision.frames());
     }
 
     CRResult cre(const ISO15099::WindowVision & vision)
     {
-        const double totalArea = vision.edgeOfGlassArea();
-        if(totalArea <= 0.0)
-        {
-            throw std::runtime_error("Total edge of glass area is zero");
-        }
-
-        const auto rawDeltas = rawDeltasEdge(vision);
-
-        return {applyDewPointNormalization(rawDeltas, totalArea),
-                crAverageNormalized(rawDeltas, totalArea)};
+        return cre<FramePosition>(vision.frames());
     }
 
     CRResult crg(const ISO15099::WindowVision & vision,
