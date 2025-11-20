@@ -233,21 +233,37 @@ TEST_F(TestSingleVisionWindow, FramesRetrieval)
 
     using Tarcog::ISO15099::SingleVisionFramePosition;
 
+    /// Testing frame areas
+
     std::map<SingleVisionFramePosition, double> areas;
     for(const auto & [framePosition, frame] : window.frames())
     {
         areas.emplace(framePosition, Tarcog::ISO15099::frameArea(frame));
     }
 
-    std::map<SingleVisionFramePosition, double> correctAreas
-    {
-        {SingleVisionFramePosition::Top, 0.1110338775},
-        {SingleVisionFramePosition::Bottom, 0.1110338775},
-        {SingleVisionFramePosition::Left, 0.1110338775},
-        {SingleVisionFramePosition::Right, 0.1110338775}
-    };
+    std::map<SingleVisionFramePosition, double> correctAreas{
+      {SingleVisionFramePosition::Top, 0.1110338775},
+      {SingleVisionFramePosition::Bottom, 0.1110338775},
+      {SingleVisionFramePosition::Left, 0.1110338775},
+      {SingleVisionFramePosition::Right, 0.1110338775}};
 
-    Helper::testMaps("Single vision frame", correctAreas, areas, 1e-6);
+    Helper::testMaps("Single vision frame areas", correctAreas, areas, 1e-6);
+
+    /// Testing edge areas
+
+    std::map<SingleVisionFramePosition, double> edgeAreas;
+    for(const auto & [framePosition, frame] : window.frames())
+    {
+        edgeAreas.emplace(framePosition, Tarcog::ISO15099::edgeOfGlassArea(frame));
+    }
+
+    std::map<SingleVisionFramePosition, double> correctEdgeAreas{
+      {SingleVisionFramePosition::Top, 0.1157097},
+      {SingleVisionFramePosition::Bottom, 0.1157097},
+      {SingleVisionFramePosition::Left, 0.1157097},
+      {SingleVisionFramePosition::Right, 0.1157097}};
+
+    Helper::testMaps("Single vision frame areas", correctEdgeAreas, edgeAreas, 1e-6);
 }
 
 TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
