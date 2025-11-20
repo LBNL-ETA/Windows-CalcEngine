@@ -96,6 +96,8 @@ namespace Tarcog
         [[nodiscard]] virtual double vt0() const = 0;
         [[nodiscard]] virtual double vt1() const = 0;
 
+        [[nodiscard]] virtual double getDividerArea() const = 0;
+        [[nodiscard]] virtual double getDividerEdgeOfGlassArea() const = 0;
 
         [[nodiscard]] virtual double visionPercentage() const = 0;
 

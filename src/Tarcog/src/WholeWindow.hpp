@@ -68,8 +68,8 @@ namespace Tarcog::ISO15099
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
-        [[nodiscard]] double getDividerArea() const;
-        [[nodiscard]] double getDividerEdgeOfGlassArea() const;
+        [[nodiscard]] double getDividerArea() const override;
+        [[nodiscard]] double getDividerEdgeOfGlassArea() const override;
 
         [[nodiscard]] IGUDimensions getIGUDimensions() const override;
 
@@ -236,12 +236,12 @@ namespace Tarcog::ISO15099
             vision2().setThicknessIGUTolerance(thickness);
         }
 
-        [[nodiscard]] double getDividerArea() const
+        [[nodiscard]] double getDividerArea() const override
         {
             return vision1().dividerArea() + vision2().dividerArea();
         }
 
-        [[nodiscard]] double getDividerEdgeOfGlassArea() const
+        [[nodiscard]] double getDividerEdgeOfGlassArea() const override
         {
             return vision1().dividerEdgeOfGlassArea() + vision2().dividerEdgeOfGlassArea();
         }

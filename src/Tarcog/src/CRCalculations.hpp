@@ -57,20 +57,30 @@ namespace Tarcog::CR
     template<typename Pos>
     double totalEdgeOfGlassArea(const std::map<Pos, ISO15099::Frame> & frames);
 
+    template<typename Getter>
+    std::map<Humidity, double> accumulateCRValue(const CRFrameContribution & item, Getter getValue)
+    {
+        std::map<Humidity, double> acc;
+        for(const auto & cd : item.data)
+        {
+            acc[cd.humidity] += item.area * getValue(cd);
+        }
+        return acc;
+    }
+
     template<typename Pos, typename Getter>
     std::map<Humidity, double> accumulateCRValues(const std::map<Pos, CRFrameContribution> & items,
                                                   Getter getValue)
     {
         std::map<Humidity, double> acc;
-
         for(const auto & [pos, item] : items)
         {
-            for(const auto & cd : item.data)
+            const auto partial = accumulateCRValue(item, getValue);
+            for(const auto & [h, v] : partial)
             {
-                acc[cd.humidity] += item.area * getValue(cd);
+                acc[h] += v;
             }
         }
-
         return acc;
     }
 
@@ -150,6 +160,34 @@ namespace Tarcog::CR
             out[pos] = c;
         }
         return out;
+    }
+
+    inline std::optional<CRFrameContribution>
+      dividerAreaContribution(const ISO15099::WindowSingleVision & window)
+    {
+        if(!window.vision().divider())
+        {
+            return std::nullopt;
+        }
+
+        CRFrameContribution c;
+        c.area = window.getDividerArea();
+        c.data = *window.vision().divider()->frame.condensationData;
+        return c;
+    }
+
+    inline std::optional<CRFrameContribution>
+      dividerEdgeAreaContribution(const ISO15099::WindowSingleVision & window)
+    {
+        if(!window.vision().divider())
+        {
+            return std::nullopt;
+        }
+
+        CRFrameContribution c;
+        c.area = window.getDividerEdgeOfGlassArea();
+        c.data = *window.vision().divider()->frame.condensationData;
+        return c;
     }
 
     template<typename Pos>
