@@ -29,27 +29,6 @@ namespace Tarcog::CR
     //   Helpers
     // =============================================================
 
-    template<typename AreaGetter>
-    std::map<FramePosition, CRFrameContribution>
-      collectCRFrameContributions(const ISO15099::WindowVision & vision, AreaGetter getArea)
-    {
-        std::map<FramePosition, CRFrameContribution> out;
-
-        for(const auto & [pos, frame] : vision.frames())
-        {
-            if(!frame.frameData.condensationData)
-                continue;
-
-            CRFrameContribution c;
-            c.area = getArea(pos, frame);
-            c.data = *frame.frameData.condensationData;
-
-            out[pos] = c;
-        }
-
-        return out;
-    }
-
     template<typename Getter>
     std::map<Humidity, double>
       accumulateCRValues(const std::map<FramePosition, CRFrameContribution> & items,

@@ -56,10 +56,6 @@ namespace Tarcog::CR
     template<typename Pos>
     double totalEdgeOfGlassArea(const std::map<Pos, ISO15099::Frame> & frames);
 
-//    template<typename Pos>
-//    std::map<Pos, CRFrameContribution>
-//      computeAverages(const std::map<Pos, CRFrameContribution> & items);
-
     template<typename Pos, typename Getter>
     std::map<Humidity, double> accumulateCRValues(const std::map<Pos, CRFrameContribution> & items,
                                                   Getter getValue)
