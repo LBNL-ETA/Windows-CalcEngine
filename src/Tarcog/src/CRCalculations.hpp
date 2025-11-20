@@ -245,5 +245,4 @@ namespace Tarcog::CR
     CRResult crb(const ISO15099::DualVisionVertical & window,
                  const DewPointSettings & dewPointSettings,
                  double outsideTemperature);
-
 }   // namespace Tarcog::CR

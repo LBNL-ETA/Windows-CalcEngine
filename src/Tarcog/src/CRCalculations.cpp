@@ -252,71 +252,122 @@ namespace Tarcog::CR
         return {applyDewPointNormalization(raw, area), crAverageNormalized(raw, area)};
     }
 
+    ////////////////////////////////////
+    /////   CR
+    ////////////////////////////////////
+
+    template<typename Window, typename GetV1, typename GetV2, typename GetFrames>
+    CRResult cr_common(const Window & window,
+                       const DewPointSettings & dewPointSettings,
+                       const double outsideTemperature,
+                       GetV1 getVision1,
+                       GetV2 getVision2,
+                       GetFrames getFrames)
+    {
+        const auto crGlassEdge1 = crge(getVision1(window), dewPointSettings, outsideTemperature);
+        const auto crGlassEdge2 = crge(getVision2(window), dewPointSettings, outsideTemperature);
+        const auto crFrame = crf(getFrames(window));
+
+        return combineMin(crFrame, crGlassEdge1, crGlassEdge2);
+    }
+
     CRResult cr(const ISO15099::WindowSingleVision & window,
                 const DewPointSettings & dewPointSettings,
                 const double outsideTemperature)
     {
-        const auto crGlassEdge = crge(window.vision(), dewPointSettings, outsideTemperature);
-        const auto crFrame = crf(window.frames());
-
-        return combineMin(crFrame, crGlassEdge);
+        return cr_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision(); },
+          [](auto const & w) -> decltype(auto) { return w.vision(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
     }
 
     CRResult cr(const ISO15099::DualVisionHorizontal & window,
                 const DewPointSettings & dewPointSettings,
                 const double outsideTemperature)
     {
-        const auto crGlassEdge1 = crge(window.vision1(), dewPointSettings, outsideTemperature);
-        const auto crGlassEdge2 = crge(window.vision2(), dewPointSettings, outsideTemperature);
-        const auto crFrame = crf(window.frames());
-
-        return combineMin(crFrame, crGlassEdge1, crGlassEdge2);
+        return cr_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision1(); },
+          [](auto const & w) -> decltype(auto) { return w.vision2(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
     }
 
     CRResult cr(const ISO15099::DualVisionVertical & window,
                 const DewPointSettings & dewPointSettings,
                 const double outsideTemperature)
     {
-        const auto crGlassEdge1 = crge(window.vision1(), dewPointSettings, outsideTemperature);
-        const auto crGlassEdge2 = crge(window.vision2(), dewPointSettings, outsideTemperature);
-        const auto crFrame = crf(window.frames());
+        return cr_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision1(); },
+          [](auto const & w) -> decltype(auto) { return w.vision2(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
+    }
 
-        return combineMin(crFrame, crGlassEdge1, crGlassEdge2);
+    ////////////////////////////////////
+    /////   CRB
+    ////////////////////////////////////
+
+    template<typename Window, typename GetV1, typename GetV2, typename GetFrames>
+    CRResult crb_common(const Window & window,
+                        const DewPointSettings & dewPointSettings,
+                        const double outsideTemperature,
+                        GetV1 getVision1,
+                        GetV2 getVision2,
+                        GetFrames getFrames)
+    {
+        const auto frames = getFrames(window);
+        const CRResult frame = crf(frames);
+        const CRResult edge = cre(frames);
+
+        const auto glass1 = crg(getVision1(window), dewPointSettings, outsideTemperature);
+        const auto glass2 = crg(getVision2(window), dewPointSettings, outsideTemperature);
+
+        return combineMin(frame, edge, glass1, glass2);
     }
 
     CRResult crb(const ISO15099::WindowSingleVision & window,
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
     {
-        const CRResult frame = crf(window.frames());
-        const CRResult edge = cre(window.frames());
-        const CRResult glass = crg(window.vision(), dewPointSettings, outsideTemperature);
-
-        return combineMin(frame, edge, glass);
+        return crb_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision(); },
+          [](auto const & w) -> decltype(auto) { return w.vision(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
     }
 
     CRResult crb(const ISO15099::DualVisionHorizontal & window,
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
     {
-        const CRResult frame = crf(window.frames());
-        const CRResult edge = cre(window.frames());
-        const CRResult glass1 = crg(window.vision1(), dewPointSettings, outsideTemperature);
-        const CRResult glass2 = crg(window.vision2(), dewPointSettings, outsideTemperature);
-
-        return combineMin(frame, edge, glass1, glass2);
+        return crb_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision1(); },
+          [](auto const & w) -> decltype(auto) { return w.vision2(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
     }
 
     CRResult crb(const ISO15099::DualVisionVertical & window,
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
     {
-        const CRResult frame = crf(window.frames());
-        const CRResult edge = cre(window.frames());
-        const CRResult glass1 = crg(window.vision1(), dewPointSettings, outsideTemperature);
-        const CRResult glass2 = crg(window.vision2(), dewPointSettings, outsideTemperature);
-
-        return combineMin(frame, edge, glass1, glass2);
+        return crb_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision1(); },
+          [](auto const & w) -> decltype(auto) { return w.vision2(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
     }
-
 }   // namespace Tarcog::CR
