@@ -288,15 +288,6 @@ namespace Tarcog::CR
     // =============================================================
     //   PUBLIC API
     // =============================================================
-    CRResult crf(const ISO15099::WindowVision & vision)
-    {
-        return crf<FramePosition>(vision.frames());
-    }
-
-    CRResult cre(const ISO15099::WindowVision & vision)
-    {
-        return cre<FramePosition>(vision.frames());
-    }
 
     CRResult crg(const ISO15099::WindowVision & vision,
                  const DewPointSettings & dewPointSettings,
@@ -315,7 +306,7 @@ namespace Tarcog::CR
                 const double outsideTemperature)
     {
         const auto crGlassEdge = crge(vision, dewPointSettings, outsideTemperature);
-        const auto crFrame = crf(vision);
+        const auto crFrame = crf(vision.frames());
 
 
         return combineMin(crFrame, crGlassEdge);
@@ -324,8 +315,8 @@ namespace Tarcog::CR
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
     {
-        const CRResult frame = crf(vision);
-        const CRResult edge = cre(vision);
+        const CRResult frame = crf(vision.frames());
+        const CRResult edge = cre(vision.frames());
         const CRResult glass = crg(vision, dewPointSettings, outsideTemperature);
 
         return combineMin(frame, edge, glass);

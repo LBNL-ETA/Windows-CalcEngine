@@ -231,7 +231,7 @@ TEST(CR_TRR97, CRf)
 {
     const auto vision{makeTRR97SingleVision()};
 
-    const auto [values, average] = CR::crf(vision);
+    const auto [values, average] = CR::crf(vision.frames());
 
     ASSERT_EQ(values.size(), 3);
 
@@ -246,7 +246,7 @@ TEST(CR_TRR97, CRe)
 {
     const auto vision{makeTRR97SingleVision()};
 
-    auto [values, average] = CR::cre(vision);
+    auto [values, average] = CR::cre(vision.frames());
 
     ASSERT_EQ(values.size(), 3);
 

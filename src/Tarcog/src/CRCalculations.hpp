@@ -60,9 +60,22 @@ namespace Tarcog::CR
     std::map<Pos, CRFrameContribution>
       computeAverages(const std::map<Pos, CRFrameContribution> & items);
 
-    template<typename Pos>
+    template<typename Pos, typename Getter>
     std::map<Humidity, double> accumulateCRValues(const std::map<Pos, CRFrameContribution> & items,
-                                                  auto getter);
+                                                  Getter getValue)
+    {
+        std::map<Humidity, double> acc;
+
+        for(const auto & [pos, item] : items)
+        {
+            for(const auto & cd : item.data)
+            {
+                acc[cd.humidity] += item.area * getValue(cd);
+            }
+        }
+
+        return acc;
+    }
 
     // -----------------------------------------------------------
     // 2) Template definitions
@@ -206,9 +219,6 @@ namespace Tarcog::CR
 
     std::map<FramePosition, CRFrameContribution>
       edgeAreasContributions(const ISO15099::WindowVision & vision);
-
-    CRResult crf(const ISO15099::WindowVision & vision);
-    CRResult cre(const ISO15099::WindowVision & vision);
 
     // Existing CRG/CR/CRB remain unchanged
     CRResult crg(const ISO15099::WindowVision &, const DewPointSettings &, double);
