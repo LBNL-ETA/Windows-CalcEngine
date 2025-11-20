@@ -3,7 +3,6 @@
 #include <utility>
 #include <array>
 #include <map>
-#include <ranges>
 #include <algorithm>
 #include <optional>
 #include <numeric>
@@ -129,6 +128,16 @@ namespace Tarcog::ISO15099
             auto [position, frameData] = pair;
             setFrameData(position, frameData);
         });
+    }
+    std::map<SingleVisionFramePosition, Frame> WindowSingleVision::frames() const
+    {
+        std::map<SingleVisionFramePosition, Frame> out;
+        for(const auto pos : Helper::kAllSinglePositions)
+        {
+            const FramePosition fp = Helper::kFrameMapping.at(pos);
+            out.emplace(pos, vision.frame(fp));
+        }
+        return out;
     }
 
     double WindowSingleVision::getFrameArea(const SingleVisionFramePosition position) const
@@ -371,6 +380,47 @@ namespace Tarcog::ISO15099
             auto [position, frameData] = pair;
             setFrameData(position, frameData);
         });
+    }
+
+    std::map<DualHorizontalFramePosition, FrameData> DualVisionHorizontal::frames() const
+    {
+        std::map<DualHorizontalFramePosition, FrameData> out;
+        for(const auto pos : kAllDualHPositions)
+        {
+            const auto it = kDualHPosToFrames.find(pos);
+            if(it == kDualHPosToFrames.end())
+            {
+                continue;
+            }
+
+            const auto & refs = it->second;
+            std::vector<FrameData> found;
+
+            for(const auto & maybeRef : refs)
+            {
+                if(!maybeRef)
+                {
+                    continue;
+                }
+                const Frame & f = getFrameFromRef(*this, *maybeRef);
+                found.push_back(f.frameData);
+            }
+
+            if(found.empty())
+            {
+                continue;
+            }
+
+            if(found.size() == 1)
+            {
+                out.emplace(pos, found[0]);
+            }
+            else
+            {
+                out.emplace(pos, mergeFrameWidths(found[0], found[1]));
+            }
+        }
+        return out;
     }
 
     double DualVisionHorizontal::getFrameArea(const DualHorizontalFramePosition position) const
@@ -618,6 +668,47 @@ namespace Tarcog::ISO15099
             auto [position, frameData] = pair;
             setFrameData(position, frameData);
         });
+    }
+
+    std::map<DualVerticalFramePosition, FrameData> DualVisionVertical::frames() const
+    {
+        std::map<DualVerticalFramePosition, FrameData> out;
+        for(const auto pos : kAllDualVPositions)
+        {
+            const auto it = kDualVPosToFrames.find(pos);
+            if(it == kDualVPosToFrames.end())
+            {
+                continue;
+            }
+
+            const auto & refs = it->second;
+            std::vector<FrameData> found;
+
+            for(const auto & maybeRef : refs)
+            {
+                if(!maybeRef)
+                {
+                    continue;
+                }
+                const Frame & f = getFrameFromRefV(*this, *maybeRef);
+                found.push_back(f.frameData);
+            }
+
+            if(found.empty())
+            {
+                continue;
+            }
+
+            if(found.size() == 1)
+            {
+                out.emplace(pos, found[0]);
+            }
+            else
+            {
+                out.emplace(pos, mergeFrameWidths(found[0], found[1]));
+            }
+        }
+        return out;
     }
 
     double DualVisionVertical::getFrameArea(const DualVerticalFramePosition position) const

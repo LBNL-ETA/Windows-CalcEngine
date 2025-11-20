@@ -5,6 +5,8 @@
 namespace Tarcog::ISO15099
 {
     [[nodiscard]] FrameData splitFrameWidth(const FrameData & frame);
+    [[nodiscard]] FrameData mergeFrameWidths(const FrameData & a, const FrameData & b);
+
     [[nodiscard]] double frameSHGC(double absorptance,
                                    double uValue,
                                    double projectedFrameDimension,

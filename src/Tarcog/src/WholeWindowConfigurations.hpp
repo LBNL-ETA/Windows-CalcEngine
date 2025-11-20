@@ -91,7 +91,6 @@ namespace Tarcog
         [[nodiscard]] virtual double shgc0() const = 0;
         [[nodiscard]] virtual double shgc1() const = 0;
 
-
         [[nodiscard]] virtual double vt() const = 0;
         [[nodiscard]] virtual double vt(double tVis) const = 0;
         [[nodiscard]] virtual double vt0() const = 0;

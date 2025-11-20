@@ -15,6 +15,14 @@ namespace Tarcog::ISO15099
         return result;
     }
 
+    FrameData mergeFrameWidths(const FrameData & a, const FrameData & b)
+    {
+        FrameData out = a;
+        out.ProjectedFrameDimension = a.ProjectedFrameDimension + b.ProjectedFrameDimension;
+        out.WettedLength = out.WettedLength + b.WettedLength;
+        return out;
+    }
+
     double frameSHGC(double absorptance,
                      double uValue,
                      double projectedFrameDimension,
