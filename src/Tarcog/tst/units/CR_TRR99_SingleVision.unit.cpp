@@ -47,7 +47,7 @@ namespace
 TEST(CR_TRR97, FramePositions)
 {
     const auto vision = makeTRR97SingleVision();
-    const auto v = CR::frameAreaContributions(vision);
+    const auto v = CR::frameAreaContributions(vision.frames());
 
     ASSERT_EQ(v.size(), 4);
 
@@ -66,7 +66,7 @@ TEST(CR_TRR97, FramePositions)
 TEST(CR_TRR97, FrameAreas)
 {
     const auto vision = makeTRR97SingleVision();
-    const auto v = CR::frameAreaContributions(vision);
+    const auto v = CR::frameAreaContributions(vision.frames());
 
     std::vector<double> areas;
     areas.reserve(v.size());
@@ -90,7 +90,7 @@ TEST(CR_TRR97, FrameAreas)
 TEST(CR_TRR97, FrameCRValues)
 {
     const auto vision = makeTRR97SingleVision();
-    const auto v = CR::frameAreaContributions(vision);
+    const auto v = CR::frameAreaContributions(vision.frames());
 
     std::vector<double> frameVals;
     frameVals.reserve(12);
@@ -132,7 +132,7 @@ TEST(CR_TRR97, FrameCRValues)
 TEST(CR_TRR97, EdgeCRValues)
 {
     const auto vision = makeTRR97SingleVision();
-    const auto v = CR::frameAreaContributions(vision);
+    const auto v = CR::frameAreaContributions(vision.frames());
 
     std::vector<double> edgeVals;
     edgeVals.reserve(12);
@@ -174,7 +174,7 @@ TEST(CR_TRR97, EdgeCRValues)
 TEST(CR_TRR97, AveragesFrame)
 {
     const auto vision = makeTRR97SingleVision();
-    const auto v = CR::frameAreaContributions(vision);
+    const auto v = CR::frameAreaContributions(vision.frames());
     const auto averages = CR::computeAverages(v);
 
     ASSERT_EQ(averages.size(), 4);
@@ -202,7 +202,7 @@ TEST(CR_TRR97, AveragesFrame)
 TEST(CR_TRR97, AveragesEdge)
 {
     const auto vision = makeTRR97SingleVision();
-    const auto v = CR::frameAreaContributions(vision);
+    const auto v = CR::frameAreaContributions(vision.frames());
     const auto averages = CR::computeAverages(v);
 
     ASSERT_EQ(averages.size(), 4);

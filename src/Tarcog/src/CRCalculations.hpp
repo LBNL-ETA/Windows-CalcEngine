@@ -56,9 +56,9 @@ namespace Tarcog::CR
     template<typename Pos>
     double totalEdgeOfGlassArea(const std::map<Pos, ISO15099::Frame> & frames);
 
-    template<typename Pos>
-    std::map<Pos, CRFrameContribution>
-      computeAverages(const std::map<Pos, CRFrameContribution> & items);
+//    template<typename Pos>
+//    std::map<Pos, CRFrameContribution>
+//      computeAverages(const std::map<Pos, CRFrameContribution> & items);
 
     template<typename Pos, typename Getter>
     std::map<Humidity, double> accumulateCRValues(const std::map<Pos, CRFrameContribution> & items,
@@ -213,12 +213,6 @@ namespace Tarcog::CR
     // -----------------------------------------------------------
     // 4) WindowVision overloads (non-templates)
     // -----------------------------------------------------------
-
-    std::map<FramePosition, CRFrameContribution>
-      frameAreaContributions(const ISO15099::WindowVision & vision);
-
-    std::map<FramePosition, CRFrameContribution>
-      edgeAreasContributions(const ISO15099::WindowVision & vision);
 
     // Existing CRG/CR/CRB remain unchanged
     CRResult crg(const ISO15099::WindowVision &, const DewPointSettings &, double);
