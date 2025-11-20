@@ -1,6 +1,5 @@
 #include <ranges>
 #include <algorithm>
-#include <numeric>
 #include <stdexcept>
 
 #include <WCECommon.hpp>
@@ -181,37 +180,6 @@ namespace Tarcog::CR
     {
         const auto frames = vision.frames();
         return edgeAreasContributions<FramePosition>(frames);
-    }
-
-    std::map<FramePosition, CRFrameContribution>
-      computeAverages(const std::map<FramePosition, CRFrameContribution> & items)
-    {
-        std::map<FramePosition, CRFrameContribution> out;
-
-        for(const auto & [pos, item] : items)
-        {
-            auto copy = item;
-            copy.average.reset();
-
-            if(!item.data.empty())
-            {
-                const auto [sumFrame, sumEdge] = std::accumulate(item.data.begin(),
-                                                                 item.data.end(),
-                                                                 std::pair{0.0, 0.0},
-                                                                 [](auto acc, const auto & cd) {
-                                                                     acc.first += cd.frame;
-                                                                     acc.second += cd.edge;
-                                                                     return acc;
-                                                                 });
-
-                const double n = static_cast<double>(item.data.size());
-                copy.average = CRFrameContributionAverage{sumFrame / n, sumEdge / n};
-            }
-
-            out[pos] = copy;
-        }
-
-        return out;
     }
 
     std::map<Humidity, double> cogContribution(const double outsideTemperature,

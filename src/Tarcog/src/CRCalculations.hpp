@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <numeric>
+
 #include "CR.hpp"             // Humidity, CRResult, CRResults
 #include "WindowVision.hpp"   // For geometry and frame access
 
@@ -74,8 +76,37 @@ namespace Tarcog::CR
         return out;
     }
 
-    std::map<FramePosition, CRFrameContribution>
-      computeAverages(const std::map<FramePosition, CRFrameContribution> & items);
+    template<typename Pos>
+    std::map<Pos, CRFrameContribution>
+      computeAverages(const std::map<Pos, CRFrameContribution> & items)
+    {
+        std::map<Pos, CRFrameContribution> out;
+
+        for(const auto & [pos, item] : items)
+        {
+            auto copy = item;
+            copy.average.reset();
+
+            if(!item.data.empty())
+            {
+                const auto [sumFrame, sumEdge] = std::accumulate(item.data.begin(),
+                                                                 item.data.end(),
+                                                                 std::pair{0.0, 0.0},
+                                                                 [](auto acc, const auto & cd) {
+                                                                     acc.first += cd.frame;
+                                                                     acc.second += cd.edge;
+                                                                     return acc;
+                                                                 });
+
+                const double n = static_cast<double>(item.data.size());
+                copy.average = CRFrameContributionAverage{sumFrame / n, sumEdge / n};
+            }
+
+            out[pos] = copy;
+        }
+
+        return out;
+    }
 
     //! Frame-only condensation resistance
     CRResult crf(const ISO15099::WindowVision & vision);
