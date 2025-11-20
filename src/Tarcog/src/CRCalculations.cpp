@@ -240,8 +240,13 @@ namespace Tarcog::CR
     //   PUBLIC API
     // =============================================================
 
-    CRResult crdiv(const IWindow & window)
+    std::optional<CRResult> crdiv(const IWindow & window)
     {
+        if(!window.divider())
+        {
+            return {};
+        }
+
         const double area = window.getDividerArea();
         if(area < 0.0)
         {
@@ -250,11 +255,17 @@ namespace Tarcog::CR
 
         const auto rawDeltas = rawDeltasDivider(window);
 
-        return {applyDewPointNormalization(rawDeltas, area), crAverageNormalized(rawDeltas, area)};
+        return CRResult{applyDewPointNormalization(rawDeltas, area),
+                        crAverageNormalized(rawDeltas, area)};
     }
 
-    CRResult crdive(const IWindow & window)
+    std::optional<CRResult> crdive(const IWindow & window)
     {
+        if(!window.divider())
+        {
+            return {};
+        }
+
         const double area = window.getDividerEdgeOfGlassArea();
         if(area < 0.0)
         {
@@ -263,7 +274,8 @@ namespace Tarcog::CR
 
         const auto rawDeltas = rawDeltasDividerEdge(window);
 
-        return {applyDewPointNormalization(rawDeltas, area), crAverageNormalized(rawDeltas, area)};
+        return CRResult{applyDewPointNormalization(rawDeltas, area),
+                        crAverageNormalized(rawDeltas, area)};
     }
 
     CRResult crg(const ISO15099::WindowVision & vision,

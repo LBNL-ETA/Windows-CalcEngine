@@ -132,7 +132,9 @@ namespace Tarcog::CR
         for(const auto & [pos, frame] : frames)
         {
             if(!frame.frameData.condensationData)
+            {
                 continue;
+            }
 
             CRFrameContribution c;
             c.area = ISO15099::frameArea(frame);
@@ -162,8 +164,7 @@ namespace Tarcog::CR
         return out;
     }
 
-    inline std::optional<CRFrameContribution>
-      dividerAreaContribution(const IWindow & window)
+    inline std::optional<CRFrameContribution> dividerAreaContribution(const IWindow & window)
     {
         if(!window.divider())
         {
@@ -176,8 +177,7 @@ namespace Tarcog::CR
         return c;
     }
 
-    inline std::optional<CRFrameContribution>
-      dividerEdgeAreaContribution(const IWindow & window)
+    inline std::optional<CRFrameContribution> dividerEdgeAreaContribution(const IWindow & window)
     {
         if(!window.divider())
         {
@@ -202,6 +202,29 @@ namespace Tarcog::CR
         return accumulateCRValue(item.value(), [](const auto & cd) { return cd.edge; });
     }
 
+    inline CRFrameContribution computeAverage(const CRFrameContribution & item)
+    {
+        CRFrameContribution copy = item;
+        copy.average.reset();
+
+        if(!item.data.empty())
+        {
+            const auto [sumFrame, sumEdge] = std::accumulate(item.data.begin(),
+                                                             item.data.end(),
+                                                             std::pair{0.0, 0.0},
+                                                             [](auto acc, const auto & cd) {
+                                                                 acc.first += cd.frame;
+                                                                 acc.second += cd.edge;
+                                                                 return acc;
+                                                             });
+
+            const auto n = static_cast<double>(item.data.size());
+            copy.average = CRFrameContributionAverage{sumFrame / n, sumEdge / n};
+        }
+
+        return copy;
+    }
+
     template<typename Pos>
     std::map<Pos, CRFrameContribution>
       computeAverages(const std::map<Pos, CRFrameContribution> & items)
@@ -210,32 +233,15 @@ namespace Tarcog::CR
 
         for(const auto & [pos, item] : items)
         {
-            auto copy = item;
-            copy.average.reset();
-
-            if(!item.data.empty())
-            {
-                const auto [sumFrame, sumEdge] = std::accumulate(item.data.begin(),
-                                                                 item.data.end(),
-                                                                 std::pair{0.0, 0.0},
-                                                                 [](auto acc, const auto & cd) {
-                                                                     acc.first += cd.frame;
-                                                                     acc.second += cd.edge;
-                                                                     return acc;
-                                                                 });
-
-                const auto n = static_cast<double>(item.data.size());
-                copy.average = CRFrameContributionAverage{sumFrame / n, sumEdge / n};
-            }
-
-            out[pos] = copy;
+            out[pos] = computeAverage(item);
         }
+
         return out;
     }
 
-    CRResult crdiv(const IWindow & window);
+    std::optional<CRResult> crdiv(const IWindow & window);
 
-    CRResult crdive(const IWindow & window);
+    std::optional<CRResult> crdive(const IWindow & window);
 
     // -----------------------------------------------------------
     // 3) Templated crf/cre

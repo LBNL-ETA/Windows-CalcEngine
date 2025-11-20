@@ -32,12 +32,19 @@ namespace
         igu->setTemperatures({interiorGlassTemperature});
 
         auto window = ISO15099::WindowSingleVision(width, height, tVis, tSol, igu);
-        window.setFrameData({
-            {ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
-            {ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
-            {ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
-            {ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}
-        });
+        window.setFrameData({{ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
+                             {ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
+                             {ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
+                             {ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}});
+
+        return window;
+    }
+
+    ISO15099::WindowSingleVision makeTRR97SingleVisionWithDividers()
+    {
+        auto window{makeTRR97SingleVision()};
+
+        window.setDividersAuto(Frame::sampleDivider());
 
         return window;
     }
@@ -192,10 +199,10 @@ TEST(CR_TRR97, AveragesFrame)
     }
 
     const std::vector expectedAvgFrames = {
-        0.035568,   // Top
-        0.047006,   // Bottom
-        0.043192,   // Left
-        0.043192    // Right
+      0.035568,   // Top
+      0.047006,   // Bottom
+      0.043192,   // Left
+      0.043192    // Right
     };
 
     Helper::testVectors("CR Avg Frame", expectedAvgFrames, avgFrames);
@@ -218,16 +225,10 @@ TEST(CR_TRR97, AveragesEdge)
         avgEdges.push_back(c.average->edge);
     }
 
-    const std::vector expectedAvgEdges = {
-        0.095272,
-        0.198207,
-        0.148171,
-        0.148171
-    };
+    const std::vector expectedAvgEdges = {0.095272, 0.198207, 0.148171, 0.148171};
 
     Helper::testVectors("CR Avg Edge", expectedAvgEdges, avgEdges);
 }
-
 
 
 TEST(CR_TRR97, CRf)
@@ -266,7 +267,8 @@ TEST(CR_TRR97, CRg)
 
     constexpr auto outsideTemperature{255.15};
 
-    auto [values, average] = CR::crg(window.vision(), CR::defaultDewPointSettings(), outsideTemperature);
+    auto [values, average] =
+      CR::crg(window.vision(), CR::defaultDewPointSettings(), outsideTemperature);
 
     ASSERT_EQ(values.size(), 3);
 
@@ -311,4 +313,87 @@ TEST(CR_TRR97, CRb)
     EXPECT_NEAR(values.at(Humidity::H70()), 35.275084, eps);
 
     EXPECT_NEAR(average, 47.169288, eps);
+}
+
+/// Dividers tests
+/// Next sets of tests are used to test dividiers
+///
+
+TEST(CR_TRR97, CR_no_div)
+{
+    const auto window{makeTRR97SingleVision()};
+
+    const auto val = CR::dividerAreaContribution(window);
+
+    EXPECT_EQ(val.has_value(), false);
+}
+
+TEST(CR_TRR97, CR_no_div_edge)
+{
+    const auto window{makeTRR97SingleVision()};
+
+    const auto val = CR::dividerEdgeAreaContribution(window);
+
+    EXPECT_EQ(val.has_value(), false);
+}
+
+TEST(CR_TRR97, CR_div)
+{
+    const auto window = makeTRR97SingleVisionWithDividers();
+    const auto vals = CR::dividerAreaContribution(window);
+
+    ASSERT_EQ(vals.has_value(), true);
+
+    std::vector<double> dividerVals;
+    dividerVals.reserve(3);
+
+    for(const auto & c : vals.value().data)
+    {
+        dividerVals.push_back(c.frame);
+    }
+
+    const std::vector expectedDividerVals = {
+      0.0,
+      0.0067814402282237998,
+      0.15709045529365501,
+    };
+
+    Helper::testVectors("CR Divider Values", expectedDividerVals, dividerVals);
+}
+
+TEST(CR_TRR97, CR_div_edge)
+{
+    const auto window = makeTRR97SingleVisionWithDividers();
+    const auto vals = CR::dividerEdgeAreaContribution(window);
+
+    ASSERT_EQ(vals.has_value(), true);
+
+    std::vector<double> dividerVals;
+    dividerVals.reserve(3);
+
+    for(const auto & c : vals.value().data)
+    {
+        dividerVals.push_back(c.edge);
+    }
+
+    const std::vector expectedDividerVals = {
+      0.0,
+      6.6004547988995896e-05,
+      0.11303797364234899,
+    };
+
+    Helper::testVectors("CR Divider Edge Values", expectedDividerVals, dividerVals);
+}
+
+TEST(CR_TRR97, CR_div_and_edge_average)
+{
+    const auto window = makeTRR97SingleVisionWithDividers();
+    const auto vals = CR::dividerAreaContribution(window);
+    ASSERT_EQ(vals.has_value(), true);
+
+    const auto average = CR::computeAverage(vals.value());
+
+    EXPECT_EQ(average.average.has_value(), true);
+    EXPECT_NEAR(average.average->frame, 0.0546239651739596, eps);
+    EXPECT_NEAR(average.average->edge, 0.037701326063445999, eps);
 }
