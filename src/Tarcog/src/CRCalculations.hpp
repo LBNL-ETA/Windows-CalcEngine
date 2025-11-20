@@ -5,6 +5,7 @@
 
 #include "CR.hpp"
 #include "WindowVision.hpp"
+#include "WholeWindow.hpp"
 
 namespace Tarcog::CR
 {
@@ -82,7 +83,9 @@ namespace Tarcog::CR
     {
         double sum = 0.0;
         for(const auto & [pos, frame] : frames)
+        {
             sum += ISO15099::frameArea(frame);
+        }
         return sum;
     }
 
@@ -91,7 +94,9 @@ namespace Tarcog::CR
     {
         double sum = 0.0;
         for(const auto & [pos, frame] : frames)
+        {
             sum += ISO15099::edgeOfGlassArea(frame);
+        }
         return sum;
     }
 
@@ -135,7 +140,9 @@ namespace Tarcog::CR
         for(const auto & [pos, frame] : frames)
         {
             if(!frame.frameData.condensationData)
+            {
                 continue;
+            }
 
             CRFrameContribution c;
             c.area = ISO15099::edgeOfGlassArea(frame);
@@ -185,7 +192,9 @@ namespace Tarcog::CR
     {
         const double totalArea = totalFrameArea(frames);
         if(totalArea <= 0.0)
+        {
             throw std::runtime_error("Total frame area is zero");
+        }
 
         const auto rawDeltas = rawDeltasFrame(frames);
 
@@ -198,7 +207,9 @@ namespace Tarcog::CR
     {
         const double totalArea = totalEdgeOfGlassArea(frames);
         if(totalArea <= 0.0)
+        {
             throw std::runtime_error("Total edge-of-glass area is zero");
+        }
 
         const auto rawDeltas = rawDeltasEdge(frames);
 
@@ -211,8 +222,28 @@ namespace Tarcog::CR
     // -----------------------------------------------------------
 
     // Existing CRG/CR/CRB remain unchanged
-    CRResult crg(const ISO15099::WindowVision &, const DewPointSettings &, double);
-    CRResult cr(const ISO15099::WindowVision &, const DewPointSettings &, double);
-    CRResult crb(const ISO15099::WindowVision &, const DewPointSettings &, double);
+    CRResult crg(const ISO15099::WindowVision & window,
+                 const DewPointSettings & dewPointSetting,
+                 double outsideTemperature);
+
+    CRResult cr(const ISO15099::WindowSingleVision & window,
+                const DewPointSettings & dewPointSetting,
+                double outsideTemperature);
+    CRResult cr(const ISO15099::DualVisionHorizontal & window,
+                const DewPointSettings & dewPointSetting,
+                double outsideTemperature);
+    CRResult cr(const ISO15099::DualVisionVertical & window,
+                const DewPointSettings & dewPointSetting,
+                double outsideTemperature);
+
+    CRResult crb(const ISO15099::WindowSingleVision & window,
+                 const DewPointSettings & dewPointSettings,
+                 double outsideTemperature);
+    CRResult crb(const ISO15099::DualVisionHorizontal & window,
+                 const DewPointSettings & dewPointSettings,
+                 double outsideTemperature);
+    CRResult crb(const ISO15099::DualVisionVertical & window,
+                 const DewPointSettings & dewPointSettings,
+                 double outsideTemperature);
 
 }   // namespace Tarcog::CR

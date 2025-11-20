@@ -17,7 +17,7 @@ namespace
 {
     constexpr double eps = 1e-6;
 
-    ISO15099::WindowVision makeTRR97SingleVision()
+    ISO15099::WindowSingleVision makeTRR97SingleVision()
     {
         constexpr auto width{1.219};
         constexpr auto height{1.219};
@@ -31,12 +31,15 @@ namespace
         auto igu = std::make_shared<ISO15099::SimpleIGU>(iguUValue, shgc, hout);
         igu->setTemperatures({interiorGlassTemperature});
 
-        ISO15099::WindowVision vision(width, height, tVis, tSol, igu);
-        vision.setFrameData(FramePosition::Bottom, Frame::sillTRR97());
-        vision.setFrameData(FramePosition::Top, Frame::headTRR97());
-        vision.setFrameData(FramePosition::Left, Frame::jambTRR97());
-        vision.setFrameData(FramePosition::Right, Frame::jambTRR97());
-        return vision;
+        auto window = ISO15099::WindowSingleVision(width, height, tVis, tSol, igu);
+        window.setFrameData({
+            {ISO15099::SingleVisionFramePosition::Top, Frame::headTRR97()},
+            {ISO15099::SingleVisionFramePosition::Bottom, Frame::sillTRR97()},
+            {ISO15099::SingleVisionFramePosition::Left, Frame::jambTRR97()},
+            {ISO15099::SingleVisionFramePosition::Right, Frame::jambTRR97()}
+        });
+
+        return window;
     }
 }   // namespace
 
@@ -46,21 +49,21 @@ namespace
 
 TEST(CR_TRR97, FramePositions)
 {
-    const auto vision = makeTRR97SingleVision();
-    const auto v = CR::frameAreaContributions(vision.frames());
+    const auto window = makeTRR97SingleVision();
+    const auto v = CR::frameAreaContributions(window.frames());
 
     ASSERT_EQ(v.size(), 4);
 
-    std::set<FramePosition> found;
+    std::set<ISO15099::SingleVisionFramePosition> found;
     for(const auto & pos : v | std::views::keys)
     {
         found.insert(pos);
     }
 
-    EXPECT_TRUE(found.contains(FramePosition::Top));
-    EXPECT_TRUE(found.contains(FramePosition::Bottom));
-    EXPECT_TRUE(found.contains(FramePosition::Left));
-    EXPECT_TRUE(found.contains(FramePosition::Right));
+    EXPECT_TRUE(found.contains(ISO15099::SingleVisionFramePosition::Top));
+    EXPECT_TRUE(found.contains(ISO15099::SingleVisionFramePosition::Bottom));
+    EXPECT_TRUE(found.contains(ISO15099::SingleVisionFramePosition::Left));
+    EXPECT_TRUE(found.contains(ISO15099::SingleVisionFramePosition::Right));
 }
 
 TEST(CR_TRR97, FrameAreas)
@@ -259,11 +262,11 @@ TEST(CR_TRR97, CRe)
 
 TEST(CR_TRR97, CRg)
 {
-    const auto vision{makeTRR97SingleVision()};
+    const auto window{makeTRR97SingleVision()};
 
     constexpr auto outsideTemperature{255.15};
 
-    auto [values, average] = CR::crg(vision, CR::defaultDewPointSettings(), outsideTemperature);
+    auto [values, average] = CR::crg(window.vision(), CR::defaultDewPointSettings(), outsideTemperature);
 
     ASSERT_EQ(values.size(), 3);
 
@@ -276,12 +279,12 @@ TEST(CR_TRR97, CRg)
 
 TEST(CR_TRR97, CR)
 {
-    const auto vision{makeTRR97SingleVision()};
+    const auto window{makeTRR97SingleVision()};
 
     constexpr auto outsideTemperature{255.15};
 
     const auto [values, average] =
-      CR::cr(vision, CR::defaultDewPointSettings(), outsideTemperature);
+      CR::cr(window, CR::defaultDewPointSettings(), outsideTemperature);
 
     ASSERT_EQ(values.size(), 3);
 
@@ -294,12 +297,12 @@ TEST(CR_TRR97, CR)
 
 TEST(CR_TRR97, CRb)
 {
-    const auto vision{makeTRR97SingleVision()};
+    const auto window{makeTRR97SingleVision()};
 
     constexpr auto outsideTemperature{255.15};
 
     const auto [values, average] =
-      CR::crb(vision, CR::defaultDewPointSettings(), outsideTemperature);
+      CR::crb(window, CR::defaultDewPointSettings(), outsideTemperature);
 
     ASSERT_EQ(values.size(), 3);
 

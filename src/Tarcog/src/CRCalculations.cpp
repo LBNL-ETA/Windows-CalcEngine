@@ -169,8 +169,8 @@ namespace Tarcog::CR
     }
 
     std::map<Humidity, double> rawDeltasGlassAndEdge(const ISO15099::WindowVision & vision,
-                                                    const DewPointSettings & dps,
-                                                    const double outsideTemperature)
+                                                     const DewPointSettings & dps,
+                                                     const double outsideTemperature)
     {
         const auto glass = cogContribution(
           outsideTemperature, vision.getTemperatures(ISO15099::System::SHGC).back(), dps);
@@ -252,25 +252,71 @@ namespace Tarcog::CR
         return {applyDewPointNormalization(raw, area), crAverageNormalized(raw, area)};
     }
 
-    CRResult cr(const ISO15099::WindowVision & vision,
+    CRResult cr(const ISO15099::WindowSingleVision & window,
                 const DewPointSettings & dewPointSettings,
                 const double outsideTemperature)
     {
-        const auto crGlassEdge = crge(vision, dewPointSettings, outsideTemperature);
-        const auto crFrame = crf(vision.frames());
+        const auto crGlassEdge = crge(window.vision(), dewPointSettings, outsideTemperature);
+        const auto crFrame = crf(window.frames());
 
         return combineMin(crFrame, crGlassEdge);
     }
 
-    CRResult crb(const ISO15099::WindowVision & vision,
+    CRResult cr(const ISO15099::DualVisionHorizontal & window,
+                const DewPointSettings & dewPointSettings,
+                const double outsideTemperature)
+    {
+        const auto crGlassEdge1 = crge(window.vision1(), dewPointSettings, outsideTemperature);
+        const auto crGlassEdge2 = crge(window.vision2(), dewPointSettings, outsideTemperature);
+        const auto crFrame = crf(window.frames());
+
+        return combineMin(crFrame, crGlassEdge1, crGlassEdge2);
+    }
+
+    CRResult cr(const ISO15099::DualVisionVertical & window,
+                const DewPointSettings & dewPointSettings,
+                const double outsideTemperature)
+    {
+        const auto crGlassEdge1 = crge(window.vision1(), dewPointSettings, outsideTemperature);
+        const auto crGlassEdge2 = crge(window.vision2(), dewPointSettings, outsideTemperature);
+        const auto crFrame = crf(window.frames());
+
+        return combineMin(crFrame, crGlassEdge1, crGlassEdge2);
+    }
+
+    CRResult crb(const ISO15099::WindowSingleVision & window,
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
     {
-        const CRResult frame = crf(vision.frames());
-        const CRResult edge = cre(vision.frames());
-        const CRResult glass = crg(vision, dewPointSettings, outsideTemperature);
+        const CRResult frame = crf(window.frames());
+        const CRResult edge = cre(window.frames());
+        const CRResult glass = crg(window.vision(), dewPointSettings, outsideTemperature);
 
         return combineMin(frame, edge, glass);
+    }
+
+    CRResult crb(const ISO15099::DualVisionHorizontal & window,
+                 const DewPointSettings & dewPointSettings,
+                 const double outsideTemperature)
+    {
+        const CRResult frame = crf(window.frames());
+        const CRResult edge = cre(window.frames());
+        const CRResult glass1 = crg(window.vision1(), dewPointSettings, outsideTemperature);
+        const CRResult glass2 = crg(window.vision2(), dewPointSettings, outsideTemperature);
+
+        return combineMin(frame, edge, glass1, glass2);
+    }
+
+    CRResult crb(const ISO15099::DualVisionVertical & window,
+                 const DewPointSettings & dewPointSettings,
+                 const double outsideTemperature)
+    {
+        const CRResult frame = crf(window.frames());
+        const CRResult edge = cre(window.frames());
+        const CRResult glass1 = crg(window.vision1(), dewPointSettings, outsideTemperature);
+        const CRResult glass2 = crg(window.vision2(), dewPointSettings, outsideTemperature);
+
+        return combineMin(frame, edge, glass1, glass2);
     }
 
 }   // namespace Tarcog::CR

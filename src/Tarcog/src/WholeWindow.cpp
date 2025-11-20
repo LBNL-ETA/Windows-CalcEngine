@@ -38,88 +38,88 @@ namespace Tarcog::ISO15099
                                            double tvis,
                                            double tsol,
                                            std::shared_ptr<IIGUSystem> iguSystem) :
-        vision(width, height, tvis, tsol, std::move(iguSystem))
+        m_vision(width, height, tvis, tsol, std::move(iguSystem))
     {}
 
     double WindowSingleVision::area() const
     {
-        return vision.area();
+        return m_vision.area();
     }
 
     double WindowSingleVision::uValue() const
     {
-        return vision.uValue();
+        return m_vision.uValue();
     }
 
     double WindowSingleVision::shgc() const
     {
-        return vision.shgc();
+        return m_vision.shgc();
     }
 
     double WindowSingleVision::shgc(const double tSol) const
     {
-        return vision.shgc(tSol);
+        return m_vision.shgc(tSol);
     }
 
     double WindowSingleVision::shgc0() const
     {
-        return vision.shgc0();
+        return m_vision.shgc0();
     }
 
     double WindowSingleVision::shgc1() const
     {
-        return vision.shgc1();
+        return m_vision.shgc1();
     }
 
     double WindowSingleVision::vt() const
     {
-        return vision.vt();
+        return m_vision.vt();
     }
 
     double WindowSingleVision::vt(const double tVis) const
     {
-        return vision.vt(tVis);
+        return m_vision.vt(tVis);
     }
 
     double WindowSingleVision::vt0() const
     {
-        return vision.vt0();
+        return m_vision.vt0();
     }
 
     double WindowSingleVision::vt1() const
     {
-        return vision.vt1();
+        return m_vision.vt1();
     }
 
     double WindowSingleVision::uValueCOG() const
     {
-        return vision.uValueCOG();
+        return m_vision.uValueCOG();
     }
 
     double WindowSingleVision::shgcCOG() const
     {
-        return vision.shgcCOG();
+        return m_vision.shgcCOG();
     }
 
     double WindowSingleVision::uValueCOGAverage() const
     {
-        return vision.uValueCOG();
+        return m_vision.uValueCOG();
     }
 
     double WindowSingleVision::shgcCOGAverage() const
     {
-        return vision.shgcCOG();
+        return m_vision.shgcCOG();
     }
 
     double WindowSingleVision::visionPercentage() const
     {
-        return vision.visionPercentage();
+        return m_vision.visionPercentage();
     }
 
     void WindowSingleVision::setFrameData(SingleVisionFramePosition position,
                                           const FrameData & frameData)
     {
-        vision.setFrameData(Helper::kFrameMapping.at(position), frameData);
+        m_vision.setFrameData(Helper::kFrameMapping.at(position), frameData);
     }
 
     void WindowSingleVision::setFrameData(const SingleVisionFrameMap & frames)
@@ -135,20 +135,20 @@ namespace Tarcog::ISO15099
         for(const auto pos : Helper::kAllSinglePositions)
         {
             const FramePosition fp = Helper::kFrameMapping.at(pos);
-            out.emplace(pos, vision.frame(fp));
+            out.emplace(pos, m_vision.frame(fp));
         }
         return out;
     }
 
     double WindowSingleVision::getFrameArea(const SingleVisionFramePosition position) const
     {
-        return frameArea(vision.frame(Helper::kFrameMapping.at(position)));
+        return frameArea(m_vision.frame(Helper::kFrameMapping.at(position)));
     }
 
     double
       WindowSingleVision::getFrameEdgeOfGlassArea(const SingleVisionFramePosition position) const
     {
-        return edgeOfGlassArea(vision.frame(Helper::kFrameMapping.at(position)));
+        return edgeOfGlassArea(m_vision.frame(Helper::kFrameMapping.at(position)));
     }
 
     double WindowSingleVision::getFrameArea() const
@@ -175,42 +175,47 @@ namespace Tarcog::ISO15099
                                          size_t nHorizontal,
                                          size_t nVertical)
     {
-        vision.setDividers(frameData, nHorizontal, nVertical);
+        m_vision.setDividers(frameData, nHorizontal, nVertical);
     }
 
     void WindowSingleVision::setDividersAuto(const FrameData & frameData)
     {
-        vision.setDividersAuto(frameData);
+        m_vision.setDividersAuto(frameData);
     }
 
     double WindowSingleVision::getDividerArea() const
     {
-        return vision.dividerArea();
+        return m_vision.dividerArea();
     }
 
     double WindowSingleVision::getDividerEdgeOfGlassArea() const
     {
-        return vision.dividerEdgeOfGlassArea();
+        return m_vision.dividerEdgeOfGlassArea();
     }
 
     IGUDimensions WindowSingleVision::getIGUDimensions() const
     {
-        return {vision.getIGUWidth(), vision.getIGUHeight()};
+        return {m_vision.getIGUWidth(), m_vision.getIGUHeight()};
     }
 
     void WindowSingleVision::setUValueIGUTolerance(double uValue)
     {
-        vision.setUValueIGUTolerance(uValue);
+        m_vision.setUValueIGUTolerance(uValue);
     }
 
     void WindowSingleVision::setThicknessIGUTolerance(double thickness)
     {
-        vision.setThicknessIGUTolerance(thickness);
+        m_vision.setThicknessIGUTolerance(thickness);
+    }
+
+    const WindowVision & WindowSingleVision::vision() const
+    {
+        return m_vision;
     }
 
     IGUMismatch WindowSingleVision::iguMissmatch(const double geometricalThickness) const
     {
-        return vision.iguMissmatch(geometricalThickness);
+        return m_vision.iguMissmatch(geometricalThickness);
     }
 
     ////////////////////////////////////////////////

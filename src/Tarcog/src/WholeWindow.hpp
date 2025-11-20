@@ -57,7 +57,7 @@ namespace Tarcog::ISO15099
         void setFrameData(SingleVisionFramePosition position, const FrameData & frameData);
         void setFrameData(const SingleVisionFrameMap & frames);
 
-        std::map<SingleVisionFramePosition, Frame> frames() const;
+        [[nodiscard]] std::map<SingleVisionFramePosition, Frame> frames() const;
 
         [[nodiscard]] double getFrameArea(SingleVisionFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(SingleVisionFramePosition position) const;
@@ -76,13 +76,15 @@ namespace Tarcog::ISO15099
         void setUValueIGUTolerance(double uValue) override;
         void setThicknessIGUTolerance(double thickness) override;
 
+        const WindowVision & vision() const;
+
         [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const;
 
     protected:
         [[nodiscard]] double visionPercentage() const override;
 
     private:
-        WindowVision vision;
+        WindowVision m_vision;
     };
 
     ////////////////////////////////////////////////
@@ -294,7 +296,7 @@ namespace Tarcog::ISO15099
 
         void setFrameData(DualHorizontalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualHorizontalFrameMap & frames);
-        std::map<DualHorizontalFramePosition, Frame> frames() const;
+        [[nodiscard]] std::map<DualHorizontalFramePosition, Frame> frames() const;
 
         [[nodiscard]] double getFrameArea(DualHorizontalFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(DualHorizontalFramePosition position) const;
@@ -382,7 +384,7 @@ namespace Tarcog::ISO15099
 
         void setFrameData(DualVerticalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualVerticalFrameMap & frames);
-        std::map<DualVerticalFramePosition, Frame> frames() const;
+        [[nodiscard]] std::map<DualVerticalFramePosition, Frame> frames() const;
 
         [[nodiscard]] double getFrameArea(DualVerticalFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(DualVerticalFramePosition position) const;
