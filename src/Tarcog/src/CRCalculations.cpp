@@ -172,21 +172,15 @@ namespace Tarcog::CR
     std::map<FramePosition, CRFrameContribution>
       frameAreaContributions(const ISO15099::WindowVision & vision)
     {
-        auto areaGetter = [&](const FramePosition pos, const ISO15099::Frame &) {
-            return vision.frameArea(pos);
-        };
-
-        return collectCRFrameContributions(vision, areaGetter);
+        const auto frames = vision.frames();
+        return frameAreaContributions<FramePosition>(frames);
     }
 
     std::map<FramePosition, CRFrameContribution>
       edgeAreasContributions(const ISO15099::WindowVision & vision)
     {
-        auto areaGetter = [&](const FramePosition pos, const ISO15099::Frame &) {
-            return vision.edgeOfGlassArea(pos);
-        };
-
-        return collectCRFrameContributions(vision, areaGetter);
+        const auto frames = vision.frames();
+        return edgeAreasContributions<FramePosition>(frames);
     }
 
     std::map<FramePosition, CRFrameContribution>

@@ -30,6 +30,50 @@ namespace Tarcog::CR
     std::map<FramePosition, CRFrameContribution>
       edgeAreasContributions(const ISO15099::WindowVision & vision);
 
+    template<typename Pos>
+    std::map<Pos, CRFrameContribution>
+      frameAreaContributions(const std::map<Pos, ISO15099::Frame> & frames)
+    {
+        {
+            std::map<Pos, CRFrameContribution> out;
+
+            for(const auto & [pos, frame] : frames)
+            {
+                if(!frame.frameData.condensationData)
+                    continue;
+
+                CRFrameContribution c;
+                c.area = ISO15099::frameArea(frame);
+                c.data = *frame.frameData.condensationData;
+
+                out[pos] = c;
+            }
+
+            return out;
+        }
+    }
+
+    template<typename Pos>
+    std::map<Pos, CRFrameContribution>
+      edgeAreasContributions(const std::map<Pos, ISO15099::Frame> & frames)
+    {
+        std::map<Pos, CRFrameContribution> out;
+
+        for(const auto & [pos, frame] : frames)
+        {
+            if(!frame.frameData.condensationData)
+                continue;
+
+            CRFrameContribution c;
+            c.area = ISO15099::edgeOfGlassArea(frame);
+            c.data = *frame.frameData.condensationData;
+
+            out[pos] = c;
+        }
+
+        return out;
+    }
+
     std::map<FramePosition, CRFrameContribution>
       computeAverages(const std::map<FramePosition, CRFrameContribution> & items);
 
