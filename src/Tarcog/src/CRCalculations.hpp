@@ -163,31 +163,43 @@ namespace Tarcog::CR
     }
 
     inline std::optional<CRFrameContribution>
-      dividerAreaContribution(const ISO15099::WindowSingleVision & window)
+      dividerAreaContribution(const IWindow & window)
     {
-        if(!window.vision().divider())
+        if(!window.divider())
         {
             return std::nullopt;
         }
 
         CRFrameContribution c;
         c.area = window.getDividerArea();
-        c.data = *window.vision().divider()->frame.condensationData;
+        c.data = *window.divider()->frame.condensationData;
         return c;
     }
 
     inline std::optional<CRFrameContribution>
-      dividerEdgeAreaContribution(const ISO15099::WindowSingleVision & window)
+      dividerEdgeAreaContribution(const IWindow & window)
     {
-        if(!window.vision().divider())
+        if(!window.divider())
         {
             return std::nullopt;
         }
 
         CRFrameContribution c;
         c.area = window.getDividerEdgeOfGlassArea();
-        c.data = *window.vision().divider()->frame.condensationData;
+        c.data = *window.divider()->frame.condensationData;
         return c;
+    }
+
+    inline std::map<Humidity, double> rawDeltasDivider(const IWindow & window)
+    {
+        const auto item = dividerAreaContribution(window);
+        return accumulateCRValue(item.value(), [](const auto & cd) { return cd.frame; });
+    }
+
+    inline std::map<Humidity, double> rawDeltasDividerEdge(const IWindow & window)
+    {
+        const auto item = dividerEdgeAreaContribution(window);
+        return accumulateCRValue(item.value(), [](const auto & cd) { return cd.edge; });
     }
 
     template<typename Pos>
@@ -212,7 +224,7 @@ namespace Tarcog::CR
                                                                      return acc;
                                                                  });
 
-                const double n = static_cast<double>(item.data.size());
+                const auto n = static_cast<double>(item.data.size());
                 copy.average = CRFrameContributionAverage{sumFrame / n, sumEdge / n};
             }
 
@@ -220,6 +232,10 @@ namespace Tarcog::CR
         }
         return out;
     }
+
+    CRResult crdiv(const IWindow & window);
+
+    CRResult crdive(const IWindow & window);
 
     // -----------------------------------------------------------
     // 3) Templated crf/cre

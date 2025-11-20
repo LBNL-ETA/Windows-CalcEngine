@@ -70,13 +70,14 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] double getDividerArea() const override;
         [[nodiscard]] double getDividerEdgeOfGlassArea() const override;
+        [[nodiscard]] std::optional<DividerData> divider() const override;
 
         [[nodiscard]] IGUDimensions getIGUDimensions() const override;
 
         void setUValueIGUTolerance(double uValue) override;
         void setThicknessIGUTolerance(double thickness) override;
 
-        const WindowVision & vision() const;
+        [[nodiscard]] const WindowVision & vision() const;
 
         [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const;
 
@@ -244,6 +245,12 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double getDividerEdgeOfGlassArea() const override
         {
             return vision1().dividerEdgeOfGlassArea() + vision2().dividerEdgeOfGlassArea();
+        }
+
+        [[nodiscard]] std::optional<DividerData> divider() const override
+        {
+            // Dividers are identical and just return it from first vision
+            return vision1().divider();
         }
 
     protected:

@@ -193,6 +193,11 @@ namespace Tarcog::ISO15099
         return m_vision.dividerEdgeOfGlassArea();
     }
 
+    std::optional<DividerData> WindowSingleVision::divider() const
+    {
+        return m_vision.divider();
+    }
+
     IGUDimensions WindowSingleVision::getIGUDimensions() const
     {
         return {m_vision.getIGUWidth(), m_vision.getIGUHeight()};

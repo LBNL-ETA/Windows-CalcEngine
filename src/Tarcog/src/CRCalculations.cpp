@@ -240,6 +240,32 @@ namespace Tarcog::CR
     //   PUBLIC API
     // =============================================================
 
+    CRResult crdiv(const IWindow & window)
+    {
+        const double area = window.getDividerArea();
+        if(area < 0.0)
+        {
+            throw std::runtime_error("Total divider area is less than zero");
+        }
+
+        const auto rawDeltas = rawDeltasDivider(window);
+
+        return {applyDewPointNormalization(rawDeltas, area), crAverageNormalized(rawDeltas, area)};
+    }
+
+    CRResult crdive(const IWindow & window)
+    {
+        const double area = window.getDividerEdgeOfGlassArea();
+        if(area < 0.0)
+        {
+            throw std::runtime_error("Total divider area is less than zero");
+        }
+
+        const auto rawDeltas = rawDeltasDividerEdge(window);
+
+        return {applyDewPointNormalization(rawDeltas, area), crAverageNormalized(rawDeltas, area)};
+    }
+
     CRResult crg(const ISO15099::WindowVision & vision,
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
