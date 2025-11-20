@@ -294,7 +294,7 @@ namespace Tarcog::ISO15099
 
         void setFrameData(DualHorizontalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualHorizontalFrameMap & frames);
-        std::map<DualHorizontalFramePosition, FrameData> frames() const;
+        std::map<DualHorizontalFramePosition, Frame> frames() const;
 
         [[nodiscard]] double getFrameArea(DualHorizontalFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(DualHorizontalFramePosition position) const;
@@ -382,7 +382,7 @@ namespace Tarcog::ISO15099
 
         void setFrameData(DualVerticalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualVerticalFrameMap & frames);
-        std::map<DualVerticalFramePosition, FrameData> frames() const;
+        std::map<DualVerticalFramePosition, Frame> frames() const;
 
         [[nodiscard]] double getFrameArea(DualVerticalFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(DualVerticalFramePosition position) const;

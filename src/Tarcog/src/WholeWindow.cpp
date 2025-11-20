@@ -382,9 +382,10 @@ namespace Tarcog::ISO15099
         });
     }
 
-    std::map<DualHorizontalFramePosition, FrameData> DualVisionHorizontal::frames() const
+    std::map<DualHorizontalFramePosition, Frame> DualVisionHorizontal::frames() const
     {
-        std::map<DualHorizontalFramePosition, FrameData> out;
+        std::map<DualHorizontalFramePosition, Frame> out;
+
         for(const auto pos : kAllDualHPositions)
         {
             const auto it = kDualHPosToFrames.find(pos);
@@ -394,7 +395,7 @@ namespace Tarcog::ISO15099
             }
 
             const auto & refs = it->second;
-            std::vector<FrameData> found;
+            std::vector<Frame> found;
 
             for(const auto & maybeRef : refs)
             {
@@ -402,8 +403,9 @@ namespace Tarcog::ISO15099
                 {
                     continue;
                 }
+
                 const Frame & f = getFrameFromRef(*this, *maybeRef);
-                found.push_back(f.frameData);
+                found.push_back(f);   // <-- push whole Frame, not FrameData
             }
 
             if(found.empty())
@@ -417,9 +419,13 @@ namespace Tarcog::ISO15099
             }
             else
             {
-                out.emplace(pos, mergeFrameWidths(found[0], found[1]));
+                const size_t edgeMultiplier =
+                  (pos == DualHorizontalFramePosition::MeetingRail ? 2 : 1);
+
+                out.emplace(pos, mergeFrameWidths(found[0], found[1], edgeMultiplier));
             }
         }
+
         return out;
     }
 
@@ -670,9 +676,10 @@ namespace Tarcog::ISO15099
         });
     }
 
-    std::map<DualVerticalFramePosition, FrameData> DualVisionVertical::frames() const
+    std::map<DualVerticalFramePosition, Frame> DualVisionVertical::frames() const
     {
-        std::map<DualVerticalFramePosition, FrameData> out;
+        std::map<DualVerticalFramePosition, Frame> out;
+
         for(const auto pos : kAllDualVPositions)
         {
             const auto it = kDualVPosToFrames.find(pos);
@@ -682,7 +689,7 @@ namespace Tarcog::ISO15099
             }
 
             const auto & refs = it->second;
-            std::vector<FrameData> found;
+            std::vector<Frame> found;
 
             for(const auto & maybeRef : refs)
             {
@@ -690,8 +697,9 @@ namespace Tarcog::ISO15099
                 {
                     continue;
                 }
+
                 const Frame & f = getFrameFromRefV(*this, *maybeRef);
-                found.push_back(f.frameData);
+                found.push_back(f);   // <-- Use full Frame, not FrameData
             }
 
             if(found.empty())
@@ -705,11 +713,16 @@ namespace Tarcog::ISO15099
             }
             else
             {
-                out.emplace(pos, mergeFrameWidths(found[0], found[1]));
+                const size_t edgeMultiplier =
+                  (pos == DualVerticalFramePosition::MeetingRail ? 2 : 1);
+
+                out.emplace(pos, mergeFrameWidths(found[0], found[1], edgeMultiplier));
             }
         }
+
         return out;
     }
+
 
     double DualVisionVertical::getFrameArea(const DualVerticalFramePosition position) const
     {
