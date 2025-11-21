@@ -397,3 +397,37 @@ TEST(CR_TRR97, CR_div_and_edge_average)
     EXPECT_NEAR(average.average->frame, 0.0546239651739596, eps);
     EXPECT_NEAR(average.average->edge, 0.037701326063445999, eps);
 }
+
+TEST(CR_TRR97, CRdiv)
+{
+    const auto window{makeTRR97SingleVisionWithDividers()};
+
+    const auto values = CR::crdiv(window);
+
+    ASSERT_EQ(values.has_value(), true);
+
+    ASSERT_EQ(values->values.size(), 3U);
+
+    EXPECT_NEAR(values->values.at(Humidity::H30()), 100.0, eps);
+    EXPECT_NEAR(values->values.at(Humidity::H50()), 81.0718873168033, eps);
+    EXPECT_NEAR(values->values.at(Humidity::H70()), 46.042734393839247, eps);
+
+    EXPECT_NEAR(values->average, 62.057342911673608, eps);
+}
+
+TEST(CR_TRR97, CRdiv_edge)
+{
+    const auto window{makeTRR97SingleVisionWithDividers()};
+
+    const auto values = CR::crdive(window);
+
+    ASSERT_EQ(values.has_value(), true);
+
+    ASSERT_EQ(values->values.size(), 3U);
+
+    EXPECT_NEAR(values->values.at(Humidity::H30()), 100.0, eps);
+    EXPECT_NEAR(values->values.at(Humidity::H50()), 95.95866715567584, eps);
+    EXPECT_NEAR(values->values.at(Humidity::H70()), 51.648703792025451, eps);
+
+    EXPECT_NEAR(values->average, 66.468559682553035, eps);
+}
