@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "WholeWindowConfigurations.hpp"
 #include "WindowVision.hpp"
 
@@ -55,6 +57,8 @@ namespace Tarcog::ISO15099
         void setFrameData(SingleVisionFramePosition position, const FrameData & frameData);
         void setFrameData(const SingleVisionFrameMap & frames);
 
+        [[nodiscard]] std::map<SingleVisionFramePosition, Frame> frames() const;
+
         [[nodiscard]] double getFrameArea(SingleVisionFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(SingleVisionFramePosition position) const;
 
@@ -64,13 +68,16 @@ namespace Tarcog::ISO15099
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
-        [[nodiscard]] double getDividerArea() const;
-        [[nodiscard]] double getDividerEdgeOfGlassArea() const;
+        [[nodiscard]] double getDividerArea() const override;
+        [[nodiscard]] double getDividerEdgeOfGlassArea() const override;
+        [[nodiscard]] std::optional<DividerData> divider() const override;
 
         [[nodiscard]] IGUDimensions getIGUDimensions() const override;
 
         void setUValueIGUTolerance(double uValue) override;
         void setThicknessIGUTolerance(double thickness) override;
+
+        [[nodiscard]] const WindowVision & vision() const;
 
         [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const;
 
@@ -78,7 +85,7 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double visionPercentage() const override;
 
     private:
-        WindowVision vision;
+        WindowVision m_vision;
     };
 
     ////////////////////////////////////////////////
@@ -230,14 +237,20 @@ namespace Tarcog::ISO15099
             vision2().setThicknessIGUTolerance(thickness);
         }
 
-        [[nodiscard]] double getDividerArea() const
+        [[nodiscard]] double getDividerArea() const override
         {
             return vision1().dividerArea() + vision2().dividerArea();
         }
 
-        [[nodiscard]] double getDividerEdgeOfGlassArea() const
+        [[nodiscard]] double getDividerEdgeOfGlassArea() const override
         {
             return vision1().dividerEdgeOfGlassArea() + vision2().dividerEdgeOfGlassArea();
+        }
+
+        [[nodiscard]] std::optional<DividerData> divider() const override
+        {
+            // Dividers are identical and just return it from first vision
+            return vision1().divider();
         }
 
     protected:
@@ -290,6 +303,7 @@ namespace Tarcog::ISO15099
 
         void setFrameData(DualHorizontalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualHorizontalFrameMap & frames);
+        [[nodiscard]] std::map<DualHorizontalFramePosition, Frame> frames() const;
 
         [[nodiscard]] double getFrameArea(DualHorizontalFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(DualHorizontalFramePosition position) const;
@@ -377,6 +391,7 @@ namespace Tarcog::ISO15099
 
         void setFrameData(DualVerticalFramePosition position, const FrameData & frameData);
         void setFrameData(const DualVerticalFrameMap & frames);
+        [[nodiscard]] std::map<DualVerticalFramePosition, Frame> frames() const;
 
         [[nodiscard]] double getFrameArea(DualVerticalFramePosition position) const;
         [[nodiscard]] double getFrameEdgeOfGlassArea(DualVerticalFramePosition position) const;

@@ -52,7 +52,6 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double vt0() const override;
         [[nodiscard]] double vt1() const override;
 
-
         [[nodiscard]] double visionPercentage() const override;
         [[nodiscard]] double hc() const override;
         [[nodiscard]] double uValueCOG() const;
@@ -67,6 +66,8 @@ namespace Tarcog::ISO15099
 
         void setDividers(const FrameData& divider, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & divider);
+
+        [[nodiscard]] std::optional<DividerData> divider() const;
 
         //! Returns total area of dividers assigned to this window vision area
         [[nodiscard]] double dividerArea() const;

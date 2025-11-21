@@ -1,6 +1,5 @@
 #include <ranges>
 #include <algorithm>
-#include <numeric>
 #include <stdexcept>
 
 #include <WCECommon.hpp>
@@ -30,30 +29,14 @@ namespace Tarcog::CR
     //   Helpers
     // =============================================================
 
-    template<typename AreaGetter>
-    std::vector<CRFrameContribution>
-      collectCRFrameContributions(const ISO15099::WindowVision & vision, AreaGetter getArea)
-    {
-        std::vector<CRFrameContribution> out;
-
-        for(const auto & [pos, frame] : vision.frames())
-        {
-            if(!frame.frameData.condensationData)
-                continue;
-
-            out.push_back({pos, getArea(pos, frame), *frame.frameData.condensationData});
-        }
-
-        return out;
-    }
-
     template<typename Getter>
-    std::map<Humidity, double> accumulateCRValues(const std::vector<CRFrameContribution> & items,
-                                                  Getter getValue)
+    std::map<Humidity, double>
+      accumulateCRValues(const std::map<FramePosition, CRFrameContribution> & items,
+                         Getter getValue)
     {
         std::map<Humidity, double> acc;
 
-        for(const auto & item : items)
+        for(const auto & item : items | std::views::values)
         {
             for(const auto & cd : item.data)
             {
@@ -164,54 +147,6 @@ namespace Tarcog::CR
           [&vision](double sum, const auto & pos) { return sum + vision.frameArea(pos); });
     }
 
-    std::vector<CRFrameContribution> frameAreaContributions(const ISO15099::WindowVision & vision)
-    {
-        auto areaGetter = [&](const FramePosition pos, const ISO15099::Frame &) {
-            return vision.frameArea(pos);
-        };
-
-        return collectCRFrameContributions(vision, areaGetter);
-    }
-
-    std::vector<CRFrameContribution> edgeAreasContributions(const ISO15099::WindowVision & vision)
-    {
-        auto areaGetter = [&](const FramePosition pos, const ISO15099::Frame &) {
-            return vision.edgeOfGlassArea(pos);
-        };
-
-        return collectCRFrameContributions(vision, areaGetter);
-    }
-
-    std::vector<CRFrameContribution> computeAverages(const std::vector<CRFrameContribution> & items)
-    {
-        std::vector<CRFrameContribution> out;
-        out.reserve(items.size());
-
-        std::ranges::transform(items, std::back_inserter(out), [](const auto & item) {
-            auto copy = item;
-            copy.average.reset();
-
-            if(!item.data.empty())
-            {
-                const auto [sumFrame, sumEdge] = std::accumulate(item.data.begin(),
-                                                                 item.data.end(),
-                                                                 std::pair{0.0, 0.0},
-                                                                 [](auto acc, const auto & cd) {
-                                                                     acc.first += cd.frame;
-                                                                     acc.second += cd.edge;
-                                                                     return acc;
-                                                                 });
-
-                const double n = static_cast<double>(item.data.size());
-                copy.average = CRFrameContributionAverage{sumFrame / n, sumEdge / n};
-            }
-
-            return copy;
-        });
-
-        return out;
-    }
-
     std::map<Humidity, double> cogContribution(const double outsideTemperature,
                                                const double insideGlassTemp,
                                                const DewPointSettings & dps)
@@ -233,28 +168,14 @@ namespace Tarcog::CR
         return out;
     }
 
-    std::map<Humidity, double> rawDeltasFrame(const ISO15099::WindowVision & vision)
-    {
-        const auto items = frameAreaContributions(vision);
-
-        return accumulateCRValues(items, [](const auto & cd) { return cd.frame; });
-    }
-
-    std::map<Humidity, double> rawDeltasEdge(const ISO15099::WindowVision & vision)
-    {
-        const auto items = edgeAreasContributions(vision);
-
-        return accumulateCRValues(items, [](const auto & cd) { return cd.edge; });
-    }
-
-    std::map<Humidity, double> rawDeltsGlassAndEdge(const ISO15099::WindowVision & vision,
-                                                    const DewPointSettings & dps,
-                                                    const double outsideTemperature)
+    std::map<Humidity, double> rawDeltasGlassAndEdge(const ISO15099::WindowVision & vision,
+                                                     const DewPointSettings & dps,
+                                                     const double outsideTemperature)
     {
         const auto glass = cogContribution(
           outsideTemperature, vision.getTemperatures(ISO15099::System::SHGC).back(), dps);
 
-        const auto rawEdges = rawDeltasEdge(vision);
+        const auto rawEdges = rawDeltasEdge(vision.frames());
 
         return sum(glass, rawEdges);
     }
@@ -310,7 +231,7 @@ namespace Tarcog::CR
                   const double outsideTemperature)
     {
         const double area = vision.visionPercentage() * vision.area();
-        const auto totals = rawDeltsGlassAndEdge(vision, dewPointSettings, outsideTemperature);
+        const auto totals = rawDeltasGlassAndEdge(vision, dewPointSettings, outsideTemperature);
 
         return {applyDewPointNormalization(totals, area), crAverageNormalized(totals, area)};
     }
@@ -318,32 +239,43 @@ namespace Tarcog::CR
     // =============================================================
     //   PUBLIC API
     // =============================================================
-    CRResult crf(const ISO15099::WindowVision & vision)
+
+    std::optional<CRResult> crdiv(const IWindow & window)
     {
-        const double totalArea = totalFrameArea(vision);
-        if(totalArea <= 0.0)
+        if(!window.divider())
         {
-            throw std::runtime_error("Total frame area is zero");
+            return {};
         }
 
-        const auto rawDeltas = rawDeltasFrame(vision);
+        const double area = window.getDividerArea();
+        if(area < 0.0)
+        {
+            throw std::runtime_error("Total divider area is less than zero");
+        }
 
-        return {applyDewPointNormalization(rawDeltas, totalArea),
-                crAverageNormalized(rawDeltas, totalArea)};
+        const auto rawDeltas = rawDeltasDivider(window);
+
+        return CRResult{applyDewPointNormalization(rawDeltas, area),
+                        crAverageNormalized(rawDeltas, area)};
     }
 
-    CRResult cre(const ISO15099::WindowVision & vision)
+    std::optional<CRResult> crdive(const IWindow & window)
     {
-        const double totalArea = vision.edgeOfGlassArea();
-        if(totalArea <= 0.0)
+        if(!window.divider())
         {
-            throw std::runtime_error("Total edge of glass area is zero");
+            return {};
         }
 
-        const auto rawDeltas = rawDeltasEdge(vision);
+        const double area = window.getDividerEdgeOfGlassArea();
+        if(area < 0.0)
+        {
+            throw std::runtime_error("Total divider area is less than zero");
+        }
 
-        return {applyDewPointNormalization(rawDeltas, totalArea),
-                crAverageNormalized(rawDeltas, totalArea)};
+        const auto rawDeltas = rawDeltasDividerEdge(window);
+
+        return CRResult{applyDewPointNormalization(rawDeltas, area),
+                        crAverageNormalized(rawDeltas, area)};
     }
 
     CRResult crg(const ISO15099::WindowVision & vision,
@@ -358,26 +290,122 @@ namespace Tarcog::CR
         return {applyDewPointNormalization(raw, area), crAverageNormalized(raw, area)};
     }
 
-    CRResult cr(const ISO15099::WindowVision & vision,
+    ////////////////////////////////////
+    /////   CR
+    ////////////////////////////////////
+
+    template<typename Window, typename GetV1, typename GetV2, typename GetFrames>
+    CRResult cr_common(const Window & window,
+                       const DewPointSettings & dewPointSettings,
+                       const double outsideTemperature,
+                       GetV1 getVision1,
+                       GetV2 getVision2,
+                       GetFrames getFrames)
+    {
+        const auto crGlassEdge1 = crge(getVision1(window), dewPointSettings, outsideTemperature);
+        const auto crGlassEdge2 = crge(getVision2(window), dewPointSettings, outsideTemperature);
+        const auto crFrame = crf(getFrames(window));
+
+        return combineMin(crFrame, crGlassEdge1, crGlassEdge2);
+    }
+
+    CRResult cr(const ISO15099::WindowSingleVision & window,
                 const DewPointSettings & dewPointSettings,
                 const double outsideTemperature)
     {
-        const auto crGlassEdge = crge(vision, dewPointSettings, outsideTemperature);
-        const auto crFrame = crf(vision);
-
-
-        return combineMin(crFrame, crGlassEdge);
+        return cr_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision(); },
+          [](auto const & w) -> decltype(auto) { return w.vision(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
     }
-    CRResult crb(const ISO15099::WindowVision & vision,
+
+    CRResult cr(const ISO15099::DualVisionHorizontal & window,
+                const DewPointSettings & dewPointSettings,
+                const double outsideTemperature)
+    {
+        return cr_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision1(); },
+          [](auto const & w) -> decltype(auto) { return w.vision2(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
+    }
+
+    CRResult cr(const ISO15099::DualVisionVertical & window,
+                const DewPointSettings & dewPointSettings,
+                const double outsideTemperature)
+    {
+        return cr_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision1(); },
+          [](auto const & w) -> decltype(auto) { return w.vision2(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
+    }
+
+    ////////////////////////////////////
+    /////   CRB
+    ////////////////////////////////////
+
+    template<typename Window, typename GetV1, typename GetV2, typename GetFrames>
+    CRResult crb_common(const Window & window,
+                        const DewPointSettings & dewPointSettings,
+                        const double outsideTemperature,
+                        GetV1 getVision1,
+                        GetV2 getVision2,
+                        GetFrames getFrames)
+    {
+        const auto frames = getFrames(window);
+        const CRResult frame = crf(frames);
+        const CRResult edge = cre(frames);
+
+        const auto glass1 = crg(getVision1(window), dewPointSettings, outsideTemperature);
+        const auto glass2 = crg(getVision2(window), dewPointSettings, outsideTemperature);
+
+        return combineMin(frame, edge, glass1, glass2);
+    }
+
+    CRResult crb(const ISO15099::WindowSingleVision & window,
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
     {
-        const CRResult frame = crf(vision);
-        const CRResult edge = cre(vision);
-        const CRResult glass = crg(vision, dewPointSettings, outsideTemperature);
-
-        return combineMin(frame, edge, glass);
+        return crb_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision(); },
+          [](auto const & w) -> decltype(auto) { return w.vision(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
     }
 
+    CRResult crb(const ISO15099::DualVisionHorizontal & window,
+                 const DewPointSettings & dewPointSettings,
+                 const double outsideTemperature)
+    {
+        return crb_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision1(); },
+          [](auto const & w) -> decltype(auto) { return w.vision2(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
+    }
 
+    CRResult crb(const ISO15099::DualVisionVertical & window,
+                 const DewPointSettings & dewPointSettings,
+                 const double outsideTemperature)
+    {
+        return crb_common(
+          window,
+          dewPointSettings,
+          outsideTemperature,
+          [](auto const & w) -> decltype(auto) { return w.vision1(); },
+          [](auto const & w) -> decltype(auto) { return w.vision2(); },
+          [](auto const & w) -> decltype(auto) { return w.frames(); });
+    }
 }   // namespace Tarcog::CR

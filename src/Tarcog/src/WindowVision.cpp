@@ -403,6 +403,11 @@ namespace Tarcog::ISO15099
         setDividers(divider, nHor, nVer);
     }
 
+    std::optional<DividerData> WindowVision::divider() const
+    {
+        return m_Divider;
+    }
+
     void WindowVision::setInteriorAndExteriorSurfaceHeight(const double height)
     {
         m_ExteriorSurfaceHeight = height;

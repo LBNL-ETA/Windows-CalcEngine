@@ -97,5 +97,9 @@ namespace Tarcog::ISO15099
 
         double dividerArea{0};
         size_t numberOfDividers{0U};
+
+        // All frames have one edge except meeting rails. This is important because of edge
+        // of glass calculations
+        size_t edgeMultiplier{1U};
     };
 }   // namespace Tarcog::ISO15099

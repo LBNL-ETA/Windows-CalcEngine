@@ -19,6 +19,8 @@
 
 #include "thermal/commonFrames.hpp"
 
+#include "mapTesting.hpp"
+
 class TestSingleVisionWindow : public testing::Test
 {
 protected:
@@ -200,6 +202,69 @@ protected:
         return std::make_shared<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
     }
 };
+
+TEST_F(TestSingleVisionWindow, FramesRetrieval)
+{
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = 5.68,
+                                                    .EdgeUValue = 5.575,
+                                                    .ProjectedFrameDimension = 0.05715,
+                                                    .WettedLength = 0.05715,
+                                                    .Absorptance = 0.9};
+
+    constexpr auto width{2.0};
+    constexpr auto height{2.0};
+    constexpr auto iguUValue{5.575};
+    constexpr auto shgc{0.86};
+    constexpr auto tVis{0.899};
+    constexpr auto tSol{0.8338};
+    constexpr auto hout{20.42635};
+
+    auto window = Tarcog::ISO15099::WindowSingleVision(
+      width,
+      height,
+      tVis,
+      tSol,
+      std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hout));
+
+    window.setFrameData({{Tarcog::ISO15099::SingleVisionFramePosition::Top, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Bottom, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Left, frameData},
+                         {Tarcog::ISO15099::SingleVisionFramePosition::Right, frameData}});
+
+    using Tarcog::ISO15099::SingleVisionFramePosition;
+
+    /// Testing frame areas
+
+    std::map<SingleVisionFramePosition, double> areas;
+    for(const auto & [framePosition, frame] : window.frames())
+    {
+        areas.emplace(framePosition, Tarcog::ISO15099::frameArea(frame));
+    }
+
+    std::map<SingleVisionFramePosition, double> correctAreas{
+      {SingleVisionFramePosition::Top, 0.1110338775},
+      {SingleVisionFramePosition::Bottom, 0.1110338775},
+      {SingleVisionFramePosition::Left, 0.1110338775},
+      {SingleVisionFramePosition::Right, 0.1110338775}};
+
+    Helper::testMaps("Single vision frame areas", correctAreas, areas, 1e-6);
+
+    /// Testing edge areas
+
+    std::map<SingleVisionFramePosition, double> edgeAreas;
+    for(const auto & [framePosition, frame] : window.frames())
+    {
+        edgeAreas.emplace(framePosition, Tarcog::ISO15099::edgeOfGlassArea(frame));
+    }
+
+    std::map<SingleVisionFramePosition, double> correctEdgeAreas{
+      {SingleVisionFramePosition::Top, 0.1157097},
+      {SingleVisionFramePosition::Bottom, 0.1157097},
+      {SingleVisionFramePosition::Left, 0.1157097},
+      {SingleVisionFramePosition::Right, 0.1157097}};
+
+    Helper::testMaps("Single vision frame areas", correctEdgeAreas, edgeAreas, 1e-6);
+}
 
 TEST_F(TestSingleVisionWindow, PredefinedCOGValues)
 {
@@ -853,13 +918,11 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     constexpr double designIGUFrameThickness{0.006};   // deliberately smaller than real thickness
 
     // Add spec to frame data
-    Tarcog::ISO15099::FrameData frameData{
-        .UValue = 5.68,
-        .EdgeUValue = 5.575,
-        .ProjectedFrameDimension = 0.05715,
-        .WettedLength = 0.05715,
-        .Absorptance = 0.9
-    };
+    Tarcog::ISO15099::FrameData frameData{.UValue = 5.68,
+                                          .EdgeUValue = 5.575,
+                                          .ProjectedFrameDimension = 0.05715,
+                                          .WettedLength = 0.05715,
+                                          .Absorptance = 0.9};
 
     frameData.iguData = Tarcog::ISO15099::IGUData{designIGUFrameUValue, designIGUFrameThickness};
 
