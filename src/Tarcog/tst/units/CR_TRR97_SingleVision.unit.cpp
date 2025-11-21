@@ -398,7 +398,7 @@ TEST(CR_TRR97, CR_div_and_edge_average)
     EXPECT_NEAR(average.average->edge, 0.037701326063445999, eps);
 }
 
-TEST(CR_TRR97, CRdiv)
+TEST(CR_TRR97, CRdiv_frame)
 {
     const auto window{makeTRR97SingleVisionWithDividers()};
 
@@ -430,4 +430,88 @@ TEST(CR_TRR97, CRdiv_edge)
     EXPECT_NEAR(values->values.at(Humidity::H70()), 51.648703792025451, eps);
 
     EXPECT_NEAR(values->average, 66.468559682553035, eps);
+}
+
+TEST(CR_TRR97, CRf_with_divider)
+{
+    const auto vision{makeTRR97SingleVisionWithDividers()};
+
+    const auto [values, average] = CR::crf(vision.frames());
+
+    ASSERT_EQ(values.size(), 3);
+
+    EXPECT_NEAR(values.at(Humidity::H30()), 83.981921, eps);
+    EXPECT_NEAR(values.at(Humidity::H50()), 67.580541, eps);
+    EXPECT_NEAR(values.at(Humidity::H70()), 55.430536, eps);
+
+    EXPECT_NEAR(average, 65.173843, eps);
+}
+
+TEST(CR_TRR97, CRe_with_divider)
+{
+    const auto vision{makeTRR97SingleVisionWithDividers()};
+
+    auto [values, average] = CR::cre(vision.frames());
+
+    ASSERT_EQ(values.size(), 3);
+
+    EXPECT_NEAR(values.at(Humidity::H30()), 71.035203, eps);
+    EXPECT_NEAR(values.at(Humidity::H50()), 47.234265, eps);
+    EXPECT_NEAR(values.at(Humidity::H70()), 35.275084, eps);
+
+    EXPECT_NEAR(average, 47.169288, eps);
+}
+
+TEST(CR_TRR97, CRg_with_divider)
+{
+    const auto window{makeTRR97SingleVisionWithDividers()};
+
+    constexpr auto outsideTemperature{255.15};
+
+    auto [values, average] =
+      CR::crg(window.vision(), CR::defaultDewPointSettings(), outsideTemperature);
+
+    ASSERT_EQ(values.size(), 3);
+
+    EXPECT_NEAR(values.at(Humidity::H70()), 47.627081, eps);
+    EXPECT_NEAR(values.at(Humidity::H30()), 100.0, eps);
+    EXPECT_NEAR(values.at(Humidity::H50()), 100.0, eps);
+
+    EXPECT_NEAR(average, 63.686646, eps);
+}
+
+TEST(CR_TRR97, CR_with_divider)
+{
+    const auto window{makeTRR97SingleVisionWithDividers()};
+
+    constexpr auto outsideTemperature{255.15};
+
+    const auto [values, average] =
+      CR::cr(window, CR::defaultDewPointSettings(), outsideTemperature);
+
+    ASSERT_EQ(values.size(), 3);
+
+    EXPECT_NEAR(values.at(Humidity::H30()), 82.285730, eps);
+    EXPECT_NEAR(values.at(Humidity::H50()), 67.580541, eps);
+    EXPECT_NEAR(values.at(Humidity::H70()), 44.298797, eps);
+
+    EXPECT_NEAR(average, 58.657743, eps);
+}
+
+TEST(CR_TRR97, CRb_with_divier)
+{
+    const auto window{makeTRR97SingleVisionWithDividers()};
+
+    constexpr auto outsideTemperature{255.15};
+
+    const auto [values, average] =
+      CR::crb(window, CR::defaultDewPointSettings(), outsideTemperature);
+
+    ASSERT_EQ(values.size(), 3);
+
+    EXPECT_NEAR(values.at(Humidity::H30()), 71.035203, eps);
+    EXPECT_NEAR(values.at(Humidity::H50()), 47.234265, eps);
+    EXPECT_NEAR(values.at(Humidity::H70()), 35.275084, eps);
+
+    EXPECT_NEAR(average, 47.169288, eps);
 }
