@@ -6,7 +6,6 @@
 
 #include "CRCalculations.hpp"
 #include "CR.hpp"
-#include "thermal/commonThermal.hpp"
 
 namespace Tarcog::CR
 {
