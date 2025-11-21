@@ -172,7 +172,7 @@ namespace Tarcog::CR
                                                      const double outsideTemperature)
     {
         const auto glass = cogContribution(
-          outsideTemperature, vision.getTemperatures(ISO15099::System::SHGC).back(), dps);
+          outsideTemperature, vision.getTemperatures(ISO15099::System::Uvalue).back(), dps);
 
         const auto rawEdges = rawDeltasEdge(vision.frames());
 
@@ -281,7 +281,7 @@ namespace Tarcog::CR
                  const DewPointSettings & dewPointSettings,
                  const double outsideTemperature)
     {
-        const double tInside = vision.getTemperatures(ISO15099::System::SHGC).back();
+        const double tInside = vision.getTemperatures(ISO15099::System::Uvalue).back();
 
         const double area = vision.visionPercentage() * vision.area() - vision.edgeOfGlassArea();
         const auto raw = cogContribution(outsideTemperature, tInside, dewPointSettings);
