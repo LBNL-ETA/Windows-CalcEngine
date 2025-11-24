@@ -949,7 +949,7 @@ TEST_F(TestSingleVisionWindow, IGUMismatchDetected)
     // thermal thickness
     constexpr double iguThickness{0.005};
 
-    const auto mismatch = window.iguMissmatch(iguThickness);
+    const auto mismatch = window.iguMismatch(iguThickness);
     EXPECT_TRUE(mismatch.any());
     EXPECT_TRUE(mismatch.uCenterMissmatch);
     EXPECT_TRUE(mismatch.thicknessMissmatch);

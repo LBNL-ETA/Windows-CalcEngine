@@ -223,7 +223,7 @@ namespace Tarcog::ISO15099
         return m_vision;
     }
 
-    IGUMismatch WindowSingleVision::iguMissmatch(const double geometricalThickness) const
+    IGUMismatch WindowSingleVision::iguMismatch(const double geometricalThickness) const
     {
         return m_vision.iguMissmatch(geometricalThickness);
     }

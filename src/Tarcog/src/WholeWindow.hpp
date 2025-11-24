@@ -81,7 +81,7 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] const WindowVision & vision() const;
 
-        [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const;
+        [[nodiscard]] IGUMismatch iguMismatch(double geometricalThickness) const;
 
     protected:
         [[nodiscard]] double visionPercentage() const override;
@@ -409,9 +409,12 @@ namespace Tarcog::ISO15099
         void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
-        void setDividersTopVision(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
+        void
+          setDividersTopVision(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersTopVisionAuto(const FrameData & frameData);
-        void setDividersBottomVision(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersBottomVision(const FrameData & frameData,
+                                     size_t nHorizontal,
+                                     size_t nVertical);
         void setDividersBottomVisionAuto(const FrameData & frameData);
 
         [[nodiscard]] IGUMismatch iguMissmatch(double topGeometricalThickness,
