@@ -74,6 +74,8 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] IGUDimensions getIGUDimensions() const override;
 
+        [[nodiscard]] double hc() const override;
+
         void setUValueIGUTolerance(double uValue) override;
         void setThicknessIGUTolerance(double thickness) override;
 
@@ -251,6 +253,11 @@ namespace Tarcog::ISO15099
         {
             // Dividers are identical and just return it from first vision
             return vision1().divider();
+        }
+
+        [[nodiscard]] double hc() const override
+        {
+            return (vision1().hc() + vision2().hc()) / 2.0;
         }
 
     protected:

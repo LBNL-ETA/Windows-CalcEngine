@@ -203,6 +203,11 @@ namespace Tarcog::ISO15099
         return {m_vision.getIGUWidth(), m_vision.getIGUHeight()};
     }
 
+    double WindowSingleVision::hc() const
+    {
+        return m_vision.hc();
+    }
+
     void WindowSingleVision::setUValueIGUTolerance(double uValue)
     {
         m_vision.setUValueIGUTolerance(uValue);

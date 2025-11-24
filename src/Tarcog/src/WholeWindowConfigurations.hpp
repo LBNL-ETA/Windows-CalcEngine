@@ -107,6 +107,8 @@ namespace Tarcog
         [[nodiscard]] virtual double uValueCOGAverage() const = 0;
         [[nodiscard]] virtual double shgcCOGAverage() const = 0;
 
+        [[nodiscard]] virtual double hc() const = 0;
+
         [[nodiscard]] virtual IGUDimensions getIGUDimensions() const = 0;
 
         [[nodiscard]] virtual std::optional<ISO15099::DividerData> divider() const = 0;
