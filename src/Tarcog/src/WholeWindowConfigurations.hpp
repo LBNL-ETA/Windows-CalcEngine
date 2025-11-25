@@ -1,9 +1,12 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 
 namespace Tarcog
 {
+    namespace ISO15099 { struct DividerData; }
+
     enum class FramePosition : uint8_t
     {
         Top,
@@ -91,19 +94,24 @@ namespace Tarcog
         [[nodiscard]] virtual double shgc0() const = 0;
         [[nodiscard]] virtual double shgc1() const = 0;
 
-
         [[nodiscard]] virtual double vt() const = 0;
         [[nodiscard]] virtual double vt(double tVis) const = 0;
         [[nodiscard]] virtual double vt0() const = 0;
         [[nodiscard]] virtual double vt1() const = 0;
 
+        [[nodiscard]] virtual double getDividerArea() const = 0;
+        [[nodiscard]] virtual double getDividerEdgeOfGlassArea() const = 0;
 
         [[nodiscard]] virtual double visionPercentage() const = 0;
 
         [[nodiscard]] virtual double uValueCOGAverage() const = 0;
         [[nodiscard]] virtual double shgcCOGAverage() const = 0;
 
+        [[nodiscard]] virtual double hc() const = 0;
+
         [[nodiscard]] virtual IGUDimensions getIGUDimensions() const = 0;
+
+        [[nodiscard]] virtual std::optional<ISO15099::DividerData> divider() const = 0;
 
         virtual void setUValueIGUTolerance(double uValue) = 0;
         virtual void setThicknessIGUTolerance(double thickness) = 0;

@@ -4,6 +4,8 @@
 
 #include "thermal/commonThermal.hpp"
 
+#include "mapTesting.hpp"
+
 namespace
 {
     // IGU preset with optics bound (NFRC_103-NFRC_103)
@@ -36,6 +38,87 @@ namespace
         return Window::withDefaultDualHorizontalFrames(window);
     }
 }   // namespace
+
+TEST(TestHorizontalSliderWindow, FramesRetrieval)
+{
+    SCOPED_TRACE("Begin Test: Horizontal slider window predefined COG.");
+
+    constexpr Tarcog::ISO15099::FrameData frameData{.UValue = 2.134059,
+                                                    .EdgeUValue = 2.251039,
+                                                    .ProjectedFrameDimension = 0.050813,
+                                                    .WettedLength = 0.05633282,
+                                                    .Absorptance = 0.3};
+
+    constexpr auto width{1.2};
+    constexpr auto height{1.5};
+    constexpr auto iguUValue{1.667875};
+    constexpr auto shgc{0.430713};
+    constexpr auto tVis{0.638525};
+    constexpr auto tSol{0.3716};
+    constexpr auto hcout{15.0};
+
+    auto window = Tarcog::ISO15099::DualVisionHorizontal(
+      width,
+      height,
+      tVis,
+      tSol,
+      std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout),
+      tVis,
+      tSol,
+      std::make_shared<Tarcog::ISO15099::SimpleIGU>(iguUValue, shgc, hcout));
+
+    using FP = Tarcog::ISO15099::DualHorizontalFramePosition;
+
+    window.setFrameData({{FP::Left, frameData},
+                         {FP::Right, frameData},
+                         {FP::BottomLeft, frameData},
+                         {FP::BottomRight, frameData},
+                         {FP::TopLeft, frameData},
+                         {FP::TopRight, frameData},
+                         {FP::MeetingRail, frameData}});
+
+    using Tarcog::ISO15099::DualHorizontalFramePosition;
+
+    /// Testing frame areas
+
+    std::map<DualHorizontalFramePosition, double> areas;
+    for(const auto & [framePosition, frame] : window.frames())
+    {
+        areas.emplace(framePosition, Tarcog::ISO15099::frameArea(frame));
+    }
+
+    const std::map<DualHorizontalFramePosition, double> correctAreas{
+      {DualHorizontalFramePosition::TopLeft, 0.029196819515499996},
+      {DualHorizontalFramePosition::TopRight, 0.029196819515499996},
+      {DualHorizontalFramePosition::Left, 0.07363753903100001},
+      {DualHorizontalFramePosition::Right, 0.07363753903100001},
+      {DualHorizontalFramePosition::BottomLeft, 0.029196819515499996},
+      {DualHorizontalFramePosition::BottomRight, 0.029196819515499996},
+      {DualHorizontalFramePosition::MeetingRail, 0.071055578061999997}
+    };
+
+    Helper::testMaps("Single vision frame areas", correctAreas, areas, 1e-6);
+
+    /// Testing edge areas
+
+    std::map<DualHorizontalFramePosition, double> edgeAreas;
+    for(const auto & [framePosition, frame] : window.frames())
+    {
+        edgeAreas.emplace(framePosition, Tarcog::ISO15099::edgeOfGlassArea(frame));
+    }
+
+    const std::map<DualHorizontalFramePosition, double> correctEdgeAreas{
+          {DualHorizontalFramePosition::TopLeft, 0.03124393675},
+          {DualHorizontalFramePosition::TopRight, 0.03124393675},
+          {DualHorizontalFramePosition::Left, 0.084764499},
+          {DualHorizontalFramePosition::Right, 0.084764499},
+          {DualHorizontalFramePosition::BottomLeft, 0.03124393675},
+          {DualHorizontalFramePosition::BottomRight, 0.03124393675},
+          {DualHorizontalFramePosition::MeetingRail, 0.161464498}
+        };
+
+    Helper::testMaps("Single vision frame areas", correctEdgeAreas, edgeAreas, 1e-6);
+}
 
 TEST(TestHorizontalSliderWindow, PredefinedCOGValues)
 {

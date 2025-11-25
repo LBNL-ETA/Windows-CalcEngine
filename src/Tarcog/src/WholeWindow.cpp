@@ -3,7 +3,6 @@
 #include <utility>
 #include <array>
 #include <map>
-#include <ranges>
 #include <algorithm>
 #include <optional>
 #include <numeric>
@@ -39,88 +38,88 @@ namespace Tarcog::ISO15099
                                            double tvis,
                                            double tsol,
                                            std::shared_ptr<IIGUSystem> iguSystem) :
-        vision(width, height, tvis, tsol, std::move(iguSystem))
+        m_vision(width, height, tvis, tsol, std::move(iguSystem))
     {}
 
     double WindowSingleVision::area() const
     {
-        return vision.area();
+        return m_vision.area();
     }
 
     double WindowSingleVision::uValue() const
     {
-        return vision.uValue();
+        return m_vision.uValue();
     }
 
     double WindowSingleVision::shgc() const
     {
-        return vision.shgc();
+        return m_vision.shgc();
     }
 
     double WindowSingleVision::shgc(const double tSol) const
     {
-        return vision.shgc(tSol);
+        return m_vision.shgc(tSol);
     }
 
     double WindowSingleVision::shgc0() const
     {
-        return vision.shgc0();
+        return m_vision.shgc0();
     }
 
     double WindowSingleVision::shgc1() const
     {
-        return vision.shgc1();
+        return m_vision.shgc1();
     }
 
     double WindowSingleVision::vt() const
     {
-        return vision.vt();
+        return m_vision.vt();
     }
 
     double WindowSingleVision::vt(const double tVis) const
     {
-        return vision.vt(tVis);
+        return m_vision.vt(tVis);
     }
 
     double WindowSingleVision::vt0() const
     {
-        return vision.vt0();
+        return m_vision.vt0();
     }
 
     double WindowSingleVision::vt1() const
     {
-        return vision.vt1();
+        return m_vision.vt1();
     }
 
     double WindowSingleVision::uValueCOG() const
     {
-        return vision.uValueCOG();
+        return m_vision.uValueCOG();
     }
 
     double WindowSingleVision::shgcCOG() const
     {
-        return vision.shgcCOG();
+        return m_vision.shgcCOG();
     }
 
     double WindowSingleVision::uValueCOGAverage() const
     {
-        return vision.uValueCOG();
+        return m_vision.uValueCOG();
     }
 
     double WindowSingleVision::shgcCOGAverage() const
     {
-        return vision.shgcCOG();
+        return m_vision.shgcCOG();
     }
 
     double WindowSingleVision::visionPercentage() const
     {
-        return vision.visionPercentage();
+        return m_vision.visionPercentage();
     }
 
     void WindowSingleVision::setFrameData(SingleVisionFramePosition position,
                                           const FrameData & frameData)
     {
-        vision.setFrameData(Helper::kFrameMapping.at(position), frameData);
+        m_vision.setFrameData(Helper::kFrameMapping.at(position), frameData);
     }
 
     void WindowSingleVision::setFrameData(const SingleVisionFrameMap & frames)
@@ -131,15 +130,26 @@ namespace Tarcog::ISO15099
         });
     }
 
+    std::map<SingleVisionFramePosition, Frame> WindowSingleVision::frames() const
+    {
+        std::map<SingleVisionFramePosition, Frame> out;
+        for(const auto pos : Helper::kAllSinglePositions)
+        {
+            const FramePosition framePosition = Helper::kFrameMapping.at(pos);
+            out.emplace(pos, m_vision.frame(framePosition));
+        }
+        return out;
+    }
+
     double WindowSingleVision::getFrameArea(const SingleVisionFramePosition position) const
     {
-        return frameArea(vision.frame(Helper::kFrameMapping.at(position)));
+        return frameArea(m_vision.frame(Helper::kFrameMapping.at(position)));
     }
 
     double
       WindowSingleVision::getFrameEdgeOfGlassArea(const SingleVisionFramePosition position) const
     {
-        return edgeOfGlassArea(vision.frame(Helper::kFrameMapping.at(position)));
+        return edgeOfGlassArea(m_vision.frame(Helper::kFrameMapping.at(position)));
     }
 
     double WindowSingleVision::getFrameArea() const
@@ -166,42 +176,57 @@ namespace Tarcog::ISO15099
                                          size_t nHorizontal,
                                          size_t nVertical)
     {
-        vision.setDividers(frameData, nHorizontal, nVertical);
+        m_vision.setDividers(frameData, nHorizontal, nVertical);
     }
 
     void WindowSingleVision::setDividersAuto(const FrameData & frameData)
     {
-        vision.setDividersAuto(frameData);
+        m_vision.setDividersAuto(frameData);
     }
 
     double WindowSingleVision::getDividerArea() const
     {
-        return vision.dividerArea();
+        return m_vision.dividerArea();
     }
 
     double WindowSingleVision::getDividerEdgeOfGlassArea() const
     {
-        return vision.dividerEdgeOfGlassArea();
+        return m_vision.dividerEdgeOfGlassArea();
+    }
+
+    std::optional<DividerData> WindowSingleVision::divider() const
+    {
+        return m_vision.divider();
     }
 
     IGUDimensions WindowSingleVision::getIGUDimensions() const
     {
-        return {vision.getIGUWidth(), vision.getIGUHeight()};
+        return {m_vision.getIGUWidth(), m_vision.getIGUHeight()};
+    }
+
+    double WindowSingleVision::hc() const
+    {
+        return m_vision.hc();
     }
 
     void WindowSingleVision::setUValueIGUTolerance(double uValue)
     {
-        vision.setUValueIGUTolerance(uValue);
+        m_vision.setUValueIGUTolerance(uValue);
     }
 
     void WindowSingleVision::setThicknessIGUTolerance(double thickness)
     {
-        vision.setThicknessIGUTolerance(thickness);
+        m_vision.setThicknessIGUTolerance(thickness);
     }
 
-    IGUMismatch WindowSingleVision::iguMissmatch(const double geometricalThickness) const
+    const WindowVision & WindowSingleVision::vision() const
     {
-        return vision.iguMissmatch(geometricalThickness);
+        return m_vision;
+    }
+
+    IGUMismatch WindowSingleVision::iguMismatch(const double geometricalThickness) const
+    {
+        return m_vision.iguMissmatch(geometricalThickness);
     }
 
     ////////////////////////////////////////////////
@@ -258,21 +283,21 @@ namespace Tarcog::ISO15099
                              DualHorizontalFramePosition where,
                              MetricFn && metric)
         {
-            const auto it = kDualHPosToFrames.find(where);
-            if(it == kDualHPosToFrames.end())
+            const auto itr = kDualHPosToFrames.find(where);
+            if(itr == kDualHPosToFrames.end())
             {
                 throw std::invalid_argument("Invalid dual-horizontal frame position");
             }
 
             double sum = 0.0;
-            for(const auto & maybeRef : it->second)
+            for(const auto & maybeRef : itr->second)
             {
                 if(!maybeRef)
                 {
                     continue;
                 }
                 const Frame & frame = getFrameFromRef(self, *maybeRef);
-                sum += metric(frame);
+                sum += std::invoke(std::forward<MetricFn>(metric), frame);
             }
             return sum;
         }
@@ -355,7 +380,7 @@ namespace Tarcog::ISO15099
                 vision2().setFrameData(FramePosition::Right, frameData);
                 break;
             case DualHorizontalFramePosition::MeetingRail: {
-                FrameData split = splitFrameWidth(frameData);
+                const FrameData split = splitFrameWidth(frameData);
                 vision1().setFrameData(FramePosition::Right, split);
                 vision2().setFrameData(FramePosition::Left, split);
                 break;
@@ -373,22 +398,70 @@ namespace Tarcog::ISO15099
         });
     }
 
+    std::map<DualHorizontalFramePosition, Frame> DualVisionHorizontal::frames() const
+    {
+        std::map<DualHorizontalFramePosition, Frame> out;
+
+        for(const auto pos : kAllDualHPositions)
+        {
+            const auto itr = kDualHPosToFrames.find(pos);
+            if(itr == kDualHPosToFrames.end())
+            {
+                continue;
+            }
+
+            const auto & refs = itr->second;
+            std::vector<Frame> found;
+
+            for(const auto & maybeRef : refs)
+            {
+                if(!maybeRef)
+                {
+                    continue;
+                }
+
+                const Frame & frame = getFrameFromRef(*this, *maybeRef);
+                found.push_back(frame);   // <-- push whole Frame, not FrameData
+            }
+
+            if(found.empty())
+            {
+                continue;
+            }
+
+            if(found.size() == 1)
+            {
+                out.emplace(pos, found[0]);
+            }
+            else
+            {
+                const size_t edgeMultiplier =
+                  (pos == DualHorizontalFramePosition::MeetingRail ? 2 : 1);
+
+                out.emplace(pos, mergeFrameWidths(found[0], found[1], edgeMultiplier));
+            }
+        }
+
+        return out;
+    }
+
     double DualVisionHorizontal::getFrameArea(const DualHorizontalFramePosition position) const
     {
-        return accumulateFor(*this, position, [](const Frame & f) { return frameArea(f); });
+        return accumulateFor(*this, position, [](const Frame & frame) { return frameArea(frame); });
     }
 
     double DualVisionHorizontal::getFrameEdgeOfGlassArea(DualHorizontalFramePosition position) const
     {
-        return accumulateFor(*this, position, [](const Frame & f) { return edgeOfGlassArea(f); });
+        return accumulateFor(
+          *this, position, [](const Frame & frame) { return edgeOfGlassArea(frame); });
     }
 
     double DualVisionHorizontal::getFrameArea() const
     {
         double total = 0.0;
-        for(const auto p : kAllDualHPositions)
+        for(const auto position : kAllDualHPositions)
         {
-            total += getFrameArea(p);
+            total += getFrameArea(position);
         }
         return total;
     }
@@ -396,15 +469,16 @@ namespace Tarcog::ISO15099
     double DualVisionHorizontal::getFrameEdgeOfGlassArea() const
     {
         double total = 0.0;
-        for(const auto p : kAllDualHPositions)
+        for(const auto pos : kAllDualHPositions)
         {
-            total += getFrameEdgeOfGlassArea(p);
+            total += getFrameEdgeOfGlassArea(pos);
         }
         return total;
     }
 
-    void
-      DualVisionHorizontal::setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical)
+    void DualVisionHorizontal::setDividers(const FrameData & frameData,
+                                           const size_t nHorizontal,
+                                           const size_t nVertical)
     {
         vision1().setDividers(frameData, nHorizontal, nVertical);
         vision2().setDividers(frameData, nHorizontal, nVertical);
@@ -416,9 +490,9 @@ namespace Tarcog::ISO15099
         vision2().setDividersAuto(frameData);
     }
 
-    void DualVisionHorizontal::setDividersLeftVision(FrameData frameData,
-                                                     size_t nHorizontal,
-                                                     size_t nVertical)
+    void DualVisionHorizontal::setDividersLeftVision(const FrameData & frameData,
+                                                     const size_t nHorizontal,
+                                                     const size_t nVertical)
     {
         vision1().setDividers(frameData, nHorizontal, nVertical);
     }
@@ -428,9 +502,9 @@ namespace Tarcog::ISO15099
         vision1().setDividersAuto(frameData);
     }
 
-    void DualVisionHorizontal::setDividersRightVision(FrameData frameData,
-                                                      size_t nHorizontal,
-                                                      size_t nVertical)
+    void DualVisionHorizontal::setDividersRightVision(const FrameData & frameData,
+                                                      const size_t nHorizontal,
+                                                      const size_t nVertical)
     {
         vision2().setDividers(frameData, nHorizontal, nVertical);
     }
@@ -491,24 +565,24 @@ namespace Tarcog::ISO15099
 
         template<typename MetricFn>
         double accumulateForV(const DualVisionVertical & self,
-                              DualVerticalFramePosition where,
+                              const DualVerticalFramePosition where,
                               MetricFn && metric)
         {
-            const auto it = kDualVPosToFrames.find(where);
-            if(it == kDualVPosToFrames.end())
+            const auto itr = kDualVPosToFrames.find(where);
+            if(itr == kDualVPosToFrames.end())
             {
                 throw std::invalid_argument("Invalid dual-vertical frame position");
             }
 
             double sum = 0.0;
-            for(const auto & maybeRef : it->second)
+            for(const auto & maybeRef : itr->second)
             {
                 if(!maybeRef)
                 {
                     continue;
                 }
                 const Frame & frame = getFrameFromRefV(self, *maybeRef);
-                sum += metric(frame);
+                sum += std::invoke(std::forward<MetricFn>(metric), frame);
             }
             return sum;
         }
@@ -620,34 +694,80 @@ namespace Tarcog::ISO15099
         });
     }
 
-    double DualVisionVertical::getFrameArea(const DualVerticalFramePosition position) const
+    std::map<DualVerticalFramePosition, Frame> DualVisionVertical::frames() const
     {
-        return accumulateForV(*this, position, [](const Frame & f) { return frameArea(f); });
+        std::map<DualVerticalFramePosition, Frame> out;
+
+        for(const auto pos : kAllDualVPositions)
+        {
+            const auto itr = kDualVPosToFrames.find(pos);
+            if(itr == kDualVPosToFrames.end())
+            {
+                continue;
+            }
+
+            const auto & refs = itr->second;
+            std::vector<Frame> found;
+
+            for(const auto & maybeRef : refs)
+            {
+                if(!maybeRef)
+                {
+                    continue;
+                }
+
+                const Frame & frame = getFrameFromRefV(*this, *maybeRef);
+                found.push_back(frame);   // <-- Use full Frame, not FrameData
+            }
+
+            if(found.empty())
+            {
+                continue;
+            }
+
+            if(found.size() == 1)
+            {
+                out.emplace(pos, found[0]);
+            }
+            else
+            {
+                const size_t edgeMultiplier =
+                  (pos == DualVerticalFramePosition::MeetingRail ? 2 : 1);
+
+                out.emplace(pos, mergeFrameWidths(found[0], found[1], edgeMultiplier));
+            }
+        }
+
+        return out;
     }
 
-    double DualVisionVertical::getFrameEdgeOfGlassArea(DualVerticalFramePosition position) const
+
+    double DualVisionVertical::getFrameArea(const DualVerticalFramePosition position) const
     {
-        return accumulateForV(*this, position, [](const Frame & f) { return edgeOfGlassArea(f); });
+        return accumulateForV(
+          *this, position, [](const Frame & frame) { return frameArea(frame); });
+    }
+
+    double
+      DualVisionVertical::getFrameEdgeOfGlassArea(const DualVerticalFramePosition position) const
+    {
+        return accumulateForV(
+          *this, position, [](const Frame & frame) { return edgeOfGlassArea(frame); });
     }
 
     double DualVisionVertical::getFrameArea() const
     {
-        double total = 0.0;
-        for(const auto p : kAllDualVPositions)
-        {
-            total += getFrameArea(p);
-        }
-        return total;
+        auto view = kAllDualVPositions
+                    | std::views::transform([this](auto pos) { return getFrameArea(pos); });
+        return std::accumulate(std::begin(view), std::end(view), 0.0);
     }
 
     double DualVisionVertical::getFrameEdgeOfGlassArea() const
     {
-        double total = 0.0;
-        for(const auto p : kAllDualVPositions)
-        {
-            total += getFrameEdgeOfGlassArea(p);
-        }
-        return total;
+        auto view = kAllDualVPositions | std::views::transform([this](auto pos) {
+                        return getFrameEdgeOfGlassArea(pos);
+                    });
+        return std::accumulate(std::begin(view), std::end(view), 0.0);
     }
 
     void DualVisionVertical::setDividers(const FrameData & frameData,

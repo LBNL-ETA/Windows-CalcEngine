@@ -15,6 +15,16 @@ namespace Tarcog::ISO15099
         return result;
     }
 
+    Frame mergeFrameWidths(const Frame & a, const Frame & b, const size_t edgeMultiplier)
+    {
+        Frame out = a;
+        out.frameData.ProjectedFrameDimension =
+          a.frameData.ProjectedFrameDimension + b.frameData.ProjectedFrameDimension;
+        out.frameData.WettedLength = out.frameData.WettedLength + b.frameData.WettedLength;
+        out.edgeMultiplier = edgeMultiplier;
+        return out;
+    }
+
     double frameSHGC(double absorptance,
                      double uValue,
                      double projectedFrameDimension,
@@ -125,7 +135,7 @@ namespace Tarcog::ISO15099
 
         area -= frame.dividerArea * static_cast<double>(frame.numberOfDividers);
 
-        return area;
+        return area * frame.edgeMultiplier;
     }
 
 }   // namespace Tarcog::ISO15099

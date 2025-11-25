@@ -23,10 +23,10 @@ namespace FenestrationCommon
     }
 
     template<typename T>
-    inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type
-      isEqual(const T val1,
-              const T val2,
-              const T tolerance = static_cast<T>(ConstantsData::floatErrorTolerance))
+    bool isEqual(const T val1,
+                 const T val2,
+                 const T tolerance = static_cast<T>(ConstantsData::floatErrorTolerance))
+        requires std::is_floating_point_v<T>
     {
         return std::abs(val1 - val2) < tolerance;
     }

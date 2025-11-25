@@ -35,8 +35,11 @@ namespace Tarcog::ISO15099
                      double tvis,
                      double tsol,
                      std::shared_ptr<IIGUSystem> iguSystem);
+
         [[nodiscard]] double area() const override;
+        [[nodiscard]] double frameArea(FramePosition position) const;
         [[nodiscard]] double uValue() const override;
+
         //! Returns solar transmittance for the default IGU solar transmittance.
         [[nodiscard]] double shgc() const override;
         [[nodiscard]] double shgc(double tSol) const override;
@@ -49,20 +52,22 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double vt0() const override;
         [[nodiscard]] double vt1() const override;
 
-
         [[nodiscard]] double visionPercentage() const override;
         [[nodiscard]] double hc() const override;
         [[nodiscard]] double uValueCOG() const;
         [[nodiscard]] double shgcCOG() const;
         void setHc(double hc) override;
 
-        void setFrameData(FramePosition position, FrameData frameData);
+        void setFrameData(FramePosition position, const FrameData & frameData);
         void setFrameTypes(const std::map<FramePosition, FrameType> & frameTypes);
 
         [[nodiscard]] const Frame & frame(FramePosition position) const;
+        [[nodiscard]] const std::map<FramePosition, Frame>& frames() const;
 
         void setDividers(const FrameData& divider, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & divider);
+
+        [[nodiscard]] std::optional<DividerData> divider() const;
 
         //! Returns total area of dividers assigned to this window vision area
         [[nodiscard]] double dividerArea() const;
@@ -75,6 +80,10 @@ namespace Tarcog::ISO15099
 
         [[nodiscard]] double getIGUWidth() const;
         [[nodiscard]] double getIGUHeight() const;
+        [[nodiscard]] std::vector<double> getTemperatures(System system) const;
+
+        [[nodiscard]] double edgeOfGlassArea() const;
+        [[nodiscard]] double edgeOfGlassArea(FramePosition position) const;
 
         [[nodiscard]] IGUMismatch iguMissmatch(double geometricalThickness) const override;
 
@@ -88,7 +97,6 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double shgcCommon(double cogSHGC) const;
 
         [[nodiscard]] double frameProjectedArea() const;
-        [[nodiscard]] double totalEdgeOfGlassArea() const;
 
         std::shared_ptr<IIGUSystem> m_IGUSystem;
 

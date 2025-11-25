@@ -7,6 +7,8 @@
 #include <array>
 #include <map>
 
+#include "CR.hpp"
+
 namespace Tarcog::ISO15099
 {
     //! Data structure for Insulating Glass Unit (IGU) properties.
@@ -30,6 +32,14 @@ namespace Tarcog::ISO15099
         DividerBodyPoly BodyPoly;
     };
 
+    struct CondensationData
+    {
+        Humidity humidity;
+        double frame{0};        // CR at frame
+        double edge{0};         // CR at edge of glass
+
+    };
+
     //! Data structure for window frame properties.
     //! Contains thermal and dimensional characteristics of a window frame.
     struct FrameData
@@ -41,6 +51,7 @@ namespace Tarcog::ISO15099
         double Absorptance{0.3};             //! Solar absorptance of the frame (0-1)
         std::optional<IGUData> iguData;   //! Optional data for the IGU associated with this frame
         std::variant<std::monostate, GenericFrame, GenericDivider> Class;
+        std::optional<std::vector<CondensationData>> condensationData;
     };
 
     // Encapsulates divider data so the data is not stored outside
@@ -86,5 +97,9 @@ namespace Tarcog::ISO15099
 
         double dividerArea{0};
         size_t numberOfDividers{0U};
+
+        // All frames have one edge except meeting rails. This is important because of edge
+        // of glass calculations
+        size_t edgeMultiplier{1U};
     };
 }   // namespace Tarcog::ISO15099

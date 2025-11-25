@@ -31,3 +31,4 @@
 #include "../src/Perforated.hpp"
 #include "../src/Woven.hpp"
 #include "../src/Zip.hpp"
+#include "../src/string.hpp"
