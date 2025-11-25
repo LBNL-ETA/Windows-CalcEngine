@@ -318,12 +318,12 @@ namespace Tarcog::ISO15099
         [[nodiscard]] double getFrameArea() const;
         [[nodiscard]] double getFrameEdgeOfGlassArea() const;
 
-        void setDividers(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividers(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersAuto(const FrameData & frameData);
 
-        void setDividersLeftVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersLeftVision(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersLeftVisionAuto(const FrameData & frameData);
-        void setDividersRightVision(FrameData frameData, size_t nHorizontal, size_t nVertical);
+        void setDividersRightVision(const FrameData & frameData, size_t nHorizontal, size_t nVertical);
         void setDividersRightVisionAuto(const FrameData & frameData);
 
         [[nodiscard]] IGUMismatch iguMissmatch(double leftGeometricalThickness,
