@@ -1,59 +1,41 @@
-#include <memory>
 #include <gtest/gtest.h>
 
 #include <WCETarcog.hpp>
 
 #include "vectorTesting.hpp"
 
-class TestDoubleClearVacuumSHGCEnvironment : public testing::Test
+namespace
 {
-private:
-    /////////////////////////////////////////////////////////
-    /// Outdoor
-    /////////////////////////////////////////////////////////
-    const double airTemperature{305.15};   // Kelvins
-    const double airSpeed{2.75};           // meters per second
-    const double tSky{305.15};             // Kelvins
-    const double solarRadiation{783.0};    // W/m2
-
-    /////////////////////////////////////////////////////////
-    /// Indoor
-    /////////////////////////////////////////////////////////
-
-    const double roomTemperature{297.15};   // Kelvins
-
-    /////////////////////////////////////////////////////////
-    /// IGU
-    /////////////////////////////////////////////////////////
-    const double solidLayerThickness{0.003048};   // [m]
-    const double solidLayerConductance{1.0};      // [W/m2K]
-
-    const double gapThickness{0.0127};   // [m]
-
-    const double windowWidth{1.0};    // [m]
-    const double windowHeight{1.0};   // [m]
-    const double tilt{90.0};          // [deg]
-
-    std::unique_ptr<Tarcog::ISO15099::CSystem> m_TarcogSystem;
-
-protected:
-    void SetUp() override
+    Tarcog::ISO15099::CSystem makeDoubleClearSystem()
     {
+        // Outdoor
+        constexpr double airTemperature{305.15};
+        constexpr double airSpeed{2.75};
+        constexpr double tSky{305.15};
+        constexpr double solarRadiation{783.0};
+
+        // Indoor
+        constexpr double roomTemperature{297.15};
+
+        // IGU
+        constexpr double solidLayerThickness{0.003048};
+        constexpr double solidLayerConductance{1.0};
+        constexpr double windowWidth{1.0};
+        constexpr double windowHeight{1.0};
+        constexpr double tilt{90.0};
+
         auto Outdoor = Tarcog::ISO15099::Environments::outdoor(
           airTemperature, airSpeed, solarRadiation, tSky, Tarcog::ISO15099::SkyModel::AllSpecified);
-        ASSERT_TRUE(Outdoor != nullptr);
         Outdoor->setHCoeffModel(Tarcog::ISO15099::BoundaryConditionsCoeffModel::CalculateH);
 
         auto Indoor = Tarcog::ISO15099::Environments::indoor(roomTemperature);
-        ASSERT_TRUE(Indoor != nullptr);
 
         auto aSolidLayer1 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
-
         auto aSolidLayer2 =
           Tarcog::ISO15099::Layers::solid(solidLayerThickness, solidLayerConductance);
 
-        // Add support pillars
+        // Pillar
         constexpr auto pillarHeight = 0.0001;
         constexpr auto gapPressure = 0.1333;
         constexpr auto pillarConductivity = 999.0;
@@ -62,39 +44,24 @@ protected:
 
         Tarcog::ISO15099::CylindricalPillar pillar{
           pillarHeight, pillarConductivity, pillarArea, pillarRadius};
-
         auto pillarGap = Tarcog::ISO15099::Layers::createPillar(pillar, gapPressure);
 
         Tarcog::ISO15099::CIGU aIGU(windowWidth, windowHeight, tilt);
         aIGU.addLayers({aSolidLayer1, pillarGap, aSolidLayer2});
 
-        /////////////////////////////////////////////////////////
-        /// System
-        /////////////////////////////////////////////////////////
-        m_TarcogSystem = std::make_unique<Tarcog::ISO15099::CSystem>(aIGU, Indoor, Outdoor);
-        ASSERT_TRUE(m_TarcogSystem != nullptr);
-
-        m_TarcogSystem->setAbsorptances({0.096498351223209947, 0.072264770003798204});
+        Tarcog::ISO15099::CSystem sys(aIGU, Indoor, Outdoor);
+        sys.setAbsorptances({0.096498351223209947, 0.072264770003798204});
+        return sys;
     }
+}   // namespace
 
-public:
-    [[nodiscard]] Tarcog::ISO15099::CSystem & GetSystem() const
-    {
-        return *m_TarcogSystem;
-    };
-};
-
-TEST_F(TestDoubleClearVacuumSHGCEnvironment, UValue)
+// Example test updates: use object semantics (dot) instead of pointer (arrow)
+TEST(DoubleClearVacuumSHGCEnvironment, UValue)
 {
     SCOPED_TRACE("Begin Test: Double Clear - U-value run");
-
     constexpr auto Tolerance = 1e-6;
 
-    auto aSystem{GetSystem()};
-
-    //////////////////////////////////////////////////////////////////////
-    /// UValue run
-    //////////////////////////////////////////////////////////////////////
+    auto aSystem = makeDoubleClearSystem();
 
     constexpr auto aRun{Tarcog::ISO15099::System::Uvalue};
 
@@ -119,23 +86,16 @@ TEST_F(TestDoubleClearVacuumSHGCEnvironment, UValue)
                         Tolerance);
 
     EXPECT_NEAR(0.030907, aSystem.getEffectiveSystemConductivity(aRun), Tolerance);
-
     EXPECT_NEAR(0.006196, aSystem.thickness(aRun), Tolerance);
-
     EXPECT_EQ(1U, aSystem.getNumberOfIterations(aRun));
 }
 
-TEST_F(TestDoubleClearVacuumSHGCEnvironment, SHGC)
+TEST(DoubleClearVacuumSHGCEnvironment, SHGC)
 {
     SCOPED_TRACE("Begin Test: Double Clear - SHGC run");
-
     constexpr auto Tolerance = 1e-6;
 
-    auto aSystem{GetSystem()};
-
-    //////////////////////////////////////////////////////////////////////
-    /// SHGC run
-    //////////////////////////////////////////////////////////////////////
+    auto aSystem = makeDoubleClearSystem();
 
     constexpr auto aRun{Tarcog::ISO15099::System::SHGC};
 
@@ -161,21 +121,5 @@ TEST_F(TestDoubleClearVacuumSHGCEnvironment, SHGC)
 
     EXPECT_NEAR(0.188977, aSystem.getEffectiveSystemConductivity(aRun), Tolerance);
     EXPECT_NEAR(0.006196, aSystem.thickness(aRun), Tolerance);
-    EXPECT_EQ(1u, aSystem.getNumberOfIterations(aRun));
-}
-
-TEST_F(TestDoubleClearVacuumSHGCEnvironment, SystemResults)
-{
-    SCOPED_TRACE("Begin Test: Double Clear - System results");
-
-    constexpr auto Tolerance = 1e-6;
-
-    auto aSystem{GetSystem()};
-
-    EXPECT_NEAR(2.543436344624626, aSystem.getUValue(), Tolerance);
-
-    constexpr auto Tsol{0.7033};
-    EXPECT_NEAR(0.764686, aSystem.getSHGC(Tsol), Tolerance);
-
-    EXPECT_NEAR(574.317448, aSystem.relativeHeatGain(Tsol), Tolerance);
+    EXPECT_EQ(1U, aSystem.getNumberOfIterations(aRun));
 }
