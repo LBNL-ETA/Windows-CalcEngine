@@ -16,6 +16,7 @@ Checks: >
   -readability-misleading-binary-operator,
   -bugprone-suspicious-missing-parentheses,
   -clang-diagnostic-parentheses
+  -readability-magic-numbers
 
 
 WarningsAsErrors: ''

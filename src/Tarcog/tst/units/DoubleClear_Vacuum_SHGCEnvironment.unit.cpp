@@ -55,7 +55,6 @@ namespace
     }
 }   // namespace
 
-// Example test updates: use object semantics (dot) instead of pointer (arrow)
 TEST(DoubleClearVacuumSHGCEnvironment, UValue)
 {
     SCOPED_TRACE("Begin Test: Double Clear - U-value run");
