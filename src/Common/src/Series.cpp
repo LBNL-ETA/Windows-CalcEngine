@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
+#include <ranges>
 
 #include "Series.hpp"
 #include "IntegratorStrategy.hpp"
@@ -129,34 +130,33 @@ namespace FenestrationCommon
 
     std::optional<CSeriesPoint> CSeries::findLower(double const t_Wavelength) const
     {
-        std::optional<CSeriesPoint> currentProperty;
+        if(m_Series.empty())
+            return std::nullopt;
 
-        for(auto & spectralProperty : m_Series)
-        {
-            if(spectralProperty.x() > t_Wavelength)
-            {
-                break;
-            }
-            currentProperty = spectralProperty;
-        }
+        // Binary search: find first element with x > t_Wavelength
+        auto it = std::ranges::upper_bound(m_Series, t_Wavelength, {}, &CSeriesPoint::x);
 
-        return currentProperty;
+        // If all elements are > t_Wavelength, there's no lower
+        if(it == m_Series.begin())
+            return std::nullopt;
+
+        // Go back one to get the last element with x <= t_Wavelength
+        return *std::prev(it);
     }
 
     std::optional<CSeriesPoint> CSeries::findUpper(double const t_Wavelength) const
     {
-        std::optional<CSeriesPoint> currentProperty;
+        if(m_Series.empty())
+            return std::nullopt;
 
-        for(auto & spectralProperty : m_Series)
-        {
-            if(spectralProperty.x() > t_Wavelength)
-            {
-                currentProperty = spectralProperty;
-                break;
-            }
-        }
+        // Binary search: find first element with x > t_Wavelength
+        auto it = std::ranges::upper_bound(m_Series, t_Wavelength, {}, &CSeriesPoint::x);
 
-        return currentProperty;
+        // If no element is > t_Wavelength, there's no upper
+        if(it == m_Series.end())
+            return std::nullopt;
+
+        return *it;
     }
 
     double CSeries::interpolate(const CSeriesPoint & t_Lower,
