@@ -50,7 +50,7 @@ namespace FenestrationCommon
         [[nodiscard]] SquareMatrix LU() const;
         [[nodiscard]] std::vector<double> checkSingularity() const;
         std::size_t m_size;
-        std::vector<double> m_Matrix;   // Flattened: element (i,j) at index i*m_size+j
+        std::vector<std::vector<double>> m_Matrix;
     };
 
     std::vector<double> operator*(const std::vector<double> & first, const SquareMatrix & second);

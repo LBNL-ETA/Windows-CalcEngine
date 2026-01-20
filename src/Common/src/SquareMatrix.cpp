@@ -8,46 +8,20 @@
 namespace FenestrationCommon
 {
     SquareMatrix::SquareMatrix(const std::size_t tSize) :
-        m_size(tSize), m_Matrix(tSize * tSize, 0.0)
+        m_size(tSize), m_Matrix(tSize, std::vector<double>(tSize, 0))
     {}
 
     SquareMatrix::SquareMatrix(const std::initializer_list<std::vector<double>> & tInput) :
-        m_size(tInput.size()), m_Matrix(m_size * m_size, 0.0)
-    {
-        size_t i = 0;
-        for(const auto & vec : tInput)
-        {
-            for(size_t j = 0; j < vec.size(); ++j)
-            {
-                m_Matrix[i * m_size + j] = vec[j];
-            }
-            ++i;
-        }
-    }
+        m_size(tInput.size()), m_Matrix(tInput)
+    {}
 
     SquareMatrix::SquareMatrix(const std::vector<std::vector<double>> & tInput) :
-        m_size(tInput.size()), m_Matrix(m_size * m_size)
-    {
-        for(size_t i = 0; i < m_size; ++i)
-        {
-            for(size_t j = 0; j < m_size; ++j)
-            {
-                m_Matrix[i * m_size + j] = tInput[i][j];
-            }
-        }
-    }
+        m_size(tInput.size()), m_Matrix(tInput)
+    {}
 
     SquareMatrix::SquareMatrix(std::vector<std::vector<double>> && tInput) :
-        m_size(tInput.size()), m_Matrix(m_size * m_size)
-    {
-        for(size_t i = 0; i < m_size; ++i)
-        {
-            for(size_t j = 0; j < m_size; ++j)
-            {
-                m_Matrix[i * m_size + j] = tInput[i][j];
-            }
-        }
-    }
+        m_size(tInput.size()), m_Matrix(std::move(tInput))
+    {}
 
     std::size_t SquareMatrix::size() const
     {
@@ -56,7 +30,10 @@ namespace FenestrationCommon
 
     void SquareMatrix::setZeros()
     {
-        std::fill(m_Matrix.begin(), m_Matrix.end(), 0.0);
+        for(size_t i = 0; i < m_size; ++i)
+        {
+            std::fill(m_Matrix[i].begin(), m_Matrix[i].end(), 0.0);
+        }
     }
 
     void SquareMatrix::setIdentity()
@@ -64,7 +41,7 @@ namespace FenestrationCommon
         setZeros();
         for(size_t i = 0; i < m_size; ++i)
         {
-            m_Matrix[i * m_size + i] = 1.0;
+            m_Matrix[i][i] = 1.0;
         }
     }
 
@@ -77,7 +54,7 @@ namespace FenestrationCommon
 
         for(size_t i = 0; i < m_size; ++i)
         {
-            m_Matrix[i * m_size + i] = tInput[i];
+            m_Matrix[i][i] = tInput[i];
         }
     }
 
@@ -122,12 +99,12 @@ namespace FenestrationCommon
 
     double SquareMatrix::operator()(const std::size_t i, const std::size_t j) const
     {
-        return m_Matrix[i * m_size + j];
+        return m_Matrix[i][j];
     }
 
     double & SquareMatrix::operator()(const std::size_t i, const std::size_t j)
     {
-        return m_Matrix[i * m_size + j];
+        return m_Matrix[i][j];
     }
 
     SquareMatrix SquareMatrix::LU() const
@@ -160,7 +137,7 @@ namespace FenestrationCommon
             double aamax = 0.0;
             for(size_t j = 0; j < m_size; ++j)
             {
-                const double absCellValue = std::abs(m_Matrix[i * m_size + j]);
+                const double absCellValue = std::abs(m_Matrix[i][j]);
                 if(absCellValue > aamax)
                 {
                     aamax = absCellValue;
@@ -187,12 +164,12 @@ namespace FenestrationCommon
         {
             for(int i = 0; i <= int(j) - 1; ++i)
             {
-                double sum = m_Matrix[i * m_size + j];
+                double sum = m_Matrix[i][j];
                 for(int k = 0; k <= i - 1; ++k)
                 {
-                    sum = sum - m_Matrix[i * m_size + k] * m_Matrix[k * m_size + j];
+                    sum = sum - m_Matrix[i][k] * m_Matrix[k][j];
                 }
-                m_Matrix[i * m_size + j] = sum;
+                m_Matrix[i][j] = sum;
             }
 
             double aamax = 0.0;
@@ -200,12 +177,12 @@ namespace FenestrationCommon
 
             for(size_t i = j; i < m_size; ++i)
             {
-                double sum = m_Matrix[i * m_size + j];
+                double sum = m_Matrix[i][j];
                 for(int k = 0; k <= int(j) - 1; ++k)
                 {
-                    sum = sum - m_Matrix[i * m_size + k] * m_Matrix[k * m_size + j];
+                    sum = sum - m_Matrix[i][k] * m_Matrix[k][j];
                 }
-                m_Matrix[i * m_size + j] = sum;
+                m_Matrix[i][j] = sum;
                 const double dum = vv[i] * std::abs(sum);
                 if(dum >= aamax)
                 {
@@ -219,23 +196,23 @@ namespace FenestrationCommon
                 // Swap rows j and imax
                 for(size_t k = 0; k < m_size; ++k)
                 {
-                    const double dum = m_Matrix[imax * m_size + k];
-                    m_Matrix[imax * m_size + k] = m_Matrix[j * m_size + k];
-                    m_Matrix[j * m_size + k] = dum;
+                    const double dum = m_Matrix[imax][k];
+                    m_Matrix[imax][k] = m_Matrix[j][k];
+                    m_Matrix[j][k] = dum;
                 }
                 vv[imax] = vv[j];
             }
             index[j] = imax;
-            if(m_Matrix[j * m_size + j] == 0.0)
+            if(m_Matrix[j][j] == 0.0)
             {
-                m_Matrix[j * m_size + j] = TINY;
+                m_Matrix[j][j] = TINY;
             }
             if(j != (m_size - 1))
             {
-                const double dum = 1.0 / m_Matrix[j * m_size + j];
+                const double dum = 1.0 / m_Matrix[j][j];
                 for(size_t i = j + 1; i < m_size; ++i)
                 {
-                    m_Matrix[i * m_size + j] = m_Matrix[i * m_size + j] * dum;
+                    m_Matrix[i][j] = m_Matrix[i][j] * dum;
                 }
             }
         }
@@ -255,7 +232,7 @@ namespace FenestrationCommon
         {
             for(size_t j = 0; j < m_size; ++j)
             {
-                res(j, i) = m_Matrix[j * m_size + i] * tInput[i];
+                res(j, i) = m_Matrix[j][i] * tInput[i];
             }
         }
 
@@ -264,15 +241,7 @@ namespace FenestrationCommon
 
     std::vector<std::vector<double>> SquareMatrix::getMatrix() const
     {
-        std::vector<std::vector<double>> result(m_size, std::vector<double>(m_size));
-        for(size_t i = 0; i < m_size; ++i)
-        {
-            for(size_t j = 0; j < m_size; ++j)
-            {
-                result[i][j] = m_Matrix[i * m_size + j];
-            }
-        }
-        return result;
+        return m_Matrix;
     }
 
     SquareMatrix SquareMatrix::operator*(const SquareMatrix & rhs) const
@@ -284,17 +253,14 @@ namespace FenestrationCommon
 
         SquareMatrix out{m_size};
 
-        const size_t N = m_size;
-        for(size_t i = 0; i < N; ++i)
+        for(size_t i = 0; i < m_size; ++i)
         {
-            const size_t iN = i * N;
-            for(size_t k = 0; k < N; ++k)
+            for(size_t k = 0; k < m_size; ++k)
             {
-                const double aik = m_Matrix[iN + k];
-                const size_t kN = k * N;
-                for(size_t j = 0; j < N; ++j)
+                const double aik = m_Matrix[i][k];
+                for(size_t j = 0; j < m_size; ++j)
                 {
-                    out.m_Matrix[iN + j] += aik * rhs.m_Matrix[kN + j];
+                    out.m_Matrix[i][j] += aik * rhs.m_Matrix[k][j];
                 }
             }
         }
@@ -310,17 +276,14 @@ namespace FenestrationCommon
 
         SquareMatrix out{m_size};
 
-        const size_t N = m_size;
-        for(size_t i = 0; i < N; ++i)
+        for(size_t i = 0; i < m_size; ++i)
         {
-            const size_t iN = i * N;
-            for(size_t k = 0; k < N; ++k)
+            for(size_t k = 0; k < m_size; ++k)
             {
-                const double aik = m_Matrix[iN + k];
-                const size_t kN = k * N;
-                for(size_t j = 0; j < N; ++j)
+                const double aik = m_Matrix[i][k];
+                for(size_t j = 0; j < m_size; ++j)
                 {
-                    out.m_Matrix[iN + j] += aik * rhs.m_Matrix[kN + j];
+                    out.m_Matrix[i][j] += aik * rhs.m_Matrix[k][j];
                 }
             }
         }
@@ -336,10 +299,12 @@ namespace FenestrationCommon
         }
 
         SquareMatrix out{m_size};
-        const size_t total = m_size * m_size;
-        for(size_t i = 0; i < total; ++i)
+        for(size_t i = 0; i < m_size; ++i)
         {
-            out.m_Matrix[i] = m_Matrix[i] + rhs.m_Matrix[i];
+            for(size_t j = 0; j < m_size; ++j)
+            {
+                out.m_Matrix[i][j] = m_Matrix[i][j] + rhs.m_Matrix[i][j];
+            }
         }
         return out;
     }
@@ -351,10 +316,12 @@ namespace FenestrationCommon
             throw std::runtime_error("Matrices must be identical in size.");
         }
 
-        const size_t total = m_size * m_size;
-        for(size_t i = 0; i < total; ++i)
+        for(size_t i = 0; i < m_size; ++i)
         {
-            m_Matrix[i] += rhs.m_Matrix[i];
+            for(size_t j = 0; j < m_size; ++j)
+            {
+                m_Matrix[i][j] += rhs.m_Matrix[i][j];
+            }
         }
         return *this;
     }
@@ -367,10 +334,12 @@ namespace FenestrationCommon
         }
 
         SquareMatrix out{m_size};
-        const size_t total = m_size * m_size;
-        for(size_t i = 0; i < total; ++i)
+        for(size_t i = 0; i < m_size; ++i)
         {
-            out.m_Matrix[i] = m_Matrix[i] - rhs.m_Matrix[i];
+            for(size_t j = 0; j < m_size; ++j)
+            {
+                out.m_Matrix[i][j] = m_Matrix[i][j] - rhs.m_Matrix[i][j];
+            }
         }
         return out;
     }
@@ -382,10 +351,12 @@ namespace FenestrationCommon
             throw std::runtime_error("Matrices must be identical in size.");
         }
 
-        const size_t total = m_size * m_size;
-        for(size_t i = 0; i < total; ++i)
+        for(size_t i = 0; i < m_size; ++i)
         {
-            m_Matrix[i] -= rhs.m_Matrix[i];
+            for(size_t j = 0; j < m_size; ++j)
+            {
+                m_Matrix[i][j] -= rhs.m_Matrix[i][j];
+            }
         }
         return *this;
     }
@@ -400,11 +371,10 @@ namespace FenestrationCommon
         std::vector<double> y(m_size, 0.0);
         for(size_t i = 0; i < m_size; ++i)
         {
-            const size_t iN = i * m_size;
             double sum = 0.0;
             for(size_t j = 0; j < m_size; ++j)
             {
-                sum += m_Matrix[iN + j] * v[j];
+                sum += m_Matrix[i][j] * v[j];
             }
             y[i] = sum;
         }
