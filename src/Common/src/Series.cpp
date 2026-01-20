@@ -252,13 +252,11 @@ namespace FenestrationCommon
     CSeries operator-(const double val, const CSeries & other)
     {
         CSeries newProperties;
+        newProperties.reserve(other.size());
 
         for(const auto & ot : other)
         {
-            double value = val - ot.value();
-            double wv = ot.x();
-
-            newProperties.addProperty(wv, value);
+            newProperties.addProperty(ot.x(), val - ot.value());
         }
 
         return newProperties;
@@ -369,6 +367,11 @@ namespace FenestrationCommon
     void CSeries::clear()
     {
         m_Series.clear();
+    }
+
+    void CSeries::reserve(size_t capacity)
+    {
+        m_Series.reserve(capacity);
     }
 
     void CSeries::cutExtraData(double minWavelength, double maxWavelength)

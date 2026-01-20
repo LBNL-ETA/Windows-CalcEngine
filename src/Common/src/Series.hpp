@@ -93,6 +93,7 @@ namespace FenestrationCommon
         const CSeriesPoint & operator[](size_t Index) const;
 
         void clear();
+        void reserve(size_t capacity);
 
         void cutExtraData(double minWavelength, double maxWavelength);
 
