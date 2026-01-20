@@ -44,6 +44,28 @@ namespace FenestrationCommon
         return *this;
     }
 
+    CMatrixSeries::CMatrixSeries(CMatrixSeries && t_MatrixSeries) noexcept :
+        m_Matrix(std::move(t_MatrixSeries.m_Matrix)),
+        m_Size1(t_MatrixSeries.m_Size1),
+        m_Size2(t_MatrixSeries.m_Size2)
+    {
+        t_MatrixSeries.m_Size1 = 0;
+        t_MatrixSeries.m_Size2 = 0;
+    }
+
+    CMatrixSeries & CMatrixSeries::operator=(CMatrixSeries && t_MatrixSeries) noexcept
+    {
+        if(this != &t_MatrixSeries)
+        {
+            m_Matrix = std::move(t_MatrixSeries.m_Matrix);
+            m_Size1 = t_MatrixSeries.m_Size1;
+            m_Size2 = t_MatrixSeries.m_Size2;
+            t_MatrixSeries.m_Size1 = 0;
+            t_MatrixSeries.m_Size2 = 0;
+        }
+        return *this;
+    }
+
     void CMatrixSeries::addProperty(const size_t i,
                                     const size_t j,
                                     const double t_Wavelength,
@@ -112,7 +134,7 @@ namespace FenestrationCommon
             for(size_t j = 0; j < m_Matrix[i].size(); ++j)
             {
                 assert(t_Series.size() == m_Matrix[i][j].size());
-                m_Matrix[i][j] = m_Matrix[i][j] * t_Series;
+                m_Matrix[i][j] *= t_Series;
             }
         }
     }
@@ -122,10 +144,10 @@ namespace FenestrationCommon
         const size_t n = m_Matrix.size();
 
         FenestrationCommon::executeInParallel<size_t>(0u, n - 1u, [this, &t_Series](size_t i) {
-            std::transform(begin(m_Matrix[i]),
-                           end(m_Matrix[i]),
-                           begin(m_Matrix[i]),
-                           [&](const CSeries & elem) { return elem * t_Series[i]; });
+            for(auto & elem : m_Matrix[i])
+            {
+                elem *= t_Series[i];
+            }
         });
     }
 
@@ -252,7 +274,7 @@ namespace FenestrationCommon
                     mat(i, j) = value;
                 }
             }
-            result.push_back(MatrixAtWavelength{wavelength, mat});
+            result.push_back(MatrixAtWavelength{wavelength, std::move(mat)});
         }
 
         return result;

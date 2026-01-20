@@ -28,9 +28,26 @@ namespace FenestrationCommon
         m_size(tInput.size()), m_Matrix(tInput)
     {}
 
-    SquareMatrix::SquareMatrix(const std::vector<std::vector<double>> && tInput) :
-        m_size(tInput.size()), m_Matrix(tInput)
+    SquareMatrix::SquareMatrix(std::vector<std::vector<double>> && tInput) :
+        m_size(tInput.size()), m_Matrix(std::move(tInput))
     {}
+
+    SquareMatrix::SquareMatrix(SquareMatrix && other) noexcept :
+        m_size(other.m_size), m_Matrix(std::move(other.m_Matrix))
+    {
+        other.m_size = 0;
+    }
+
+    SquareMatrix & SquareMatrix::operator=(SquareMatrix && other) noexcept
+    {
+        if(this != &other)
+        {
+            m_size = other.m_size;
+            m_Matrix = std::move(other.m_Matrix);
+            other.m_size = 0;
+        }
+        return *this;
+    }
 
     std::size_t SquareMatrix::size() const
     {
@@ -66,11 +83,6 @@ namespace FenestrationCommon
             m_Matrix[i][i] = tInput[i];
         }
     }
-
-    // SquareMatrix::SquareMatrix(SquareMatrix && tMatrix) :
-    //    m_size(tMatrix.size()),
-    //    m_Matrix(std::move(tMatrix.m_Matrix))
-    //{}
 
     SquareMatrix SquareMatrix::inverse() const
     {
@@ -324,7 +336,6 @@ namespace FenestrationCommon
             auto & ro = out.m_Matrix[i];
             const auto & a = m_Matrix[i];
             const auto & b = rhs.m_Matrix[i];
-            ro.resize(m_size);
             for(size_t j = 0; j < m_size; ++j)
                 ro[j] = a[j] + b[j];
         }
@@ -361,7 +372,6 @@ namespace FenestrationCommon
             auto & ro = out.m_Matrix[i];
             const auto & a = m_Matrix[i];
             const auto & b = rhs.m_Matrix[i];
-            ro.resize(m_size);
             for(size_t j = 0; j < m_size; ++j)
                 ro[j] = a[j] - b[j];
         }

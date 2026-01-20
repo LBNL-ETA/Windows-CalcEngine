@@ -23,7 +23,9 @@ namespace FenestrationCommon
         CMatrixSeries() = default;
         CMatrixSeries(size_t t_Size1, size_t t_Size2, size_t seriesSize = 0u);
         CMatrixSeries(const CMatrixSeries & t_MatrixSeries);
+        CMatrixSeries(CMatrixSeries && t_MatrixSeries) noexcept;
         CMatrixSeries & operator=(CMatrixSeries const & t_MatrixSeries);
+        CMatrixSeries & operator=(CMatrixSeries && t_MatrixSeries) noexcept;
 
         // add property at specific series position
         void addProperty(size_t i, size_t j, double t_Wavelength, double t_Value);
