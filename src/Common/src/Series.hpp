@@ -40,7 +40,6 @@ namespace FenestrationCommon
         CSeries(const std::initializer_list<std::pair<double, double>> & t_values);
 
         CSeries(const CSeries & t_Series) = default;
-        CSeries(CSeries && t_Series) noexcept = default;
         void addProperty(double t_x, double t_Value);
         void setPropertyAtIndex(size_t index, double x, double value);
         void insertToBeginning(double t_x, double t_Value);
@@ -76,15 +75,6 @@ namespace FenestrationCommon
         //! range, then interpolation function should be called.
         CSeries operator+(const CSeries & other) const;
 
-        //! \brief In-place multiplication of values in spectral properties.
-        CSeries & operator*=(const CSeries & other);
-
-        //! \brief In-place subtraction of values in spectral properties.
-        CSeries & operator-=(const CSeries & other);
-
-        //! \brief In-place addition of values in spectral properties.
-        CSeries & operator+=(const CSeries & other);
-
         // Return wavelength values for spectral properties.
         [[nodiscard]] std::vector<double> getXArray() const;
         [[nodiscard]] std::vector<double> getYArray() const;
@@ -100,7 +90,6 @@ namespace FenestrationCommon
         [[nodiscard]] size_t size() const;
 
         CSeries & operator=(const CSeries & t_Series) = default;
-        CSeries & operator=(CSeries && t_Series) noexcept = default;
         const CSeriesPoint & operator[](size_t Index) const;
 
         void clear();

@@ -129,45 +129,34 @@ namespace FenestrationCommon
 
     std::optional<CSeriesPoint> CSeries::findLower(double const t_Wavelength) const
     {
-        if(m_Series.empty())
+        std::optional<CSeriesPoint> currentProperty;
+
+        for(auto & spectralProperty : m_Series)
         {
-            return std::nullopt;
+            if(spectralProperty.x() > t_Wavelength)
+            {
+                break;
+            }
+            currentProperty = spectralProperty;
         }
 
-        // Find first element with x > t_Wavelength
-        auto it = std::upper_bound(
-          m_Series.begin(),
-          m_Series.end(),
-          t_Wavelength,
-          [](double val, const CSeriesPoint & point) { return val < point.x(); });
-
-        // Go back one to get element with x <= t_Wavelength
-        if(it == m_Series.begin())
-        {
-            return std::nullopt;
-        }
-        return *std::prev(it);
+        return currentProperty;
     }
 
     std::optional<CSeriesPoint> CSeries::findUpper(double const t_Wavelength) const
     {
-        if(m_Series.empty())
+        std::optional<CSeriesPoint> currentProperty;
+
+        for(auto & spectralProperty : m_Series)
         {
-            return std::nullopt;
+            if(spectralProperty.x() > t_Wavelength)
+            {
+                currentProperty = spectralProperty;
+                break;
+            }
         }
 
-        // Find first element with x > t_Wavelength
-        auto it = std::upper_bound(
-          m_Series.begin(),
-          m_Series.end(),
-          t_Wavelength,
-          [](double val, const CSeriesPoint & point) { return val < point.x(); });
-
-        if(it == m_Series.end())
-        {
-            return std::nullopt;
-        }
-        return *it;
+        return currentProperty;
     }
 
     double CSeries::interpolate(const CSeriesPoint & t_Lower,
@@ -213,23 +202,24 @@ namespace FenestrationCommon
 
     CSeries CSeries::operator*(const CSeries & other) const
     {
-        const double WAVELENGTHTOLERANCE = 1e-10;
-        const size_t minSize = std::min(m_Series.size(), other.m_Series.size());
-
         CSeries newProperty;
-        newProperty.m_Series.reserve(minSize);
+
+        const double WAVELENGTHTOLERANCE = 1e-10;
+
+        size_t minSize = std::min(m_Series.size(), other.m_Series.size());
 
         for(size_t i = 0; i < minSize; ++i)
         {
-            const double wv = m_Series[i].x();
-            const double testWv = other.m_Series[i].x();
+            double value = m_Series[i].value() * other.m_Series[i].value();
+            double wv = m_Series[i].x();
+            double testWv = other.m_Series[i].x();
 
             if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
             {
                 throw std::runtime_error("The wavelengths of the two vectors are not the same. "
                                          "Cannot perform multiplication.");
             }
-            newProperty.m_Series.emplace_back(wv, m_Series[i].value() * other.m_Series[i].value());
+            newProperty.addProperty(wv, value);
         }
 
         return newProperty;
@@ -238,15 +228,15 @@ namespace FenestrationCommon
     CSeries CSeries::operator-(const CSeries & t_Series) const
     {
         const double WAVELENGTHTOLERANCE = 1e-10;
-        const size_t minSize = std::min(m_Series.size(), t_Series.m_Series.size());
 
         CSeries newProperties;
-        newProperties.m_Series.reserve(minSize);
+        size_t minSize = std::min(m_Series.size(), t_Series.m_Series.size());
 
         for(size_t i = 0; i < minSize; ++i)
         {
-            const double wv = m_Series[i].x();
-            const double testWv = t_Series.m_Series[i].x();
+            double value = m_Series[i].value() - t_Series.m_Series[i].value();
+            double wv = m_Series[i].x();
+            double testWv = t_Series.m_Series[i].x();
 
             if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
             {
@@ -254,7 +244,7 @@ namespace FenestrationCommon
                   "Wavelengths of two vectors are not the same. Cannot preform subtraction.");
             }
 
-            newProperties.m_Series.emplace_back(wv, m_Series[i].value() - t_Series.m_Series[i].value());
+            newProperties.addProperty(wv, value);
         }
 
         return newProperties;
@@ -262,12 +252,14 @@ namespace FenestrationCommon
 
     CSeries operator-(const double val, const CSeries & other)
     {
-        CSeries newProperties(other.size());
+        CSeries newProperties;
 
-        size_t i = 0;
         for(const auto & ot : other)
         {
-            newProperties.setPropertyAtIndex(i++, ot.x(), val - ot.value());
+            double value = val - ot.value();
+            double wv = ot.x();
+
+            newProperties.addProperty(wv, value);
         }
 
         return newProperties;
@@ -276,15 +268,15 @@ namespace FenestrationCommon
     CSeries CSeries::operator+(const CSeries & other) const
     {
         const double WAVELENGTHTOLERANCE = 1e-10;
-        const size_t minSize = std::min(m_Series.size(), other.m_Series.size());
 
         CSeries newProperties;
-        newProperties.m_Series.reserve(minSize);
+        size_t minSize = std::min(m_Series.size(), other.m_Series.size());
 
         for(size_t i = 0; i < minSize; ++i)
         {
-            const double wv = m_Series[i].x();
-            const double testWv = other.m_Series[i].x();
+            double value = m_Series[i].value() + other.m_Series[i].value();
+            double wv = m_Series[i].x();
+            double testWv = other.m_Series[i].x();
 
             if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
             {
@@ -292,79 +284,10 @@ namespace FenestrationCommon
                   "Wavelengths of two vectors are not the same. Cannot preform addition.");
             }
 
-            newProperties.m_Series.emplace_back(wv, m_Series[i].value() + other.m_Series[i].value());
+            newProperties.addProperty(wv, value);
         }
 
         return newProperties;
-    }
-
-    CSeries & CSeries::operator*=(const CSeries & other)
-    {
-        const double WAVELENGTHTOLERANCE = 1e-10;
-        const size_t minSize = std::min(m_Series.size(), other.m_Series.size());
-
-        for(size_t i = 0; i < minSize; ++i)
-        {
-            const double wv = m_Series[i].x();
-            const double testWv = other.m_Series[i].x();
-
-            if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
-            {
-                throw std::runtime_error("The wavelengths of the two vectors are not the same. "
-                                         "Cannot perform multiplication.");
-            }
-            m_Series[i].setValue(m_Series[i].value() * other.m_Series[i].value());
-        }
-
-        // Truncate if other was smaller
-        m_Series.resize(minSize);
-        return *this;
-    }
-
-    CSeries & CSeries::operator-=(const CSeries & other)
-    {
-        const double WAVELENGTHTOLERANCE = 1e-10;
-        const size_t minSize = std::min(m_Series.size(), other.m_Series.size());
-
-        for(size_t i = 0; i < minSize; ++i)
-        {
-            const double wv = m_Series[i].x();
-            const double testWv = other.m_Series[i].x();
-
-            if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
-            {
-                throw std::runtime_error(
-                  "Wavelengths of two vectors are not the same. Cannot perform subtraction.");
-            }
-            m_Series[i].setValue(m_Series[i].value() - other.m_Series[i].value());
-        }
-
-        // Truncate if other was smaller
-        m_Series.resize(minSize);
-        return *this;
-    }
-
-    CSeries & CSeries::operator+=(const CSeries & other)
-    {
-        const double WAVELENGTHTOLERANCE = 1e-10;
-        const size_t minSize = std::min(m_Series.size(), other.m_Series.size());
-
-        for(size_t i = 0; i < minSize; ++i)
-        {
-            const double wv = m_Series[i].x();
-            const double testWv = other.m_Series[i].x();
-
-            if(std::abs(wv - testWv) > WAVELENGTHTOLERANCE)
-            {
-                throw std::runtime_error(
-                  "Wavelengths of two vectors are not the same. Cannot perform addition.");
-            }
-            m_Series[i].setValue(m_Series[i].value() + other.m_Series[i].value());
-        }
-
-        // Truncate if other was smaller
-        m_Series.resize(minSize);
-        return *this;
     }
 
     namespace Helper

@@ -9,14 +9,12 @@ namespace FenestrationCommon
     {
     public:
         SquareMatrix(const SquareMatrix &) = default;
-        SquareMatrix(SquareMatrix && other) noexcept;
         explicit SquareMatrix(std::size_t tSize = 0);
         explicit SquareMatrix(const std::initializer_list<std::vector<double>> & tInput);
         explicit SquareMatrix(const std::vector<std::vector<double>> & tInput);
-        explicit SquareMatrix(std::vector<std::vector<double>> && tInput);
+        explicit SquareMatrix(const std::vector<std::vector<double>> && tInput);
 
         SquareMatrix & operator=(const SquareMatrix & val) = default;
-        SquareMatrix & operator=(SquareMatrix && other) noexcept;
 
         [[nodiscard]] std::size_t size() const;
         void setZeros();
@@ -48,8 +46,9 @@ namespace FenestrationCommon
         std::vector<double> operator*(const std::vector<double> & v) const;
 
     private:
-        [[nodiscard]] SquareMatrix LU() const;
-        [[nodiscard]] std::vector<double> checkSingularity() const;
+        // explicit SquareMatrix(SquareMatrix && tMatrix);
+        SquareMatrix LU() const;
+        std::vector<double> checkSingularity() const;
         std::size_t m_size;
         std::vector<std::vector<double>> m_Matrix;
     };
