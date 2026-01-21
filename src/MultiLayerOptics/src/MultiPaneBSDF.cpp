@@ -120,13 +120,17 @@ namespace MultiLayerOptics
         auto jscSum = jscTotal.getSums(minLambda, maxLambda);
 
         std::vector<std::vector<double>> jscWithSolar;
+        jscWithSolar.reserve(jscSum.size());
         for(size_t i = 0; i < jscSum.size(); ++i)
         {
-            jscWithSolar.emplace_back();
+            std::vector<double> layerJsc;
+            layerJsc.reserve(jscSum[i].size());
+            const double incomingSolar = m_IncomingSolar[i];
             for(size_t j = 0; j < jscSum[i].size(); ++j)
             {
-                jscWithSolar[i].push_back(jscSum[i][j] * m_IncomingSolar[i]);
+                layerJsc.push_back(jscSum[i][j] * incomingSolar);
             }
+            jscWithSolar.push_back(std::move(layerJsc));
         }
 
         return calcPVLayersElectricity(jscWithSolar, m_IncomingSolar);
@@ -266,11 +270,13 @@ namespace MultiLayerOptics
       CMultiPaneBSDF::AbsHeat(double minLambda, double maxLambda, Side t_Side, size_t Index)
     {
         calculate(minLambda, maxLambda);
+        const auto & absVec = m_Abs.at(t_Side)[Index - 1];
+        const auto & absElecVec = m_AbsElectricity.at(t_Side)[Index - 1];
         std::vector<double> result;
-        for(size_t i = 0u; i < m_Abs.at(t_Side)[Index - 1].size(); ++i)
+        result.reserve(absVec.size());
+        for(size_t i = 0u; i < absVec.size(); ++i)
         {
-            result.push_back(m_Abs.at(t_Side)[Index - 1][i]
-                             - m_AbsElectricity.at(t_Side)[Index - 1][i]);
+            result.push_back(absVec[i] - absElecVec[i]);
         }
 
         return result;
@@ -491,11 +497,13 @@ namespace MultiLayerOptics
         m_CalculationProperties = calcProperties;
 
         const auto directionsSize{m_BSDFDirections.size()};
+        const auto scaledRadiation = calcProperties.scaledSolarRadiation();
 
-        this->m_IncomingSpectra = std::vector<CSeries>(directionsSize);
+        this->m_IncomingSpectra.clear();
+        this->m_IncomingSpectra.reserve(directionsSize);
         for(size_t i = 0; i < directionsSize; ++i)
         {
-            this->m_IncomingSpectra[i] = calcProperties.scaledSolarRadiation();
+            this->m_IncomingSpectra.push_back(scaledRadiation);
         }
         m_SpectralIntegrationWavelengths = calcProperties.CommonWavelengths;
 
@@ -510,8 +518,9 @@ namespace MultiLayerOptics
                                            const double theta,
                                            const double phi)
     {
-        std::vector<double> abs;
         const size_t absSize{m_EquivalentLayer.numberOfLayers()};
+        std::vector<double> abs;
+        abs.reserve(absSize);
         for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)
@@ -535,8 +544,9 @@ namespace MultiLayerOptics
                                                const double theta,
                                                const double phi)
     {
-        std::vector<double> abs;
         const size_t absSize{m_EquivalentLayer.numberOfLayers()};
+        std::vector<double> abs;
+        abs.reserve(absSize);
         for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)
@@ -559,8 +569,9 @@ namespace MultiLayerOptics
       const double theta,
       const double phi)
     {
+        const size_t absSize{m_EquivalentLayer.numberOfLayers()};
         std::vector<double> abs;
-        size_t absSize{m_EquivalentLayer.numberOfLayers()};
+        abs.reserve(absSize);
         for(size_t i = 1u; i <= absSize; ++i)
         {
             switch(scattering)

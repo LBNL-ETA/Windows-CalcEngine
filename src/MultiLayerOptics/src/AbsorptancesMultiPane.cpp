@@ -161,14 +161,17 @@ namespace MultiLayerOptics
                                             const CSeries & t_RCoeffs)
     {
         CSeries rCoeffs;
-        size_t size = t_T.size();
+        const size_t size = t_T.size();
+        rCoeffs.reserve(size);
 
         for(size_t i = 0; i < size; ++i)
         {
-            double wl = t_T[i].x();
-            double rValue = t_Rf[i].value()
-                            + t_T[i].value() * t_T[i].value() * t_RCoeffs[i].value()
-                                / (1 - t_Rb[i].value() * t_RCoeffs[i].value());
+            const double wl = t_T[i].x();
+            const double tVal = t_T[i].value();
+            const double rbVal = t_Rb[i].value();
+            const double rCoeffsVal = t_RCoeffs[i].value();
+            const double rValue = t_Rf[i].value()
+                            + tVal * tVal * rCoeffsVal / (1 - rbVal * rCoeffsVal);
             rCoeffs.addProperty(wl, rValue);
         }
 
@@ -180,12 +183,15 @@ namespace MultiLayerOptics
                                             const CSeries & t_RCoeffs)
     {
         CSeries tCoeffs;
-        size_t size = t_T.size();
+        const size_t size = t_T.size();
+        tCoeffs.reserve(size);
 
         for(size_t i = 0; i < size; ++i)
         {
-            double wl = t_T[i].x();
-            double tValue = t_T[i].value() / (1 - t_Rb[i].value() * t_RCoeffs[i].value());
+            const double wl = t_T[i].x();
+            const double rbVal = t_Rb[i].value();
+            const double rCoeffsVal = t_RCoeffs[i].value();
+            const double tValue = t_T[i].value() / (1 - rbVal * rCoeffsVal);
             tCoeffs.addProperty(wl, tValue);
         }
 

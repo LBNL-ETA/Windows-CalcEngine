@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -236,7 +237,8 @@ namespace MultiLayerOptics
         // Results for angle-properties std::pair. If same angle is required twice, then model will
         // not calculate it twice. First it will search for results here and if results are not
         // available, then it will perform calculation for given angle
-        std::vector<CEquivalentLayerSingleComponentMWAngle> m_EquivalentAngle;
+        // Using map for O(log n) lookup instead of O(n) linear search
+        std::map<double, CEquivalentLayerSingleComponentMWAngle> m_EquivalentAngle;
 
         SingleLayerOptics::CalculationProperties m_CalculationProperties;
 

@@ -500,14 +500,8 @@ namespace MultiLayerOptics
 
     CEquivalentLayerSingleComponentMWAngle CMultiPaneSpecular::getAngular(const double t_Angle)
     {
-        std::vector<CEquivalentLayerSingleComponentMWAngle>::iterator it;
-        it = find_if(m_EquivalentAngle.begin(),
-                     m_EquivalentAngle.end(),
-                     [&t_Angle](const CEquivalentLayerSingleComponentMWAngle & obj) {
-                         return std::abs(obj.angle() - t_Angle) < 1e-6;
-                     });
-
-        return (it != m_EquivalentAngle.end()) ? (*it) : createNewAngular(t_Angle);
+        auto it = m_EquivalentAngle.find(t_Angle);
+        return (it != m_EquivalentAngle.end()) ? it->second : createNewAngular(t_Angle);
     }
 
     CEquivalentLayerSingleComponentMWAngle
@@ -530,9 +524,9 @@ namespace MultiLayerOptics
 
         CEquivalentLayerSingleComponentMWAngle newLayer(aEqLayer, aAbs, t_Angle);
 
-        m_EquivalentAngle.push_back(newLayer);
+        auto result = m_EquivalentAngle.emplace(t_Angle, newLayer);
 
-        return newLayer;
+        return result.first->second;
     }
 
     CMultiPaneSpecular::SeriesResults
