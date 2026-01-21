@@ -52,6 +52,9 @@ namespace MultiLayerOptics
         void calculate(const FenestrationCommon::ProgressCallback & callback = nullptr);
         void setCommonBandWavelengths(const std::vector<double> & value);
 
+        // Clear cached calculation results to free memory
+        void invalidateCache();
+
     private:
         [[nodiscard]] CEquivalentBSDFLayerSingleBand
           getEquivalentLayerAtWavelength(size_t wavelengthIndex) const;
@@ -83,7 +86,6 @@ namespace MultiLayerOptics
 
         bool hasCache() const;
         void ensureCache();
-        void invalidateCache();
 
         void calculateWavelengthByWavelengthProperties(
           const FenestrationCommon::ProgressCallback & callback = nullptr);

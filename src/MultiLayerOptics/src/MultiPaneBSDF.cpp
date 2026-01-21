@@ -203,6 +203,10 @@ namespace MultiLayerOptics
         }
 
         m_Range = Range{minLambda, maxLambda};
+
+        // Clear the equivalent layer cache to free memory - the data has been extracted
+        // to m_WavelengthMatrices, m_Abs, m_AbsElectricity, and m_Results
+        m_EquivalentLayer.invalidateCache();
     }
 
     double CMultiPaneBSDF::integrateBSDFAbsorptance(const std::vector<double> & lambda,
