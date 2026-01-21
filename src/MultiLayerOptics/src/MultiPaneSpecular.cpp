@@ -165,7 +165,7 @@ namespace MultiLayerOptics
                                                    double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
-        std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
+        CSeries aAngularProperties;
         for(size_t i = 0; i < size; ++i)
         {
             double angle = t_IntegrationAngles[i];
@@ -176,10 +176,10 @@ namespace MultiLayerOptics
                                            maxLambda,
                                            t_IntegrationType,
                                            normalizationCoefficient);
-            aAngularProperties->addProperty(angle, aProperty);
+            aAngularProperties.addProperty(angle, aProperty);
         }
         CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator(
-          *aAngularProperties, t_IntegrationType, normalizationCoefficient);
+          aAngularProperties, t_IntegrationType, normalizationCoefficient);
         return aIntegrator.value();
     }
 
@@ -439,16 +439,16 @@ namespace MultiLayerOptics
                                                 double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
-        std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
+        CSeries aAngularProperties;
         for(size_t i = 0; i < size; ++i)
         {
             double angle = t_IntegrationAngles[i];
             double aAbs = Abs(Index, angle, minLambda, maxLambda, side, t_IntegrationType);
-            aAngularProperties->addProperty(angle, aAbs);
+            aAngularProperties.addProperty(angle, aAbs);
         }
 
         CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator(
-          *aAngularProperties, t_IntegrationType, normalizationCoefficient);
+          aAngularProperties, t_IntegrationType, normalizationCoefficient);
         return aIntegrator.value();
     }
 
@@ -461,16 +461,16 @@ namespace MultiLayerOptics
                                                     double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
-        std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
+        CSeries aAngularProperties;
         for(size_t i = 0; i < size; ++i)
         {
             double angle = t_IntegrationAngles[i];
             double aAbs = AbsHeat(Index, angle, minLambda, maxLambda, side, t_IntegrationType);
-            aAngularProperties->addProperty(angle, aAbs);
+            aAngularProperties.addProperty(angle, aAbs);
         }
 
         CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator(
-          *aAngularProperties, t_IntegrationType, normalizationCoefficient);
+          aAngularProperties, t_IntegrationType, normalizationCoefficient);
         return aIntegrator.value();
     }
 
@@ -484,17 +484,17 @@ namespace MultiLayerOptics
       double normalizationCoefficient)
     {
         size_t size = t_IntegrationAngles.size();
-        std::shared_ptr<CSeries> aAngularProperties = std::make_shared<CSeries>();
+        CSeries aAngularProperties;
         for(size_t i = 0; i < size; ++i)
         {
             double angle = t_IntegrationAngles[i];
             double aAbs =
               AbsElectricity(Index, angle, minLambda, maxLambda, side, t_IntegrationType);
-            aAngularProperties->addProperty(angle, aAbs);
+            aAngularProperties.addProperty(angle, aAbs);
         }
 
         CHemispherical2DIntegrator aIntegrator = CHemispherical2DIntegrator(
-          *aAngularProperties, t_IntegrationType, normalizationCoefficient);
+          aAngularProperties, t_IntegrationType, normalizationCoefficient);
         return aIntegrator.value();
     }
 

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 #include <stdexcept>
 
@@ -134,23 +135,27 @@ namespace MultiLayerOptics
     {
         CLayer_List & aLayers = m_StackedLayers.at(Side::Back);
 
-        // Insert interior environment
         const CScatteringSurface aFront(1, 0, 0, 0, 1, 0);
         const CScatteringSurface aBack(1, 0, 0, 0, 1, 0);
         const CScatteringLayer exterior(aFront, aBack);
-        aLayers.push_back(exterior);
+
+        // Build in reverse order using push_back (O(1) each), then reverse once (O(n))
+        // This avoids O(n²) from repeated insert(begin()) operations
+        aLayers.push_back(exterior);   // Will be last after reverse
 
         const size_t size = m_Layers.size() - 1;
-        // Last layer just in
         auto & aLayer = m_Layers[size];
-        aLayers.insert(aLayers.begin(), aLayer);
+        aLayers.push_back(aLayer);     // Will be second-to-last after reverse
+
         CEquivalentScatteringLayer aEqLayer = CEquivalentScatteringLayer(aLayer, t_Theta, t_Phi);
         for(size_t i = size; i > 0; --i)
         {
             aEqLayer.addLayer(m_Layers[i - 1], Side::Front, t_Theta, t_Phi);
-            aLayers.insert(aLayers.begin(), aEqLayer.getLayer());
+            aLayers.push_back(aEqLayer.getLayer());
         }
-        aLayers.insert(aLayers.begin(), exterior);
+        aLayers.push_back(exterior);   // Will be first after reverse
+
+        std::reverse(aLayers.begin(), aLayers.end());
     }
 
     CSurfaceEnergy CInterRef::calcDiffuseEnergy(const double t_Theta, const double t_Phi)
@@ -211,14 +216,32 @@ namespace MultiLayerOptics
         CSurfaceEnergy aScatter{};
 
         // Calculate total energy scattered from beam to diffuse
-        for(EnergyFlow aEnergyFlow : allEnergyFlow())
+        // Loop order optimized: layer index outer, energy flow inner
+        // This allows caching layer property lookups which don't depend on energy flow
+        for(size_t i = 0; i <= m_Layers.size(); ++i)
         {
-            // In this case numbering goes through gas environments (gaps, interior and exterior)
-            // because we want to keep inter-reflectance calculations together
-            for(size_t i = 0; i <= m_Layers.size(); ++i)
+            auto & fwdLayer = m_StackedLayers.at(Side::Front)[i];
+            auto & bkwLayer = m_StackedLayers.at(Side::Back)[i + 1];
+
+            // Cache property lookups - these don't depend on energy flow
+            const double Rf_bkw = bkwLayer.getPropertySurface(bkwLayer.getMinLambda(),
+                                                              bkwLayer.getMaxLambda(),
+                                                              PropertySurface::R,
+                                                              Side::Front,
+                                                              Scattering::DiffuseDiffuse,
+                                                              t_Theta,
+                                                              t_Phi);
+            const double Rb_fwd = fwdLayer.getPropertySurface(fwdLayer.getMinLambda(),
+                                                              fwdLayer.getMaxLambda(),
+                                                              PropertySurface::R,
+                                                              Side::Back,
+                                                              Scattering::DiffuseDiffuse,
+                                                              t_Theta,
+                                                              t_Phi);
+            const double interRef = 1 / (1 - Rf_bkw * Rb_fwd);
+
+            for(EnergyFlow aEnergyFlow : allEnergyFlow())
             {
-                auto & fwdLayer = m_StackedLayers.at(Side::Front)[i];
-                auto & bkwLayer = m_StackedLayers.at(Side::Back)[i + 1];
                 double Ib = 0;
                 if(i != 0)
                 {
@@ -229,21 +252,6 @@ namespace MultiLayerOptics
                 {
                     If = diffSum.IEnergy(i + 1, Side::Front, aEnergyFlow);
                 }
-                const double Rf_bkw = bkwLayer.getPropertySurface(bkwLayer.getMinLambda(),
-                                                                  bkwLayer.getMaxLambda(),
-                                                                  PropertySurface::R,
-                                                                  Side::Front,
-                                                                  Scattering::DiffuseDiffuse,
-                                                                  t_Theta,
-                                                                  t_Phi);
-                const double Rb_fwd = fwdLayer.getPropertySurface(fwdLayer.getMinLambda(),
-                                                                  fwdLayer.getMaxLambda(),
-                                                                  PropertySurface::R,
-                                                                  Side::Back,
-                                                                  Scattering::DiffuseDiffuse,
-                                                                  t_Theta,
-                                                                  t_Phi);
-                const double interRef = 1 / (1 - Rf_bkw * Rb_fwd);
                 const double Ib_tot = (Ib * Rf_bkw + If) * interRef;
                 const double If_tot = (Ib + Rb_fwd * If) * interRef;
                 if(i != 0)

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "AbsorptancesMultiPane.hpp"
 #include "WCECommon.hpp"
 
@@ -63,6 +65,8 @@ namespace MultiLayerOptics
             t.setConstantValues(wv, 0);
             m_rCoeffs.at(side).clear();
             m_tCoeffs.at(side).clear();
+            m_rCoeffs.at(side).reserve(size);
+            m_tCoeffs.at(side).reserve(size);
 
             auto index{side == Side::Front ? static_cast<int>(size) - 1 : 0};
             const auto endValue{side == Side::Front ? -1 : static_cast<int>(size)};
@@ -71,8 +75,8 @@ namespace MultiLayerOptics
                 t = tCoeffs(m_T[index], m_R.at(oppositeSide)[index], r);
                 r = rCoeffs(m_T[index], m_R.at(side)[index], m_R.at(oppositeSide)[index], r);
 
-                m_rCoeffs.at(side).insert(m_rCoeffs.at(side).begin(), r);
-                m_tCoeffs.at(side).insert(m_tCoeffs.at(side).begin(), t);
+                m_rCoeffs.at(side).push_back(r);
+                m_tCoeffs.at(side).push_back(t);
                 if(side == Side::Front)
                 {
                     index--;
@@ -82,6 +86,9 @@ namespace MultiLayerOptics
                     index++;
                 }
             } while(index != endValue);
+
+            std::reverse(m_rCoeffs.at(side).begin(), m_rCoeffs.at(side).end());
+            std::reverse(m_tCoeffs.at(side).begin(), m_tCoeffs.at(side).end());
         }
     }
 
