@@ -3,9 +3,10 @@
 
 #include <memory>
 
+#include "BeamDirection.hpp"
+
 namespace SingleLayerOptics
 {
-    class CBeamDirection;
 
     class AngleLimits
     {
@@ -33,7 +34,7 @@ namespace SingleLayerOptics
     {
     public:
         CBSDFPatch(const AngleLimits & t_Theta, const AngleLimits & t_Phi);
-        [[nodiscard]] CBeamDirection centerPoint() const;
+        [[nodiscard]] const CBeamDirection & centerPoint() const;
         [[nodiscard]] double lambda() const;
         [[nodiscard]] bool isInPatch(double t_Theta, double t_Phi) const;
 
@@ -42,6 +43,7 @@ namespace SingleLayerOptics
         AngleLimits m_Theta;
         AngleLimits m_Phi;
         double m_Lambda;
+        CBeamDirection m_CenterPoint;  // Cached center point
     };
 
 }   // namespace SingleLayerOptics

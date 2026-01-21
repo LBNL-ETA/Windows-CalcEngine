@@ -56,7 +56,7 @@ namespace SingleLayerOptics
             const size_t M = dirs.size();
             for(size_t out = 0; out < M; ++out)
             {
-                const CBeamDirection oDir = dirs[out].centerPoint();
+                const CBeamDirection & oDir = dirs[out].centerPoint();
                 const double s = wght[out];
                 f(out, oDir, s);
             }

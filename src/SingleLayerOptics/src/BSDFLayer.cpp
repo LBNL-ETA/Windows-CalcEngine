@@ -61,7 +61,7 @@ namespace SingleLayerOptics
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = aDirections[i].centerPoint();
+                const CBeamDirection & aDirection = aDirections[i].centerPoint();
                 const auto aTau = m_Cell->T_dir_dir_band(aSide, aDirection)[wavelengthIndex];
                 const auto aRho = m_Cell->R_dir_dir_band(aSide, aDirection)[wavelengthIndex];
                 double Lambda = aDirections[i].lambda();
@@ -82,7 +82,7 @@ namespace SingleLayerOptics
 
             for(size_t directionIndex = 0; directionIndex < aDirections.size(); ++directionIndex)
             {
-                const CBeamDirection aDirection = aDirections[directionIndex].centerPoint();
+                const CBeamDirection & aDirection = aDirections[directionIndex].centerPoint();
                 calcDiffuseDistribution_byWavelength(
                   aSide, aDirection, directionIndex, wavelengthIndex, results);
             }
@@ -119,7 +119,7 @@ namespace SingleLayerOptics
             SquareMatrix rho{size};
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = aDirections[i].centerPoint();
+                const CBeamDirection & aDirection = aDirections[i].centerPoint();
                 const double Lambda = aDirections[i].lambda();
 
                 const double aTau = m_Cell->T_dir_dir(t_Side, aDirection);
@@ -140,7 +140,7 @@ namespace SingleLayerOptics
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = aDirections[i].centerPoint();
+                const CBeamDirection & aDirection = aDirections[i].centerPoint();
                 std::vector<double> aTau = m_Cell->T_dir_dir_band(aSide, aDirection);
                 std::vector<double> aRho = m_Cell->R_dir_dir_band(aSide, aDirection);
                 double Lambda = aDirections[i].lambda();
@@ -165,7 +165,7 @@ namespace SingleLayerOptics
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = aDirections[i].centerPoint();
+                const CBeamDirection & aDirection = aDirections[i].centerPoint();
                 calcDiffuseDistribution(aSide, aDirection, i);
             }
         }
@@ -180,7 +180,7 @@ namespace SingleLayerOptics
             size_t size = aDirections.size();
             for(size_t i = 0; i < size; ++i)
             {
-                const CBeamDirection aDirection = aDirections[i].centerPoint();
+                const CBeamDirection & aDirection = aDirections[i].centerPoint();
                 calcDiffuseDistribution_wv(aSide, aDirection, i, results);
             }
         }

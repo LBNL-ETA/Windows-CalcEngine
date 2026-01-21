@@ -55,12 +55,13 @@ namespace SingleLayerOptics
     CBSDFPatch::CBSDFPatch(const AngleLimits & t_Theta, const AngleLimits & t_Phi) :
         m_Theta(t_Theta),
         m_Phi(t_Phi),
-        m_Lambda(calculateLambda(m_Theta.low(), m_Theta.high(), m_Phi.delta()))
+        m_Lambda(calculateLambda(m_Theta.low(), m_Theta.high(), m_Phi.delta())),
+        m_CenterPoint(m_Theta.average(), m_Phi.average())
     {}
 
-    CBeamDirection CBSDFPatch::centerPoint() const
+    const CBeamDirection & CBSDFPatch::centerPoint() const
     {
-        return {m_Theta.average(), m_Phi.average()};
+        return m_CenterPoint;
     }
 
     double CBSDFPatch::lambda() const
