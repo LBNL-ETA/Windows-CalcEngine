@@ -1,5 +1,4 @@
-#ifndef WINDOWS_CALCENGINE_COLORPROPERTIES_HPP
-#define WINDOWS_CALCENGINE_COLORPROPERTIES_HPP
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -11,8 +10,6 @@ namespace SingleLayerOptics
 {
     struct Trichromatic
     {
-        Trichromatic(double X, double Y, double Z);
-
         double X;
         double Y;
         double Z;
@@ -20,8 +17,6 @@ namespace SingleLayerOptics
 
     struct aRGB
     {
-        aRGB(int R, int G, int B);
-
         int R;
         int G;
         int B;
@@ -29,8 +24,6 @@ namespace SingleLayerOptics
 
     struct CIE_LAB
     {
-        CIE_LAB(double L, double A, double B);
-
         double L;
         double a;
         double b;
@@ -83,6 +76,3 @@ namespace SingleLayerOptics
     };
 
 }   // namespace SingleLayerOptics
-
-
-#endif   // WINDOWS_CALCENGINE_COLORPROPERTIES_HPP
