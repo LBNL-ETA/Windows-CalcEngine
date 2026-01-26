@@ -46,6 +46,8 @@ protected:
           StandardData::Photopic::ASTM_E308_1964_X(),
           StandardData::Photopic::ASTM_E308_1964_Y(),
           StandardData::Photopic::ASTM_E308_1964_Z(),
+          StandardData::Photopic::CIE_1964_Locus_X(),
+          StandardData::Photopic::CIE_1964_Locus_Y(),
           StandardData::condensedSpectrumDefault());
     }
 
