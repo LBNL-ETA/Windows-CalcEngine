@@ -39,15 +39,18 @@ protected:
     void SetUp() override
     {
         auto LayerX = createLayer(StandardData::Photopic::ASTM_E308_1964_X());
-
+        const SingleLayerOptics::ColorDetectors observer{
+            StandardData::Photopic::ASTM_E308_1964_X(),
+            StandardData::Photopic::ASTM_E308_1964_Y(),
+            StandardData::Photopic::ASTM_E308_1964_Z()};
+        const SingleLayerOptics::SpectrumLocus locus{
+            SingleLayerOptics::CIE_1964_Locus_X(),
+            SingleLayerOptics::CIE_1964_Locus_Y()};
         m_Color = std::make_shared<SingleLayerOptics::ColorProperties>(
           std::move(LayerX),
           StandardData::Photopic::solarRadiation(),
-          StandardData::Photopic::ASTM_E308_1964_X(),
-          StandardData::Photopic::ASTM_E308_1964_Y(),
-          StandardData::Photopic::ASTM_E308_1964_Z(),
-          SingleLayerOptics::CIE_1964_Locus_X(),
-          SingleLayerOptics::CIE_1964_Locus_Y(),
+          observer,
+          locus,
           StandardData::condensedSpectrumDefault());
     }
 

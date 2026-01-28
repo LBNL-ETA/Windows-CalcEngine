@@ -37,13 +37,11 @@ protected:
     void SetUp() override
     {
         // Initialize ColorProperties with D65 illuminant and CIE 1964 10-degree observer
-        m_Color.emplace(createLayer(),
-                        StandardData::Photopic::solarRadiation(),
-                        StandardData::Photopic::ASTM_E308_1964_X(),
-                        StandardData::Photopic::ASTM_E308_1964_Y(),
-                        StandardData::Photopic::ASTM_E308_1964_Z(),
-                        SingleLayerOptics::CIE_1964_Locus_X(),
-                        SingleLayerOptics::CIE_1964_Locus_Y());
+        const SingleLayerOptics::ColorDetectors observer{
+            StandardData::Photopic::ASTM_E308_1964_X(),
+            StandardData::Photopic::ASTM_E308_1964_Y(),
+            StandardData::Photopic::ASTM_E308_1964_Z()};
+        m_Color.emplace(createLayer(), StandardData::Photopic::solarRadiation(), observer);
     }
 
 public:

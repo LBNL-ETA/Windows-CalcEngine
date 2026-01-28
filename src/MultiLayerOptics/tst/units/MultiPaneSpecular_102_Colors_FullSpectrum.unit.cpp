@@ -47,14 +47,11 @@ protected:
     {
         // Initialize ColorProperties with D65 illuminant and CIE 1964 10-degree observer
         auto LayerX = createLayer(StandardData::Photopic::ASTM_E308_1964_X());
-
-        m_Color.emplace(std::move(LayerX),
-                        StandardData::Photopic::solarRadiation(),
-                        StandardData::Photopic::ASTM_E308_1964_X(),
-                        StandardData::Photopic::ASTM_E308_1964_Y(),
-                        StandardData::Photopic::ASTM_E308_1964_Z(),
-                        SingleLayerOptics::CIE_1964_Locus_X(),
-                        SingleLayerOptics::CIE_1964_Locus_Y());
+        const SingleLayerOptics::ColorDetectors observer{
+            StandardData::Photopic::ASTM_E308_1964_X(),
+            StandardData::Photopic::ASTM_E308_1964_Y(),
+            StandardData::Photopic::ASTM_E308_1964_Z()};
+        m_Color.emplace(std::move(LayerX), StandardData::Photopic::solarRadiation(), observer);
     }
 
 public:

@@ -5,6 +5,7 @@
 
 #include "WCECommon.hpp"
 #include "ScatteringLayer.hpp"
+#include "SpectrumLocus.hpp"
 
 namespace SingleLayerOptics
 {
@@ -36,28 +37,37 @@ namespace SingleLayerOptics
         double purity;               // [%]
     };
 
+    /// CIE color matching functions (tristimulus weighting functions)
+    struct ColorDetectors
+    {
+        FenestrationCommon::CSeries X;
+        FenestrationCommon::CSeries Y;
+        FenestrationCommon::CSeries Z;
+    };
+
+    /// Spectrum locus chromaticity coordinates for dominant wavelength calculation
+    struct SpectrumLocus
+    {
+        FenestrationCommon::CSeries X;
+        FenestrationCommon::CSeries Y;
+    };
+
     class ColorProperties
     {
     public:
         /// Constructor for color property calculations
-        /// @param layerX The scattering layer to calculate properties for
-        /// @param t_Source Source spectrum (e.g., D65 illuminant)
-        /// @param t_DetectorX CIE color matching function X
-        /// @param t_DetectorY CIE color matching function Y
-        /// @param t_DetectorZ CIE color matching function Z
-        /// @param t_LocusX Spectrum locus x chromaticity coordinates (wavelength vs x)
-        /// @param t_LocusY Spectrum locus y chromaticity coordinates (wavelength vs y)
-        /// @param t_wavelengths Optional wavelength set (uses layer wavelengths if empty)
+        /// @param layer The scattering layer to calculate properties for
+        /// @param source Source spectrum (e.g., D65 illuminant)
+        /// @param detectors CIE color matching functions (X, Y, Z)
+        /// @param locus Spectrum locus chromaticity coordinates (defaults to CIE 1964)
+        /// @param wavelengths Optional wavelength set (uses layer wavelengths if empty)
         /// @param integrator Integration method
         /// @param normalizationCoefficient Normalization factor
-        ColorProperties(std::unique_ptr<IScatteringLayer> && layerX,
-                        const FenestrationCommon::CSeries & t_Source,
-                        const FenestrationCommon::CSeries & t_DetectorX,
-                        const FenestrationCommon::CSeries & t_DetectorY,
-                        const FenestrationCommon::CSeries & t_DetectorZ,
-                        const FenestrationCommon::CSeries & t_LocusX,
-                        const FenestrationCommon::CSeries & t_LocusY,
-                        const std::vector<double> & t_wavelengths = {},
+        ColorProperties(std::unique_ptr<IScatteringLayer> && layer,
+                        const FenestrationCommon::CSeries & source,
+                        const ColorDetectors & detectors,
+                        const SpectrumLocus & locus = {CIE_1964_Locus_X(), CIE_1964_Locus_Y()},
+                        const std::vector<double> & wavelengths = {},
                         FenestrationCommon::IntegrationType integrator =
                           FenestrationCommon::IntegrationType::Trapezoidal,
                         double normalizationCoefficient = 1.0);

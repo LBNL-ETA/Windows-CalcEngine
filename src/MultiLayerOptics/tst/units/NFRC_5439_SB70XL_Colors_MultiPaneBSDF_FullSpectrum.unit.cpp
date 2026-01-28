@@ -32,14 +32,12 @@ class TestNFRC_5439_SB70XL_Colors_MultiPaneBSDF_FullSpectrum : public testing::T
 protected:
     void SetUp() override
     {
+        const SingleLayerOptics::ColorDetectors observer{
+            StandardData::Photopic::ASTM_E308_1964_X(),
+            StandardData::Photopic::ASTM_E308_1964_Y(),
+            StandardData::Photopic::ASTM_E308_1964_Z()};
         m_Color = std::make_shared<SingleLayerOptics::ColorProperties>(
-          std::move(createLayer()),
-          StandardData::Photopic::solarRadiation(),
-          StandardData::Photopic::ASTM_E308_1964_X(),
-          StandardData::Photopic::ASTM_E308_1964_Y(),
-          StandardData::Photopic::ASTM_E308_1964_Z(),
-          SingleLayerOptics::CIE_1964_Locus_X(),
-          SingleLayerOptics::CIE_1964_Locus_Y());
+          createLayer(), StandardData::Photopic::solarRadiation(), observer);
     }
 
 public:

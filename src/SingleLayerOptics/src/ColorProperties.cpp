@@ -121,35 +121,32 @@ namespace SingleLayerOptics
         }
     }   // namespace
 
-    ColorProperties::ColorProperties(std::unique_ptr<IScatteringLayer> && layerX,
-                                     const FenestrationCommon::CSeries & t_Source,
-                                     const FenestrationCommon::CSeries & t_DetectorX,
-                                     const FenestrationCommon::CSeries & t_DetectorY,
-                                     const FenestrationCommon::CSeries & t_DetectorZ,
-                                     const FenestrationCommon::CSeries & t_LocusX,
-                                     const FenestrationCommon::CSeries & t_LocusY,
-                                     const std::vector<double> & t_wavelengths,
+    ColorProperties::ColorProperties(std::unique_ptr<IScatteringLayer> && layer,
+                                     const FenestrationCommon::CSeries & source,
+                                     const ColorDetectors & detectors,
+                                     const SpectrumLocus & locus,
+                                     const std::vector<double> & wavelengths,
                                      FenestrationCommon::IntegrationType integrator,
                                      double normalizationCoefficient) :
-        m_LayerX(std::move(layerX)),
-        m_Source(t_Source),
-        m_DetectorX(t_DetectorX),
-        m_DetectorY(t_DetectorY),
-        m_DetectorZ(t_DetectorZ),
-        m_LocusX(t_LocusX),
-        m_LocusY(t_LocusY),
-        m_wavelengths(t_wavelengths),
+        m_LayerX(std::move(layer)),
+        m_Source(source),
+        m_DetectorX(detectors.X),
+        m_DetectorY(detectors.Y),
+        m_DetectorZ(detectors.Z),
+        m_LocusX(locus.X),
+        m_LocusY(locus.Y),
+        m_wavelengths(wavelengths),
         m_Integrator(integrator),
         m_NormalizationCoefficient(normalizationCoefficient)
     {
-        if(t_wavelengths.empty())
+        if(wavelengths.empty())
         {
             m_wavelengths = m_LayerX->getWavelengths();
         }
-        auto aSolar = t_Source;
-        auto DX = t_DetectorX;
-        auto DY = t_DetectorY;
-        auto DZ = t_DetectorZ;
+        auto aSolar = source;
+        auto DX = detectors.X;
+        auto DY = detectors.Y;
+        auto DZ = detectors.Z;
         aSolar = aSolar.interpolate(m_wavelengths);
         DX = DX.interpolate(m_wavelengths);
         DY = DY.interpolate(m_wavelengths);
