@@ -65,12 +65,10 @@ TEST(CR_TRR97_Horizontal_Slider, FrameCRValues)
     const auto vision = makeTRR97HorizontalSlider();
     const auto values = CR::frameAreaContributions(vision.frames());
 
-    auto framesView =
-      values | std::views::values
-      | std::views::transform([](auto const & val) -> auto const & { return val.data; })
-      | std::views::join | std::views::transform([](auto const & cond) { return cond.frame; });
-
-    const std::vector frameVals(std::ranges::begin(framesView), std::ranges::end(framesView));
+    std::vector<double> frameVals;
+    for(const auto & [key, val] : values)
+        for(const auto & cond : val.data)
+            frameVals.push_back(cond.frame);
 
     // clang-format off
     const std::vector expectedFrameVals = {
@@ -106,12 +104,10 @@ TEST(CR_TRR97_Horizontal_Slider, EdgeCRValues)
     const auto vision = makeTRR97HorizontalSlider();
     const auto values = CR::frameAreaContributions(vision.frames());
 
-    auto edgesView =
-      values | std::views::values
-      | std::views::transform([](auto const & val) -> auto const & { return val.data; })
-      | std::views::join | std::views::transform([](auto const & cond) { return cond.edge; });
-
-    const std::vector edgeVals(std::ranges::begin(edgesView), std::ranges::end(edgesView));
+    std::vector<double> edgeVals;
+    for(const auto & [key, val] : values)
+        for(const auto & cond : val.data)
+            edgeVals.push_back(cond.edge);
 
     // clang-format off
     const std::vector expectedEdgeVals = {
