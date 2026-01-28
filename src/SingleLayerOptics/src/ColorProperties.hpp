@@ -11,30 +11,47 @@ namespace SingleLayerOptics
 {
     struct Trichromatic
     {
-        double X;
-        double Y;
-        double Z;
+        Trichromatic() = default;
+        Trichromatic(double xVal, double yVal, double zVal) : X(xVal), Y(yVal), Z(zVal)
+        {}
+
+        double X{0};
+        double Y{0};
+        double Z{0};
     };
 
     struct aRGB
     {
-        int R;
-        int G;
-        int B;
+        aRGB() = default;
+        aRGB(int rVal, int gVal, int bVal) : R(rVal), G(gVal), B(bVal)
+        {}
+
+        int R{0};
+        int G{0};
+        int B{0};
     };
 
     struct CIE_LAB
     {
-        double L;
-        double a;
-        double b;
+        CIE_LAB() = default;
+        CIE_LAB(double lVal, double aVal, double bVal) : L(lVal), a(aVal), b(bVal)
+        {}
+
+        double L{0};
+        double a{0};
+        double b{0};
     };
 
     /// Dominant wavelength (in micrometers) and excitation purity (percentage)
     struct DominantWavelengthPurity
     {
-        double dominantWavelength;   // [μm]
-        double purity;               // [%]
+        DominantWavelengthPurity() = default;
+        DominantWavelengthPurity(double wavelength, double pur) :
+            dominantWavelength(wavelength), purity(pur)
+        {}
+
+        double dominantWavelength{0};   // [μm]
+        double purity{0};               // [%]
     };
 
     /// CIE color matching functions (tristimulus weighting functions)
