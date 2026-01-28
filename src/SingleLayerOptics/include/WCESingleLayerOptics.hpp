@@ -25,6 +25,7 @@
 #include "../src/SpecularLayer.hpp"
 #include "../src/PhotovoltaicSpecularLayer.hpp"
 #include "../src/PhotovoltaicSpecularBSDFLayer.hpp"
+#include "../src/SpectrumLocus.hpp"
 #include "../src/SpecularBSDFLayer.hpp"
 #include "../src/SpecularCell.hpp"
 #include "../src/SpecularCellDescription.hpp"
