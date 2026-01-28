@@ -38,3 +38,4 @@
 #include "../src/IScatteringLayer.hpp"
 #include "../src/ColorProperties.hpp"
 #include "../src/CalculationProperties.hpp"
+#include "../src/SpectrumLocus.hpp"
