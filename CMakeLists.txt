@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)
 
 project(Windows-CalcEngine VERSION 1.0.66 LANGUAGES CXX)
 
@@ -72,28 +72,21 @@ if (${BUILD_WCE_OPTICAL})
     set(BUILD_WCE_VIEWER ON)
 endif ()
 
-if (DOWNLOAD_GTEST STREQUAL ON) # Do not need gtest since it will be processed by E+
-    # include(CMakeLists-GTest.txt)
-    configure_file(CMakeLists.txt.in ${CMAKE_CURRENT_BINARY_DIR}/googletest-download/CMakeLists.txt)
-    execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download)
-    execute_process(COMMAND ${CMAKE_COMMAND} --build .
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download)
-
+if (DOWNLOAD_GTEST STREQUAL ON)
     # Prevent GoogleTest from overriding our compiler/linker options
     # when building with Visual Studio
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-    # Add googletest directly to our build. This adds
-    # the following targets: gtest, gtest_main, gmock
-    # and gmock_main
-    add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
-            ${CMAKE_CURRENT_BINARY_DIR}/googletest-build)
+    include(FetchContent)
 
-    # Now simply link your own targets against gtest, gmock,
-    # etc. as appropriate
-
-    include_directories(${CMAKE_CURRENT_BINARY_DIR}/googletest-src/include)
+    if(NOT TARGET gtest)
+        FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG v1.14.0
+        )
+        FetchContent_MakeAvailable(googletest)
+    endif()
 endif ()
 
 # foreach( _variableName ${SOURCES})
@@ -157,7 +150,7 @@ else ()
             src/Common/src/Callbacks.hpp)
 
     if (${BUILD_WCE_COMMON})
-        target_include_directories(${target_name} PUBLIC "src/Common/include")
+        target_include_directories(${target_name} PUBLIC "src/Common/include" "src/Common/src")
     endif ()
 
     if (${BUILD_WCE_GASES})
