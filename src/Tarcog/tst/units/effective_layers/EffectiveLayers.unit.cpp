@@ -182,7 +182,7 @@ TEST(TestEffectiveLayers, TestRollerShadeWithSideOpenness)
 
     constexpr auto materialThickness{0.0008};   // m
     constexpr auto permeabilityFactor{0.001610};
-    const EffectiveLayers::ShadeOpenness openness{0, 0, 0.07874016, 0.07874016};
+    const EffectiveLayers::ShadeOpenness openness{0.07874016, 0.07874016, 0, 0};
 
     const auto shade = EffectiveLayers::makeCommonValues(materialThickness, permeabilityFactor, openness);
 
