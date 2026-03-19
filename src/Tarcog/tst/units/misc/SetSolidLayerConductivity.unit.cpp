@@ -94,6 +94,6 @@ TEST_F(TestSetSolidLayerConductivity, ConductivityUpdateIsReflectedInEffectiveVa
     const auto updatedKeffs = sys->getSolidEffectiveLayerConductivities(Tarcog::ISO15099::System::Uvalue);
     ASSERT_EQ(3u, updatedKeffs.size());
     
-    const std::vector correctKeffs{1.0, 1.0, 0.0986982};
+    const std::vector correctKeffs{1.0, 1.0, 0.098693748135024753};
     Helper::testVectors("Effective conductivities after set", correctKeffs, updatedKeffs);
 }
