@@ -156,6 +156,45 @@ TEST(TestEffectiveLayer, TestLouveredShutterEffectiveOpenness)
     EXPECT_NEAR(0.295495, effectiveOpenness.PermeabilityFactor, 1e-6);
 }
 
+// Roller shade from AERC database (ID 3001): "3000 NET 1% N001 White/White"
+// IDF values: thickness=8e-4, conductivity=0.3, IR transmittance=0.0333,
+// emissivity=0.8948, permeability=0.001610
+TEST(TestEffectiveLayers, TestRollerShadeEffectiveLayer)
+{
+    SCOPED_TRACE("Begin Test: Roller shade effective layer properties (AERC 3001).");
+
+    constexpr auto materialThickness{0.0008};   // m
+    constexpr auto permeabilityFactor{0.001610};
+
+    const auto shade = EffectiveLayers::makeCommonValues(materialThickness, permeabilityFactor);
+
+    EXPECT_NEAR(0.0008, shade.thickness, 1e-6);
+
+    const auto effectiveOpenness{shade.openness};
+    EXPECT_NEAR(3.470426e-05, effectiveOpenness.Mfront, 1e-8);
+    EXPECT_NEAR(0.001610, effectiveOpenness.PermeabilityFactor, 1e-6);
+}
+
+// Roller shade with side openness (left=0.078740, right=0.078740)
+TEST(TestEffectiveLayers, TestRollerShadeWithSideOpenness)
+{
+    SCOPED_TRACE("Begin Test: Roller shade with side openness (AERC 3001).");
+
+    constexpr auto materialThickness{0.0008};   // m
+    constexpr auto permeabilityFactor{0.001610};
+    const EffectiveLayers::ShadeOpenness openness{0, 0, 0.07874016, 0.07874016};
+
+    const auto shade = EffectiveLayers::makeCommonValues(materialThickness, permeabilityFactor, openness);
+
+    EXPECT_NEAR(0.0008, shade.thickness, 1e-6);
+
+    const auto effectiveOpenness{shade.openness};
+    EXPECT_NEAR(3.470426e-05, effectiveOpenness.Mfront, 1e-8);
+    EXPECT_NEAR(0.07874016, effectiveOpenness.Mleft, 1e-6);
+    EXPECT_NEAR(0.07874016, effectiveOpenness.Mright, 1e-6);
+    EXPECT_NEAR(0.001610, effectiveOpenness.PermeabilityFactor, 1e-6);
+}
+
 TEST(TestEffectiveLayers, RadiusFromRise)
 {
     constexpr double curvature{23.88962765};
