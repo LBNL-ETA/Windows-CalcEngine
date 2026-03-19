@@ -206,7 +206,7 @@ else ()
 
         if (${BUILD_WCE_THERMAL})
             include_directories(src/Tarcog/include)
-            file(GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Tarcog/tst/units/*.cpp")
+            file(GLOB_RECURSE all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/Tarcog/tst/units/*.cpp")
             LIST(REMOVE_ITEM all_test_src "src/Tarcog/tst/units/main.cpp")
             LIST(APPEND test_src ${all_test_src})
         endif ()
