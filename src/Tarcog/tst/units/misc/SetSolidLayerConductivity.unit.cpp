@@ -37,14 +37,14 @@ protected:
         auto glass2 = Tarcog::ISO15099::Layers::solid(glassThickness, glassConductance);
 
         // Shade layer (cellular shade) with initial conductivity of 0.45
-        constexpr auto shadeThickness = 0.035;
+        constexpr auto shadeThickness = 0.03514;
         constexpr auto initialConductivity = 0.45;
         constexpr auto permeabilityFactor = 0.0;
 
         const auto effectiveLayer{EffectiveLayers::makeCommonValues(shadeThickness, permeabilityFactor)};
 
         constexpr auto emissivity = 0.876;
-        constexpr auto irTransmittance = 0.0003;
+        constexpr auto irTransmittance = 0.00028564859999999278;
 
         auto shade = Tarcog::ISO15099::Layers::shading(
           effectiveLayer.thickness,

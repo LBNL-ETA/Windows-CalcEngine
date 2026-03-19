@@ -37,6 +37,7 @@ if (BUILD_WCE_TESTING)
             "../helper/thermal/*.hpp"
             "../helper/thermal/*.cpp"
             "tst/units/*.cpp"
+            "tst/units/**/*.cpp"
         )
 
         CREATE_TEST_TARGETS_WCE(${target_name} "${test_src}" "")
