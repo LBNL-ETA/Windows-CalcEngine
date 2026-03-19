@@ -32,8 +32,8 @@ if (BUILD_WCE_TESTING)
         include_directories(include)
 
         file(GLOB_RECURSE test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
-            "../helper/*.hpp"
-            "../helper/*.cpp"
+            "../helper/thermal/*.hpp"
+            "../helper/thermal/*.cpp"
             "tst/units/*.cpp"
         )
 
