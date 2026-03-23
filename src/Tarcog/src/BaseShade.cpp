@@ -56,6 +56,10 @@ namespace Tarcog::ISO15099 {
         return m_Abot > 0 || m_Atop > 0 || m_Aleft > 0 || m_Aright > 0 || m_Afront > 0;
     }
 
+    double CShadeOpenings::effectiveFrontThermalOpennessArea() const {
+        return m_Afront;
+    }
+
     void CShadeOpenings::checkAndSetDominantWidth(const double gapWidth) {
         m_Abot = std::min(gapWidth, m_Abot);
         m_Atop = std::min(gapWidth, m_Atop);

@@ -235,6 +235,57 @@ TEST(TestEffectiveLayers, TestCellularShadeEffectiveLayer)
     EXPECT_NEAR(1.0, shade.coeffs.C4, 1e-6);
 }
 
+// Horizontal venetian blind from AERC database (ID 2001): "Off White Aluminum 24 mm (0)"
+// IDF WindowMaterial:ComplexShade values:
+//   type=VenetianHorizontal, slat width=0.024, slat spacing=0.019,
+//   slat thickness=0.0001, slat angle=0, slat conductivity=160, slat curve=0.0488,
+//   PermeabilityFactor=9.947644e-1, FrontOpeningRatio=1.595555e-2,
+//   Left/RightSideOpeningRatio=7.874016e-2, Top/BottomOpeningRatio=0
+//
+// ShadeOpenness takes raw opening distances in meters.
+// Left/right opening = 3 mm, top/bottom = 0.
+// Note: venetian blinds ignore left/right openness (Mleft=Mright=0).
+TEST(TestEffectiveLayers, TestHorizontalVenetianEffectiveLayer)
+{
+    SCOPED_TRACE("Begin Test: Horizontal venetian effective layer properties (AERC 2001).");
+
+    constexpr auto slatThickness{0.0001};   // m (material thickness)
+    constexpr FenestrationCommon::Venetian::Geometry geometry{
+      .SlatWidth = 0.024,
+      .SlatSpacing = 0.019,
+      .SlatTiltAngle = 0.0,
+      .CurvatureRadius = 0.0488};
+
+    constexpr EffectiveLayers::ShadeOpenness openness{
+      .Dl = 0.003, .Dr = 0.003, .Dtop = 0.0, .Dbot = 0.0};
+
+    const auto venetian =
+      EffectiveLayers::makeHorizontalVenetianValues(slatThickness, geometry, openness);
+
+    // t_eff = C4 * (SlatWidth * cos(0) + thickness * sin(0)) = 0.043 * 0.024 = 0.001032
+    EXPECT_NEAR(0.001032, venetian.thickness, 1e-6);
+
+    const auto & [Mfront, Mleft, Mright, Mtop, Mbot, PermFactor] = venetian.openness;
+
+    // Venetian permeability from slat geometry
+    EXPECT_NEAR(0.994764, PermFactor, 1e-5);
+
+    // Mfront = C1 * pow(perm * pow(cos(0), C2), C3) = 0.016 * pow(0.994764, 0.53)
+    EXPECT_NEAR(1.595555e-02, Mfront, 1e-6);
+
+    // Venetian blinds: left/right always zero, top/bottom from openness
+    EXPECT_NEAR(0.0, Mleft, 1e-8);
+    EXPECT_NEAR(0.0, Mright, 1e-8);
+    EXPECT_NEAR(0.0, Mtop, 1e-8);
+    EXPECT_NEAR(0.0, Mbot, 1e-8);
+
+    // Coefficients for horizontal venetian
+    EXPECT_NEAR(0.016, venetian.coeffs.C1, 1e-6);
+    EXPECT_NEAR(-0.63, venetian.coeffs.C2, 1e-6);
+    EXPECT_NEAR(0.53, venetian.coeffs.C3, 1e-6);
+    EXPECT_NEAR(0.043, venetian.coeffs.C4, 1e-6);
+}
+
 TEST(TestEffectiveLayers, RadiusFromRise)
 {
     constexpr double curvature{23.88962765};

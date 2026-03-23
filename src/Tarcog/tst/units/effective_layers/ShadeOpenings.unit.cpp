@@ -24,14 +24,56 @@ TEST(TestShadeOpenings, CellularShadeOpeningAreas)
     const auto shadeOpenings =
       Tarcog::ISO15099::getShadeOpenings(width, height, shade.openness);
 
+    // Afront = Mfront * width * height = 0 (non-porous cellular shade)
     // Aleft  = Mleft  * height = 0.003 * 0.661 = 0.001983 m2
     // Aright = Mright * height = 0.003 * 0.661 = 0.001983 m2
-    // Atop = Abot = Afront = 0
+    // Atop = Abot = 0
     //
     // Since Atop and Abot are zero, OPENING_TOLERANCE (1e-6) is used as minimum.
     // Aeq_bot = Aeq_top = 0.0009925 m2 (symmetric when top == bottom)
-    EXPECT_NEAR(0.0009925, shadeOpenings.Aeq_bot(), 1e-6);
-    EXPECT_NEAR(0.0009925, shadeOpenings.Aeq_top(), 1e-6);
-    EXPECT_NEAR(0.0, shadeOpenings.frontPorosity(), 1e-8);
+    EXPECT_NEAR(0.0, shadeOpenings.effectiveFrontThermalOpennessArea(), 1e-6);
+    EXPECT_NEAR(0.000993, shadeOpenings.Aeq_bot(), 1e-6);
+    EXPECT_NEAR(0.000993, shadeOpenings.Aeq_top(), 1e-6);
+    EXPECT_NEAR(0.0, shadeOpenings.frontPorosity(), 1e-6);
+    EXPECT_TRUE(shadeOpenings.isOpen());
+}
+
+// Horizontal venetian blind from AERC database (ID 2001): "Off White Aluminum 24 mm (0)"
+// Window dimensions: width=8.78 m, height=0.661 m
+// Left/right opening = 3 mm, dominant gap width = 38.1 mm (0.0381 m)
+// Venetian: Mleft=Mright=0 (slats block side flow), only Mfront contributes
+TEST(TestShadeOpenings, HorizontalVenetianOpeningAreas)
+{
+    SCOPED_TRACE("Begin Test: Horizontal venetian opening areas (AERC 2001).");
+
+    constexpr auto slatThickness{0.0001};   // m
+    constexpr FenestrationCommon::Venetian::Geometry geometry{
+      .SlatWidth = 0.024,
+      .SlatSpacing = 0.019,
+      .SlatTiltAngle = 0.0,
+      .CurvatureRadius = 0.0488};
+
+    constexpr EffectiveLayers::ShadeOpenness openness{
+      .Dl = 0.003, .Dr = 0.003, .Dtop = 0.0, .Dbot = 0.0};
+
+    const auto venetian =
+      EffectiveLayers::makeHorizontalVenetianValues(slatThickness, geometry, openness);
+
+    constexpr auto width{8.78};     // m
+    constexpr auto height{0.661};   // m
+
+    const auto shadeOpenings =
+      Tarcog::ISO15099::getShadeOpenings(width, height, venetian.openness);
+
+    // Aleft = Aright = 0 (venetian ignores side openings)
+    // Atop = Abot = 0
+    // Afront = Mfront * width * height = 0.015956 * 8.78 * 0.661 = 0.092599 m2
+    //
+    // Since Atop and Abot are zero, OPENING_TOLERANCE (1e-6) is used as minimum.
+    // Aeq_bot = Aeq_top = 0.023151 (confirmed against E+ A1eqin/A1eqout)
+    EXPECT_NEAR(0.092599, shadeOpenings.effectiveFrontThermalOpennessArea(), 1e-6);
+    EXPECT_NEAR(0.023151, shadeOpenings.Aeq_bot(), 1e-6);
+    EXPECT_NEAR(0.023151, shadeOpenings.Aeq_top(), 1e-6);
+    EXPECT_NEAR(0.994764, shadeOpenings.frontPorosity(), 1e-6);
     EXPECT_TRUE(shadeOpenings.isOpen());
 }

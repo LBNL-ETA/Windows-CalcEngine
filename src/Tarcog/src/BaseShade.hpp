@@ -38,6 +38,8 @@ namespace Tarcog::ISO15099 {
 
         [[nodiscard]] bool isOpen() const;
 
+        [[nodiscard]] double effectiveFrontThermalOpennessArea() const;
+
         //! If gap next to shade is tighter than the opening, that gap will be dominant compared
         //! to the opening
         void checkAndSetDominantWidth(double gapWidth);
