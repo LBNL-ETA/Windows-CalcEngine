@@ -297,6 +297,141 @@ TEST(TestEffectiveLayers, TestHorizontalVenetianEffectiveLayer)
     EXPECT_NEAR(0.043, venetian.coeffs.C4, 1e-6);
 }
 
+// Vertical venetian blind from AERC database (ID 8001): "White PVC Vertical Blind 2" (0)"
+// IDF WindowMaterial:ComplexShade values:
+//   type=VenetianVertical, slat width=0.0508, slat spacing=0.0432,
+//   slat thickness=0.001, slat angle=0, slat conductivity=0.12, slat curve=0.067,
+//   PermeabilityFactor=9.773756e-1, FrontOpeningRatio=4.074745e-2,
+//   Left/RightSideOpeningRatio=7.874016e-2, Top/BottomOpeningRatio=0
+//
+// ShadeOpenness takes raw opening distances in meters.
+// Left/right opening = 3 mm, top/bottom = 0.
+// Note: venetian blinds ignore left/right openness (Mleft=Mright=0).
+TEST(TestEffectiveLayers, TestVerticalVenetianEffectiveLayer)
+{
+    SCOPED_TRACE("Begin Test: Vertical venetian effective layer properties (AERC 8001).");
+
+    constexpr auto slatThickness{0.001};   // m (material thickness)
+    constexpr FenestrationCommon::Venetian::Geometry geometry{
+      .SlatWidth = 0.0508,
+      .SlatSpacing = 0.0432,
+      .SlatTiltAngle = 0.0,
+      .CurvatureRadius = 0.067};
+
+    constexpr EffectiveLayers::ShadeOpenness openness{
+      .Dl = 0.003, .Dr = 0.003, .Dtop = 0.0, .Dbot = 0.0};
+
+    const auto venetian =
+      EffectiveLayers::makeVerticalVenetianValues(slatThickness, geometry, openness);
+
+    // t_eff = C4 * (SlatWidth * cos(0) + thickness * sin(0)) = 0.012 * 0.0508 = 0.0006096
+    EXPECT_NEAR(0.0006096, venetian.thickness, 1e-6);
+
+    const auto & [Mfront, Mleft, Mright, Mtop, Mbot, PermFactor] = venetian.openness;
+
+    // Venetian permeability from slat geometry
+    EXPECT_NEAR(0.977376, PermFactor, 1e-6);
+
+    // Mfront = C1 * pow(perm * pow(cos(0), C2), C3) = 0.041 * pow(0.977376, 0.27)
+    EXPECT_NEAR(4.074745e-02, Mfront, 1e-6);
+
+    // Vertical venetian: left/right always zero, top/bottom from openness
+    EXPECT_NEAR(0.0, Mleft, 1e-6);
+    EXPECT_NEAR(0.0, Mright, 1e-6);
+    EXPECT_NEAR(0.0, Mtop, 1e-6);
+    EXPECT_NEAR(0.0, Mbot, 1e-6);
+
+    // Coefficients for vertical venetian
+    EXPECT_NEAR(0.041, venetian.coeffs.C1, 1e-6);
+    EXPECT_NEAR(0.0, venetian.coeffs.C2, 1e-6);
+    EXPECT_NEAR(0.27, venetian.coeffs.C3, 1e-6);
+    EXPECT_NEAR(0.012, venetian.coeffs.C4, 1e-6);
+}
+
+// Exterior roller shutter from AERC database (ID 100004): "RollerShutter_A150_AL_Light_NoInsul"
+// IDF WindowMaterial:ComplexShade values:
+//   type=OtherShadingType, thickness=8.856e-3, conductivity=1.295377e-1,
+//   IR transmittance=3.238752e-5, front emissivity=0.90567, back emissivity=0.90954,
+//   TopOpeningRatio=0, BottomOpeningRatio=0,
+//   LeftSideOpeningRatio=2.362205e-1, RightSideOpeningRatio=2.362205e-1,
+//   FrontOpeningRatio=0, PermeabilityFactor=0
+//
+// ShadeOpenness takes raw opening distances in meters.
+// Left/right opening = 3 mm (0.003 m), gap = 12.7 mm.
+// IDF ratio = 3 / 12.7 = 0.236221 (used only for E+ IDF export).
+TEST(TestEffectiveLayers, TestRollerShutterEffectiveLayer)
+{
+    SCOPED_TRACE("Begin Test: Roller shutter effective layer properties (AERC 100004).");
+
+    constexpr auto materialThickness{8.856e-03};   // m
+    constexpr auto permeabilityFactor{0.0};
+    constexpr EffectiveLayers::ShadeOpenness openness{
+      .Dl = 0.003, .Dr = 0.003, .Dtop = 0.0, .Dbot = 0.0};
+
+    const auto shade =
+      EffectiveLayers::makeCommonValues(materialThickness, permeabilityFactor, openness);
+
+    EXPECT_NEAR(8.856e-03, shade.thickness, 1e-6);
+
+    const auto & [Mfront, Mleft, Mright, Mtop, Mbot, PermFactor] = shade.openness;
+    EXPECT_NEAR(0.0, Mfront, 1e-6);
+    EXPECT_NEAR(0.003, Mleft, 1e-6);
+    EXPECT_NEAR(0.003, Mright, 1e-6);
+    EXPECT_NEAR(0.0, Mtop, 1e-6);
+    EXPECT_NEAR(0.0, Mbot, 1e-6);
+    EXPECT_NEAR(0.0, PermFactor, 1e-6);
+
+    // Coefficients for OtherShadingType (common shade model)
+    EXPECT_NEAR(0.078, shade.coeffs.C1, 1e-6);
+    EXPECT_NEAR(1.2, shade.coeffs.C2, 1e-6);
+    EXPECT_NEAR(1.0, shade.coeffs.C3, 1e-6);
+    EXPECT_NEAR(1.0, shade.coeffs.C4, 1e-6);
+}
+
+// Louvered shutter from AERC database (ID 70000): "Louvered Shutter L1 - 0"
+// IDF WindowMaterial:ComplexShade values:
+//   type=LouveredShutter, layer thickness=8.89e-2, conductivity=1.723063,
+//   PermeabilityFactor=8.434433e-1, FrontOpeningRatio=4.536313e-2,
+//   Left/RightSideOpeningRatio=5.405406e-1, Top/BottomOpeningRatio=0
+//
+// Geometry from XML: Width=0.0889, Height(thickness)=0.011935, Angle=0, Spacing=0.0643
+// Note: louvered shutter ignores all openness (Mleft=Mright=Mtop=Mbot=0).
+TEST(TestEffectiveLayers, TestLouveredShutterEffectiveLayer)
+{
+    SCOPED_TRACE("Begin Test: Louvered shutter effective layer properties (AERC 70000).");
+
+    constexpr FenestrationCommon::LouveredShutter::Geometry geometry{
+      .SlatWidth = 0.0889,
+      .SlatThickness = 0.011935,
+      .SlatAngle = 0.0,
+      .SlatSpacing = 0.0643};
+
+    constexpr EffectiveLayers::ShadeOpenness openness{
+      .Dl = 0.003, .Dr = 0.003, .Dtop = 0.0, .Dbot = 0.0};
+
+    const auto shutter = EffectiveLayers::makeLouveredShutterValues(geometry, openness);
+
+    // t_eff = C4 * (SlatWidth * cos(0) + SlatThickness * |sin(0)|) = 0.11 * 0.0889
+    EXPECT_NEAR(0.009779, shutter.thickness, 1e-6);
+
+    const auto & [Mfront, Mleft, Mright, Mtop, Mbot, PermFactor] = shutter.openness;
+
+    EXPECT_NEAR(0.843445, PermFactor, 1e-6);
+    EXPECT_NEAR(4.536313e-02, Mfront, 1e-6);
+
+    // Louvered shutter: all side/top/bottom openings zeroed
+    EXPECT_NEAR(0.0, Mleft, 1e-6);
+    EXPECT_NEAR(0.0, Mright, 1e-6);
+    EXPECT_NEAR(0.0, Mtop, 1e-6);
+    EXPECT_NEAR(0.0, Mbot, 1e-6);
+
+    // Coefficients for louvered shutter
+    EXPECT_NEAR(0.12, shutter.coeffs.C1, 1e-6);
+    EXPECT_NEAR(0.82, shutter.coeffs.C2, 1e-6);
+    EXPECT_NEAR(0.059, shutter.coeffs.C3, 1e-6);
+    EXPECT_NEAR(0.11, shutter.coeffs.C4, 1e-6);
+}
+
 TEST(TestEffectiveLayers, RadiusFromRise)
 {
     constexpr double curvature{23.88962765};
