@@ -175,25 +175,36 @@ TEST(TestEffectiveLayers, TestRollerShadeEffectiveLayer)
     EXPECT_NEAR(0.001610, effectiveOpenness.PermeabilityFactor, 1e-6);
 }
 
-// Roller shade with side openness (left=0.078740, right=0.078740)
+// Roller shade from AERC database (ID 3001): "3000 NET 1% N001 White/White"
+// with side openness. ShadeOpenness takes raw opening distances in meters.
+// Left/right opening = 3 mm (0.003 m).
 TEST(TestEffectiveLayers, TestRollerShadeWithSideOpenness)
 {
     SCOPED_TRACE("Begin Test: Roller shade with side openness (AERC 3001).");
 
     constexpr auto materialThickness{0.0008};   // m
     constexpr auto permeabilityFactor{0.001610};
-    constexpr EffectiveLayers::ShadeOpenness openness{0.07874016, 0.07874016, 0, 0};
+    constexpr EffectiveLayers::ShadeOpenness openness{
+      .Dl = 0.003, .Dr = 0.003, .Dtop = 0.0, .Dbot = 0.0};
 
     const auto shade =
       EffectiveLayers::makeCommonValues(materialThickness, permeabilityFactor, openness);
 
     EXPECT_NEAR(0.0008, shade.thickness, 1e-6);
 
-    const auto effectiveOpenness{shade.openness};
-    EXPECT_NEAR(3.470426e-05, effectiveOpenness.Mfront, 1e-8);
-    EXPECT_NEAR(0.07874016, effectiveOpenness.Mleft, 1e-6);
-    EXPECT_NEAR(0.07874016, effectiveOpenness.Mright, 1e-6);
-    EXPECT_NEAR(0.001610, effectiveOpenness.PermeabilityFactor, 1e-6);
+    const auto & [Mfront, Mleft, Mright, Mtop, Mbot, PermFactor] = shade.openness;
+    EXPECT_NEAR(3.470426e-05, Mfront, 1e-6);
+    EXPECT_NEAR(0.003, Mleft, 1e-6);
+    EXPECT_NEAR(0.003, Mright, 1e-6);
+    EXPECT_NEAR(0.0, Mtop, 1e-6);
+    EXPECT_NEAR(0.0, Mbot, 1e-6);
+    EXPECT_NEAR(0.001610, PermFactor, 1e-6);
+
+    // Coefficients for common shade model (BSDF/OtherShadingType)
+    EXPECT_NEAR(0.078, shade.coeffs.C1, 1e-6);
+    EXPECT_NEAR(1.2, shade.coeffs.C2, 1e-6);
+    EXPECT_NEAR(1.0, shade.coeffs.C3, 1e-6);
+    EXPECT_NEAR(1.0, shade.coeffs.C4, 1e-6);
 }
 
 // Cellular shade from AERC database (ID 1007): "Cell-in-cell Light color (HD)"
