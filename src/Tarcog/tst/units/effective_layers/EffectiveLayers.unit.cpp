@@ -1,4 +1,3 @@
-#include <memory>
 #include <gtest/gtest.h>
 
 #include <WCETarcog.hpp>
@@ -9,7 +8,8 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer)
 
     constexpr auto materialThickness{0.0029};   // m
 
-    const FenestrationCommon::Venetian::Geometry geometry{0.0508, 0.012, 0.0, 0.0};
+    constexpr FenestrationCommon::Venetian::Geometry geometry{
+      .SlatWidth = 0.0508, .SlatSpacing = 0.012, .SlatTiltAngle = 0.0, .CurvatureRadius = 0.0};
 
     const auto venetian =
       EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry);
@@ -30,7 +30,7 @@ TEST(TestEffectiveLayers, TestVenetianHorizontalEffectiveLayer1)
 
     constexpr auto materialThickness{0.0029};   // m
 
-    const FenestrationCommon::Venetian::Geometry geometry{0.0508, 0.012, 0.0, 0.0};
+    constexpr FenestrationCommon::Venetian::Geometry geometry{0.0508, 0.012, 0.0, 0.0};
 
     const auto venetian =
       EffectiveLayers::makeHorizontalVenetianValues(materialThickness, geometry);
@@ -182,9 +182,10 @@ TEST(TestEffectiveLayers, TestRollerShadeWithSideOpenness)
 
     constexpr auto materialThickness{0.0008};   // m
     constexpr auto permeabilityFactor{0.001610};
-    const EffectiveLayers::ShadeOpenness openness{0.07874016, 0.07874016, 0, 0};
+    constexpr EffectiveLayers::ShadeOpenness openness{0.07874016, 0.07874016, 0, 0};
 
-    const auto shade = EffectiveLayers::makeCommonValues(materialThickness, permeabilityFactor, openness);
+    const auto shade =
+      EffectiveLayers::makeCommonValues(materialThickness, permeabilityFactor, openness);
 
     EXPECT_NEAR(0.0008, shade.thickness, 1e-6);
 
@@ -193,6 +194,45 @@ TEST(TestEffectiveLayers, TestRollerShadeWithSideOpenness)
     EXPECT_NEAR(0.07874016, effectiveOpenness.Mleft, 1e-6);
     EXPECT_NEAR(0.07874016, effectiveOpenness.Mright, 1e-6);
     EXPECT_NEAR(0.001610, effectiveOpenness.PermeabilityFactor, 1e-6);
+}
+
+// Cellular shade from AERC database (ID 1007): "Cell-in-cell Light color (HD)"
+// IDF WindowMaterial:ComplexShade values:
+//   type=OtherShadingType, thickness=3.514e-2, conductivity=9.857403e-2,
+//   IR transmittance=2.856486e-4, front emissivity=0.87586, back emissivity=0.8758530,
+//   TopOpeningRatio=0, BottomOpeningRatio=0,
+//   LeftSideOpeningRatio=7.874016e-2, RightSideOpeningRatio=7.874016e-2,
+//   FrontOpeningRatio=0, PermeabilityFactor=0
+//
+// ShadeOpenness takes raw opening distances in meters (not IDF ratios).
+// Left/right opening = 3 mm (0.003 m).
+TEST(TestEffectiveLayers, TestCellularShadeEffectiveLayer)
+{
+    SCOPED_TRACE("Begin Test: Cellular shade effective layer properties (AERC 1007).");
+
+    constexpr auto materialThickness{3.514e-02};   // m
+    constexpr auto permeabilityFactor{0.0};
+    constexpr EffectiveLayers::ShadeOpenness openness{
+      .Dl = 0.003, .Dr = 0.003, .Dtop = 0.0, .Dbot = 0.0};
+
+    const auto shade =
+      EffectiveLayers::makeCommonValues(materialThickness, permeabilityFactor, openness);
+
+    EXPECT_NEAR(3.514e-02, shade.thickness, 1e-6);
+
+    const auto & [Mfront, Mleft, Mright, Mtop, Mbot, PermFactor] = shade.openness;
+    EXPECT_NEAR(0.0, Mfront, 1e-8);
+    EXPECT_NEAR(0.003, Mleft, 1e-8);
+    EXPECT_NEAR(0.003, Mright, 1e-8);
+    EXPECT_NEAR(0.0, Mtop, 1e-8);
+    EXPECT_NEAR(0.0, Mbot, 1e-8);
+    EXPECT_NEAR(0.0, PermFactor, 1e-8);
+
+    // Coefficients for OtherShadingType (common shade model)
+    EXPECT_NEAR(0.078, shade.coeffs.C1, 1e-6);
+    EXPECT_NEAR(1.2, shade.coeffs.C2, 1e-6);
+    EXPECT_NEAR(1.0, shade.coeffs.C3, 1e-6);
+    EXPECT_NEAR(1.0, shade.coeffs.C4, 1e-6);
 }
 
 TEST(TestEffectiveLayers, RadiusFromRise)
