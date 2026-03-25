@@ -473,6 +473,26 @@ namespace MultiLayerOptics
         return m_WavelengthMatrices.at(std::make_pair(t_Side, t_Property));
     }
 
+    std::vector<FenestrationCommon::MatrixAtWavelength>
+      CMultiPaneBSDF::getLayerWavelengthMatrices(const size_t layerIndex,
+                                                  const Side side,
+                                                  const PropertySurface property)
+    {
+        const auto & layers = m_EquivalentLayer.getLayers();
+        const auto & wavelengths = m_EquivalentLayer.getCommonWavelengths();
+        const size_t idx = layerIndex - 1;
+
+        std::vector<FenestrationCommon::MatrixAtWavelength> result;
+        result.reserve(wavelengths.size());
+        for(size_t wlIdx = 0; wlIdx < wavelengths.size(); ++wlIdx)
+        {
+            auto integrator = layers[idx]->getResultsAtWavelength(wlIdx);
+            SquareMatrix mat = integrator.getMatrix(side, property);
+            result.push_back(FenestrationCommon::MatrixAtWavelength{wavelengths[wlIdx], std::move(mat)});
+        }
+        return result;
+    }
+
     double CMultiPaneBSDF::getMinLambda() const
     {
         return m_EquivalentLayer.getMinLambda();

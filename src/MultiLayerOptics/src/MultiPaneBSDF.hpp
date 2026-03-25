@@ -186,6 +186,13 @@ namespace MultiLayerOptics
                                 FenestrationCommon::Side t_Side,
                                 FenestrationCommon::PropertySurface t_Property);
 
+        // Per-layer wavelength-by-wavelength BSDF matrices (on-demand, not cached).
+        // layerIndex is 1-based (matching Abs, AbsDiff, etc.)
+        [[nodiscard]] std::vector<FenestrationCommon::MatrixAtWavelength>
+          getLayerWavelengthMatrices(size_t layerIndex,
+                                     FenestrationCommon::Side side,
+                                     FenestrationCommon::PropertySurface property);
+
         [[nodiscard]] double getMinLambda() const override;
         [[nodiscard]] double getMaxLambda() const override;
 
