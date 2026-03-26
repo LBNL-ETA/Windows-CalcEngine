@@ -80,54 +80,63 @@ namespace Tarcog::ISO15099
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const SphericalPillar & pillar,
           double pressure,
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const RectangularPillar & pillar,
           double pressure,
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const TriangularPillar & pillar,
           double pressure,
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const PentagonPillar & pillar,
           double pressure,
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const HexagonPillar & pillar,
           double pressure,
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const LinearBearingPillar & pillar,
           double pressure,
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const TruncatedConePillar & pillar,
           double pressure,
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const AnnulusCylinderPillar & pillar,
           double pressure,
           const Gases::CGas & gas = defaultVacuumMixture(),
           double accommodation1 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT,
           double accommodation2 = ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT);
+
         GapLayer createPillar(
           const CShapedCylinderPillar & pillar,
           double pressure,

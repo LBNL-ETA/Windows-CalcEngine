@@ -1,9 +1,10 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include "BaseLayer.hpp"
-#include "DeflectionInterface.hpp"
+#include "TarcogConstants.hpp"
 
 namespace FenestrationCommon
 {
@@ -12,7 +13,14 @@ namespace FenestrationCommon
 
 namespace Tarcog::ISO15099
 {
-    class CIGUSolidLayer : public CBaseLayer, public Tarcog::Deflectable
+    struct DeflectionMaterial
+    {
+        double youngsModulus{DeflectionConstants::YOUNGSMODULUS};
+        double poissonRatio{DeflectionConstants::POISONRATIO};
+        double density{MaterialConstants::GLASSDENSITY};
+    };
+
+    class CIGUSolidLayer : public CBaseLayer
     {
     public:
         CIGUSolidLayer(double t_Thickness,
@@ -40,18 +48,21 @@ namespace Tarcog::ISO15099
 
         double getRadiationFlow() override;
 
-        virtual double youngsModulus() const;
+        [[nodiscard]] double youngsModulus() const;
+        [[nodiscard]] double density() const;
+        [[nodiscard]] double flexuralRigidity() const;
 
         double getMaxDeflection() const override;
         double getMeanDeflection() const override;
 
-        virtual double density() const;
-
         std::shared_ptr<CBaseLayer> clone() const override;
 
         void applyDeflection(double meanDeflection, double maxDeflection);
+        [[nodiscard]] bool hasMeasuredDeflection() const;
+        void setMeasuredDeflection();
 
         void setConductivity(double t_Conductivity);
+        void setDeflectionMaterial(const DeflectionMaterial & mat);
 
     protected:
         void calculateConvectionOrConductionFlow() override;
@@ -60,6 +71,8 @@ namespace Tarcog::ISO15099
 
     private:
         double m_SolarAbsorptance;
+        std::optional<DeflectionMaterial> m_DeflectionMaterial;
+        bool m_HasMeasuredDeflection{false};
     };
 
 }   // namespace Tarcog::ISO15099

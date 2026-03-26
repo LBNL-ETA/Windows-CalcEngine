@@ -36,6 +36,9 @@ namespace Tarcog::ISO15099
         virtual std::shared_ptr<CBaseLayer> clone() const = 0;
         virtual void precalculateState() {};
 
+        [[nodiscard]] virtual double getMaxDeflection() const { return 0.0; }
+        [[nodiscard]] virtual double getMeanDeflection() const { return 0.0; }
+
         double getConductivity();
         double getEffectiveThermalConductivity();
 

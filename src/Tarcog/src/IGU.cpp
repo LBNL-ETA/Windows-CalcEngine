@@ -11,7 +11,6 @@
 #include "IGUSolidLayer.hpp"
 #include "IGUGapLayer.hpp"
 #include "Surface.hpp"
-#include "IGUSolidDeflection.hpp"
 #include "IGUVentilatedGapLayer.hpp"
 #include "BaseShade.hpp"
 #include "Environment.hpp"
@@ -431,26 +430,13 @@ namespace Tarcog::ISO15099
         }
     }
 
-    // Purpose of this function is not to convert solid layer twice since it is already
-    // converted for the measured deflection
-    CIGUSolidLayerDeflection convertToMeasuredDeflectionLayer(const CIGUSolidLayer & layer)
-    {
-        if(auto deflectionLayer = dynamic_cast<const CIGUDeflectionMeasured *>(&layer))
-        {
-            return *deflectionLayer;
-        }
-        else
-        {
-            return CIGUSolidLayerDeflection(layer);
-        }
-    }
-
     void CIGU::setDeflectionProperties(std::vector<double> const & t_MeasuredDeflections)
     {
         // In case user sets the deflection properties as pressure and temperature and then
         // reset this back to measured deflection should delete calculator for the deflection
         // from E1300 curves.
         m_DeflectionFromE1300Curves = std::nullopt;
+        resetSurfaceDeflections();
 
         if(t_MeasuredDeflections.size() != getNumOfLayers() - 1)
         {
@@ -461,16 +447,16 @@ namespace Tarcog::ISO15099
         auto deflectionRatio = Ldmean() / Ldmax();
         auto LDefMax = calculateLDefMax(t_MeasuredDeflections);
 
-        for(auto i = 0u; i < getNumOfLayers(); ++i)
+        for(auto idx = 0u; idx < getNumOfLayers(); ++idx)
         {
-            auto LDefNMean = deflectionRatio * LDefMax[i];
-            auto aLayer = getSolidLayers()[i];
-            if(dynamic_cast<CIGUDeflectionMeasured *>(aLayer.get()) == nullptr)
+            auto aLayer = getSolidLayers()[idx];
+            if(!aLayer->hasMeasuredDeflection())
             {
-                auto aDefLayer = std::make_shared<CIGUSolidLayerDeflection>(*aLayer);
-                aDefLayer =
-                  std::make_shared<CIGUDeflectionMeasured>(aDefLayer, LDefNMean, LDefMax[i]);
-                replaceLayer(aLayer, aDefLayer);
+                const auto LDefNMean = deflectionRatio * LDefMax[idx];
+                auto cloned = std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer->clone());
+                cloned->applyDeflection(LDefNMean, LDefMax[idx]);
+                cloned->setMeasuredDeflection();
+                replaceLayer(aLayer, cloned);
             }
         }
     }
@@ -685,15 +671,15 @@ namespace Tarcog::ISO15099
       CIGU::calculateDeflectionNumerator(const std::vector<double> & t_MeasuredDeflections) const
     {
         auto numerator = 0.0;
-        for(size_t i = 0; i < t_MeasuredDeflections.size(); ++i)
+        const auto solidLayers = getSolidLayers();
+        for(size_t idx = 0; idx < t_MeasuredDeflections.size(); ++idx)
         {
             auto SumL = 0.0;
-            for(auto j = i; j < t_MeasuredDeflections.size(); ++j)
+            for(auto jdx = idx; jdx < t_MeasuredDeflections.size(); ++jdx)
             {
-                SumL += getGapLayers()[j]->getThickness() - t_MeasuredDeflections[j];
+                SumL += getGapLayers()[jdx]->getThickness() - t_MeasuredDeflections[jdx];
             }
-            auto aDefLayer = convertToMeasuredDeflectionLayer(*getSolidLayers()[i]);
-            numerator += SumL * aDefLayer.flexuralRigidity();
+            numerator += SumL * solidLayers[idx]->flexuralRigidity();
         }
         return numerator;
     }
@@ -701,10 +687,9 @@ namespace Tarcog::ISO15099
     double CIGU::calculateDeflectionDenominator() const
     {
         auto denominator = 0.0;
-        for(auto i = 0u; i < getSolidLayers().size(); ++i)
+        for(const auto & layer : getSolidLayers())
         {
-            auto aDefLayer = CIGUSolidLayerDeflection(*getSolidLayers()[i]);
-            denominator += aDefLayer.flexuralRigidity();
+            denominator += layer->flexuralRigidity();
         }
         return denominator;
     }

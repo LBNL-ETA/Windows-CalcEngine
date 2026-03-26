@@ -5,7 +5,6 @@
 #include <WCEGases.hpp>
 
 #include "BaseLayer.hpp"
-#include "DeflectionInterface.hpp"
 #include "GasSpecification.hpp"
 
 #include <iostream>
@@ -29,7 +28,7 @@ namespace Tarcog
 
         [[nodiscard]] bool isStillAir(double airSpeed);
 
-        class CIGUGapLayer : public CBaseLayer, public Tarcog::Deflectable
+        class CIGUGapLayer : public CBaseLayer
         {
         public:
             CIGUGapLayer(double t_Thickness, double t_Pressure, bool t_isDCenterMeasured = false);

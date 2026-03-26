@@ -127,8 +127,11 @@ namespace Tarcog::ISO15099
 
     double CIGUSolidLayer::youngsModulus() const
     {
-        static const double defaultYoungsModulus{Tarcog::DeflectionConstants::YOUNGSMODULUS};
-        return defaultYoungsModulus;
+        if(m_DeflectionMaterial.has_value())
+        {
+            return m_DeflectionMaterial->youngsModulus;
+        }
+        return DeflectionConstants::YOUNGSMODULUS;
     }
 
     double CIGUSolidLayer::getMaxDeflection() const
@@ -147,8 +150,35 @@ namespace Tarcog::ISO15099
 
     double CIGUSolidLayer::density() const
     {
-        static const double defaultDensity{Tarcog::MaterialConstants::GLASSDENSITY};
-        return defaultDensity;
+        if(m_DeflectionMaterial.has_value())
+        {
+            return m_DeflectionMaterial->density;
+        }
+        return MaterialConstants::GLASSDENSITY;
+    }
+
+    double CIGUSolidLayer::flexuralRigidity() const
+    {
+        const auto poissonRatio = m_DeflectionMaterial.has_value()
+                                    ? m_DeflectionMaterial->poissonRatio
+                                    : DeflectionConstants::POISONRATIO;
+        return youngsModulus() * pow(m_Thickness, 3)
+               / (12 * (1 - pow(poissonRatio, 2)));
+    }
+
+    bool CIGUSolidLayer::hasMeasuredDeflection() const
+    {
+        return m_HasMeasuredDeflection;
+    }
+
+    void CIGUSolidLayer::setMeasuredDeflection()
+    {
+        m_HasMeasuredDeflection = true;
+    }
+
+    void CIGUSolidLayer::setDeflectionMaterial(const DeflectionMaterial & mat)
+    {
+        m_DeflectionMaterial = mat;
     }
 
     double CIGUSolidLayer::getRadiationFlow()

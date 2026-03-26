@@ -1,13 +1,50 @@
 #include "Layers.hpp"
 #include "IGUGapLayer.hpp"
 #include "IGUSolidLayer.hpp"
-#include "IGUSolidDeflection.hpp"
 #include "BaseShade.hpp"
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
 #include "SupportPillarMeasured.hpp"
 #include "EffectiveMultipliers.hpp"
 #include "IGUVentilatedGapLayer.hpp"
+
+namespace Tarcog::ISO15099
+{
+    // Forward declarations of free functions from SupportPillar.cpp
+    double universalPillarThermalResistance(double glassConductivityHotSide,
+                                            double glassConductivityColdSide,
+                                            double pillarConductivity,
+                                            double pillarHeight,
+                                            double areaOfContact);
+
+    double linearBearingPillarThermalResistance(double glassConductivityHotSide,
+                                                double glassConductivityColdSide,
+                                                double pillarConductivity,
+                                                double pillarHeight,
+                                                double length,
+                                                double width);
+
+    double annulusCylinderPillarThermalResistance(double pillarConductivity,
+                                                  double height,
+                                                  double areaOfContact,
+                                                  double rcGlass1,
+                                                  double rcGlass2);
+
+    double cShapedCylinderPillarThermalResistance(double coverageFraction,
+                                                  double pillarConductivity,
+                                                  double height,
+                                                  double areaOfContact,
+                                                  double rcGlass1,
+                                                  double rcGlass2);
+
+    namespace Helper
+    {
+        double rCS(double kGlass, double innerRadius, double outerRadius);
+        double adjustInnerRadius(double innerRadius);
+        double adjustOuterRadius(double innerRadius, double outerRadius);
+    }   // namespace Helper
+}   // namespace Tarcog::ISO15099
+
 
 namespace Tarcog::ISO15099::Layers
 {
@@ -107,16 +144,11 @@ namespace Tarcog::ISO15099::Layers
     SolidLayer updateMaterialData(const SolidLayer & layer, double density, double youngsModulus)
     {
         // Deflection cannot be applied to shading layers
-        if(std::dynamic_pointer_cast<CIGUShadeLayer>(layer) == nullptr)
+        if(!layer->isPermeable())
         {
-            static const double poissonRatio{0.22};
-            return std::make_shared<CIGUSolidLayerDeflection>(
-              *layer, youngsModulus, poissonRatio, density);
+            layer->setDeflectionMaterial({youngsModulus, DeflectionConstants::POISONRATIO, density});
         }
-        else
-        {
-            return layer;
-        }
+        return layer;
     }
 
     SolidLayer shading(double thickness,
@@ -167,43 +199,214 @@ namespace Tarcog::ISO15099::Layers
         return Gases::CGas{std::vector<Gases::CGasItem>{{1.0, Gases::GasDef::VacuumMixture}}};
     }
 
-    template<typename PillarType, typename PillarLayerType>
-    GapLayer createPillar(const PillarType & pillar,
+    namespace
+    {
+        GapLayer makeComputedPillar(double height,
+                                    double pressure,
+                                    const Gases::CGas & gas,
+                                    double accommodation1,
+                                    double accommodation2,
+                                    double materialConductivity,
+                                    double cellArea,
+                                    PillarGapLayer::AreaFn areaFn,
+                                    PillarGapLayer::ResistanceFn resistanceFn)
+        {
+            auto gapLayer = gap(height, pressure, gas, accommodation1, accommodation2);
+            return std::make_shared<PillarGapLayer>(
+              *gapLayer, materialConductivity, cellArea,
+              std::move(areaFn), std::move(resistanceFn));
+        }
+    }   // anonymous namespace
+
+    GapLayer createPillar(const CylindricalPillar & pillar,
                           double pressure,
                           const Gases::CGas & gas,
                           const double accommodation1,
                           const double accommodation2)
     {
-        auto pillarGap = Tarcog::ISO15099::Layers::gap(
-          pillar.height, pressure, gas, accommodation1, accommodation2);
-        return std::make_shared<PillarLayerType>(*pillarGap, pillar);
+        const auto rad = pillar.radius;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [rad]() { return ConstantsData::WCE_PI * rad * rad; },
+          universalPillarThermalResistance);
     }
 
-// Avoiding code duplication by using a macro. Since all the createPillar functions are identical
-// except for the types, we can use a macro to define them all at once.
-#define CREATE_PILLAR_FUNCTION(PillarType, PillarLayerType)       \
-    GapLayer createPillar(const PillarType & pillar,              \
-                          double pressure,                        \
-                          const Gases::CGas & gas,                \
-                          const double accommodation1,            \
-                          const double accommodation2)            \
-    {                                                             \
-        return createPillar<PillarType, PillarLayerType>(         \
-          pillar, pressure, gas, accommodation1, accommodation2); \
+    GapLayer createPillar(const SphericalPillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto rad = pillar.radiusOfContact;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [rad]() { return ConstantsData::WCE_PI * rad * rad; },
+          universalPillarThermalResistance);
     }
 
-    CREATE_PILLAR_FUNCTION(CylindricalPillar, CylindricalPillarLayer)
-    CREATE_PILLAR_FUNCTION(SphericalPillar, SphericalPillarLayer)
-    CREATE_PILLAR_FUNCTION(RectangularPillar, RectangularPillarLayer)
-    CREATE_PILLAR_FUNCTION(TriangularPillar, TriangularPillarLayer)
-    CREATE_PILLAR_FUNCTION(PentagonPillar, PentagonPillarLayer)
-    CREATE_PILLAR_FUNCTION(HexagonPillar, HexagonPillarLayer)
-    CREATE_PILLAR_FUNCTION(LinearBearingPillar, LinearBearingPillarLayer)
-    CREATE_PILLAR_FUNCTION(TruncatedConePillar, TruncatedConePillarLayer)
-    CREATE_PILLAR_FUNCTION(AnnulusCylinderPillar, AnnulusCylinderPillarLayer)
-    CREATE_PILLAR_FUNCTION(CShapedCylinderPillar, CShapedCylinderPillarLayer)
+    GapLayer createPillar(const RectangularPillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto len = pillar.length;
+        const auto wid = pillar.width;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [len, wid]() { return len * wid; },
+          [len, wid](double kHot, double kCold, double kPillar,
+                     double height, double area) -> double
+          {
+              if(std::max(wid, len) / std::min(wid, len) < 2)
+              {
+                  return universalPillarThermalResistance(kHot, kCold, kPillar, height, area);
+              }
+              return linearBearingPillarThermalResistance(
+                kHot, kCold, kPillar, height, len, wid);
+          });
+    }
 
-#undef CREATE_PILLAR_FUNCTION
+    GapLayer createPillar(const TriangularPillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto len = pillar.length;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [len]() { return std::sqrt(3) / 4 * len * len; },
+          universalPillarThermalResistance);
+    }
+
+    GapLayer createPillar(const PentagonPillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto len = pillar.length;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [len]() { return 5 * std::sqrt(3) / 4 * len * len; },
+          universalPillarThermalResistance);
+    }
+
+    GapLayer createPillar(const HexagonPillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto len = pillar.length;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [len]() { return 3 * std::sqrt(3) / 2 * len * len; },
+          universalPillarThermalResistance);
+    }
+
+    GapLayer createPillar(const LinearBearingPillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto len = pillar.length;
+        const auto wid = pillar.width;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [len, wid]() { return len * wid; },
+          [len, wid](double kHot, double kCold, double kPillar,
+                     double height, double /*area*/) -> double
+          {
+              return linearBearingPillarThermalResistance(
+                kHot, kCold, kPillar, height, len, wid);
+          });
+    }
+
+    GapLayer createPillar(const TruncatedConePillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto rad1 = pillar.radius1;
+        const auto rad2 = pillar.radius2;
+        const auto matCond = pillar.materialConductivity;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          []() { return 0.0; },
+          [rad1, rad2, matCond](double kHot, double kCold, double /*kPillar*/,
+                                double height, double /*area*/) -> double
+          {
+              auto rpGen = [](double glassCond, double radius) -> double {
+                  return 1 / (4 * glassCond * radius);
+              };
+              using FenestrationCommon::WCE_PI;
+              return rpGen(kHot, rad1) + rpGen(kCold, rad2)
+                     + height / (matCond * WCE_PI * std::pow((rad1 + rad2) / 2, 2));
+          });
+    }
+
+    GapLayer createPillar(const AnnulusCylinderPillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto inner = Helper::adjustInnerRadius(pillar.innerRadius);
+        const auto outer = Helper::adjustOuterRadius(pillar.innerRadius, pillar.outerRadius);
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [inner, outer]()
+          {
+              return FenestrationCommon::WCE_PI * (outer * outer - inner * inner);
+          },
+          [inner, outer](double kHot, double kCold, double kPillar,
+                         double height, double area) -> double
+          {
+              return annulusCylinderPillarThermalResistance(
+                kPillar, height, area,
+                Helper::rCS(kHot, inner, outer),
+                Helper::rCS(kCold, inner, outer));
+          });
+    }
+
+    GapLayer createPillar(const CShapedCylinderPillar & pillar,
+                          double pressure,
+                          const Gases::CGas & gas,
+                          const double accommodation1,
+                          const double accommodation2)
+    {
+        const auto inner = Helper::adjustInnerRadius(pillar.innerRadius);
+        const auto outer = Helper::adjustOuterRadius(pillar.innerRadius, pillar.outerRadius);
+        const auto fraction = pillar.fractionCovered;
+        return makeComputedPillar(
+          pillar.height, pressure, gas, accommodation1, accommodation2,
+          pillar.materialConductivity, pillar.cellArea,
+          [inner, outer, fraction]()
+          {
+              return FenestrationCommon::WCE_PI * (outer * outer - inner * inner) * fraction;
+          },
+          [inner, outer, fraction](double kHot, double kCold, double kPillar,
+                                   double height, double area) -> double
+          {
+              return cShapedCylinderPillarThermalResistance(
+                fraction, kPillar, height, area,
+                Helper::rCS(kHot, inner, outer),
+                Helper::rCS(kCold, inner, outer));
+          });
+    }
 
     GapLayer createPillar(const PillarMeasurement & pillar)
     {
