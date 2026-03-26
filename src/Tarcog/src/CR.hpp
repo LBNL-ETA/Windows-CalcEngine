@@ -3,7 +3,7 @@
 #include <map>
 
 #include "WholeWindowConfigurations.hpp"
-#include "BaseShade.hpp"
+#include "IGUSolidLayer.hpp"
 
 namespace Tarcog
 {

@@ -4,8 +4,8 @@
 #include <WCEGases.hpp>
 #include <WCECommon.hpp>
 
-#include "BaseShade.hpp"
 #include "IGUGapLayer.hpp"
+#include "IGUSolidLayer.hpp"
 #include "Surface.hpp"
 #include "NusseltNumber.hpp"
 
@@ -117,15 +117,15 @@ namespace Tarcog::ISO15099
         auto thickness = CBaseLayer::getThickness();
         if(m_isDCenterMeasured)
         {
-            auto previousLayer = std::dynamic_pointer_cast<CIGUShadeLayer>(getPreviousLayer());
-            if(previousLayer)
+            auto prevSolid = std::dynamic_pointer_cast<CIGUSolidLayer>(getPreviousLayer());
+            if(prevSolid != nullptr && prevSolid->isShadeLayer())
             {
-                thickness -= previousLayer->getThickness() / 2;
+                thickness -= prevSolid->getThickness() / 2;
             }
-            auto nextLayer = std::dynamic_pointer_cast<CIGUShadeLayer>(getNextLayer());
-            if(nextLayer)
+            auto nxtSolid = std::dynamic_pointer_cast<CIGUSolidLayer>(getNextLayer());
+            if(nxtSolid != nullptr && nxtSolid->isShadeLayer())
             {
-                thickness -= nextLayer->getThickness() / 2;
+                thickness -= nxtSolid->getThickness() / 2;
             }
         }
 

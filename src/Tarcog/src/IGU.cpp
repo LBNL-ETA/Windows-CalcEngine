@@ -12,7 +12,6 @@
 #include "IGUGapLayer.hpp"
 #include "Surface.hpp"
 #include "IGUVentilatedGapLayer.hpp"
-#include "BaseShade.hpp"
 #include "Environment.hpp"
 #include "WCECommon.hpp"
 
@@ -509,7 +508,8 @@ namespace Tarcog::ISO15099
 
     void CIGU::checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer)
     {
-        if(std::dynamic_pointer_cast<CIGUShadeLayer>(t_Layer) != nullptr)
+        auto solidLayer = std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer);
+        if(solidLayer != nullptr && solidLayer->isShadeLayer())
         {
             if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer()) != nullptr
                && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(t_Layer->getPreviousLayer())
@@ -524,7 +524,9 @@ namespace Tarcog::ISO15099
         if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer) != nullptr
            && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(t_Layer) == nullptr)
         {
-            if(std::dynamic_pointer_cast<CIGUShadeLayer>(t_Layer->getPreviousLayer()) != nullptr)
+            auto prevSolid =
+              std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer->getPreviousLayer());
+            if(prevSolid != nullptr && prevSolid->isShadeLayer())
             {
                 auto newLayer = std::make_shared<CIGUVentilatedGapLayer>(
                   std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer));

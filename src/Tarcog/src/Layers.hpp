@@ -38,7 +38,7 @@ namespace Tarcog::ISO15099
                            double backEmissivity = 0.84,
                            double backIRTransmittance = 0.0);
 
-        ShadeLayer sealedLayer(double thickness,
+        SolidLayer sealedLayer(double thickness,
                                double conductivity,
                                double frontEmissivity = 0.84,
                                double frontIRTransmittance = 0.0,

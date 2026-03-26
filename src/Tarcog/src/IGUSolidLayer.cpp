@@ -6,6 +6,9 @@
 #include "Surface.hpp"
 #include "TarcogConstants.hpp"
 #include "LayerInterfaces.hpp"
+#include "IGUGapLayer.hpp"
+#include "Environment.hpp"
+#include "IGUVentilatedGapLayer.hpp"
 
 
 using FenestrationCommon::Side;
@@ -13,6 +16,83 @@ using FenestrationCommon::Side;
 
 namespace Tarcog::ISO15099
 {
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /// CShadeOpenings
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    CShadeOpenings::CShadeOpenings(double const t_Atop,
+                                   double const t_Abot,
+                                   double const t_Aleft,
+                                   double const t_Aright,
+                                   double const t_Afront,
+                                   double const t_FrontPorosity) :
+        m_Atop(t_Atop),
+        m_Abot(t_Abot),
+        m_Aleft(t_Aleft),
+        m_Aright(t_Aright),
+        m_Afront(t_Afront),
+        m_FrontPorosity(t_FrontPorosity)
+    {}
+
+    double CShadeOpenings::openingMultiplier() const
+    {
+        const double denom = m_Abot + m_Atop;
+        const double safeDenom = (denom == 0.0) ? 2 * OPENING_TOLERANCE : denom;
+        return (m_Aleft + m_Aright + m_Afront) / safeDenom;
+    }
+
+    double CShadeOpenings::Aeq_bot() const
+    {
+        const double bot = std::max(OPENING_TOLERANCE, m_Abot);
+        const double top = std::max(OPENING_TOLERANCE, m_Atop);
+        return bot + 0.5 * top * openingMultiplier();
+    }
+
+    double CShadeOpenings::Aeq_top() const
+    {
+        const double bot = std::max(OPENING_TOLERANCE, m_Abot);
+        const double top = std::max(OPENING_TOLERANCE, m_Atop);
+        return top + 0.5 * bot * openingMultiplier();
+    }
+
+    double CShadeOpenings::frontPorosity() const
+    {
+        return m_FrontPorosity;
+    }
+
+    bool CShadeOpenings::isOpen() const
+    {
+        return m_Abot > 0 || m_Atop > 0 || m_Aleft > 0 || m_Aright > 0 || m_Afront > 0;
+    }
+
+    double CShadeOpenings::effectiveFrontThermalOpennessArea() const
+    {
+        return m_Afront;
+    }
+
+    void CShadeOpenings::checkAndSetDominantWidth(const double gapWidth)
+    {
+        m_Abot = std::min(gapWidth, m_Abot);
+        m_Atop = std::min(gapWidth, m_Atop);
+        m_Aleft = std::min(gapWidth, m_Aleft);
+        m_Aright = std::min(gapWidth, m_Aright);
+    }
+
+    CShadeOpenings getShadeOpenings(double width,
+                                    double height,
+                                    const EffectiveLayers::EffectiveMultipliers & effectiveMultipliers)
+    {
+        return {effectiveMultipliers.Mtop * width,
+                effectiveMultipliers.Mbot * width,
+                effectiveMultipliers.Mleft * height,
+                effectiveMultipliers.Mright * height,
+                effectiveMultipliers.Mfront * width * height,
+                effectiveMultipliers.PermeabilityFactor};
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /// CIGUSolidLayer
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     CIGUSolidLayer::CIGUSolidLayer(
       double const t_Thickness,
@@ -67,12 +147,159 @@ namespace Tarcog::ISO15099
 
     void CIGUSolidLayer::calculateConvectionOrConductionFlow()
     {
+        if(m_IsShadeLayer)
+        {
+            calculateShadeConvectionOrConductionFlow();
+        }
+        else
+        {
+            calculateSolidConvectionOrConductionFlow();
+        }
+    }
+
+    void CIGUSolidLayer::calculateSolidConvectionOrConductionFlow()
+    {
         if(m_Thickness == 0)
         {
             throw std::runtime_error("Solid layer thickness is set to zero.");
         }
 
         m_ConductiveConvectiveCoeff = m_Conductivity / m_Thickness;
+    }
+
+    void CIGUSolidLayer::calculateShadeConvectionOrConductionFlow()
+    {
+        m_Conductivity =
+          equivalentConductivity(m_MaterialConductivity, getEffectiveOpenings().frontPorosity());
+        calculateSolidConvectionOrConductionFlow();
+        assert(getNextLayer() != nullptr);
+        assert(getPreviousLayer() != nullptr);
+
+        // This must be set here or gap will be constantly calling this routine back throughout
+        // nextLayer property.
+        setCalculated();
+
+        if(std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer()) != nullptr
+           && std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer()) != nullptr)
+        {
+            auto previousGapLayer =
+              std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer());
+            auto nextGapLayer =
+              std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer());
+            calcInBetweenShadeFlow(*previousGapLayer, *nextGapLayer);
+        }
+        else if(std::dynamic_pointer_cast<CEnvironment>(getPreviousLayer()) != nullptr
+                && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer()) != nullptr)
+        {
+            calcEdgeShadeFlow(
+              *std::dynamic_pointer_cast<CEnvironment>(getPreviousLayer()),
+              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer()));
+        }
+        else if(std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()) != nullptr
+                && std::dynamic_pointer_cast<CEnvironment>(getNextLayer()) != nullptr)
+        {
+            calcEdgeShadeFlow(
+              *std::dynamic_pointer_cast<CEnvironment>(getNextLayer()),
+              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()));
+        }
+    }
+
+    CShadeOpenings CIGUSolidLayer::getEffectiveOpenings() const
+    {
+        if(m_ShadeMultipliers.has_value())
+        {
+            CShadeOpenings result{
+              getShadeOpenings(m_Width, m_Height, m_ShadeMultipliers.value())};
+            if(getPreviousLayer() != nullptr)
+            {
+                result.checkAndSetDominantWidth(getPreviousLayer()->getThickness());
+            }
+            if(getNextLayer() != nullptr)
+            {
+                result.checkAndSetDominantWidth(getNextLayer()->getThickness());
+            }
+            return result;
+        }
+        return {};
+    }
+
+    void CIGUSolidLayer::calcInBetweenShadeFlow(CIGUVentilatedGapLayer & gap1,
+                                                 CIGUVentilatedGapLayer & gap2)
+    {
+        const auto effectiveOpenings = getEffectiveOpenings();
+        gap1.setFlowGeometry(effectiveOpenings.Aeq_bot(), effectiveOpenings.Aeq_top());
+        gap2.setFlowGeometry(effectiveOpenings.Aeq_top(), effectiveOpenings.Aeq_bot());
+        gap1.calculateThermallyDrivenAirflowWithAdjacentGap(gap2);
+    }
+
+    void CIGUSolidLayer::calcEdgeShadeFlow(CEnvironment & environment,
+                                            CIGUVentilatedGapLayer & gap)
+    {
+        const auto effectiveOpenings = getEffectiveOpenings();
+        gap.setFlowGeometry(effectiveOpenings.Aeq_bot(), effectiveOpenings.Aeq_top());
+        gap.calculateVentilatedAirflow(environment.getAirTemperature());
+    }
+
+    namespace
+    {
+        std::optional<double> thermalConductivity(const double temperature,
+                                                  const CIGUGapLayer * layer)
+        {
+            if(layer != nullptr)
+            {
+                auto gasSpec{layer->getGasSpecification()};
+                gasSpec.setTemperature(temperature);
+                return gasSpec.gas.getGasProperties().m_ThermalConductivity;
+            }
+            return std::nullopt;
+        }
+
+        double effectiveGasConductivity(std::optional<double> gas1Cond,
+                                        std::optional<double> gas2Cond,
+                                        double defaultConductivity = 0.0)
+        {
+            auto average = [](double aaa, double bbb) { return (aaa + bbb) / 2.0; };
+
+            return gas1Cond && gas2Cond
+                     ? average(*gas1Cond, *gas2Cond)
+                     : gas1Cond.value_or(gas2Cond.value_or(defaultConductivity));
+        }
+    }   // anonymous namespace
+
+    double CIGUSolidLayer::equivalentConductivity(const double conductivity,
+                                                  const double permeabilityFactor)
+    {
+        auto previousLayer = std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer());
+        auto nextLayer = std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer());
+        auto gas1Cond = thermalConductivity(averageSurfaceTemperature(), previousLayer.get());
+        auto gas2Cond = thermalConductivity(averageSurfaceTemperature(), nextLayer.get());
+
+        return effectiveGasConductivity(gas1Cond, gas2Cond) * permeabilityFactor
+               + (1 - permeabilityFactor) * conductivity;
+    }
+
+    bool CIGUSolidLayer::isPermeable() const
+    {
+        return getEffectiveOpenings().isOpen();
+    }
+
+    bool CIGUSolidLayer::isShadeLayer() const
+    {
+        return m_IsShadeLayer;
+    }
+
+    void CIGUSolidLayer::assignEffectiveMultipliers(
+      const EffectiveLayers::EffectiveMultipliers & effectiveMultipliers)
+    {
+        m_ShadeMultipliers = effectiveMultipliers;
+        m_MaterialConductivity = m_Conductivity;
+        m_IsShadeLayer = true;
+    }
+
+    void CIGUSolidLayer::markAsShadeLayer()
+    {
+        m_IsShadeLayer = true;
+        m_MaterialConductivity = m_Conductivity;
     }
 
     void CIGUSolidLayer::setLayerState(double const t_Tf,
@@ -119,6 +346,7 @@ namespace Tarcog::ISO15099
             m_Surface[aSide]->applyDeflection(meanDeflection, maxDeflection);
         }
     }
+
     void CIGUSolidLayer::setConductivity(double t_Conductivity)
     {
         m_Conductivity = t_Conductivity;
@@ -183,10 +411,6 @@ namespace Tarcog::ISO15099
 
     double CIGUSolidLayer::getRadiationFlow()
     {
-        // Solid layers share surfaces, so actually asking for front surface of previous layer
-        // will be actual incoming radiation to this surface layer. And vice versa for back
-        // surface.
-
         return transmittance(Side::Front)
                * (getNextLayer()->J(FenestrationCommon::Side::Back)
                   - getPreviousLayer()->J(FenestrationCommon::Side::Front));

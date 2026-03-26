@@ -1,7 +1,6 @@
 #include "Layers.hpp"
 #include "IGUGapLayer.hpp"
 #include "IGUSolidLayer.hpp"
-#include "BaseShade.hpp"
 #include "Surface.hpp"
 #include "SupportPillar.hpp"
 #include "SupportPillarMeasured.hpp"
@@ -169,7 +168,7 @@ namespace Tarcog::ISO15099::Layers
                          backIRTransmittance);
         }
 
-        auto layer = std::make_shared<CIGUShadeLayer>(
+        auto layer = std::make_shared<CIGUSolidLayer>(
           thickness,
           conductivity,
           std::make_shared<Surface>(frontEmissivity, frontIRTransmittance),
@@ -180,18 +179,20 @@ namespace Tarcog::ISO15099::Layers
         return layer;
     }
 
-    ShadeLayer sealedLayer(double thickness,
+    SolidLayer sealedLayer(double thickness,
                            double conductivity,
                            double frontEmissivity,
                            double frontIRTransmittance,
                            double backEmissivity,
                            double backIRTransmittance)
     {
-        return std::make_shared<CIGUShadeLayer>(
+        auto layer = std::make_shared<CIGUSolidLayer>(
           thickness,
           conductivity,
           std::make_shared<Surface>(frontEmissivity, frontIRTransmittance),
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
+        layer->markAsShadeLayer();
+        return layer;
     }
 
     Gases::CGas defaultVacuumMixture()
