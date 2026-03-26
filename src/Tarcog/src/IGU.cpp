@@ -434,7 +434,6 @@ namespace Tarcog::ISO15099
         // reset this back to measured deflection should delete calculator for the deflection
         // from E1300 curves.
         m_DeflectionFromE1300Curves = std::nullopt;
-        resetSurfaceDeflections();
 
         if(t_MeasuredDeflections.size() != getNumOfLayers() - 1)
         {
@@ -451,10 +450,8 @@ namespace Tarcog::ISO15099
             if(!aLayer->hasMeasuredDeflection())
             {
                 const auto LDefNMean = deflectionRatio * LDefMax[idx];
-                auto cloned = std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer->clone());
-                cloned->applyDeflection(LDefNMean, LDefMax[idx]);
-                cloned->setMeasuredDeflection();
-                replaceLayer(aLayer, cloned);
+                aLayer->applyDeflection(LDefNMean, LDefMax[idx]);
+                aLayer->setMeasuredDeflection();
             }
         }
     }

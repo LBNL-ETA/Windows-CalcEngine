@@ -92,12 +92,12 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature{257.56333804292137,
-                                   257.778199167472,
-                                   270.38163708188478,
-                                   270.5964982064354,
-                                   283.89299684982035,
-                                   284.10785797437092};
+    std::vector correctTemperature{257.57940950504042,
+                                   257.79570372474865,
+                                   270.47734999239498,
+                                   270.6936442121031,
+                                   284.0588003153718,
+                                   284.27509453507992};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -106,12 +106,12 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity{248.03939792628864,
-                                 257.61321393304598,
-                                 295.7534834937947,
-                                 312.85131025670762,
-                                 359.41188170064646,
-                                 378.20666480049886};
+    std::vector correctRadiosity{248.09171549331847,
+                                 257.73105339429702,
+                                 296.13294306799133,
+                                 313.34660336612473,
+                                 360.21446021554499,
+                                 378.93791124722327};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -139,5 +139,5 @@ TEST_F(TripleClearDeflectionMeasured, Test1)
     }
 
     auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(24u, numOfIter);
+    EXPECT_EQ(25u, numOfIter);
 }
