@@ -185,13 +185,11 @@ namespace Tarcog::ISO15099::Layers
                            double backEmissivity,
                            double backIRTransmittance)
     {
-        auto layer = std::make_shared<CIGUSolidLayer>(
+        return std::make_shared<CIGUSolidLayer>(
           thickness,
           conductivity,
           std::make_shared<Surface>(frontEmissivity, frontIRTransmittance),
           std::make_shared<Surface>(backEmissivity, backIRTransmittance));
-        layer->markAsShadeLayer();
-        return layer;
     }
 
     Gases::CGas defaultVacuumMixture()
