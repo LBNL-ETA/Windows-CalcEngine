@@ -88,10 +88,6 @@ namespace Tarcog::ISO15099
         void setSolidLayerConductivity(size_t t_LayerIndex, double t_SolidLayerThermalConductivity);
 
     private:
-        // Replaces layer in existing construction and keeps correct connections in linked list
-        void replaceLayer(const std::shared_ptr<CBaseLayer> & t_Original,
-                          const std::shared_ptr<CBaseLayer> & t_Replacement);
-
         // Check if layer needs to be decorated with another object
         void checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer);
 

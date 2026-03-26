@@ -486,22 +486,6 @@ namespace Tarcog::ISO15099
         }
     }
 
-    void CIGU::replaceLayer(const std::shared_ptr<CBaseLayer> & t_Original,
-                            const std::shared_ptr<CBaseLayer> & t_Replacement)
-    {
-        size_t index = static_cast<size_t>(find(m_Layers.begin(), m_Layers.end(), t_Original)
-                                           - m_Layers.begin());
-        m_Layers[index] = t_Replacement;
-        if(index > 0)
-        {
-            m_Layers[index - 1]->connectToBackSide(t_Replacement);
-        }
-        if(index < m_Layers.size() - 1)
-        {
-            t_Replacement->connectToBackSide(m_Layers[index + 1]);
-        }
-    }
-
     void CIGU::checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer)
     {
         auto solidLayer = std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer);
