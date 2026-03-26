@@ -142,7 +142,7 @@ namespace Tarcog::ISO15099::Layers
     SolidLayer updateMaterialData(const SolidLayer & layer, double density, double youngsModulus)
     {
         // Deflection cannot be applied to shading layers
-        if(!layer->isPermeable())
+        if(!layer->isPorous())
         {
             layer->setDeflectionMaterial({youngsModulus, DeflectionConstants::POISONRATIO, density});
         }

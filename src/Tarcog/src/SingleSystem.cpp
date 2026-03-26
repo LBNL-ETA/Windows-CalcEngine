@@ -429,7 +429,7 @@ namespace Tarcog::ISO15099
         };
 
         const auto & shadingLayer = getShadingLayer();
-        if(!shadingLayer->isPermeable())
+        if(!shadingLayer->isPorous())
             return modifier;
 
         const auto & glassLayer = getGlassLayer(shadingLayer);

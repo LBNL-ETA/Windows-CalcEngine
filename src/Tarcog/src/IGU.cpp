@@ -360,7 +360,7 @@ namespace Tarcog::ISO15099
             const std::map<Environment, size_t> solidLayerIndex = {{Environment::Indoor, size - 1},
                                                                    {Environment::Outdoor, 0}};
 
-            if(m_Layers[solidLayerIndex.at(t_Environment)]->isPermeable())
+            if(m_Layers[solidLayerIndex.at(t_Environment)]->isPorous())
             {
                 result = m_Layers[envLayer.at(t_Environment)]->getGainFlow();
             }

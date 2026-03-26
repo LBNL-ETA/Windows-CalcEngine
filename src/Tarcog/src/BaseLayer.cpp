@@ -71,7 +71,7 @@ namespace Tarcog::ISO15099
                - surfaceDeflectionMean(FenestrationCommon::Side::Back);
     }
 
-    bool CBaseLayer::isPermeable() const { return false; }
+    bool CBaseLayer::isPorous() const { return false; }
 
     double CBaseLayer::getSurfaceArea() const { return m_Width * m_Height; }
 

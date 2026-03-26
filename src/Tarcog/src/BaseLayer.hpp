@@ -32,7 +32,7 @@ namespace Tarcog::ISO15099
         virtual double getRadiationFlow();
         virtual double getConvectionConductionFlow() final;
 
-        virtual bool isPermeable() const;
+        virtual bool isPorous() const;
         [[nodiscard]] virtual bool isGapLayer() const { return false; }
         [[nodiscard]] virtual bool isEnvironment() const { return false; }
         [[nodiscard]] virtual bool isShadeLayer() const { return false; }

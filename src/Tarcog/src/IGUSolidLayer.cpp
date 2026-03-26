@@ -278,7 +278,7 @@ namespace Tarcog::ISO15099
                + (1 - permeabilityFactor) * conductivity;
     }
 
-    bool CIGUSolidLayer::isPermeable() const
+    bool CIGUSolidLayer::isPorous() const
     {
         return getEffectiveOpenings().isOpen();
     }
