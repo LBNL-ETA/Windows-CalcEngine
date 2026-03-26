@@ -179,28 +179,26 @@ namespace Tarcog::ISO15099
         // nextLayer property.
         setCalculated();
 
-        if(std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer()) != nullptr
-           && std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer()) != nullptr)
+        const auto & prev = getPreviousLayer();
+        const auto & next = getNextLayer();
+
+        if(prev->isGapLayer() && next->isGapLayer())
         {
-            auto previousGapLayer =
-              std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer());
-            auto nextGapLayer =
-              std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer());
-            calcInBetweenShadeFlow(*previousGapLayer, *nextGapLayer);
+            calcInBetweenShadeFlow(
+              static_cast<CIGUGapLayer &>(*prev),
+              static_cast<CIGUGapLayer &>(*next));
         }
-        else if(std::dynamic_pointer_cast<CEnvironment>(getPreviousLayer()) != nullptr
-                && std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer()) != nullptr)
+        else if(prev->isEnvironment() && next->isGapLayer())
         {
             calcEdgeShadeFlow(
-              *std::dynamic_pointer_cast<CEnvironment>(getPreviousLayer()),
-              *std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer()));
+              static_cast<CEnvironment &>(*prev),
+              static_cast<CIGUGapLayer &>(*next));
         }
-        else if(std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer()) != nullptr
-                && std::dynamic_pointer_cast<CEnvironment>(getNextLayer()) != nullptr)
+        else if(prev->isGapLayer() && next->isEnvironment())
         {
             calcEdgeShadeFlow(
-              *std::dynamic_pointer_cast<CEnvironment>(getNextLayer()),
-              *std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer()));
+              static_cast<CEnvironment &>(*next),
+              static_cast<CIGUGapLayer &>(*prev));
         }
     }
 
@@ -269,10 +267,12 @@ namespace Tarcog::ISO15099
     double CIGUSolidLayer::equivalentConductivity(const double conductivity,
                                                   const double permeabilityFactor)
     {
-        auto previousLayer = std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer());
-        auto nextLayer = std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer());
-        auto gas1Cond = thermalConductivity(averageSurfaceTemperature(), previousLayer.get());
-        auto gas2Cond = thermalConductivity(averageSurfaceTemperature(), nextLayer.get());
+        const auto & prev = getPreviousLayer();
+        const auto & next = getNextLayer();
+        auto * prevGap = prev && prev->isGapLayer() ? static_cast<CIGUGapLayer *>(prev.get()) : nullptr;
+        auto * nxtGap = next && next->isGapLayer() ? static_cast<CIGUGapLayer *>(next.get()) : nullptr;
+        auto gas1Cond = thermalConductivity(averageSurfaceTemperature(), prevGap);
+        auto gas2Cond = thermalConductivity(averageSurfaceTemperature(), nxtGap);
 
         return effectiveGasConductivity(gas1Cond, gas2Cond) * permeabilityFactor
                + (1 - permeabilityFactor) * conductivity;

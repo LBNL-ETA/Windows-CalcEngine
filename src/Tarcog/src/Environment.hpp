@@ -17,6 +17,8 @@ namespace Tarcog::ISO15099
 
         ~CEnvironment() override;
 
+        [[nodiscard]] bool isEnvironment() const override { return true; }
+
         void setHCoeffModel(BoundaryConditionsCoeffModel t_BCModel, double t_HCoeff = 0);
         void setEnvironmentIR(double t_InfraRed);
         void setEmissivity(double t_Emissivity);

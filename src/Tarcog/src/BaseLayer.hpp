@@ -33,6 +33,8 @@ namespace Tarcog::ISO15099
         virtual double getConvectionConductionFlow() final;
 
         virtual bool isPermeable() const;
+        [[nodiscard]] virtual bool isGapLayer() const { return false; }
+        [[nodiscard]] virtual bool isEnvironment() const { return false; }
         virtual std::shared_ptr<CBaseLayer> clone() const = 0;
         virtual void precalculateState() {};
 

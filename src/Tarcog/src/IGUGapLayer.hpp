@@ -60,6 +60,7 @@ namespace Tarcog
             double getPressure();
 
             double getThickness() const override;
+            [[nodiscard]] bool isGapLayer() const override { return true; }
 
             std::shared_ptr<CBaseLayer> clone() const override;
 

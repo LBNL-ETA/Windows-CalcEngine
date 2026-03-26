@@ -66,7 +66,7 @@ namespace Tarcog::ISO15099
         // In case this is first layer then it must be a solid layer in order to create IGU
         if(getNumOfLayers() == 0)
         {
-            if(std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer) != nullptr)
+            if(!t_Layer->isGapLayer())
             {
                 m_Layers.push_back(t_Layer);
             }
@@ -78,8 +78,7 @@ namespace Tarcog::ISO15099
         else
         {
             auto lastLayer = m_Layers.back();
-            if(std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer)
-               != std::dynamic_pointer_cast<CIGUSolidLayer>(lastLayer))
+            if(t_Layer->isGapLayer() != lastLayer->isGapLayer())
             {
                 m_Layers.push_back(t_Layer);
                 lastLayer->connectToBackSide(t_Layer);
@@ -551,9 +550,9 @@ namespace Tarcog::ISO15099
         std::vector<std::shared_ptr<CIGUSolidLayer>> aVect;
         for(auto const & aLayer : m_Layers)
         {
-            if(std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer) != nullptr)
+            if(!aLayer->isGapLayer())
             {
-                aVect.push_back(std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer));
+                aVect.push_back(std::static_pointer_cast<CIGUSolidLayer>(aLayer));
             }
         }
         return aVect;
@@ -564,9 +563,9 @@ namespace Tarcog::ISO15099
         std::vector<std::shared_ptr<CIGUGapLayer>> aVect;
         for(auto const & aLayer : m_Layers)
         {
-            if(std::dynamic_pointer_cast<CIGUGapLayer>(aLayer) != nullptr)
+            if(aLayer->isGapLayer())
             {
-                aVect.push_back(std::dynamic_pointer_cast<CIGUGapLayer>(aLayer));
+                aVect.push_back(std::static_pointer_cast<CIGUGapLayer>(aLayer));
             }
         }
         return aVect;
@@ -693,9 +692,9 @@ namespace Tarcog::ISO15099
     {
         for(auto const & aLayer : m_Layers)
         {
-            if(std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer) != nullptr)
+            if(!aLayer->isGapLayer())
             {
-                std::dynamic_pointer_cast<CIGUSolidLayer>(aLayer)->applyDeflection(0, 0);
+                std::static_pointer_cast<CIGUSolidLayer>(aLayer)->applyDeflection(0, 0);
             }
         }
     }

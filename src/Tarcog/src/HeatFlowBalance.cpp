@@ -152,25 +152,24 @@ namespace Tarcog::ISO15099
 
         buildBaseCell(sP, hgl, hgap_prev, hgap_next, qv_prev, qv_next, solarRadiation, solid);
 
-        auto previousEnvironment = std::dynamic_pointer_cast<CEnvironment>(previous);
-        auto nextEnvironment = std::dynamic_pointer_cast<CEnvironment>(next);
-
-        if(!previousEnvironment)
+        if(!previous || !previous->isEnvironment())
         {
             handleNonEnvironmentPreviousLayer(sP, hgap_prev, solid);
         }
         else
         {
-            handleEnvironmentPreviousLayer(sP, previousEnvironment, hgap_prev, solid);
+            handleEnvironmentPreviousLayer(
+              sP, std::static_pointer_cast<CEnvironment>(previous), hgap_prev, solid);
         }
 
-        if(!nextEnvironment)
+        if(!next || !next->isEnvironment())
         {
             handleNonEnvironmentNextLayer(sP, hgap_next, solid);
         }
         else
         {
-            handleEnvironmentNextLayer(sP, nextEnvironment, hgap_next, solid);
+            handleEnvironmentNextLayer(
+              sP, std::static_pointer_cast<CEnvironment>(next), hgap_next, solid);
         }
     }
 
