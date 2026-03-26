@@ -214,13 +214,13 @@ namespace Tarcog::ISO15099
 
     double CIGUGapLayer::getPressure()
     {
-        if(m_SealedGapProperties.has_value())
+        if(m_ManufacturingConditions.has_value())
         {
             auto Vini = getSurfaceArea() * m_Thickness;
             auto modThickness = getThickness();
             auto Vgap = getSurfaceArea() * modThickness;
-            return m_SealedGapProperties->pressure * Vini * averageLayerTemperature()
-                   / (m_SealedGapProperties->temperature * Vgap);
+            return m_ManufacturingConditions->pressure * Vini * averageLayerTemperature()
+                   / (m_ManufacturingConditions->temperature * Vgap);
         }
         return gasSpecification.pressure;
     }
@@ -260,9 +260,9 @@ namespace Tarcog::ISO15099
         return std::make_shared<CIGUGapLayer>(*this);
     }
 
-    void CIGUGapLayer::setSealedGapProperties(double t_Temperature, double t_Pressure)
+    void CIGUGapLayer::setManufacturingConditions(double t_Temperature, double t_Pressure)
     {
-        m_SealedGapProperties = SealedGapProperties(t_Temperature, t_Pressure);
+        m_ManufacturingConditions = ManufacturingConditions(t_Temperature, t_Pressure);
     }
 
     void CIGUGapLayer::updateGasSpecifications()

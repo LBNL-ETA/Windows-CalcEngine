@@ -410,7 +410,7 @@ namespace Tarcog::ISO15099
         auto gaps = getGapLayers();
         for(auto const & gap : gaps)
         {
-            gap->setSealedGapProperties(t_Tini, t_Pini);
+            gap->setManufacturingConditions(t_Tini, t_Pini);
             gapData.emplace_back(gap->getThickness(), t_Tini, t_Pini);
         }
 

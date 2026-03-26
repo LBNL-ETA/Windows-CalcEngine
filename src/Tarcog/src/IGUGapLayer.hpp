@@ -16,9 +16,9 @@ namespace Tarcog
     namespace ISO15099
     {
         // Properties of the gap at time of production
-        struct SealedGapProperties
+        struct ManufacturingConditions
         {
-            SealedGapProperties(double t_Temperature, double t_Pressure) :
+            ManufacturingConditions(double t_Temperature, double t_Pressure) :
                 temperature(t_Temperature), pressure(t_Pressure)
             {}
 
@@ -67,7 +67,7 @@ namespace Tarcog
             double getMaxDeflection() const override;
             double getMeanDeflection() const override;
 
-            void setSealedGapProperties(double t_Temperature, double t_Pressure);
+            void setManufacturingConditions(double t_Temperature, double t_Pressure);
 
             [[nodiscard]] GasSpecification getGasSpecification() const;
 
@@ -98,14 +98,13 @@ namespace Tarcog
 
             double averageLayerTemperature() override;
 
-        protected:
+        private:
             void calculateConvectionOrConductionFlow() override;
 
-            std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
+            std::optional<ManufacturingConditions> m_ManufacturingConditions{std::nullopt};
 
             GasSpecification gasSpecification;
 
-        private:
             // Base gap calculations
             double calculateRayleighNumber();
             double aspectRatio() const;
