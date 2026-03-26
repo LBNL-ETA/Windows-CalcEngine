@@ -111,7 +111,6 @@ namespace Tarcog::ISO15099
 
         void assignEffectiveMultipliers(
           const EffectiveLayers::EffectiveMultipliers & effectiveMultipliers);
-        void markAsShadeLayer();
 
     protected:
         void calculateConvectionOrConductionFlow() override;
@@ -133,8 +132,6 @@ namespace Tarcog::ISO15099
         std::optional<DeflectionMaterial> m_DeflectionMaterial;
         bool m_HasMeasuredDeflection{false};
 
-        // Shade data (populated only for shade layers)
-        bool m_IsShadeLayer{false};
         std::optional<EffectiveLayers::EffectiveMultipliers> m_EffectiveMultipliers;
         double m_MaterialConductivity{0};
     };

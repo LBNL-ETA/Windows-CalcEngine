@@ -147,7 +147,7 @@ namespace Tarcog::ISO15099
 
     void CIGUSolidLayer::calculateConvectionOrConductionFlow()
     {
-        if(m_IsShadeLayer)
+        if(m_EffectiveMultipliers.has_value())
         {
             calculateShadeConvectionOrConductionFlow();
         }
@@ -285,20 +285,13 @@ namespace Tarcog::ISO15099
 
     bool CIGUSolidLayer::isShadeLayer() const
     {
-        return m_IsShadeLayer;
+        return m_EffectiveMultipliers.has_value();
     }
 
     void CIGUSolidLayer::assignEffectiveMultipliers(
       const EffectiveLayers::EffectiveMultipliers & effectiveMultipliers)
     {
         m_EffectiveMultipliers = effectiveMultipliers;
-        m_MaterialConductivity = m_Conductivity;
-        m_IsShadeLayer = true;
-    }
-
-    void CIGUSolidLayer::markAsShadeLayer()
-    {
-        m_IsShadeLayer = true;
         m_MaterialConductivity = m_Conductivity;
     }
 
