@@ -33,7 +33,6 @@ namespace Tarcog::ISO15099
         std::shared_ptr<CBaseLayer> clone() const override;
         std::shared_ptr<CEnvironment> cloneEnvironment() const override;
 
-        void setSolarRadiation(double t_SolarRadiation);
         double getSolarRadiation() const;
 
     private:

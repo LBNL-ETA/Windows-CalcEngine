@@ -86,10 +86,10 @@ namespace Tarcog
             void activatePillar(double measuredConductance);
 
             // Ventilation activation
-            void activateVentilation();
+            void activateVentilation() override;
             void activateVentilation(double forcedVentilationInletTemperature,
                                      double forcedVentilationInletSpeed);
-            [[nodiscard]] bool isVentilated() const;
+            [[nodiscard]] bool isVentilated() const override;
 
             // Ventilation flow methods (called by shade layer)
             void setFlowGeometry(double t_Ain, double t_Aout);

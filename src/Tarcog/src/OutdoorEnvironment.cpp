@@ -84,11 +84,6 @@ namespace Tarcog::ISO15099
         return std::make_shared<COutdoorEnvironment>(*this);
     }
 
-    void COutdoorEnvironment::setSolarRadiation(double const t_SolarRadiation)
-    {
-        m_DirectSolarRadiation = t_SolarRadiation;
-    }
-
     double COutdoorEnvironment::getSolarRadiation() const
     {
         return m_DirectSolarRadiation;

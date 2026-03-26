@@ -35,6 +35,9 @@ namespace Tarcog::ISO15099
         virtual bool isPermeable() const;
         [[nodiscard]] virtual bool isGapLayer() const { return false; }
         [[nodiscard]] virtual bool isEnvironment() const { return false; }
+        [[nodiscard]] virtual bool isShadeLayer() const { return false; }
+        [[nodiscard]] virtual bool isVentilated() const { return false; }
+        virtual void activateVentilation() {}
         virtual std::shared_ptr<CBaseLayer> clone() const = 0;
         virtual void precalculateState() {};
 

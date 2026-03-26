@@ -69,6 +69,11 @@ namespace Tarcog::ISO15099
         return m_DirectSolarRadiation;
     }
 
+    void CEnvironment::setSolarRadiation(double const t_SolarRadiation)
+    {
+        m_DirectSolarRadiation = t_SolarRadiation;
+    }
+
     void CEnvironment::connectToIGULayer(std::shared_ptr<CBaseLayer> const &)
     {
         //

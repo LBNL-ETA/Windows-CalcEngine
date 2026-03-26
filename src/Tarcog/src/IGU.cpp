@@ -487,23 +487,20 @@ namespace Tarcog::ISO15099
 
     void CIGU::checkForLayerUpgrades(const std::shared_ptr<CBaseLayer> & t_Layer)
     {
-        auto solidLayer = std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer);
-        if(solidLayer != nullptr && solidLayer->isShadeLayer())
+        if(t_Layer->isShadeLayer())
         {
-            auto prevGap = std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer());
-            if(prevGap != nullptr && !prevGap->isVentilated())
+            const auto & prev = t_Layer->getPreviousLayer();
+            if(prev != nullptr && prev->isGapLayer() && !prev->isVentilated())
             {
-                prevGap->activateVentilation();
+                prev->activateVentilation();
             }
         }
-        auto gapLayer = std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer);
-        if(gapLayer != nullptr && !gapLayer->isVentilated())
+        if(t_Layer->isGapLayer() && !t_Layer->isVentilated())
         {
-            auto prevSolid =
-              std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer->getPreviousLayer());
-            if(prevSolid != nullptr && prevSolid->isShadeLayer())
+            const auto & prev = t_Layer->getPreviousLayer();
+            if(prev != nullptr && prev->isShadeLayer())
             {
-                gapLayer->activateVentilation();
+                t_Layer->activateVentilation();
             }
         }
     }

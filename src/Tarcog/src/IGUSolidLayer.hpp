@@ -98,7 +98,7 @@ namespace Tarcog::ISO15099
         double getMeanDeflection() const override;
 
         bool isPermeable() const override;
-        [[nodiscard]] bool isShadeLayer() const;
+        [[nodiscard]] bool isShadeLayer() const override;
 
         std::shared_ptr<CBaseLayer> clone() const override;
 

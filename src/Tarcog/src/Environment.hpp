@@ -24,6 +24,7 @@ namespace Tarcog::ISO15099
         void setEmissivity(double t_Emissivity);
 
         double getDirectSolarRadiation() const;
+        void setSolarRadiation(double t_SolarRadiation);
         double getEnvironmentIR();
         double getHc();
         virtual double calculateHc() = 0;

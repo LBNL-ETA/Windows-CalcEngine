@@ -265,16 +265,13 @@ namespace Tarcog::ISO15099
 
     void CSingleSystem::setSolarRadiation(double const t_SolarRadiation)
     {
-        std::dynamic_pointer_cast<COutdoorEnvironment>(m_Environment.at(Environment::Outdoor))
-          ->setSolarRadiation(t_SolarRadiation);
+        m_Environment.at(Environment::Outdoor)->setSolarRadiation(t_SolarRadiation);
         m_IGU.setSolarRadiation(t_SolarRadiation);
     }
 
     double CSingleSystem::getSolarRadiation() const
     {
-        return std::dynamic_pointer_cast<COutdoorEnvironment>(
-                 m_Environment.at(Environment::Outdoor))
-          ->getSolarRadiation();
+        return m_Environment.at(Environment::Outdoor)->getDirectSolarRadiation();
     }
 
     std::vector<double> CSingleSystem::getSolidEffectiveLayerConductivities() const
