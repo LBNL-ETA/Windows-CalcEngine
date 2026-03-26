@@ -5,7 +5,6 @@
 #include "SupportPillar.hpp"
 #include "SupportPillarMeasured.hpp"
 #include "EffectiveMultipliers.hpp"
-#include "IGUGapLayer.hpp"
 
 namespace Tarcog::ISO15099
 {
@@ -209,13 +208,13 @@ namespace Tarcog::ISO15099::Layers
                                     double accommodation2,
                                     double materialConductivity,
                                     double cellArea,
-                                    PillarGapLayer::AreaFn areaFn,
-                                    PillarGapLayer::ResistanceFn resistanceFn)
+                                    CIGUGapLayer::PillarAreaFn areaFn,
+                                    CIGUGapLayer::PillarResistanceFn resistanceFn)
         {
             auto gapLayer = gap(height, pressure, gas, accommodation1, accommodation2);
-            return std::make_shared<PillarGapLayer>(
-              *gapLayer, materialConductivity, cellArea,
-              std::move(areaFn), std::move(resistanceFn));
+            gapLayer->activatePillar(materialConductivity, cellArea,
+                                     std::move(areaFn), std::move(resistanceFn));
+            return gapLayer;
         }
     }   // anonymous namespace
 
@@ -411,6 +410,9 @@ namespace Tarcog::ISO15099::Layers
 
     GapLayer createPillar(const PillarMeasurement & pillar)
     {
-        return std::make_shared<MeasuredPillarLayer>(pillar);
+        auto gapLayer = std::make_shared<CIGUGapLayer>(
+          pillar.totalThickness - pillar.glass1.thickness - pillar.glass2.thickness, 0.0);
+        gapLayer->activatePillar(cStar(pillar));
+        return gapLayer;
     }
 }   // namespace Tarcog::ISO15099::Layers

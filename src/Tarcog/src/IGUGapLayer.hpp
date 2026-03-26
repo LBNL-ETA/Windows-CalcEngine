@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <optional>
+#include <functional>
 
 #include <WCEGases.hpp>
 
@@ -69,6 +70,20 @@ namespace Tarcog
 
             [[nodiscard]] GasSpecification getGasSpecification() const;
 
+            // Pillar activation
+            using PillarAreaFn = std::function<double()>;
+            using PillarResistanceFn = std::function<double(double kHot,
+                                                            double kCold,
+                                                            double kPillar,
+                                                            double height,
+                                                            double area)>;
+
+            void activatePillar(double materialConductivity,
+                                double cellArea,
+                                PillarAreaFn areaOfContactFn,
+                                PillarResistanceFn thermalResistanceFn);
+            void activatePillar(double measuredConductance);
+
             // Ventilation activation
             void activateVentilation();
             void activateVentilation(double forcedVentilationInletTemperature,
@@ -126,12 +141,22 @@ namespace Tarcog
                                            const VentilatedGapTemperatures & previous);
             void adjustTemperatures(CIGUGapLayer & adjacentGap);
 
+            // Pillar calculations
+            [[nodiscard]] double conductivityOfPillarArray();
+
             double m_AccommodationCoefficient1{
               ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT};
             double m_AccommodationCoefficient2{
               ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT};
 
             bool m_isDCenterMeasured{false};
+
+            // Pillar state
+            double m_PillarMaterialConductivity{0};
+            double m_PillarCellArea{0};
+            PillarAreaFn m_PillarAreaOfContactFn;
+            PillarResistanceFn m_PillarResistanceFn;
+            std::optional<double> m_PillarMeasuredConductance;
 
             // Ventilation state
             bool m_IsVentilated{false};

@@ -149,6 +149,16 @@ namespace Tarcog::ISO15099
 
     void CIGUGapLayer::calculateConvectionOrConductionFlow()
     {
+        if(m_PillarMeasuredConductance.has_value())
+        {
+            if(!isCalculated())
+            {
+                m_ConductiveConvectiveCoeff = m_PillarMeasuredConductance.value();
+                setCalculated();
+            }
+            return;
+        }
+
         if(m_IsVentilated)
         {
             calculateHeatFlowNextLayer();
@@ -162,6 +172,11 @@ namespace Tarcog::ISO15099
             }
 
             m_ConductiveConvectiveCoeff = convectiveH();
+        }
+
+        if(m_PillarAreaOfContactFn && !isCalculated())
+        {
+            m_ConductiveConvectiveCoeff += conductivityOfPillarArray();
         }
 
         if(m_IsVentilated && !isCalculated())
@@ -304,6 +319,38 @@ namespace Tarcog::ISO15099
         return avTemp
                - (cHeight / m_Height)
                    * (m_VentState.outletTemperature - m_VentState.inletTemperature);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////  CIGUGapLayer -- pillar activation
+    ////////////////////////////////////////////////////////////////////////////
+
+    void CIGUGapLayer::activatePillar(double materialConductivity,
+                                      double cellArea,
+                                      PillarAreaFn areaOfContactFn,
+                                      PillarResistanceFn thermalResistanceFn)
+    {
+        m_PillarMaterialConductivity = materialConductivity;
+        m_PillarCellArea = cellArea;
+        m_PillarAreaOfContactFn = std::move(areaOfContactFn);
+        m_PillarResistanceFn = std::move(thermalResistanceFn);
+    }
+
+    void CIGUGapLayer::activatePillar(double measuredConductance)
+    {
+        m_PillarMeasuredConductance = measuredConductance;
+    }
+
+    double CIGUGapLayer::conductivityOfPillarArray()
+    {
+        const auto area = m_PillarAreaOfContactFn();
+        const auto resistance = m_PillarResistanceFn(
+          getPreviousLayer()->getConductivity(),
+          getNextLayer()->getConductivity(),
+          m_PillarMaterialConductivity,
+          m_Thickness,
+          area);
+        return 1 / (m_PillarCellArea * resistance);
     }
 
     ////////////////////////////////////////////////////////////////////////////

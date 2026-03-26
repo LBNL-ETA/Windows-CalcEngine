@@ -1,7 +1,5 @@
 #pragma once
 
-#include "IGUGapLayer.hpp"
-
 namespace Tarcog::ISO15099
 {
     struct Glass
@@ -21,14 +19,5 @@ namespace Tarcog::ISO15099
         Glass glass2;
     };
 
-    class MeasuredPillarLayer : public CIGUGapLayer
-    {
-    public:
-        explicit MeasuredPillarLayer(const PillarMeasurement & pillar);
-
-    private:
-        void calculateConvectionOrConductionFlow() override;
-
-        double m_MeasuredConductance;
-    };
+    [[nodiscard]] double cStar(const PillarMeasurement & pillar);
 }   // namespace Tarcog::ISO15099

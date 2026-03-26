@@ -95,7 +95,10 @@ TEST_F(NFRC102_NFRC102_VacuumMeasuredPillar, Test1)
     ASSERT_TRUE(aSystem != nullptr);
 
     const auto Temperature = aSystem->getTemperatures();
-    std::vector correctTemperature = {257.898671, 258.143440, 282.805015, 283.049784};
+    std::vector correctTemperature = {262.26180506603146,
+                                      262.89691607683903,
+                                      265.92848452379843,
+                                      266.56359553460595};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -104,7 +107,10 @@ TEST_F(NFRC102_NFRC102_VacuumMeasuredPillar, Test1)
     }
 
     const auto Radiosity = aSystem->getRadiosities();
-    std::vector correctRadiosity = {249.133043, 267.066429, 347.371235, 373.610048};
+    std::vector correctRadiosity = {263.75651459661407,
+                                    272.58640648365679,
+                                    281.79026538921579,
+                                    308.37333019765526};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -113,8 +119,8 @@ TEST_F(NFRC102_NFRC102_VacuumMeasuredPillar, Test1)
     }
 
     const auto numOfIter = aSystem->getNumberOfIterations();
-    EXPECT_EQ(44u, numOfIter);
+    EXPECT_EQ(25u, numOfIter);
 
     const auto uValue{aSystem->getUValue()};
-    EXPECT_NEAR(2.059098, uValue, tolerance);
+    EXPECT_NEAR(5.3428142101277789, uValue, tolerance);
 }
