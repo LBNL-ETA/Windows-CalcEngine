@@ -1,13 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <WCEGases.hpp>
 
 #include "BaseLayer.hpp"
 #include "GasSpecification.hpp"
-
-#include <iostream>
 
 namespace Tarcog
 {
@@ -24,6 +23,18 @@ namespace Tarcog
 
             double temperature;
             double pressure;
+        };
+
+        struct VentilatedGapTemperatures
+        {
+            double inletTemperature{0};
+            double outletTemperature{0};
+        };
+
+        struct ForcedVentilation
+        {
+            double speed{0};
+            double temperature{0};
         };
 
         [[nodiscard]] bool isStillAir(double airSpeed);
@@ -56,28 +67,64 @@ namespace Tarcog
 
             void setSealedGapProperties(double t_Temperature, double t_Pressure);
 
-            // Gas specification is needed for equivalent solid layer conductivity calculations
-            // In case gas is not air, but some other gas or gas mixture, then gas specification
-            // should be used to calculate the gas thermal conductivity.
             [[nodiscard]] GasSpecification getGasSpecification() const;
+
+            // Ventilation activation
+            void activateVentilation();
+            void activateVentilation(double forcedVentilationInletTemperature,
+                                     double forcedVentilationInletSpeed);
+            [[nodiscard]] bool isVentilated() const;
+
+            // Ventilation flow methods (called by shade layer)
+            void setFlowGeometry(double t_Ain, double t_Aout);
+            void calculateThermallyDrivenAirflowWithAdjacentGap(CIGUGapLayer & adjacentGap);
+            void calculateVentilatedAirflow(double inletTemperature);
+
+            double averageLayerTemperature() override;
 
         protected:
             void calculateConvectionOrConductionFlow() override;
 
-            // Gap by default will not be considered to be sealed. If not sealed then
-            // pressure will be considered to be m_Pressure;
             std::optional<SealedGapProperties> m_SealedGapProperties{std::nullopt};
 
             GasSpecification gasSpecification;
 
         private:
+            // Base gap calculations
             double calculateRayleighNumber();
             double aspectRatio() const;
-
             void updateGasSpecifications();
             [[nodiscard]] double calculateConvectiveConductiveCoefficient();
             [[nodiscard]] double addAirflowEffect(double convectiveCoefficient);
             double convectiveH();
+
+            // Ventilation calculations
+            void precalculateState() override;
+            void setInletTemperature(double inletTemperature);
+            void setFlowTemperatures(double t_inTemperature, double t_outTemperature);
+            void setFlowSpeed(double t_speed);
+            void smoothEnergyGain(double qv1, double qv2);
+            void calculateHeatFlowNextLayer() const;
+            double characteristicHeight();
+            [[nodiscard]] double calcImpedance(double t_A) const;
+            [[nodiscard]] double ventilatedHeatGain();
+            double calculateThermallyDrivenSpeed();
+            void calculateOutletTemperatureFromAirFlow();
+            double calculateThermallyDrivenSpeedOfAdjacentGap(CIGUGapLayer & adjacentGap);
+            VentilatedGapTemperatures calculateInletAndOutletTemperaturesWithTheAdjacentGap(
+              CIGUGapLayer & adjacentGap,
+              VentilatedGapTemperatures current,
+              VentilatedGapTemperatures previous,
+              double relaxationParameter);
+            double performIterationStep(double relaxationParameter, double & TgapOut);
+            [[nodiscard]] double getDrivingPressure();
+            [[nodiscard]] double bernoullyPressureTerm();
+            [[nodiscard]] double hagenPressureTerm();
+            [[nodiscard]] double pressureLossTerm();
+            [[nodiscard]] double betaCoeff();
+            [[nodiscard]] bool isConverged(const VentilatedGapTemperatures & current,
+                                           const VentilatedGapTemperatures & previous);
+            void adjustTemperatures(CIGUGapLayer & adjacentGap);
 
             double m_AccommodationCoefficient1{
               ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT};
@@ -85,6 +132,15 @@ namespace Tarcog
               ConstantsData::DEFAULT_SURFACE_ACCOMMODATION_COEFFICIENT};
 
             bool m_isDCenterMeasured{false};
+
+            // Ventilation state
+            bool m_IsVentilated{false};
+            VentilatedGapTemperatures m_VentState{Gases::DefaultTemperature,
+                                                  Gases::DefaultTemperature};
+            Gases::GasProperties m_ReferenceGasProperties{};
+            double m_Zin{0};
+            double m_Zout{0};
+            std::optional<ForcedVentilation> m_ForcedVentilation;
         };
 
     }   // namespace ISO15099

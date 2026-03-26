@@ -5,7 +5,7 @@
 #include "SupportPillar.hpp"
 #include "SupportPillarMeasured.hpp"
 #include "EffectiveMultipliers.hpp"
-#include "IGUVentilatedGapLayer.hpp"
+#include "IGUGapLayer.hpp"
 
 namespace Tarcog::ISO15099
 {
@@ -136,8 +136,8 @@ namespace Tarcog::ISO15099::Layers
                                   double forcedVentilationAirSpeed,
                                   double forcedVentilationAirTemperature)
     {
-        return std::make_shared<CIGUVentilatedGapLayer>(
-          gap, forcedVentilationAirTemperature, forcedVentilationAirSpeed);
+        gap->activateVentilation(forcedVentilationAirTemperature, forcedVentilationAirSpeed);
+        return gap;
     }
 
     SolidLayer updateMaterialData(const SolidLayer & layer, double density, double youngsModulus)

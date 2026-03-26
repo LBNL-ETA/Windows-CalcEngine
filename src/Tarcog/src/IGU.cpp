@@ -11,7 +11,6 @@
 #include "IGUSolidLayer.hpp"
 #include "IGUGapLayer.hpp"
 #include "Surface.hpp"
-#include "IGUVentilatedGapLayer.hpp"
 #include "Environment.hpp"
 #include "WCECommon.hpp"
 
@@ -511,26 +510,20 @@ namespace Tarcog::ISO15099
         auto solidLayer = std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer);
         if(solidLayer != nullptr && solidLayer->isShadeLayer())
         {
-            if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer()) != nullptr
-               && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(t_Layer->getPreviousLayer())
-                    == nullptr)
+            auto prevGap = std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer());
+            if(prevGap != nullptr && !prevGap->isVentilated())
             {
-                auto newLayer = std::make_shared<CIGUVentilatedGapLayer>(
-                  std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer()));
-                replaceLayer(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer->getPreviousLayer()),
-                             newLayer);
+                prevGap->activateVentilation();
             }
         }
-        if(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer) != nullptr
-           && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(t_Layer) == nullptr)
+        auto gapLayer = std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer);
+        if(gapLayer != nullptr && !gapLayer->isVentilated())
         {
             auto prevSolid =
               std::dynamic_pointer_cast<CIGUSolidLayer>(t_Layer->getPreviousLayer());
             if(prevSolid != nullptr && prevSolid->isShadeLayer())
             {
-                auto newLayer = std::make_shared<CIGUVentilatedGapLayer>(
-                  std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer));
-                replaceLayer(std::dynamic_pointer_cast<CIGUGapLayer>(t_Layer), newLayer);
+                gapLayer->activateVentilation();
             }
         }
     }

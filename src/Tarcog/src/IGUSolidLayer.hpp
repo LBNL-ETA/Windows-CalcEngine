@@ -15,7 +15,7 @@ namespace FenestrationCommon
 namespace Tarcog::ISO15099
 {
     class CIGUGapLayer;
-    class CIGUVentilatedGapLayer;
+    class CIGUGapLayer;
     class CEnvironment;
     class Surface;
 
@@ -123,9 +123,9 @@ namespace Tarcog::ISO15099
         void calculateShadeConvectionOrConductionFlow();
 
         [[nodiscard]] CShadeOpenings getEffectiveOpenings() const;
-        void calcInBetweenShadeFlow(CIGUVentilatedGapLayer & gap1,
-                                    CIGUVentilatedGapLayer & gap2);
-        void calcEdgeShadeFlow(CEnvironment & environment, CIGUVentilatedGapLayer & gap);
+        void calcInBetweenShadeFlow(CIGUGapLayer & gap1,
+                                    CIGUGapLayer & gap2);
+        void calcEdgeShadeFlow(CEnvironment & environment, CIGUGapLayer & gap);
         [[nodiscard]] double equivalentConductivity(double conductivity,
                                                     double permeabilityFactor);
 

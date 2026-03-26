@@ -8,7 +8,7 @@
 #include "LayerInterfaces.hpp"
 #include "IGUGapLayer.hpp"
 #include "Environment.hpp"
-#include "IGUVentilatedGapLayer.hpp"
+#include "IGUGapLayer.hpp"
 
 
 using FenestrationCommon::Side;
@@ -183,24 +183,24 @@ namespace Tarcog::ISO15099
            && std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer()) != nullptr)
         {
             auto previousGapLayer =
-              std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer());
+              std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer());
             auto nextGapLayer =
-              std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer());
+              std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer());
             calcInBetweenShadeFlow(*previousGapLayer, *nextGapLayer);
         }
         else if(std::dynamic_pointer_cast<CEnvironment>(getPreviousLayer()) != nullptr
-                && std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer()) != nullptr)
+                && std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer()) != nullptr)
         {
             calcEdgeShadeFlow(
               *std::dynamic_pointer_cast<CEnvironment>(getPreviousLayer()),
-              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getNextLayer()));
+              *std::dynamic_pointer_cast<CIGUGapLayer>(getNextLayer()));
         }
-        else if(std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()) != nullptr
+        else if(std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer()) != nullptr
                 && std::dynamic_pointer_cast<CEnvironment>(getNextLayer()) != nullptr)
         {
             calcEdgeShadeFlow(
               *std::dynamic_pointer_cast<CEnvironment>(getNextLayer()),
-              *std::dynamic_pointer_cast<CIGUVentilatedGapLayer>(getPreviousLayer()));
+              *std::dynamic_pointer_cast<CIGUGapLayer>(getPreviousLayer()));
         }
     }
 
@@ -223,8 +223,8 @@ namespace Tarcog::ISO15099
         return {};
     }
 
-    void CIGUSolidLayer::calcInBetweenShadeFlow(CIGUVentilatedGapLayer & gap1,
-                                                 CIGUVentilatedGapLayer & gap2)
+    void CIGUSolidLayer::calcInBetweenShadeFlow(CIGUGapLayer & gap1,
+                                                 CIGUGapLayer & gap2)
     {
         const auto effectiveOpenings = getEffectiveOpenings();
         gap1.setFlowGeometry(effectiveOpenings.Aeq_bot(), effectiveOpenings.Aeq_top());
@@ -233,7 +233,7 @@ namespace Tarcog::ISO15099
     }
 
     void CIGUSolidLayer::calcEdgeShadeFlow(CEnvironment & environment,
-                                            CIGUVentilatedGapLayer & gap)
+                                            CIGUGapLayer & gap)
     {
         const auto effectiveOpenings = getEffectiveOpenings();
         gap.setFlowGeometry(effectiveOpenings.Aeq_bot(), effectiveOpenings.Aeq_top());

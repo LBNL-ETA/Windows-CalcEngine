@@ -11,7 +11,6 @@
 #include "../src/IGU.hpp"
 #include "../src/IGUGapLayer.hpp"
 #include "../src/IGUSolidLayer.hpp"
-#include "../src/IGUVentilatedGapLayer.hpp"
 #include "../src/IndoorEnvironment.hpp"
 #include "../src/LayerInterfaces.hpp"
 #include "../src/Layers.hpp"

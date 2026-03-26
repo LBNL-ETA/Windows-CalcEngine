@@ -12,6 +12,5 @@ namespace Tarcog::ISO15099
     class CIGUGapLayer;
     using GapLayer = std::shared_ptr<CIGUGapLayer>;
 
-    class CIGUVentilatedGapLayer;
-    using VentilatedGapLayer = std::shared_ptr<CIGUVentilatedGapLayer>;
+    using VentilatedGapLayer = std::shared_ptr<CIGUGapLayer>;
 }   // namespace Tarcog::ISO15099
