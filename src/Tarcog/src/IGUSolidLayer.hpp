@@ -135,7 +135,7 @@ namespace Tarcog::ISO15099
 
         // Shade data (populated only for shade layers)
         bool m_IsShadeLayer{false};
-        std::optional<EffectiveLayers::EffectiveMultipliers> m_ShadeMultipliers;
+        std::optional<EffectiveLayers::EffectiveMultipliers> m_EffectiveMultipliers;
         double m_MaterialConductivity{0};
     };
 

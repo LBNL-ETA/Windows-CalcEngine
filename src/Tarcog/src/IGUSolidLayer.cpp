@@ -204,10 +204,10 @@ namespace Tarcog::ISO15099
 
     CShadeOpenings CIGUSolidLayer::getEffectiveOpenings() const
     {
-        if(m_ShadeMultipliers.has_value())
+        if(m_EffectiveMultipliers.has_value())
         {
             CShadeOpenings result{
-              getShadeOpenings(m_Width, m_Height, m_ShadeMultipliers.value())};
+              getShadeOpenings(m_Width, m_Height, m_EffectiveMultipliers.value())};
             if(getPreviousLayer() != nullptr)
             {
                 result.checkAndSetDominantWidth(getPreviousLayer()->getThickness());
@@ -291,7 +291,7 @@ namespace Tarcog::ISO15099
     void CIGUSolidLayer::assignEffectiveMultipliers(
       const EffectiveLayers::EffectiveMultipliers & effectiveMultipliers)
     {
-        m_ShadeMultipliers = effectiveMultipliers;
+        m_EffectiveMultipliers = effectiveMultipliers;
         m_MaterialConductivity = m_Conductivity;
         m_IsShadeLayer = true;
     }
