@@ -65,7 +65,7 @@ TEST(DoubleClearVacuumSHGCEnvironment, UValue)
     constexpr auto aRun{Tarcog::ISO15099::System::Uvalue};
 
     Helper::testVectors("Temperature - UValue Run",
-                        {304.151914, 304.089895, 300.134801, 300.072782},
+                        {304.150642, 304.088544, 300.138331, 300.076232},
                         aSystem.getTemperatures(aRun),
                         Tolerance);
 
@@ -75,16 +75,16 @@ TEST(DoubleClearVacuumSHGCEnvironment, UValue)
                         Tolerance);
 
     Helper::testVectors("Gap Conductivities - UValue Run",
-                        {0.000514},
+                        {0.000516},
                         aSystem.getGapEffectiveLayerConductivities(aRun),
                         Tolerance);
 
     Helper::testVectors("Radiosity - UValue Run",
-                        {486.225721, 481.394417, 463.483318, 456.867517},
+                        {486.218900, 481.389973, 463.500787, 456.885279},
                         aSystem.getRadiosities(aRun),
                         Tolerance);
 
-    EXPECT_NEAR(0.030907, aSystem.getEffectiveSystemConductivity(aRun), Tolerance);
+    EXPECT_NEAR(0.030982, aSystem.getEffectiveSystemConductivity(aRun), Tolerance);
     EXPECT_NEAR(0.006196, aSystem.thickness(aRun), Tolerance);
     EXPECT_EQ(1U, aSystem.getNumberOfIterations(aRun));
 }
@@ -99,7 +99,7 @@ TEST(DoubleClearVacuumSHGCEnvironment, SHGC)
     constexpr auto aRun{Tarcog::ISO15099::System::SHGC};
 
     Helper::testVectors("Temperature - SHGC Run",
-                        {308.259264, 308.338358, 306.138494, 306.016204},
+                        {308.258554, 308.337603, 306.140245, 306.017910},
                         aSystem.getTemperatures(aRun),
                         Tolerance);
 
@@ -109,16 +109,16 @@ TEST(DoubleClearVacuumSHGCEnvironment, SHGC)
                         Tolerance);
 
     Helper::testVectors("Gap Conductivities - SHGC Run",
-                        {0.000538},
+                        {0.000539},
                         aSystem.getGapEffectiveLayerConductivities(aRun),
                         Tolerance);
 
     Helper::testVectors("Radiosity - SHGC Run",
-                        {508.691418, 510.476417, 499.998638, 488.381035},
+                        {508.687455, 510.473663, 500.007766, 488.390349},
                         aSystem.getRadiosities(aRun),
                         Tolerance);
 
-    EXPECT_NEAR(0.188977, aSystem.getEffectiveSystemConductivity(aRun), Tolerance);
+    EXPECT_NEAR(0.189222, aSystem.getEffectiveSystemConductivity(aRun), Tolerance);
     EXPECT_NEAR(0.006196, aSystem.thickness(aRun), Tolerance);
     EXPECT_EQ(1U, aSystem.getNumberOfIterations(aRun));
 }

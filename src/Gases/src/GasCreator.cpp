@@ -46,7 +46,7 @@ namespace Gases
           {GasDef::VacuumMixture,
            {
              "VacuumMixture",
-             21.15,             // Molecular weight
+             18.23,             // Molecular weight
              1.33,              // Specific heat ratio
              {0.0, 0.0, 0.0},   // Specific heat coefficients
              {0.0, 0.0, 0.0},   // Conductivity coefficients

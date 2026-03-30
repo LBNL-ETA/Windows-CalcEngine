@@ -108,7 +108,7 @@ TEST_F(NFRC102_NFRC102_VacuumCustomAccommodation, Test1)
     const auto aSystem = GetSystem();
 
     const auto Temperature = aSystem.getTemperatures();
-    std::vector<double> correctTemperature = {258.158140, 258.426059, 281.790131, 282.058051};
+    std::vector<double> correctTemperature = {258.160897, 258.429063, 281.779364, 282.047530};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
     for(auto i = 0u; i < correctTemperature.size(); ++i)
     {
@@ -116,7 +116,7 @@ TEST_F(NFRC102_NFRC102_VacuumCustomAccommodation, Test1)
     }
 
     const auto Radiosity = aSystem.getRadiosities();
-    std::vector<double> correctRadiosity = {249.982197, 267.304277, 343.059799, 369.348184};
+    std::vector<double> correctRadiosity = {249.991234, 267.306875, 343.014321, 369.303211};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)
@@ -128,5 +128,5 @@ TEST_F(NFRC102_NFRC102_VacuumCustomAccommodation, Test1)
     EXPECT_EQ(32u, numOfIter);
 
     const auto uValue{aSystem.getUValue()};
-    EXPECT_NEAR(2.253850, uValue, tolerance);
+    EXPECT_NEAR(2.255920, uValue, tolerance);
 }

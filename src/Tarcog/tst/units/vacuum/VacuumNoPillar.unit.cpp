@@ -102,7 +102,7 @@ TEST_F(DoubleLowEVacuumNoPillar, Test1)
     auto aSystem = GetSystem();
 
     const auto Temperature = aSystem.getTemperatures();
-    const std::vector correctTemperature{255.530983, 255.575438, 292.387411, 292.431448};
+    const std::vector correctTemperature{255.530668, 255.575086, 292.388791, 292.432792};
     ASSERT_EQ(correctTemperature.size(), Temperature.size());
 
     for(auto i = 0u; i < correctTemperature.size(); ++i)
@@ -111,7 +111,7 @@ TEST_F(DoubleLowEVacuumNoPillar, Test1)
     }
 
     const auto Radiosity = aSystem.getRadiosities();
-    std::vector correctRadiosity{241.501961, 406.882895, 413.177234, 416.199118};
+    std::vector correctRadiosity{241.500960, 406.890322, 413.184995, 416.205520};
     ASSERT_EQ(correctRadiosity.size(), Radiosity.size());
 
     for(auto i = 0u; i < correctRadiosity.size(); ++i)

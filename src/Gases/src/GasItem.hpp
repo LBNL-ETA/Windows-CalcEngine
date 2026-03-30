@@ -12,7 +12,7 @@ namespace Gases
     double const DefaultPressure = 101325.0;
     double const DefaultTemperature = 273.15;
     double const DefaultFraction = 1.0;
-    constexpr double DefaultSurfaceAccommodation = 0.89;
+    constexpr double DefaultSurfaceAccommodation = 0.889;
     enum class GasDef;
 
     struct GasItemProperties
