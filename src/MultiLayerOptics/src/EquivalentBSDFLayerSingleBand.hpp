@@ -17,6 +17,14 @@ namespace MultiLayerOptics
                        const FenestrationCommon::SquareMatrix & t_Rb,
                        const FenestrationCommon::SquareMatrix & t_Rf);
 
+    // Internal helper used on the hot path. Returns the LU factorisation of
+    // (I - lambda*Rb * lambda*Rf), so callers can compute (I - ...)^-1 * X
+    // without ever materialising the full inverse.
+    FenestrationCommon::LUFactor
+      interReflectanceFactor(const std::vector<double> & t_Lambda,
+                             const FenestrationCommon::SquareMatrix & t_Rb,
+                             const FenestrationCommon::SquareMatrix & t_Rf);
+
     // Class to calculate equivalent BSDF transmittance and reflectances. This will be used by
     // multilayer routines to calculate properties for any number of layers.
     class CBSDFDoubleLayer
@@ -30,7 +38,7 @@ namespace MultiLayerOptics
     private:
         static FenestrationCommon::SquareMatrix
           equivalentT(const FenestrationCommon::SquareMatrix & t_Tf2,
-                      const FenestrationCommon::SquareMatrix & t_InterRefl,
+                      const FenestrationCommon::LUFactor & t_InterRefl,
                       const std::vector<double> & t_Lambda,
                       const FenestrationCommon::SquareMatrix & t_Tf1);
 
@@ -39,7 +47,7 @@ namespace MultiLayerOptics
                       const FenestrationCommon::SquareMatrix & t_Tf1,
                       const FenestrationCommon::SquareMatrix & t_Tb1,
                       const FenestrationCommon::SquareMatrix & t_Rf2,
-                      const FenestrationCommon::SquareMatrix & t_InterRefl,
+                      const FenestrationCommon::LUFactor & t_InterRefl,
                       const std::vector<double> & t_Lambda);
 
         SingleLayerOptics::BSDFIntegrator m_Results;
@@ -88,11 +96,11 @@ namespace MultiLayerOptics
         void calcEquivalentProperties();
 
         [[nodiscard]] FenestrationCommon::SquareMatrix
-          iminusCalc(const FenestrationCommon::SquareMatrix & t_InterRefl,
+          iminusCalc(const FenestrationCommon::LUFactor & t_InterRefl,
                      const FenestrationCommon::SquareMatrix & t_T) const;
 
         [[nodiscard]] FenestrationCommon::SquareMatrix
-          iplusCalc(const FenestrationCommon::SquareMatrix & t_InterRefl,
+          iplusCalc(const FenestrationCommon::LUFactor & t_InterRefl,
                     const FenestrationCommon::SquareMatrix & t_R,
                     const FenestrationCommon::SquareMatrix & t_T) const;
 

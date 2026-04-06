@@ -7,19 +7,36 @@ using namespace SingleLayerOptics;
 
 namespace MultiLayerOptics
 {
+    namespace
+    {
+        // Builds the matrix M = (I - lambda*Rb * lambda*Rf), shared by both
+        // interReflectance() and interReflectanceFactor().
+        SquareMatrix buildInterReflectanceMatrix(const std::vector<double> & t_Lambda,
+                                                 const SquareMatrix & t_Rb,
+                                                 const SquareMatrix & t_Rf)
+        {
+            const auto size = t_Lambda.size();
+            const auto lRb = multiplyWithDiagonalMatrix(t_Lambda, t_Rb);
+            const auto lRf = multiplyWithDiagonalMatrix(t_Lambda, t_Rf);
+            auto M = lRb * lRf;
+            SquareMatrix I(size);
+            I.setIdentity();
+            return I - M;
+        }
+    }   // namespace
+
     SquareMatrix interReflectance(const std::vector<double> & t_Lambda,
                                   const SquareMatrix & t_Rb,
                                   const SquareMatrix & t_Rf)
     {
-        const auto size = t_Lambda.size();
-        const auto lRb = multiplyWithDiagonalMatrix(t_Lambda, t_Rb);
-        const auto lRf = multiplyWithDiagonalMatrix(t_Lambda, t_Rf);
-        auto InterRefl = lRb * lRf;
-        SquareMatrix I(size);
-        I.setIdentity();
-        InterRefl = I - InterRefl;
-        InterRefl = InterRefl.inverse();
-        return InterRefl;
+        return buildInterReflectanceMatrix(t_Lambda, t_Rb, t_Rf).inverse();
+    }
+
+    LUFactor interReflectanceFactor(const std::vector<double> & t_Lambda,
+                                    const SquareMatrix & t_Rb,
+                                    const SquareMatrix & t_Rf)
+    {
+        return LUFactor(buildInterReflectanceMatrix(t_Lambda, t_Rb, t_Rf));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,13 +47,15 @@ namespace MultiLayerOptics
                                        const BSDFIntegrator & t_BackLayer)
     {
         const auto aLambda = t_FrontLayer.lambdaVector();
-        const auto InterRefl1 = interReflectance(aLambda,
-                                                 t_FrontLayer.at(Side::Back, PropertySurface::R),
-                                                 t_BackLayer.at(Side::Front, PropertySurface::R));
+        const auto InterRefl1 =
+          interReflectanceFactor(aLambda,
+                                 t_FrontLayer.at(Side::Back, PropertySurface::R),
+                                 t_BackLayer.at(Side::Front, PropertySurface::R));
 
-        const auto InterRefl2 = interReflectance(aLambda,
-                                                 t_BackLayer.at(Side::Front, PropertySurface::R),
-                                                 t_FrontLayer.at(Side::Back, PropertySurface::R));
+        const auto InterRefl2 =
+          interReflectanceFactor(aLambda,
+                                 t_BackLayer.at(Side::Front, PropertySurface::R),
+                                 t_FrontLayer.at(Side::Back, PropertySurface::R));
 
         m_Tf = equivalentT(t_BackLayer.at(Side::Front, PropertySurface::T),
                            InterRefl1,
@@ -70,28 +89,32 @@ namespace MultiLayerOptics
     }
 
     SquareMatrix CBSDFDoubleLayer::equivalentT(const SquareMatrix & t_Tf2,
-                                               const SquareMatrix & t_InterRefl,
+                                               const LUFactor & t_InterRefl,
                                                const std::vector<double> & t_Lambda,
                                                const SquareMatrix & t_Tf1)
     {
-        const auto TinterRefl = t_Tf2 * t_InterRefl;
+        // Original: Tf2 * IR * (lambda*Tf1)
+        // Reorder:  Tf2 * (IR * (lambda*Tf1))
+        // The inner expression is a right-solve against the LU factor, which
+        // is roughly half the work of building the full inverse and then
+        // doing two GEMMs.
         const auto lambdaTf1 = multiplyWithDiagonalMatrix(t_Lambda, t_Tf1);
-        return TinterRefl * lambdaTf1;
+        return t_Tf2 * t_InterRefl.solveRight(lambdaTf1);
     }
 
     SquareMatrix CBSDFDoubleLayer::equivalentR(const SquareMatrix & t_Rf1,
                                                const SquareMatrix & t_Tf1,
                                                const SquareMatrix & t_Tb1,
                                                const SquareMatrix & t_Rf2,
-                                               const SquareMatrix & t_InterRefl,
+                                               const LUFactor & t_InterRefl,
                                                const std::vector<double> & t_Lambda)
     {
-        auto TinterRefl = t_Tb1 * t_InterRefl;
+        // Original: Rf1 + Tb1 * IR * (lambda*Rf2) * (lambda*Tf1)
+        // Reorder:  Rf1 + Tb1 * (IR * ((lambda*Rf2) * (lambda*Tf1)))
         const auto lambdaRf2 = multiplyWithDiagonalMatrix(t_Lambda, t_Rf2);
         const auto lambdaTf1 = multiplyWithDiagonalMatrix(t_Lambda, t_Tf1);
-        TinterRefl = TinterRefl * lambdaRf2;
-        TinterRefl = TinterRefl * lambdaTf1;
-        return t_Rf1 + TinterRefl;
+        const auto rhs = lambdaRf2 * lambdaTf1;
+        return t_Rf1 + t_Tb1 * t_InterRefl.solveRight(rhs);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -251,9 +274,10 @@ namespace MultiLayerOptics
             {
                 BSDFIntegrator & Layer1 = absLayers.Forward[i];
                 BSDFIntegrator & Layer2 = absLayers.Backward[i + 1];
-                const auto InterRefl2{interReflectance(m_Lambda,
-                                                       Layer2.at(Side::Front, PropertySurface::R),
-                                                       Layer1.at(Side::Back, PropertySurface::R))};
+                const auto InterRefl2{
+                  interReflectanceFactor(m_Lambda,
+                                         Layer2.at(Side::Front, PropertySurface::R),
+                                         Layer1.at(Side::Back, PropertySurface::R))};
                 auto iMinus =
                   iminusCalc(InterRefl2, Layer2.getMatrix(Side::Back, PropertySurface::T));
                 result.Iminus[EnergyFlow::Backward].push_back(std::move(iMinus));
@@ -275,9 +299,10 @@ namespace MultiLayerOptics
             {
                 BSDFIntegrator & Layer1 = absLayers.Forward[i - 1];
                 BSDFIntegrator & Layer2 = absLayers.Backward[i];
-                const auto InterRefl1{interReflectance(m_Lambda,
-                                                       Layer1.at(Side::Back, PropertySurface::R),
-                                                       Layer2.at(Side::Front, PropertySurface::R))};
+                const auto InterRefl1{
+                  interReflectanceFactor(m_Lambda,
+                                         Layer1.at(Side::Back, PropertySurface::R),
+                                         Layer2.at(Side::Front, PropertySurface::R))};
                 auto iMinus = iminusCalc(InterRefl1, Layer1.at(Side::Front, PropertySurface::T));
                 result.Iminus[EnergyFlow::Forward].push_back(std::move(iMinus));
                 auto iPlus = iplusCalc(InterRefl1,
@@ -349,18 +374,22 @@ namespace MultiLayerOptics
         }
     }
 
-    SquareMatrix CEquivalentBSDFLayerSingleBand::iminusCalc(const SquareMatrix & t_InterRefl,
+    SquareMatrix CEquivalentBSDFLayerSingleBand::iminusCalc(const LUFactor & t_InterRefl,
                                                             const SquareMatrix & t_T) const
     {
-        return t_InterRefl * multiplyWithDiagonalMatrix(m_Lambda, t_T);
+        // Original: IR * (lambda*T)  --> right-solve against the LU factor.
+        return t_InterRefl.solveRight(multiplyWithDiagonalMatrix(m_Lambda, t_T));
     }
 
-    SquareMatrix CEquivalentBSDFLayerSingleBand::iplusCalc(const SquareMatrix & t_InterRefl,
+    SquareMatrix CEquivalentBSDFLayerSingleBand::iplusCalc(const LUFactor & t_InterRefl,
                                                            const SquareMatrix & t_R,
                                                            const SquareMatrix & t_T) const
     {
-        return t_InterRefl * multiplyWithDiagonalMatrix(m_Lambda, t_R)
-               * multiplyWithDiagonalMatrix(m_Lambda, t_T);
+        // Original: IR * (lambda*R) * (lambda*T)
+        // Reorder:  IR * ((lambda*R) * (lambda*T))  --> single right-solve.
+        const auto rhs =
+          multiplyWithDiagonalMatrix(m_Lambda, t_R) * multiplyWithDiagonalMatrix(m_Lambda, t_T);
+        return t_InterRefl.solveRight(rhs);
     }
 
 }   // namespace MultiLayerOptics

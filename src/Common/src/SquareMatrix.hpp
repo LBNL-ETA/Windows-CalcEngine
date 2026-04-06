@@ -54,6 +54,30 @@ namespace FenestrationCommon
         // Replaces vector<vector<double>> for cache locality and faster GEMM.
         std::size_t m_size;
         std::vector<double> m_Data;
+
+        friend class LUFactor;
+    };
+
+    // Reusable LU factorisation (no pivoting, matches SquareMatrix::LU semantics).
+    // Lets callers compute A^-1 * B without ever materialising A^-1, which is
+    // significantly cheaper than building the full inverse and then doing a GEMM.
+    class LUFactor
+    {
+    public:
+        explicit LUFactor(const SquareMatrix & A);
+
+        // Returns A^-1 * B, computed via forward+back substitution against the
+        // factorised A. Both passes operate on whole rows of B at once, so the
+        // inner loop walks contiguous memory.
+        [[nodiscard]] SquareMatrix solveRight(const SquareMatrix & B) const;
+
+        [[nodiscard]] std::size_t size() const { return m_size; }
+
+    private:
+        std::size_t m_size;
+        // Row-major flat LU. Lower triangle (i > j) holds L's multipliers
+        // (L has unit diagonal); upper triangle (i <= j) holds U.
+        std::vector<double> m_LU;
     };
 
     std::vector<double> operator*(const std::vector<double> & first, const SquareMatrix & second);

@@ -462,6 +462,97 @@ namespace FenestrationCommon
         return res;
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    // LUFactor
+    //////////////////////////////////////////////////////////////////////////
+
+    LUFactor::LUFactor(const SquareMatrix & A) : m_size(A.m_size), m_LU(A.m_Data)
+    {
+        // Same Doolittle factorisation as SquareMatrix::LU(), no pivoting.
+        const std::size_t n = m_size;
+        if(n == 0)
+        {
+            return;
+        }
+        double * const d = m_LU.data();
+        for(std::size_t k = 0; k + 1 < n; ++k)
+        {
+            const double pivot = d[k * n + k];
+            for(std::size_t j = k + 1; j < n; ++j)
+            {
+                const double x = d[j * n + k] / pivot;
+                double * row_j = d + j * n;
+                const double * row_k = d + k * n;
+                for(std::size_t i = k; i < n; ++i)
+                {
+                    row_j[i] -= x * row_k[i];
+                }
+                row_j[k] = x;
+            }
+        }
+    }
+
+    SquareMatrix LUFactor::solveRight(const SquareMatrix & B) const
+    {
+        if(B.m_size != m_size)
+        {
+            throw std::runtime_error("LUFactor::solveRight: size mismatch.");
+        }
+
+        const std::size_t n = m_size;
+        SquareMatrix X(n);
+
+        const double * const lu = m_LU.data();
+        const double * const b = B.m_Data.data();
+        double * const x = X.m_Data.data();
+
+        // Step 1: solve L * Y = B (L unit-diagonal). Stored in-place into X.
+        // Both reads of "previous rows" and writes of "current row" are
+        // contiguous in memory, so the inner j-loop auto-vectorises.
+        for(std::size_t i = 0; i < n; ++i)
+        {
+            double * const row_x = x + i * n;
+            const double * const row_b = b + i * n;
+            for(std::size_t j = 0; j < n; ++j)
+            {
+                row_x[j] = row_b[j];
+            }
+            const double * const row_l = lu + i * n;
+            for(std::size_t k = 0; k < i; ++k)
+            {
+                const double lik = row_l[k];
+                const double * const row_xk = x + k * n;
+                for(std::size_t j = 0; j < n; ++j)
+                {
+                    row_x[j] -= lik * row_xk[j];
+                }
+            }
+        }
+
+        // Step 2: solve U * X = Y in place (X currently holds Y).
+        for(std::size_t ii = n; ii-- > 0;)
+        {
+            double * const row_x = x + ii * n;
+            const double * const row_u = lu + ii * n;
+            for(std::size_t k = ii + 1; k < n; ++k)
+            {
+                const double uik = row_u[k];
+                const double * const row_xk = x + k * n;
+                for(std::size_t j = 0; j < n; ++j)
+                {
+                    row_x[j] -= uik * row_xk[j];
+                }
+            }
+            const double inv_uii = 1.0 / row_u[ii];
+            for(std::size_t j = 0; j < n; ++j)
+            {
+                row_x[j] *= inv_uii;
+            }
+        }
+
+        return X;
+    }
+
     SquareMatrix multiplyWithDiagonalMatrix(const std::vector<double> & tInput,
                                             const SquareMatrix & tMatrix)
     {
