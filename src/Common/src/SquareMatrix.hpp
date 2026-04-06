@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cstddef>
 
 namespace FenestrationCommon
 {
@@ -46,11 +47,13 @@ namespace FenestrationCommon
         std::vector<double> operator*(const std::vector<double> & v) const;
 
     private:
-        // explicit SquareMatrix(SquareMatrix && tMatrix);
         [[nodiscard]] SquareMatrix LU() const;
         [[nodiscard]] std::vector<double> checkSingularity() const;
+
+        // Row-major flat storage. Element (i, j) lives at m_Data[i * m_size + j].
+        // Replaces vector<vector<double>> for cache locality and faster GEMM.
         std::size_t m_size;
-        std::vector<std::vector<double>> m_Matrix;
+        std::vector<double> m_Data;
     };
 
     std::vector<double> operator*(const std::vector<double> & first, const SquareMatrix & second);
