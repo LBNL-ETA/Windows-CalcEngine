@@ -37,81 +37,46 @@ cmake --preset local
 
 Missing siblings fall back to the declared remote automatically, so `local` is safe to invoke even with only a subset of overrides checked out.
 
-For compiler-specific presets (`gcc-13`, `clang-18`, `vs2022`, etc.), see "Per-machine compiler presets" below — the [lbnl-scripts](https://github.com/vidanovic/scripts) `cmake-user-presets` command scans your machine and writes a personal `CMakeUserPresets.json` with one preset per detected toolchain, pre-wired for CLion's WSL / Visual Studio toolchains.
+For compiler-specific presets (`gcc-13`, `clang-18`, `vs2022`, etc.), see "Per-machine compiler presets" below — each developer maintains their own `CMakeUserPresets.json` with one preset per toolchain they actually want to use.
 
 #### Per-machine compiler presets (`CMakeUserPresets.json`)
 
-`CMakePresets.json` ships only the four `default-*` / `local-*` framework presets — no compiler choices. To get explicit per-compiler presets (`vs2022-debug`, `gcc-13-release`, `clang-18-debug`, etc.), use the **[lbnl-scripts](https://github.com/vidanovic/scripts) `cmake-user-presets` command**. One-time setup per machine:
+`CMakePresets.json` ships only the four `default-*` / `local-*` framework presets — no compiler choices. To get explicit per-compiler presets (`vs2022-debug`, `gcc-13-release`, `clang-18-debug`, etc.), each developer maintains their own `CMakeUserPresets.json` next to `CMakePresets.json`. It is gitignored, read automatically by CMake (and CLion, VS Code, etc.), and stays on the developer's machine.
 
-```bash
-pip install --upgrade git+https://github.com/vidanovic/scripts.git
-cd Windows-CalcEngine
-cmake-user-presets
-```
-
-The script:
-
-- Detects every C/C++ toolchain available to your machine — local PATH, WSL (on Windows when available), and every installed Visual Studio version (via `vswhere`)
-- Writes a `Debug` and a `Release` preset per detected toolchain into `CMakeUserPresets.json` (next to `CMakePresets.json`)
-- Inherits each from the shipped `local` preset so sibling-repo overrides apply automatically
-- Embeds a JetBrains vendor hint (`vendor.jetbrains.com/clion.toolchain`) so CLion 2023.2+ routes each preset through the correct toolchain automatically — `WSL`-detected presets bounce through your WSL distro, `vs2022-*` use Visual Studio, no manual Toolchain dropdown configuration needed
-
-After running the command, `Tools → CMake → Reset Cache and Reload Project` in CLion picks up every variant in the picker. Pick `clang-18-release`, build, done.
-
-`CMakeUserPresets.json` is gitignored — your file stays on your machine, doesn't enter the repo.
-
-##### Windows + WSL + CLion walkthrough
-
-The Windows + WSL + CLion combination is the most common LBNL dev setup, and the script is built around it. Concretely, on a Windows laptop with WSL Ubuntu installed:
-
-```powershell
-# PowerShell
-pip install --upgrade git+https://github.com/vidanovic/scripts.git
-cd D:\Programming\GitHub\Windows-CalcEngine
-cmake-user-presets
-```
-
-The script detects:
-
-- Visual Studio 2022 (via `vswhere`)
-- Whatever gcc / clang versions are installed inside your WSL distro (`gcc-13`, `clang-18`, etc.)
-
-…and writes `CMakeUserPresets.json` next to the shipped `CMakePresets.json`, with a `Debug` and a `Release` variant for each toolchain, each tagged with the right JetBrains toolchain hint.
-
-In CLion:
-
-1. `Tools → CMake → Reset Cache and Reload Project` (or close + reopen the project)
-2. The profile picker (top bar) now lists every preset: `default-debug`, `default-release`, `local-debug`, `local-release`, plus the per-compiler ones the script generated.
-3. Pick `clang-18-release` → CLion routes the configure through your WSL `cmake`, finds `/usr/bin/clang++-18`, builds in `build/clang-18-release/` on the WSL side. Run/Debug works through the WSL toolchain end-to-end.
-4. Pick `vs2022-release` → CLion uses Windows-side `cmake.exe` with the Visual Studio 17 2022 generator, builds in `build/vs2022-release/`. Native Windows debugger attaches.
-
-No manual Toolchain dropdown changes, no per-preset configuration in `Settings → CMake`. The script's vendor hint does the routing.
-
-**Assumption:** the CLion toolchains in `Settings → Build, Execution, Deployment → Toolchains` keep their default names (`WSL`, `Visual Studio`). If a developer has renamed one, the vendor hint silently doesn't match for that one — CLion falls back to its global default. No configure-time error, just a one-row dropdown to set manually.
-
-##### Hand-writing a personal preset
-
-If you need something the script doesn't generate (a custom compiler path, an extra build dir for a side experiment, etc.), edit `CMakeUserPresets.json` directly. Personal presets `inherit` from any shipped preset:
+Personal presets `inherit` from one of the shipped presets (usually `local`, which gives you sibling-repo overrides for free) and override whatever they want. A complete realistic example — building with WSL Clang on a Windows machine, with CLion 2023.2+ routed through the WSL toolchain automatically:
 
 ```json
 {
     "version": 6,
     "configurePresets": [
         {
-            "name": "clang-windows",
-            "inherits": "local-release",
+            "name": "clang-release",
+            "displayName": "clang (Release)",
+            "inherits": "local",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/clang-windows",
+            "binaryDir": "${sourceDir}/build/clang-release",
             "cacheVariables": {
-                "CMAKE_C_COMPILER":   "C:/Program Files/LLVM/bin/clang.exe",
-                "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe"
+                "CMAKE_C_COMPILER":   "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE":   "Release"
+            },
+            "vendor": {
+                "jetbrains.com/clion": {
+                    "toolchain": "WSL"
+                }
             }
         }
     ]
 }
 ```
 
-Use forward slashes even on Windows — CMake handles them and you avoid escaping backslashes in JSON.
+A few things going on in that one preset:
+
+- `"inherits": "local"` → picks up sibling-repo overrides (when present) and the rest of the framework setup.
+- Bare compiler names (`clang`, `clang++`) rather than `/usr/bin/clang` → portable to any machine that has that toolchain on `PATH`. Use absolute paths only if the compiler isn't on `PATH` (e.g. `C:/Program Files/LLVM/bin/clang.exe` — forward slashes work in JSON, no escaping needed).
+- `"vendor.jetbrains.com/clion.toolchain"` → tells CLion (2023.2+) which configured toolchain to route this preset through. Standard names are `WSL`, `Visual Studio`, `MinGW`; whatever you see in `Settings → Build, Execution, Deployment → Toolchains`. The hint is silently ignored if the name doesn't match — no configure-time error.
+
+Add as many of those blocks as you have toolchains you want explicit presets for (one per compiler × build type). Each gets its own `binaryDir` so Debug and Release artifacts don't clobber each other.
 
 Alternative if you don't want a personal preset at all: set `CC` and `CXX` environment variables in your shell rc (`~/.bashrc`, PowerShell profile) before invoking `cmake --preset default-release`. CMake picks them up. Tradeoff — affects every CMake project on your machine, not just this one.
 
