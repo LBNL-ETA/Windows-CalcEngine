@@ -37,41 +37,32 @@ cmake --preset local
 
 Missing siblings fall back to the declared remote automatically, so `local` is safe to invoke even with only a subset of overrides checked out.
 
-For compiler-specific presets (`gcc-13`, `clang-18`, `vs2022`, etc.), see "Personal overrides" below — the [lbnl-scripts](https://github.com/vidanovic/scripts) `cmake-user-presets` command scans your machine and writes a personal `CMakeUserPresets.json` with one preset per detected toolchain.
+For compiler-specific presets (`gcc-13`, `clang-18`, `vs2022`, etc.), see "Per-machine compiler presets" below — the [lbnl-scripts](https://github.com/vidanovic/scripts) `cmake-user-presets` command scans your machine and writes a personal `CMakeUserPresets.json` with one preset per detected toolchain, pre-wired for CLion's WSL / Visual Studio toolchains.
 
-#### Personal overrides (`CMakeUserPresets.json`)
+#### Per-machine compiler presets (`CMakeUserPresets.json`)
 
-The four shipped presets cover the common cases — you do **not** need to write `CMakeUserPresets.json` to get default, local, gcc, or clang builds. Create one only when you need something that is specific to your machine and shouldn't ship to the team:
+`CMakePresets.json` ships only the four `default-*` / `local-*` framework presets — no compiler choices. To get explicit per-compiler presets (`vs2022-debug`, `gcc-13-release`, `clang-18-debug`, etc.), use the **[lbnl-scripts](https://github.com/vidanovic/scripts) `cmake-user-presets` command**. One-time setup per machine:
 
-- pin a specific compiler version (e.g. `g++-13` rather than whatever `g++` symlinks to)
-- point at a compiler at a non-standard absolute path
-- use a custom CMake toolchain file
-- want an extra build directory for a side experiment
-
-`CMakeUserPresets.json` lives next to `CMakePresets.json` and is read automatically by CMake (and CLion, VS Code, etc.). It is in `.gitignore`, so each developer's file stays on their own machine. Personal presets can `inherit` from any shipped preset — usually you'll inherit from `local`, `gcc`, or `clang` and only change the few fields you care about.
-
-**Example 1 — pin gcc-13 under WSL** (when your distro has both gcc-11 and gcc-13 installed and `gcc` defaults to the older one):
-
-```json
-{
-    "version": 6,
-    "configurePresets": [
-        {
-            "name": "gcc-13",
-            "inherits": "gcc",
-            "binaryDir": "${sourceDir}/build/gcc-13",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER":   "/usr/bin/gcc-13",
-                "CMAKE_CXX_COMPILER": "/usr/bin/g++-13"
-            }
-        }
-    ]
-}
+```bash
+pip install --upgrade git+https://github.com/vidanovic/scripts.git
+cd Windows-CalcEngine
+cmake-user-presets
 ```
 
-Then `cmake --preset gcc-13` (in your WSL shell) configures into `build/gcc-13/` with that specific compiler.
+The script:
 
-**Example 2 — Windows LLVM clang at a non-PATH location**:
+- Detects every C/C++ toolchain available to your machine — local PATH, WSL (on Windows when available), and every installed Visual Studio version (via `vswhere`)
+- Writes a `Debug` and a `Release` preset per detected toolchain into `CMakeUserPresets.json` (next to `CMakePresets.json`)
+- Inherits each from the shipped `local` preset so sibling-repo overrides apply automatically
+- Embeds a JetBrains vendor hint (`vendor.jetbrains.com/clion.toolchain`) so CLion 2023.2+ routes each preset through the correct toolchain automatically — `WSL`-detected presets bounce through your WSL distro, `vs2022-*` use Visual Studio, no manual Toolchain dropdown configuration needed
+
+After running the command, `Tools → CMake → Reset Cache and Reload Project` in CLion picks up every variant in the picker. Pick `clang-18-release`, build, done.
+
+`CMakeUserPresets.json` is gitignored — your file stays on your machine, doesn't enter the repo.
+
+##### Hand-writing a personal preset
+
+If you need something the script doesn't generate (a custom compiler path, an extra build dir for a side experiment, etc.), edit `CMakeUserPresets.json` directly. Personal presets `inherit` from any shipped preset:
 
 ```json
 {
@@ -79,13 +70,12 @@ Then `cmake --preset gcc-13` (in your WSL shell) configures into `build/gcc-13/`
     "configurePresets": [
         {
             "name": "clang-windows",
-            "inherits": "local",
+            "inherits": "local-release",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/clang-windows",
             "cacheVariables": {
                 "CMAKE_C_COMPILER":   "C:/Program Files/LLVM/bin/clang.exe",
-                "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe",
-                "CMAKE_BUILD_TYPE":   "Release"
+                "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe"
             }
         }
     ]
@@ -94,46 +84,26 @@ Then `cmake --preset gcc-13` (in your WSL shell) configures into `build/gcc-13/`
 
 Use forward slashes even on Windows — CMake handles them and you avoid escaping backslashes in JSON.
 
-**Example 3 — a separate debug build dir on top of any shipped preset**:
-
-```json
-{
-    "version": 6,
-    "configurePresets": [
-        {
-            "name": "gcc-debug",
-            "inherits": "gcc",
-            "binaryDir": "${sourceDir}/build/gcc-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        }
-    ]
-}
-```
-
-This is a **one-time setup per machine** — write the file once, then `cmake --preset <name>` and `cmake --build build/<name>` forever after. Different compilers cache differently, so each personal preset should usually have its own `binaryDir`.
-
-Alternative if you don't want a personal preset at all: set `CC` and `CXX` environment variables in your shell rc (`~/.bashrc`, PowerShell profile) before invoking `cmake --preset default`. CMake picks them up. Trade-off — affects every CMake project on your machine, not just this one.
+Alternative if you don't want a personal preset at all: set `CC` and `CXX` environment variables in your shell rc (`~/.bashrc`, PowerShell profile) before invoking `cmake --preset default-release`. CMake picks them up. Tradeoff — affects every CMake project on your machine, not just this one.
 
 ### Build
 
-```
-cmake --build build --config Release --parallel
-```
-
-For Debug:
+Each preset lands in its own subdirectory under `build/`:
 
 ```
-cmake --build build --config Debug --parallel
+cmake --build build/default-release --parallel
+cmake --build build/default-debug   --parallel
+cmake --build build/clang-18-release --parallel        # if you ran cmake-user-presets
+cmake --build build/vs2022-release   --parallel
 ```
 
 ### Manual configure (without presets)
 
 ```
 cmake -B build
+cmake --build build --config Release --parallel
 ```
 
 ### Clean rebuild
 
-Delete the `build/` directory and re-run the configure and build commands above.
+Delete the `build/` directory (removes every preset's build tree) and re-run the configure and build commands above.
