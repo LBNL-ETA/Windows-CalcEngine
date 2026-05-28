@@ -1,0 +1,57 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "default",
+            "hidden": true,
+            "description": "Base: fetches all dependencies from their declared remotes via FetchContent. Inherited by default-debug and default-release.",
+            "binaryDir": "${sourceDir}/build/default"
+        },
+        {
+            "name": "default-debug",
+            "displayName": "Default (Debug)",
+            "inherits": "default",
+            "binaryDir": "${sourceDir}/build/default-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "default-release",
+            "displayName": "Default (Release)",
+            "inherits": "default",
+            "binaryDir": "${sourceDir}/build/default-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "local",
+            "hidden": true,
+            "description": "Base: prefers sibling working copies of dependencies (../<RepoName>); falls back to remote per-dep when missing. Inherited by local-debug, local-release, and script-generated compiler presets.",
+            "inherits": "default",
+            "cacheVariables": {
+                "FETCHCONTENT_SOURCE_DIR_GOOGLETEST": "${sourceDir}/../googletest",
+                "FETCHCONTENT_SOURCE_DIR_MIMALLOC":   "${sourceDir}/../mimalloc"
+            }
+        },
+        {
+            "name": "local-debug",
+            "displayName": "Local (Debug)",
+            "inherits": "local",
+            "binaryDir": "${sourceDir}/build/local-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "local-release",
+            "displayName": "Local (Release)",
+            "inherits": "local",
+            "binaryDir": "${sourceDir}/build/local-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ]
+}

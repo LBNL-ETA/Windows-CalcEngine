@@ -39,3 +39,6 @@ Builds
 .cproject
 .idea
 .se
+
+# Personal CMake presets (per-developer toolchain overrides, etc.)
+CMakeUserPresets.json

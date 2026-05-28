@@ -7,8 +7,14 @@
 // allocations are lock-free under multithreading. This TU is always linked, so
 // the override is pulled into any consuming executable. Windows-only; CMake gates
 // the dependency to WIN32 (mimalloc legal clearance is Windows-scoped).
+// C4559: mimalloc redeclares operator new/new[] adding __declspec(restrict),
+// which differs from the CRT's declaration. The redefinition is intentional
+// (that's how the allocator override works) and silenced locally.
 #if defined(_WIN32)
+#  pragma warning(push)
+#  pragma warning(disable: 4559)
 #  include <mimalloc-new-delete.h>
+#  pragma warning(pop)
 #endif
 
 #include "SquareMatrix.hpp"

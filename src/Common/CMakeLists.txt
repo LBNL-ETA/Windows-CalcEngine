@@ -15,6 +15,14 @@ LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
 
 add_library(${target_name} STATIC ${SOURCES})
 
+# SquareMatrix.cpp pulls <mimalloc-new-delete.h> on Windows; FenestrationCommon
+# must link mimalloc-static so its INTERFACE_INCLUDE_DIRECTORIES is propagated.
+# The mimalloc-static target is declared in the top-level CMakeLists.txt under
+# `if(WIN32)`, so it only exists on Windows builds.
+if(WIN32 AND TARGET mimalloc-static)
+    target_link_libraries(${target_name} PUBLIC mimalloc-static)
+endif()
+
 # Install will be used by master projects to get information on destination of library files
 install(TARGETS ${target_name}
         RUNTIME DESTINATION bin
