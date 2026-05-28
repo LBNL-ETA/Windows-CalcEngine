@@ -40,17 +40,38 @@ namespace
     constexpr double visMax = 0.78;
     constexpr double tol = 1e-6;
 
-    std::unique_ptr<CMultiPaneBSDF> makeLayer(const BSDFBasis basis)
+    enum class Spectrum
+    {
+        Solar,
+        Visible
+    };
+
+    void applyCalculationProperties(CMultiPaneBSDF & layer, const Spectrum spec)
+    {
+        if(spec == Spectrum::Solar)
+        {
+            const CalculationProperties input{
+              StandardData::solarRadiationASTM_E891_87_Table1(),
+              StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
+            layer.setCalculationProperties(input);
+        }
+        else
+        {
+            const CalculationProperties input{StandardData::Photopic::solarRadiation(),
+                                              StandardData::Photopic::wavelengthSetPhotopic(),
+                                              StandardData::Photopic::detectorData()};
+            layer.setCalculationProperties(input);
+        }
+    }
+
+    std::unique_ptr<CMultiPaneBSDF> makeLayer(const BSDFBasis basis, const Spectrum spec)
     {
         const auto material = Material::nBandMaterial(
           SpectralSample::ILC2019_1(), thicknessILC2019_1, MaterialType::Laminate);
         const auto bsdf = BSDFHemisphere::create(basis);
         const auto layer = CBSDFLayerMaker::getDirDifLayer(material, bsdf);
         auto multiLayer = CMultiPaneBSDF::create({layer});
-        const CalculationProperties input{
-          StandardData::solarRadiationASTM_E891_87_Table1(),
-          StandardData::solarRadiationASTM_E891_87_Table1().getXArray()};
-        multiLayer->setCalculationProperties(input);
+        applyCalculationProperties(*multiLayer, spec);
         return multiLayer;
     }
 
@@ -106,23 +127,23 @@ namespace
         .absDir = 0.215728};
 
     constexpr DirDiffResult expected_Nano_Visible_Front{
-        .tDir = 0.015976,
-        .tDif = 0.647792,
-        .tHem = 0.674213,
-        .rDir = 0.044192,
-        .rDif = 0.197305,
-        .rHem = 0.175458,
-        .absDif = 0.154903,
-        .absDir = 0.150328};
+        .tDir = 0.014420,
+        .tDif = 0.669602,
+        .tHem = 0.695851,
+        .rDir = 0.044388,
+        .rDif = 0.210078,
+        .rHem = 0.188374,
+        .absDif = 0.120319,
+        .absDir = 0.115775};
     constexpr DirDiffResult expected_Nano_Visible_Back{
-        .tDir = 0.015669,
-        .tDif = 0.647055,
-        .tHem = 0.673447,
-        .rDir = 0.043681,
-        .rDif = 0.197098,
-        .rHem = 0.175245,
-        .absDif = 0.155846,
-        .absDir = 0.151307};
+        .tDir = 0.014111,
+        .tDif = 0.668950,
+        .tHem = 0.695173,
+        .rDir = 0.043839,
+        .rDif = 0.209793,
+        .rHem = 0.188081,
+        .absDif = 0.121257,
+        .absDir = 0.116746};
 
     constexpr DirDiffResult expected_Small_Solar_Front{
         .tDir = 0.037390,
@@ -144,23 +165,23 @@ namespace
         .absDir = 0.215728};
 
     constexpr DirDiffResult expected_Small_Visible_Front{
-        .tDir = 0.015976,
-        .tDif = 0.606582,
-        .tHem = 0.674213,
-        .rDir = 0.044192,
-        .rDif = 0.242605,
-        .rHem = 0.175458,
-        .absDif = 0.150813,
-        .absDir = 0.150328};
+        .tDir = 0.014420,
+        .tDif = 0.626917,
+        .tHem = 0.695851,
+        .rDir = 0.044388,
+        .rDif = 0.255380,
+        .rHem = 0.188374,
+        .absDif = 0.117702,
+        .absDir = 0.115775};
     constexpr DirDiffResult expected_Small_Visible_Back{
-        .tDir = 0.015669,
-        .tDif = 0.605892,
-        .tHem = 0.673447,
-        .rDir = 0.043681,
-        .rDif = 0.242410,
-        .rHem = 0.175245,
-        .absDif = 0.151698,
-        .absDir = 0.151307};
+        .tDir = 0.014111,
+        .tDif = 0.626307,
+        .tHem = 0.695173,
+        .rDir = 0.043839,
+        .rDif = 0.255111,
+        .rHem = 0.188081,
+        .absDif = 0.118582,
+        .absDir = 0.116746};
 
     constexpr DirDiffResult expected_Quarter_Solar_Front{
         .tDir = 0.037390,
@@ -182,23 +203,23 @@ namespace
         .absDir = 0.215728};
 
     constexpr DirDiffResult expected_Quarter_Visible_Front{
-        .tDir = 0.015976,
-        .tDif = 0.601818,
-        .tHem = 0.674213,
-        .rDir = 0.044192,
-        .rDif = 0.247122,
-        .rHem = 0.175458,
-        .absDif = 0.151060,
-        .absDir = 0.150328};
+        .tDir = 0.014420,
+        .tDif = 0.622027,
+        .tHem = 0.695851,
+        .rDir = 0.044388,
+        .rDif = 0.259942,
+        .rHem = 0.188374,
+        .absDif = 0.118031,
+        .absDir = 0.115775};
     constexpr DirDiffResult expected_Quarter_Visible_Back{
-        .tDir = 0.015669,
-        .tDif = 0.601134,
-        .tHem = 0.673447,
-        .rDir = 0.043681,
-        .rDif = 0.246927,
-        .rHem = 0.175245,
-        .absDif = 0.151939,
-        .absDir = 0.151307};
+        .tDir = 0.014111,
+        .tDif = 0.621421,
+        .tHem = 0.695173,
+        .rDir = 0.043839,
+        .rDif = 0.259674,
+        .rHem = 0.188081,
+        .absDif = 0.118905,
+        .absDir = 0.116746};
 
     constexpr DirDiffResult expected_Half_Solar_Front{
         .tDir = 0.037390,
@@ -220,23 +241,23 @@ namespace
         .absDir = 0.215728};
 
     constexpr DirDiffResult expected_Half_Visible_Front{
-        .tDir = 0.015976,
-        .tDif = 0.606582,
-        .tHem = 0.674213,
-        .rDir = 0.044192,
-        .rDif = 0.242605,
-        .rHem = 0.175458,
-        .absDif = 0.150813,
-        .absDir = 0.150328};
+        .tDir = 0.014420,
+        .tDif = 0.626917,
+        .tHem = 0.695851,
+        .rDir = 0.044388,
+        .rDif = 0.255380,
+        .rHem = 0.188374,
+        .absDif = 0.117702,
+        .absDir = 0.115775};
     constexpr DirDiffResult expected_Half_Visible_Back{
-        .tDir = 0.015669,
-        .tDif = 0.605892,
-        .tHem = 0.673447,
-        .rDir = 0.043681,
-        .rDif = 0.242410,
-        .rHem = 0.175245,
-        .absDif = 0.151698,
-        .absDir = 0.151307};
+        .tDir = 0.014111,
+        .tDif = 0.626307,
+        .tHem = 0.695173,
+        .rDir = 0.043839,
+        .rDif = 0.255111,
+        .rHem = 0.188081,
+        .absDif = 0.118582,
+        .absDir = 0.116746};
 
     constexpr DirDiffResult expected_Full_Solar_Front{
         .tDir = 0.037390,
@@ -258,92 +279,92 @@ namespace
         .absDir = 0.215728};
 
     constexpr DirDiffResult expected_Full_Visible_Front{
-        .tDir = 0.015976,
-        .tDif = 0.608374,
-        .tHem = 0.674213,
-        .rDir = 0.044192,
-        .rDif = 0.240611,
-        .rHem = 0.175458,
-        .absDif = 0.151015,
-        .absDir = 0.150328};
+        .tDir = 0.014420,
+        .tDif = 0.628765,
+        .tHem = 0.695851,
+        .rDir = 0.044388,
+        .rDif = 0.253398,
+        .rHem = 0.188374,
+        .absDif = 0.117837,
+        .absDir = 0.115775};
     constexpr DirDiffResult expected_Full_Visible_Back{
-        .tDir = 0.015669,
-        .tDif = 0.607682,
-        .tHem = 0.673447,
-        .rDir = 0.043681,
-        .rDif = 0.240415,
-        .rHem = 0.175245,
-        .absDif = 0.151903,
-        .absDir = 0.151307};
+        .tDir = 0.014111,
+        .tDif = 0.628153,
+        .tHem = 0.695173,
+        .rDir = 0.043839,
+        .rDif = 0.253128,
+        .rHem = 0.188081,
+        .absDif = 0.118719,
+        .absDir = 0.116746};
 
 }   // namespace
 
 TEST(ILC2019_1_DirDiff, Nano_Solar)
 {
-    auto layer = makeLayer(BSDFBasis::Nano);
+    auto layer = makeLayer(BSDFBasis::Nano, Spectrum::Solar);
     expectClose(compute(*layer, Side::Front, solarMin, solarMax), expected_Nano_Solar_Front);
     expectClose(compute(*layer, Side::Back, solarMin, solarMax), expected_Nano_Solar_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Nano_Visible)
 {
-    auto layer = makeLayer(BSDFBasis::Nano);
+    auto layer = makeLayer(BSDFBasis::Nano, Spectrum::Visible);
     expectClose(compute(*layer, Side::Front, visMin, visMax), expected_Nano_Visible_Front);
     expectClose(compute(*layer, Side::Back, visMin, visMax), expected_Nano_Visible_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Small_Solar)
 {
-    auto layer = makeLayer(BSDFBasis::Small);
+    auto layer = makeLayer(BSDFBasis::Small, Spectrum::Solar);
     expectClose(compute(*layer, Side::Front, solarMin, solarMax), expected_Small_Solar_Front);
     expectClose(compute(*layer, Side::Back, solarMin, solarMax), expected_Small_Solar_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Small_Visible)
 {
-    auto layer = makeLayer(BSDFBasis::Small);
+    auto layer = makeLayer(BSDFBasis::Small, Spectrum::Visible);
     expectClose(compute(*layer, Side::Front, visMin, visMax), expected_Small_Visible_Front);
     expectClose(compute(*layer, Side::Back, visMin, visMax), expected_Small_Visible_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Quarter_Solar)
 {
-    auto layer = makeLayer(BSDFBasis::Quarter);
+    auto layer = makeLayer(BSDFBasis::Quarter, Spectrum::Solar);
     expectClose(compute(*layer, Side::Front, solarMin, solarMax), expected_Quarter_Solar_Front);
     expectClose(compute(*layer, Side::Back, solarMin, solarMax), expected_Quarter_Solar_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Quarter_Visible)
 {
-    auto layer = makeLayer(BSDFBasis::Quarter);
+    auto layer = makeLayer(BSDFBasis::Quarter, Spectrum::Visible);
     expectClose(compute(*layer, Side::Front, visMin, visMax), expected_Quarter_Visible_Front);
     expectClose(compute(*layer, Side::Back, visMin, visMax), expected_Quarter_Visible_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Half_Solar)
 {
-    auto layer = makeLayer(BSDFBasis::Half);
+    auto layer = makeLayer(BSDFBasis::Half, Spectrum::Solar);
     expectClose(compute(*layer, Side::Front, solarMin, solarMax), expected_Half_Solar_Front);
     expectClose(compute(*layer, Side::Back, solarMin, solarMax), expected_Half_Solar_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Half_Visible)
 {
-    auto layer = makeLayer(BSDFBasis::Half);
+    auto layer = makeLayer(BSDFBasis::Half, Spectrum::Visible);
     expectClose(compute(*layer, Side::Front, visMin, visMax), expected_Half_Visible_Front);
     expectClose(compute(*layer, Side::Back, visMin, visMax), expected_Half_Visible_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Full_Solar)
 {
-    auto layer = makeLayer(BSDFBasis::Full);
+    auto layer = makeLayer(BSDFBasis::Full, Spectrum::Solar);
     expectClose(compute(*layer, Side::Front, solarMin, solarMax), expected_Full_Solar_Front);
     expectClose(compute(*layer, Side::Back, solarMin, solarMax), expected_Full_Solar_Back);
 }
 
 TEST(ILC2019_1_DirDiff, Full_Visible)
 {
-    auto layer = makeLayer(BSDFBasis::Full);
+    auto layer = makeLayer(BSDFBasis::Full, Spectrum::Visible);
     expectClose(compute(*layer, Side::Front, visMin, visMax), expected_Full_Visible_Front);
     expectClose(compute(*layer, Side::Back, visMin, visMax), expected_Full_Visible_Back);
 }
@@ -410,13 +431,14 @@ TEST(ILC2019_1_DirDiff, DISABLED_BasisComparisonTable)
        {BSDFBasis::Half, "Half"},
        {BSDFBasis::Full, "Full"}}};
 
-    constexpr std::array<std::tuple<const char *, double, double>, 2> ranges{
-      {{"Solar", solarMin, solarMax}, {"Visible", visMin, visMax}}};
+    constexpr std::array<std::tuple<const char *, double, double, Spectrum>, 2> ranges{
+      {{"Solar", solarMin, solarMax, Spectrum::Solar},
+       {"Visible", visMin, visMax, Spectrum::Visible}}};
 
     constexpr std::array<std::pair<Side, const char *>, 2> sides{
       {{Side::Front, "Front"}, {Side::Back, "Back"}}};
 
-    for(const auto & [rangeName, rangeMin, rangeMax] : ranges)
+    for(const auto & [rangeName, rangeMin, rangeMax, spec] : ranges)
     {
         for(const auto & [side, sideName] : sides)
         {
@@ -428,7 +450,7 @@ TEST(ILC2019_1_DirDiff, DISABLED_BasisComparisonTable)
                       << "Rhem" << "\n";
             for(const auto & [basis, basisName] : bases)
             {
-                auto layer = makeLayer(basis);
+                auto layer = makeLayer(basis, spec);
                 const auto r = compute(*layer, side, rangeMin, rangeMax);
                 std::cout << std::left << std::setw(10) << basisName << std::right << std::fixed
                           << std::setprecision(6) << std::setw(12) << r.tDir << std::setw(12)
