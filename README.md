@@ -60,6 +60,35 @@ After running the command, `Tools → CMake → Reset Cache and Reload Project` 
 
 `CMakeUserPresets.json` is gitignored — your file stays on your machine, doesn't enter the repo.
 
+##### Windows + WSL + CLion walkthrough
+
+The Windows + WSL + CLion combination is the most common LBNL dev setup, and the script is built around it. Concretely, on a Windows laptop with WSL Ubuntu installed:
+
+```powershell
+# PowerShell
+pip install --upgrade git+https://github.com/vidanovic/scripts.git
+cd D:\Programming\GitHub\Windows-CalcEngine
+cmake-user-presets
+```
+
+The script detects:
+
+- Visual Studio 2022 (via `vswhere`)
+- Whatever gcc / clang versions are installed inside your WSL distro (`gcc-13`, `clang-18`, etc.)
+
+…and writes `CMakeUserPresets.json` next to the shipped `CMakePresets.json`, with a `Debug` and a `Release` variant for each toolchain, each tagged with the right JetBrains toolchain hint.
+
+In CLion:
+
+1. `Tools → CMake → Reset Cache and Reload Project` (or close + reopen the project)
+2. The profile picker (top bar) now lists every preset: `default-debug`, `default-release`, `local-debug`, `local-release`, plus the per-compiler ones the script generated.
+3. Pick `clang-18-release` → CLion routes the configure through your WSL `cmake`, finds `/usr/bin/clang++-18`, builds in `build/clang-18-release/` on the WSL side. Run/Debug works through the WSL toolchain end-to-end.
+4. Pick `vs2022-release` → CLion uses Windows-side `cmake.exe` with the Visual Studio 17 2022 generator, builds in `build/vs2022-release/`. Native Windows debugger attaches.
+
+No manual Toolchain dropdown changes, no per-preset configuration in `Settings → CMake`. The script's vendor hint does the routing.
+
+**Assumption:** the CLion toolchains in `Settings → Build, Execution, Deployment → Toolchains` keep their default names (`WSL`, `Visual Studio`). If a developer has renamed one, the vendor hint silently doesn't match for that one — CLion falls back to its global default. No configure-time error, just a one-row dropdown to set manually.
+
 ##### Hand-writing a personal preset
 
 If you need something the script doesn't generate (a custom compiler path, an extra build dir for a side experiment, etc.), edit `CMakeUserPresets.json` directly. Personal presets `inherit` from any shipped preset:
