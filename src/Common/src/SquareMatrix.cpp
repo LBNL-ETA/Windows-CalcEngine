@@ -3,6 +3,12 @@
 #include <cmath>
 #include <algorithm>
 
+// TEMPORARY / LOCAL ONLY - DO NOT PUSH (mimalloc third-party, pending legal).
+// Routes global new/delete through mimalloc's per-thread heaps so large matrix
+// allocations are lock-free under multithreading. This TU is always linked, so
+// the override is pulled into any consuming executable.
+#include <mimalloc-new-delete.h>
+
 #include "SquareMatrix.hpp"
 
 namespace FenestrationCommon

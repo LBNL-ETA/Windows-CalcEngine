@@ -89,6 +89,23 @@ if (DOWNLOAD_GTEST STREQUAL ON)
     endif()
 endif ()
 
+# TEMPORARY / LOCAL ONLY - DO NOT PUSH (mimalloc is third-party, pending legal).
+# Thread-caching allocator so large matrix allocations are lock-free per-thread
+# under multithreading. The global new/delete override lives in SquareMatrix.cpp.
+include(FetchContent)
+if(NOT TARGET mimalloc-static)
+    set(MI_OVERRIDE OFF CACHE BOOL "" FORCE)
+    set(MI_BUILD_SHARED OFF CACHE BOOL "" FORCE)
+    set(MI_BUILD_OBJECT OFF CACHE BOOL "" FORCE)
+    set(MI_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(
+        mimalloc
+        GIT_REPOSITORY https://github.com/microsoft/mimalloc.git
+        GIT_TAG v2.1.7
+    )
+    FetchContent_MakeAvailable(mimalloc)
+endif()
+
 # foreach( _variableName ${SOURCES})
 #   message( STATUS "${_variableName}" )
 # endforeach()
@@ -170,6 +187,9 @@ else ()
         target_include_directories(${target_name} PUBLIC "src/SingleLayerOptics/include")
         target_include_directories(${target_name} PUBLIC "src/MultiLayerOptics/include")
     endif ()
+
+    # TEMPORARY / LOCAL ONLY - DO NOT PUSH (mimalloc third-party, pending legal).
+    target_link_libraries(${target_name} PUBLIC mimalloc-static)
 
     if (BUILD_WCE_TESTING)
         include_directories(src/helper)
