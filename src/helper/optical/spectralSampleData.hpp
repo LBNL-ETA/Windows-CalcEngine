@@ -23,4 +23,5 @@ namespace SpectralSample
 
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> DirectDiffuse();
     std::shared_ptr<SpectralAveraging::CSpectralSampleData> ILC2019_1();
+    std::shared_ptr<SpectralAveraging::CSpectralSampleData> ILC2019_2();
 }   // namespace SpectralSample

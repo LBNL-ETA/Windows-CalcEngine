@@ -191,6 +191,7 @@ namespace SingleLayerOptics
     std::vector<BSDFDefinition> bsdfDefinition(const BSDFBasis basis)
     {
         static const std::map<BSDFBasis, std::vector<BSDFDefinition>> defs = {
+          {BSDFBasis::Nano, {{0, 1}, {50, 1}}},
           {BSDFBasis::Small, {{0, 1}, {13, 1}, {26, 1}, {39, 1}, {52, 1}, {65, 1}, {80.75, 1}}},
           {BSDFBasis::Quarter, {{0, 1}, {18, 8}, {36, 12}, {54, 12}, {76.5, 8}}},
           {BSDFBasis::Half, {{0, 1}, {13, 8}, {26, 12}, {39, 16}, {52, 20}, {65, 12}, {80.75, 8}}},

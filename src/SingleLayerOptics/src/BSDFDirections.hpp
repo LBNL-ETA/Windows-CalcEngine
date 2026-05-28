@@ -83,6 +83,7 @@ namespace SingleLayerOptics
 
     enum class BSDFBasis
     {
+        Nano,
         Small,
         Quarter,
         Half,

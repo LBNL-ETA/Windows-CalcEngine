@@ -13,6 +13,15 @@ namespace SingleLayerOptics
 {
     class CDirectionalDiffuseCell;
 
+    // Selects which lambda the WeightFn is evaluated against:
+    //   Outgoing - per outgoing patch (e.g. matrix-style 1/lam density conversion)
+    //   Incoming - per incoming patch (e.g. Lambertian 1/(pi - lam_in) row-constant normalization)
+    enum class WeightSource
+    {
+        Outgoing,
+        Incoming
+    };
+
     // All outgoing directions are calculated
     class CDirectionalBSDFLayer : public CBSDFLayer
     {
@@ -22,7 +31,8 @@ namespace SingleLayerOptics
         CDirectionalBSDFLayer(
           const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
           const BSDFHemisphere & t_Hemisphere,
-          WeightFn && weightFn = [](double) { return 1.0; });
+          WeightFn && weightFn = [](double) { return 1.0; },
+          WeightSource source = WeightSource::Outgoing);
 
     protected:
         CDirectionalDiffuseCell * cellAsDirectionalDiffuse() const;
@@ -49,21 +59,25 @@ namespace SingleLayerOptics
 
     private:
         template<class F>
-        void for_each_outgoing_(F && f) const
+        void for_each_outgoing_(const size_t inIdx, F && f) const
         {
             const auto & dirs = m_BSDFHemisphere.getDirections(BSDFDirection::Outgoing);
             const auto wght = weights();
             const size_t M = dirs.size();
+            const double sIn =
+              (m_weightSource == WeightSource::Incoming) ? wght[inIdx] : 1.0;
             for(size_t out = 0; out < M; ++out)
             {
                 const CBeamDirection & oDir = dirs[out].centerPoint();
-                const double s = wght[out];
-                f(out, oDir, s);
+                const double sOut =
+                  (m_weightSource == WeightSource::Outgoing) ? wght[out] : 1.0;
+                f(out, oDir, sIn * sOut);
             }
         }
 
         std::vector<double> m_weights;
         WeightFn m_weightsFunction;
+        WeightSource m_weightSource{WeightSource::Outgoing};
     };
 
     class CDirectionalDiffuseBSDFLayer : public CDirectionalBSDFLayer

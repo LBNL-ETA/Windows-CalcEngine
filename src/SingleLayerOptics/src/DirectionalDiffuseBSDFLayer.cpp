@@ -16,10 +16,12 @@ namespace SingleLayerOptics
     CDirectionalBSDFLayer::CDirectionalBSDFLayer(
       const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
       const BSDFHemisphere & t_Hemisphere,
-      WeightFn && weightFn) :
+      WeightFn && weightFn,
+      WeightSource source) :
         CBSDFLayer(t_Cell, t_Hemisphere),
         lambdas(t_Hemisphere.getDirections(BSDFDirection::Outgoing).lambdaVector()),
-        m_weights(lambdas.size(), 1.0)
+        m_weights(lambdas.size(), 1.0),
+        m_weightSource(source)
     {
         if(weightFn)
         {
@@ -43,7 +45,7 @@ namespace SingleLayerOptics
         auto & tau = m_Results->getMatrix(side, PropertySurface::T);
         auto & rho = m_Results->getMatrix(side, PropertySurface::R);
 
-        for_each_outgoing_([&](size_t out, const CBeamDirection & oDir, double s) {
+        for_each_outgoing_(inIdx, [&](size_t out, const CBeamDirection & oDir, double s) {
             const double T = cell->T_dir_dif(side, inDir, oDir);
             const double R = cell->R_dir_dif(side, inDir, oDir);
             tau(out, inIdx) += T * s;
@@ -58,7 +60,7 @@ namespace SingleLayerOptics
     {
         auto * cell = cellAsDirectionalDiffuse();
 
-        for_each_outgoing_([&](size_t out, const CBeamDirection & oDir, double s) {
+        for_each_outgoing_(inIdx, [&](size_t out, const CBeamDirection & oDir, double s) {
             auto t = cell->T_dir_dif_band(side, inDir, oDir);
             auto r = cell->R_dir_dif_band(side, inDir, oDir);
             const size_t N = t.size();
@@ -82,7 +84,7 @@ namespace SingleLayerOptics
         auto & tau = res.getMatrix(side, PropertySurface::T);
         auto & rho = res.getMatrix(side, PropertySurface::R);
 
-        for_each_outgoing_([&](size_t out, const CBeamDirection & oDir, double s) {
+        for_each_outgoing_(inIdx, [&](size_t out, const CBeamDirection & oDir, double s) {
             const double T = cell->T_dir_dif_by_wavelength(side, inDir, oDir, wavelengthIndex);
             const double R = cell->R_dir_dif_by_wavelength(side, inDir, oDir, wavelengthIndex);
             tau(out, inIdx) += T * s;
@@ -104,13 +106,19 @@ namespace SingleLayerOptics
     CHomogeneousDiffuseBSDFLayer::CHomogeneousDiffuseBSDFLayer(
       const std::shared_ptr<CHomogeneousDiffuseCell> & t_Cell,
       const BSDFHemisphere & t_Hemisphere) :
-        CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / (WCE_PI - lam); })
+        CDirectionalBSDFLayer(t_Cell,
+                              t_Hemisphere,
+                              [](const double lam) { return 1.0 / (WCE_PI - lam); },
+                              WeightSource::Incoming)
     {}
 
     CMaterialDirectionalDiffuseBSDFLayer::CMaterialDirectionalDiffuseBSDFLayer(
       const std::shared_ptr<CMaterialDirectionalDiffuseCell> & t_Cell,
       const BSDFHemisphere & t_Hemisphere) :
-        CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / (WCE_PI - lam); })
+        CDirectionalBSDFLayer(t_Cell,
+                              t_Hemisphere,
+                              [](const double lam) { return 1.0 / (WCE_PI - lam); },
+                              WeightSource::Incoming)
     {}
 
     bool CMaterialDirectionalDiffuseBSDFLayer::isEmissivityPolynomialApplicable() const
@@ -120,6 +128,6 @@ namespace SingleLayerOptics
 
     CMatrixBSDFLayer::CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
                                        const BSDFHemisphere & t_Hemisphere) :
-        CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](double lam) { return 1.0 / lam; })
+        CDirectionalBSDFLayer(t_Cell, t_Hemisphere, [](const double lam) { return 1.0 / lam; })
     {}
 }   // namespace SingleLayerOptics
