@@ -22,9 +22,8 @@ protected:
         constexpr auto Rbmat = 0.9;
         const auto aMaterial = Material::singleBandMaterial(Tfmat, Tbmat, Rfmat, Rbmat);
 
-        std::shared_ptr<ICellDescription> aCell = std::make_shared<CSpecularCellDescription>();
-
-        m_Cell = std::make_shared<CDirectionalDiffuseCell>(aMaterial, aCell);
+        m_Cell =
+          std::make_shared<CDirectionalDiffuseCell>(aMaterial, CSpecularCellDescription{});
     }
 
 public:

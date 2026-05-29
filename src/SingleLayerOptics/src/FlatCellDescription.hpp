@@ -1,19 +1,22 @@
 #pragma once
 
-#include "CellDescription.hpp"
+namespace FenestrationCommon
+{
+    enum class Side;
+}
 
 namespace SingleLayerOptics
 {
+    class CBeamDirection;
+
     // Cell description that needs to be used for perfect diffusers. Specular components are
     // set to zero
-    class CFlatCellDescription : public ICellDescription
+    class CFlatCellDescription
     {
     public:
-        ~CFlatCellDescription() override = default;
         CFlatCellDescription() = default;
 
-        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
-                            const CBeamDirection & t_Direction) override;
+        double Beam_dir_dir(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
     };
 
 }   // namespace SingleLayerOptics

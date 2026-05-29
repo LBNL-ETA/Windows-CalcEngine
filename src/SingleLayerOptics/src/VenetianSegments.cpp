@@ -21,11 +21,11 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
     ///  CVenetianCellEnergy
     ////////////////////////////////////////////////////////////////////////////////////////////
-    CVenetianCellEnergy::CVenetianCellEnergy() : m_Cell(nullptr), m_LayerProperties({})
+    CVenetianCellEnergy::CVenetianCellEnergy() : m_LayerProperties({})
     {}
 
     CVenetianCellEnergy::CVenetianCellEnergy(
-      const std::shared_ptr<CVenetianCellDescription> & t_Cell,
+      const CVenetianCellDescription & t_Cell,
       const LayerProperties & properties) :
         m_Cell(t_Cell),
         m_LayerProperties(properties),
@@ -538,8 +538,8 @@ namespace SingleLayerOptics
 
     CVenetianEnergy::CVenetianEnergy(
       const CMaterial & t_Material,
-      const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
-      const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
+      const CVenetianCellDescription & t_ForwardFlowGeometry,
+      const CVenetianCellDescription & t_BackwardFlowGeometry)
     {
         // clang-format off
         createForwardAndBackward({t_Material.getProperty(Property::T, Side::Front),
@@ -553,8 +553,8 @@ namespace SingleLayerOptics
 
     CVenetianEnergy::CVenetianEnergy(
       const LayerProperties & properties,
-      const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
-      const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
+      const CVenetianCellDescription & t_ForwardFlowGeometry,
+      const CVenetianCellDescription & t_BackwardFlowGeometry)
     {
         createForwardAndBackward(properties, t_ForwardFlowGeometry, t_BackwardFlowGeometry);
     }
@@ -566,11 +566,9 @@ namespace SingleLayerOptics
 
     void CVenetianEnergy::createForwardAndBackward(
       const LayerProperties & layerProperties,
-      const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
-      const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry)
+      const CVenetianCellDescription & t_ForwardFlowGeometry,
+      const CVenetianCellDescription & t_BackwardFlowGeometry)
     {
-        assert(t_ForwardFlowGeometry != nullptr);
-        assert(t_BackwardFlowGeometry != nullptr);
         m_CellEnergy[Side::Front] = CVenetianCellEnergy(t_ForwardFlowGeometry, layerProperties);
         m_CellEnergy[Side::Back] = CVenetianCellEnergy(t_BackwardFlowGeometry, layerProperties);
     }

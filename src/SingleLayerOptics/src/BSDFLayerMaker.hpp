@@ -1,8 +1,10 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include "PhotovoltaicProperties.hpp"
+#include "CellDescription.hpp"
 
 namespace FenestrationCommon::Venetian
 {
@@ -17,7 +19,6 @@ namespace SingleLayerOptics
         DirectionalDiffuse
     };
 
-    class ICellDescription;
     class CMaterial;
     class BSDFHemisphere;
     class CBSDFLayer;
@@ -100,8 +101,8 @@ namespace SingleLayerOptics
 
         CBSDFLayerMaker(const std::shared_ptr<CMaterial> & t_Material,
                         const BSDFHemisphere & t_BSDF,
-                        std::shared_ptr<ICellDescription> t_Description = nullptr,
-                        const DistributionMethod t_Method = DistributionMethod::UniformDiffuse);
+                        std::optional<CellDescription> t_Description = std::nullopt,
+                        DistributionMethod t_Method = DistributionMethod::UniformDiffuse);
 
         [[nodiscard]] std::shared_ptr<CBSDFLayer> getLayer() const;
         [[nodiscard]] std::shared_ptr<CBaseCell> getCell() const;

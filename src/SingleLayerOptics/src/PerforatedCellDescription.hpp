@@ -1,32 +1,21 @@
 #ifndef PERFORATEDCELLDESCRIPTION_H
 #define PERFORATEDCELLDESCRIPTION_H
 
-#include "CellDescription.hpp"
+namespace FenestrationCommon
+{
+    enum class Side;
+}
 
 namespace SingleLayerOptics
 {
-    class CPerforatedCellDescription : public ICellDescription
+    class CBeamDirection;
+
+    class CCircularCellDescription
     {
     public:
-        CPerforatedCellDescription(const double t_x, const double t_y, const double t_Thickness);
+        CCircularCellDescription(double t_x, double t_y, double t_Thickness, double t_Radius);
 
-    protected:
-        double m_x;
-        double m_y;
-        double m_Thickness;
-    };
-
-    class CCircularCellDescription : public CPerforatedCellDescription
-    {
-    public:
-        virtual ~CCircularCellDescription() = default;
-        CCircularCellDescription(const double t_x,
-                                 const double t_y,
-                                 const double t_Thickness,
-                                 const double t_Radius);
-
-        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
-                            const CBeamDirection & t_Direction);
+        double Beam_dir_dir(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
 
         [[nodiscard]] double xDimension() const;
         [[nodiscard]] double yDimension() const;
@@ -42,18 +31,13 @@ namespace SingleLayerOptics
         double m_Radius;
     };
 
-    class CRectangularCellDescription : public CPerforatedCellDescription
+    class CRectangularCellDescription
     {
     public:
-        virtual ~CRectangularCellDescription() = default;
-        CRectangularCellDescription(const double t_x,
-                                    const double t_y,
-                                    const double t_Thickness,
-                                    const double t_XHole,
-                                    const double t_YHole);
+        CRectangularCellDescription(
+          double t_x, double t_y, double t_Thickness, double t_XHole, double t_YHole);
 
-        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
-                            const CBeamDirection & t_Direction);
+        double Beam_dir_dir(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
 
         [[nodiscard]] double xDimension() const;
         [[nodiscard]] double yDimension() const;

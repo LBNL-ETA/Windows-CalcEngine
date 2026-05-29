@@ -27,8 +27,7 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
                                         const BSDFHemisphere & t_BSDF)
     {
-        auto aDescription = std::make_shared<CSpecularCellDescription>();
-        auto aCell = std::make_shared<CSpecularCell>(t_Material, aDescription);
+        auto aCell = std::make_shared<CSpecularCell>(t_Material, CSpecularCellDescription{});
         return std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -36,8 +35,8 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getDirDifLayer(const std::shared_ptr<CMaterial> & t_Material,
                                       const BSDFHemisphere & t_BSDF)
     {
-        auto aDescription = std::make_shared<CSpecularCellDescription>();
-        auto aCell = std::make_shared<CMaterialDirectionalDiffuseCell>(t_Material, aDescription);
+        auto aCell =
+          std::make_shared<CMaterialDirectionalDiffuseCell>(t_Material, CSpecularCellDescription{});
         return std::make_shared<CMaterialDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -46,8 +45,7 @@ namespace SingleLayerOptics
                                                     const BSDFHemisphere & t_BSDF,
                                                     PVPowerPropertiesTable powerTable)
     {
-        auto aDecription{std::make_shared<CSpecularCellDescription>()};
-        auto aCell = std::make_shared<CSpecularCell>(t_Material, aDecription);
+        auto aCell = std::make_shared<CSpecularCell>(t_Material, CSpecularCellDescription{});
         auto aLayer = std::make_shared<PhotovoltaicSpecularBSDFLayer>(aCell, t_BSDF);
         aLayer->assignPowerTable(std::move(powerTable));
 
@@ -62,10 +60,8 @@ namespace SingleLayerOptics
                                                   double thickness,
                                                   double radius)
     {
-        std::shared_ptr<ICellDescription> aCellDescription =
-          std::make_shared<CCircularCellDescription>(x, y, thickness, radius);
-        std::shared_ptr<CUniformDiffuseCell> aCell =
-          std::make_shared<CPerforatedCell>(t_Material, aCellDescription);
+        auto aCell = std::make_shared<CPerforatedCell>(
+          t_Material, CCircularCellDescription{x, y, thickness, radius});
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -78,10 +74,8 @@ namespace SingleLayerOptics
                                                      double xHole,
                                                      double yHole)
     {
-        std::shared_ptr<ICellDescription> aCellDescription =
-          std::make_shared<CRectangularCellDescription>(x, y, thickness, xHole, yHole);
-        std::shared_ptr<CUniformDiffuseCell> aCell =
-          std::make_shared<CPerforatedCell>(t_Material, aCellDescription);
+        auto aCell = std::make_shared<CPerforatedCell>(
+          t_Material, CRectangularCellDescription{x, y, thickness, xHole, yHole});
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -110,16 +104,15 @@ namespace SingleLayerOptics
                                         DistributionMethod method,
                                         bool isHorizontal)
     {
-        std::shared_ptr<ICellDescription> aCellDescription =
-          std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
+        CVenetianCellDescription aCellDescription{geometry, numOfSlatSegments};
 
         const auto profileAnglesIncoming = t_BSDF.profileAngles(BSDFDirection::Incoming);
-        std::dynamic_pointer_cast<CVenetianCellDescription>(aCellDescription)
-          ->preCalculateForProfileAngles(FenestrationCommon::Side::Front, profileAnglesIncoming);
+        aCellDescription.preCalculateForProfileAngles(FenestrationCommon::Side::Front,
+                                                      profileAnglesIncoming);
 
         const auto profileAnglesOutgoing = t_BSDF.profileAngles(BSDFDirection::Outgoing);
-        std::dynamic_pointer_cast<CVenetianCellDescription>(aCellDescription)
-          ->preCalculateForProfileAngles(FenestrationCommon::Side::Back, profileAnglesOutgoing);
+        aCellDescription.preCalculateForProfileAngles(FenestrationCommon::Side::Back,
+                                                      profileAnglesOutgoing);
 
         static const auto horizontalVenetianRotation{0.0};
         static const auto verticalVenetianRotation{90.0};
@@ -143,8 +136,7 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getPerfectlyDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                                 const BSDFHemisphere & t_BSDF)
     {
-        auto aDescription = std::make_shared<CFlatCellDescription>();
-        auto aCell = std::make_shared<CUniformDiffuseCell>(t_Material, aDescription);
+        auto aCell = std::make_shared<CUniformDiffuseCell>(t_Material, CFlatCellDescription{});
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -152,8 +144,7 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getHomogeneousDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                                   const BSDFHemisphere & t_BSDF)
     {
-        auto aDescription = std::make_shared<CFlatCellDescription>();
-        auto aCell = std::make_shared<CHomogeneousDiffuseCell>(t_Material, aDescription);
+        auto aCell = std::make_shared<CHomogeneousDiffuseCell>(t_Material, CFlatCellDescription{});
         return std::make_shared<CHomogeneousDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -161,8 +152,7 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getDirectionalDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                                   const BSDFHemisphere & t_BSDF)
     {
-        auto aDescription = std::make_shared<CFlatCellDescription>();
-        auto aCell = std::make_shared<CDirectionalDiffuseCell>(t_Material, aDescription);
+        auto aCell = std::make_shared<CDirectionalDiffuseCell>(t_Material, CFlatCellDescription{});
         return std::make_shared<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -170,8 +160,7 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getPreLoadedBSDFLayer(const std::shared_ptr<CMaterial> & t_Material,
                                              const BSDFHemisphere & t_BSDF)
     {
-        auto aDescription = std::make_shared<CFlatCellDescription>();
-        auto aCell = std::make_shared<CDirectionalDiffuseCell>(t_Material, aDescription);
+        auto aCell = std::make_shared<CDirectionalDiffuseCell>(t_Material, CFlatCellDescription{});
         return std::make_shared<CMatrixBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -181,15 +170,15 @@ namespace SingleLayerOptics
                                      double diameter,
                                      double spacing)
     {
-        auto aDescription = std::make_shared<CWovenCellDescription>(diameter, spacing);
-        auto aCell = std::make_shared<CWovenCell>(t_Material, aDescription);
+        auto aCell =
+          std::make_shared<CWovenCell>(t_Material, CWovenCellDescription{diameter, spacing});
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
     CBSDFLayerMaker::CBSDFLayerMaker(const std::shared_ptr<CMaterial> & t_Material,
                                      const BSDFHemisphere & t_BSDF,
-                                     std::shared_ptr<ICellDescription> t_Description,
-                                     const DistributionMethod t_Method) :
+                                     std::optional<CellDescription> t_Description,
+                                     DistributionMethod t_Method) :
         m_Cell(nullptr)
     {
         if(t_Material == nullptr)
@@ -197,70 +186,51 @@ namespace SingleLayerOptics
             throw std::runtime_error("Material for BSDF layer must be defined.");
         }
 
-        // Specular BSDF layer is considered to be default. Default is used if t_Description is null
-        // pointer
-        if(t_Description == nullptr)
-        {
-            t_Description = std::make_shared<CSpecularCellDescription>();
-        }
+        // Specular BSDF layer is considered to be default. Default is used if no description is
+        // provided.
+        const CellDescription & description =
+          t_Description.value_or(CellDescription{CSpecularCellDescription{}});
 
-        // Specular cell
-        if(std::dynamic_pointer_cast<CSpecularCellDescription>(t_Description) != nullptr)
+        if(std::holds_alternative<CSpecularCellDescription>(description))
         {
             m_Layer = getSpecularLayer(t_Material, t_BSDF);
         }
-
-        if(std::dynamic_pointer_cast<CFlatCellDescription>(t_Description) != nullptr)
+        else if(std::holds_alternative<CFlatCellDescription>(description))
         {
             m_Layer = getPerfectlyDiffuseLayer(t_Material, t_BSDF);
         }
-
-        // Venetian cell
-        if(std::dynamic_pointer_cast<CVenetianCellDescription>(t_Description) != nullptr)
+        else if(const auto * venetian = std::get_if<CVenetianCellDescription>(&description))
         {
-            const auto description{
-              std::dynamic_pointer_cast<CVenetianCellDescription>(t_Description)};
             m_Layer = getVenetianLayer(t_Material,
                                        t_BSDF,
-                                       description->getVenetianGeometry(),
-                                       description->numberOfSegments(),
+                                       venetian->getVenetianGeometry(),
+                                       venetian->numberOfSegments(),
                                        t_Method,
                                        0);
         }
-
-        // Perforated cell
-        if(std::dynamic_pointer_cast<CCircularCellDescription>(t_Description) != nullptr)
+        else if(const auto * circular = std::get_if<CCircularCellDescription>(&description))
         {
-            const auto description{
-              std::dynamic_pointer_cast<CCircularCellDescription>(t_Description)};
             m_Layer = getCircularPerforatedLayer(t_Material,
                                                  t_BSDF,
-                                                 description->xDimension(),
-                                                 description->yDimension(),
-                                                 description->thickness(),
-                                                 description->radius());
+                                                 circular->xDimension(),
+                                                 circular->yDimension(),
+                                                 circular->thickness(),
+                                                 circular->radius());
         }
-
-        if(std::dynamic_pointer_cast<CRectangularCellDescription>(t_Description) != nullptr)
+        else if(const auto * rectangular = std::get_if<CRectangularCellDescription>(&description))
         {
-            const auto description{
-              std::dynamic_pointer_cast<CRectangularCellDescription>(t_Description)};
             m_Layer = getRectangularPerforatedLayer(t_Material,
                                                     t_BSDF,
-                                                    description->xDimension(),
-                                                    description->yDimension(),
-                                                    description->thickness(),
-                                                    description->xHole(),
-                                                    description->yHole());
+                                                    rectangular->xDimension(),
+                                                    rectangular->yDimension(),
+                                                    rectangular->thickness(),
+                                                    rectangular->xHole(),
+                                                    rectangular->yHole());
         }
-
-        // Woven cell
-        if(std::dynamic_pointer_cast<CWovenCellDescription>(t_Description) != nullptr)
+        else if(const auto * woven = std::get_if<CWovenCellDescription>(&description))
         {
             // Woven shades do not work with directional diffuse algorithm
-            const auto description{std::dynamic_pointer_cast<CWovenCellDescription>(t_Description)};
-            m_Layer =
-              getWovenLayer(t_Material, t_BSDF, description->diameter(), description->spacing());
+            m_Layer = getWovenLayer(t_Material, t_BSDF, woven->diameter(), woven->spacing());
         }
     }
 

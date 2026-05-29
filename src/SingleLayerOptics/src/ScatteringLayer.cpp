@@ -64,7 +64,7 @@ namespace SingleLayerOptics
     {}
 
     CScatteringLayer::CScatteringLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                       std::shared_ptr<ICellDescription> t_Description,
+                                       std::optional<CellDescription> t_Description,
                                        const DistributionMethod t_Method) :
         m_BSDFLayer(nullptr), m_Theta(0), m_Phi(0)
     {
@@ -72,7 +72,7 @@ namespace SingleLayerOptics
         // integration will be performed using BSDF distribution while direct-direct component will
         // be taken directly from cell.
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
-        auto aMaker = CBSDFLayerMaker(t_Material, aBSDF, t_Description, t_Method);
+        auto aMaker = CBSDFLayerMaker(t_Material, aBSDF, std::move(t_Description), t_Method);
         m_BSDFLayer = aMaker.getLayer();
     }
 

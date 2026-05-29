@@ -1,8 +1,6 @@
 #ifndef SPECULARCELLDESCRIPTION_H
 #define SPECULARCELLDESCRIPTION_H
 
-#include "CellDescription.hpp"
-
 namespace FenestrationCommon
 {
     enum class Side;
@@ -12,15 +10,15 @@ namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
-    class CSpecularCellDescription : public ICellDescription
+    class CBeamDirection;
+
+    class CSpecularCellDescription
     {
     public:
-        virtual ~CSpecularCellDescription() = default;
-        CSpecularCellDescription();
+        CSpecularCellDescription() = default;
 
-        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
-                            const CBeamDirection & t_Direction) override;
-        double Rspecular(const FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Beam_dir_dir(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
+        double Rspecular(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
     };
 
 }   // namespace SingleLayerOptics

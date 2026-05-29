@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include "CellDescription.hpp"
+
 namespace FenestrationCommon
 {
     enum class Side;
@@ -13,7 +15,6 @@ namespace FenestrationCommon
 namespace SingleLayerOptics
 {
     class CMaterial;
-    class ICellDescription;
     class CBeamDirection;
 
     // Handles optical layer "cell". Base behavior is to calculate specular (direct-direct)
@@ -24,7 +25,7 @@ namespace SingleLayerOptics
         virtual ~CBaseCell() = default;
         CBaseCell();
         CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
-                  const std::shared_ptr<ICellDescription> & t_CellDescription,
+                  const CellDescription & t_CellDescription,
                   double rotation = 0);
 
         virtual void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
@@ -66,7 +67,7 @@ namespace SingleLayerOptics
 
     protected:
         std::shared_ptr<CMaterial> m_Material;
-        std::shared_ptr<ICellDescription> m_CellDescription;
+        CellDescription m_CellDescription;
 
         // This indicates cell rotation in phi angle
         double m_CellRotation;

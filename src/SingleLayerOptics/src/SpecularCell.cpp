@@ -12,12 +12,12 @@ using namespace SpectralAveraging;
 namespace SingleLayerOptics
 {
     CSpecularCell::CSpecularCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                                 const std::shared_ptr<ICellDescription> & t_Cell) :
+                                 const CellDescription & t_Cell) :
         CBaseCell(t_MaterialProperties, t_Cell)
     {}
 
     CSpecularCell::CSpecularCell(const std::shared_ptr<CMaterial> & t_MaterialProperties) :
-        CBaseCell(t_MaterialProperties, std::make_shared<CSpecularCellDescription>())
+        CBaseCell(t_MaterialProperties, CSpecularCellDescription{})
     {}
 
     double CSpecularCell::T_dir_dir(const Side t_Side, const CBeamDirection & t_Direction)
@@ -53,19 +53,6 @@ namespace SingleLayerOptics
                                                       const CBeamDirection & t_Direction)
     {
         return m_Material->getBandProperties(Property::R, t_Side, t_Direction, t_Direction);
-    }
-
-    std::shared_ptr<CSpecularCellDescription> CSpecularCell::getCellAsSpecular() const
-    {
-        if(std::dynamic_pointer_cast<CSpecularCellDescription>(m_CellDescription) == nullptr)
-        {
-            assert("Incorrectly assigned cell description.");
-        }
-
-        std::shared_ptr<CSpecularCellDescription> aCell =
-          std::dynamic_pointer_cast<CSpecularCellDescription>(m_CellDescription);
-
-        return aCell;
     }
 
     double CSpecularCell::R_dir_dir_at_wavelength(Side t_Side,

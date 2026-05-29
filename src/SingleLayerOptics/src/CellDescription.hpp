@@ -1,5 +1,13 @@
 #pragma once
 
+#include <variant>
+
+#include "SpecularCellDescription.hpp"
+#include "FlatCellDescription.hpp"
+#include "VenetianCellDescription.hpp"
+#include "PerforatedCellDescription.hpp"
+#include "WovenCellDescription.hpp"
+
 namespace FenestrationCommon
 {
     enum class Side;
@@ -9,18 +17,19 @@ namespace SingleLayerOptics
 {
     class CBeamDirection;
 
-    // Interface for describing a single optical cell within a window layer.
-    // Multiple cells are combined to form the complete window layer.
-    // Each cell must provide methods to calculate direct-to-direct transmittance and reflectance
-    // for a specified incoming direction and side. These calculations are essential for determining
-    // the overall optical properties of the window system.
-    class ICellDescription
-    {
-    public:
-        virtual ~ICellDescription() = default;
-        ICellDescription() = default;
+    // A cell description is one of a closed set of geometries. Previously these were subclasses of
+    // an ICellDescription interface held through a shared_ptr; they are now value types collected in
+    // a variant so cells can store the description directly (no inheritance, no heap allocation).
+    using CellDescription = std::variant<CSpecularCellDescription,
+                                         CFlatCellDescription,
+                                         CVenetianCellDescription,
+                                         CCircularCellDescription,
+                                         CRectangularCellDescription,
+                                         CWovenCellDescription>;
 
-        virtual double Beam_dir_dir(const FenestrationCommon::Side t_Side,
-                                    const CBeamDirection & t_Direction) = 0;
-    };
+    // Direct-to-direct beam fraction through the cell geometry. Dispatches over the active
+    // alternative, replacing the former ICellDescription::Beam_dir_dir virtual call.
+    double Beam_dir_dir(CellDescription & description,
+                        FenestrationCommon::Side t_Side,
+                        const CBeamDirection & t_Direction);
 }   // namespace SingleLayerOptics

@@ -15,7 +15,6 @@ namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
-    class ICellDescription;
     class CBeamDirection;
     class CMaterial;
 
@@ -24,7 +23,7 @@ namespace SingleLayerOptics
     {
     public:
         CUniformDiffuseCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                            const std::shared_ptr<ICellDescription> & t_Cell,
+                            const CellDescription & t_Cell,
                             double rotation = 0);
 
         // dir_dif and dir_dif_band functions are calculating portion of incoming beam that bounced

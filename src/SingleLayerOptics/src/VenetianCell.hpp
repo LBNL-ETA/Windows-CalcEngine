@@ -7,6 +7,7 @@
 #include <WCECommon.hpp>
 
 #include "VenetianSegments.hpp"
+#include "VenetianCellDescription.hpp"
 #include "UniformDiffuseCell.hpp"
 #include "DirectionalDiffuseCell.hpp"
 #include "BeamDirection.hpp"
@@ -20,25 +21,22 @@ namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
-    class ICellDescription;
-    class CVenetianCellDescription;
-
     class CVenetianBase : public CUniformDiffuseCell, public CDirectionalDiffuseCell
     {
     public:
         CVenetianBase(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                      const std::shared_ptr<ICellDescription> & t_Cell,
+                      const CellDescription & t_Cell,
                       double rotation = 0);
 
     protected:
-        [[nodiscard]] std::shared_ptr<CVenetianCellDescription> getCellAsVenetian() const;
+        [[nodiscard]] const CVenetianCellDescription & getCellAsVenetian() const;
     };
 
     class CVenetianCell : public CVenetianBase
     {
     public:
         CVenetianCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                      const std::shared_ptr<ICellDescription> & t_Cell,
+                      const CellDescription & t_Cell,
                       double rotation = 0);
 
         void setSourceData(const FenestrationCommon::CSeries & t_SourceData) override;
@@ -114,7 +112,7 @@ namespace SingleLayerOptics
         // Energy calculations for material range (wavelengths)
         std::vector<CVenetianEnergy> m_EnergiesBand;
 
-        std::shared_ptr<CVenetianCellDescription> m_BackwardFlowCellDescription;
+        CVenetianCellDescription m_BackwardFlowCellDescription;
     };
 
 }   // namespace SingleLayerOptics

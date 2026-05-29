@@ -9,7 +9,7 @@ using namespace FenestrationCommon;
 class TestVenetianCellFlat0_4 : public testing::Test
 {
 private:
-    CVenetianCell m_Cell{createMaterial(), createCellDescription()};
+    CVenetianCell m_Cell{createMaterial(), *createCellDescription()};
 
     static std::shared_ptr<CMaterial> createMaterial()
     {

@@ -12,13 +12,11 @@ namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
-    class ICellDescription;
-
     class CPerforatedCell : public CUniformDiffuseCell
     {
     public:
         CPerforatedCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                        const std::shared_ptr<ICellDescription> & t_Cell);
+                        const CellDescription & t_Cell);
     };
 }   // namespace SingleLayerOptics
 
