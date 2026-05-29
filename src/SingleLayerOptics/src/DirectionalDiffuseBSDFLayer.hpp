@@ -6,12 +6,10 @@
 #include <span>
 
 #include "BSDFLayer.hpp"
-#include "HomogeneousDiffuseCell.hpp"
-#include "MaterialDirDifCell.hpp"
 
 namespace SingleLayerOptics
 {
-    class CDirectionalDiffuseCell;
+    class CBaseCell;
 
     // Selects which lambda the WeightFn is evaluated against:
     //   Outgoing - per outgoing patch (e.g. matrix-style 1/lam density conversion)
@@ -29,14 +27,12 @@ namespace SingleLayerOptics
         using WeightFn = std::function<double(double)>;
 
         CDirectionalBSDFLayer(
-          const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+          const std::shared_ptr<CBaseCell> & t_Cell,
           const BSDFHemisphere & t_Hemisphere,
           WeightFn && weightFn = [](double) { return 1.0; },
           WeightSource source = WeightSource::Outgoing);
 
     protected:
-        CDirectionalDiffuseCell * cellAsDirectionalDiffuse() const;
-
         void calcDiffuseDistribution(const FenestrationCommon::Side aSide,
                                      const CBeamDirection & incomingDirection,
                                      const size_t incomingDirectionIndex) override;
@@ -83,7 +79,7 @@ namespace SingleLayerOptics
     class CDirectionalDiffuseBSDFLayer : public CDirectionalBSDFLayer
     {
     public:
-        CDirectionalDiffuseBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+        CDirectionalDiffuseBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                                      const BSDFHemisphere & t_Hemisphere);
 
         bool isEmissivityPolynomialApplicable() const override;
@@ -92,16 +88,15 @@ namespace SingleLayerOptics
     class CHomogeneousDiffuseBSDFLayer : public CDirectionalBSDFLayer
     {
     public:
-        CHomogeneousDiffuseBSDFLayer(const std::shared_ptr<CHomogeneousDiffuseCell> & t_Cell,
+        CHomogeneousDiffuseBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                                      const BSDFHemisphere & t_Hemisphere);
     };
 
     class CMaterialDirectionalDiffuseBSDFLayer : public CDirectionalBSDFLayer
     {
     public:
-        CMaterialDirectionalDiffuseBSDFLayer(
-          const std::shared_ptr<CMaterialDirectionalDiffuseCell> & t_Cell,
-          const BSDFHemisphere & t_Hemisphere);
+        CMaterialDirectionalDiffuseBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
+                                             const BSDFHemisphere & t_Hemisphere);
 
         bool isEmissivityPolynomialApplicable() const override;
     };
@@ -109,7 +104,7 @@ namespace SingleLayerOptics
     class CMatrixBSDFLayer : public CDirectionalBSDFLayer
     {
     public:
-        CMatrixBSDFLayer(const std::shared_ptr<CDirectionalDiffuseCell> & t_Cell,
+        CMatrixBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                          const BSDFHemisphere & t_Hemisphere);
     };
 

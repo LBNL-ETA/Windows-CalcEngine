@@ -7,13 +7,13 @@
 
 namespace SingleLayerOptics
 {
-    class CSpecularCell;
+    class CBaseCell;
     class CMaterialPhotovoltaicSample;
 
     class PhotovoltaicSpecularBSDFLayer : public CSpecularBSDFLayer
     {
     public:
-        PhotovoltaicSpecularBSDFLayer(const std::shared_ptr<CSpecularCell> & t_Cell,
+        PhotovoltaicSpecularBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                                       const BSDFHemisphere & t_Hemisphere);
 
         [[nodiscard]] std::vector<std::vector<double>>

@@ -2,23 +2,16 @@
 #include <utility>
 
 #include "BSDFLayerMaker.hpp"
-#include "UniformDiffuseCell.hpp"
-#include "DirectionalDiffuseCell.hpp"
+#include "BaseCell.hpp"
 #include "UniformDiffuseBSDFLayer.hpp"
 #include "DirectionalDiffuseBSDFLayer.hpp"
 #include "CellDescription.hpp"
 #include "SpecularCellDescription.hpp"
-#include "SpecularCell.hpp"
 #include "SpecularBSDFLayer.hpp"
 #include "VenetianCellDescription.hpp"
-#include "VenetianCell.hpp"
 #include "PerforatedCellDescription.hpp"
-#include "PerforatedCell.hpp"
 #include "WovenCellDescription.hpp"
-#include "WovenCell.hpp"
 #include "FlatCellDescription.hpp"
-#include "HomogeneousDiffuseCell.hpp"
-#include "MaterialDirDifCell.hpp"
 #include "PhotovoltaicSpecularBSDFLayer.hpp"
 
 namespace SingleLayerOptics
@@ -27,7 +20,7 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
                                         const BSDFHemisphere & t_BSDF)
     {
-        auto aCell = std::make_shared<CSpecularCell>(t_Material, CSpecularCellDescription{});
+        auto aCell = std::make_shared<CBaseCell>(makeSpecularCell(t_Material));
         return std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -35,8 +28,8 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getDirDifLayer(const std::shared_ptr<CMaterial> & t_Material,
                                       const BSDFHemisphere & t_BSDF)
     {
-        auto aCell =
-          std::make_shared<CMaterialDirectionalDiffuseCell>(t_Material, CSpecularCellDescription{});
+        auto aCell = std::make_shared<CBaseCell>(
+          makeMaterialDirectionalDiffuseCell(t_Material, CSpecularCellDescription{}));
         return std::make_shared<CMaterialDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -45,10 +38,9 @@ namespace SingleLayerOptics
                                                     const BSDFHemisphere & t_BSDF,
                                                     PVPowerPropertiesTable powerTable)
     {
-        auto aCell = std::make_shared<CSpecularCell>(t_Material, CSpecularCellDescription{});
+        auto aCell = std::make_shared<CBaseCell>(makeSpecularCell(t_Material));
         auto aLayer = std::make_shared<PhotovoltaicSpecularBSDFLayer>(aCell, t_BSDF);
         aLayer->assignPowerTable(std::move(powerTable));
-
         return aLayer;
     }
 
@@ -60,8 +52,8 @@ namespace SingleLayerOptics
                                                   double thickness,
                                                   double radius)
     {
-        auto aCell = std::make_shared<CPerforatedCell>(
-          t_Material, CCircularCellDescription{x, y, thickness, radius});
+        auto aCell = std::make_shared<CBaseCell>(
+          makeUniformDiffuseCell(t_Material, CCircularCellDescription{x, y, thickness, radius}));
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -74,8 +66,8 @@ namespace SingleLayerOptics
                                                      double xHole,
                                                      double yHole)
     {
-        auto aCell = std::make_shared<CPerforatedCell>(
-          t_Material, CRectangularCellDescription{x, y, thickness, xHole, yHole});
+        auto aCell = std::make_shared<CBaseCell>(makeUniformDiffuseCell(
+          t_Material, CRectangularCellDescription{x, y, thickness, xHole, yHole}));
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -118,25 +110,28 @@ namespace SingleLayerOptics
         static const auto verticalVenetianRotation{90.0};
         const auto rotation{isHorizontal ? horizontalVenetianRotation : verticalVenetianRotation};
 
+        // Match pre-Phase-A behaviour: only the UniformDiffuse path applies the horizontal/vertical
+        // rotation. The DirectionalDiffuse path ignores it (the directional cell pre-dates the
+        // rotation feature and the existing tests have been validated without it).
+        const auto cellRotation =
+          (method == DistributionMethod::UniformDiffuse) ? rotation : 0.0;
+
+        auto aCell = std::make_shared<CBaseCell>(
+          makeVenetianCell(t_Material, std::move(aCellDescription), cellRotation));
+
         if(method == DistributionMethod::UniformDiffuse)
         {
-            std::shared_ptr<CUniformDiffuseCell> aCell =
-              std::make_shared<CVenetianCell>(t_Material, aCellDescription, rotation);
             return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
         }
-        else
-        {
-            std::shared_ptr<CDirectionalDiffuseCell> aCell =
-              std::make_shared<CVenetianCell>(t_Material, aCellDescription);
-            return std::make_shared<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
-        }
+        return std::make_shared<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getPerfectlyDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                                 const BSDFHemisphere & t_BSDF)
     {
-        auto aCell = std::make_shared<CUniformDiffuseCell>(t_Material, CFlatCellDescription{});
+        auto aCell = std::make_shared<CBaseCell>(
+          makeUniformDiffuseCell(t_Material, CFlatCellDescription{}));
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -144,7 +139,8 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getHomogeneousDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                                   const BSDFHemisphere & t_BSDF)
     {
-        auto aCell = std::make_shared<CHomogeneousDiffuseCell>(t_Material, CFlatCellDescription{});
+        auto aCell = std::make_shared<CBaseCell>(
+          makeHomogeneousDiffuseCell(t_Material, CFlatCellDescription{}));
         return std::make_shared<CHomogeneousDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -152,7 +148,8 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getDirectionalDiffuseLayer(const std::shared_ptr<CMaterial> & t_Material,
                                                   const BSDFHemisphere & t_BSDF)
     {
-        auto aCell = std::make_shared<CDirectionalDiffuseCell>(t_Material, CFlatCellDescription{});
+        auto aCell = std::make_shared<CBaseCell>(
+          makeDirectionalDiffuseCell(t_Material, CFlatCellDescription{}));
         return std::make_shared<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -160,7 +157,8 @@ namespace SingleLayerOptics
       CBSDFLayerMaker::getPreLoadedBSDFLayer(const std::shared_ptr<CMaterial> & t_Material,
                                              const BSDFHemisphere & t_BSDF)
     {
-        auto aCell = std::make_shared<CDirectionalDiffuseCell>(t_Material, CFlatCellDescription{});
+        auto aCell = std::make_shared<CBaseCell>(
+          makeDirectionalDiffuseCell(t_Material, CFlatCellDescription{}));
         return std::make_shared<CMatrixBSDFLayer>(aCell, t_BSDF);
     }
 
@@ -170,8 +168,8 @@ namespace SingleLayerOptics
                                      double diameter,
                                      double spacing)
     {
-        auto aCell =
-          std::make_shared<CWovenCell>(t_Material, CWovenCellDescription{diameter, spacing});
+        auto aCell = std::make_shared<CBaseCell>(
+          makeWovenCell(t_Material, CWovenCellDescription{diameter, spacing}));
         return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
     }
 

@@ -1,85 +1,707 @@
+#include <algorithm>
 #include <cassert>
+#include <cmath>
+#include <ranges>
+#include <stdexcept>
+#include <utility>
 
 #include <WCECommon.hpp>
 
 #include "BaseCell.hpp"
-#include "CellDescription.hpp"
+#include "BeamDirection.hpp"
 #include "MaterialDescription.hpp"
+#include "WovenCellDescription.hpp"
 
-using FenestrationCommon::Side;
 using FenestrationCommon::CSeries;
+using FenestrationCommon::oppositeSide;
+using FenestrationCommon::Property;
+using FenestrationCommon::Side;
+using FenestrationCommon::degrees;
 
 namespace SingleLayerOptics
 {
-    CBaseCell::CBaseCell() : m_Material(nullptr), m_CellRotation(0)
-    {}
-
-    CBaseCell::CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
-                         const CellDescription & t_CellDescription,
-                         const double rotation) :
-        m_Material(t_Material), m_CellDescription(t_CellDescription), m_CellRotation(rotation)
-    {}
-
-    void CBaseCell::setSourceData(const CSeries & t_SourceData)
+    namespace
     {
-        m_Material->setSourceData(t_SourceData);
-    }
-
-    double CBaseCell::T_dir_dir(const Side t_Side, const CBeamDirection & t_Direction)
-    {
-        if(m_CellRotation != 0)
+        //! Apply cell rotation if the cell carries one, otherwise pass the direction through.
+        [[nodiscard]] CBeamDirection rotateIfNeeded(double rotation, CBeamDirection const & dir)
         {
-            return Beam_dir_dir(
-              m_CellDescription, t_Side, t_Direction.rotate(m_CellRotation));
+            if(rotation == 0.0)
+            {
+                return dir;
+            }
+            return dir.rotate(rotation);
         }
-        return Beam_dir_dir(m_CellDescription, t_Side, t_Direction);
+
+        //! Tscatter for woven shades. Same formula as the pre-Phase-A CWovenCell helper.
+        [[nodiscard]] double wovenTscatter(double gamma,
+                                           CBeamDirection const & direction,
+                                           double rMat)
+        {
+            if(rMat <= 0)
+            {
+                return 0;
+            }
+            if(gamma >= 1)
+            {
+                return 0;
+            }
+
+            double const aAlt = degrees(direction.Altitude());
+            double const aAzm = degrees(direction.Azimuth());
+
+            double const tScatterMax = 0.0229 * gamma + 0.2971 * rMat - 0.03624 * std::pow(gamma, 2)
+                                       + 0.04763 * std::pow(rMat, 2) - 0.44416 * gamma * rMat;
+            double const deltaMax = 89.7 - 10 * gamma / 0.16;
+            double const delta = std::pow(std::pow(aAlt, 2) + std::pow(aAzm, 2), 0.5);
+            double const peakRatio = 1 / (0.2 * rMat * (1 - gamma));
+
+            double exponent = 0;
+            double tSct = 0;
+            if(delta > deltaMax)
+            {
+                exponent = -(std::pow(std::abs(delta - deltaMax), 2.5)) / 600;
+                tSct = -0.2 * rMat * tScatterMax * (1 - gamma)
+                       * std::max(0.0, (delta - deltaMax) / (90 - deltaMax));
+            }
+            else
+            {
+                exponent = -(std::pow(std::abs(delta - deltaMax), 2)) / 600;
+            }
+            tSct = tSct
+                   + 0.2 * rMat * tScatterMax * (1 - gamma) * (1 + (peakRatio - 1) * std::exp(exponent));
+
+            return tSct < 0 ? 0 : tSct;
+        }
+
+        [[nodiscard]] double wovenGamma(CellDescription const & description)
+        {
+            assert(std::holds_alternative<CWovenCellDescription>(description)
+                   && "Woven cell must carry a CWovenCellDescription.");
+            return std::get<CWovenCellDescription>(description).gamma();
+        }
+    }   // namespace
+
+    CBaseCell::CBaseCell() : m_Material(nullptr), m_CellDescription(CSpecularCellDescription{})
+    {}
+
+    CBaseCell::CBaseCell(std::shared_ptr<CMaterial> material,
+                         CellDescription description,
+                         CellKind kind,
+                         double rotation) :
+        m_Material(std::move(material)),
+        m_CellDescription(std::move(description)),
+        m_Kind(kind),
+        m_CellRotation(rotation)
+    {
+        if(m_Kind == CellKind::Venetian)
+        {
+            m_Venetian.emplace();
+            generateVenetianEnergy();
+        }
     }
 
-    double CBaseCell::R_dir_dir(const Side, const CBeamDirection &)
+    void CBaseCell::generateVenetianEnergy()
     {
-        return 0;
+        assert(m_Kind == CellKind::Venetian && m_Venetian.has_value());
+        assert(std::holds_alternative<CVenetianCellDescription>(m_CellDescription)
+               && "Venetian cell must carry a CVenetianCellDescription.");
+
+        auto const & forward = std::get<CVenetianCellDescription>(m_CellDescription);
+        auto forwardGeometry = makeVenetianGeometry(forward);
+        auto backwardGeometry = makeVenetianGeometry(forward.getBackwardFlowCell());
+
+        m_Venetian->m_Energy = CVenetianEnergy(*m_Material, forwardGeometry, backwardGeometry);
+        m_Venetian->m_EnergiesBand.clear();
+
+        auto const bandProperties = m_Material->getBandProperties();
+        if(bandProperties.empty())
+        {
+            return;
+        }
+
+        std::size_t const bandSize = m_Material->getBandSize();
+        m_Venetian->m_EnergiesBand.reserve(bandSize);
+        for(std::size_t idx = 0; idx < bandSize; ++idx)
+        {
+            double const tFront = bandProperties[idx].getProperty(Property::T, Side::Front);
+            double const tBack = bandProperties[idx].getProperty(Property::T, Side::Back);
+            double const rFront = bandProperties[idx].getProperty(Property::R, Side::Front);
+            double const rBack = bandProperties[idx].getProperty(Property::R, Side::Back);
+            m_Venetian->m_EnergiesBand.emplace_back(
+              LayerProperties{tFront, rFront, tBack, rBack}, forwardGeometry, backwardGeometry);
+        }
     }
 
-    double CBaseCell::T_dir_dir_at_wavelength(const FenestrationCommon::Side t_Side,
-                                              const CBeamDirection & t_Direction,
-                                              size_t wavelengthIndex)
+    void CBaseCell::setSourceData(CSeries const & sourceData)
     {
-        std::ignore = wavelengthIndex;
-        return T_dir_dir(t_Side, t_Direction);
+        m_Material->setSourceData(sourceData);
+        if(m_Kind == CellKind::Venetian)
+        {
+            generateVenetianEnergy();
+        }
     }
 
-    double CBaseCell::R_dir_dir_at_wavelength(const FenestrationCommon::Side t_Side,
-                                              const CBeamDirection & t_Direction,
-                                              size_t wavelengthIndex)
+    void CBaseCell::setBandWavelengths(std::vector<double> const & wavelengths)
     {
-        std::ignore = wavelengthIndex;
-        return R_dir_dir(t_Side, t_Direction);
+        assert(m_Material != nullptr);
+        m_Material->setBandWavelengths(wavelengths);
+        if(m_Kind == CellKind::Venetian)
+        {
+            generateVenetianEnergy();
+        }
     }
 
-    template<class F>
-    std::vector<double> CBaseCell::makeBand(F && f)
+    //////////////////////////////////////////////////////////////////////////////////
+    //  direct-direct
+    //////////////////////////////////////////////////////////////////////////////////
+
+    double CBaseCell::T_dir_dir(Side side, CBeamDirection const & dir)
     {
-        const size_t n = m_Material->getBandSize();
-        std::vector<double> out;
-        out.reserve(n);
-        for(size_t i = 0; i < n; ++i)
-            out.push_back(f(i));
-        return out;
+        switch(m_Kind)
+        {
+            case CellKind::Specular:
+                return m_Material->getProperty(Property::T, side, dir, dir);
+            case CellKind::MaterialDirectionalDiffuse:
+                return m_Material ? m_Material->getProperty(Property::T, side, dir, dir) : 0;
+            case CellKind::Venetian:
+                return m_Venetian->m_Energy.getCell(side).T_dir_dir(
+                  rotateIfNeeded(m_CellRotation, dir));
+            default:
+                return Beam_dir_dir(m_CellDescription, side, rotateIfNeeded(m_CellRotation, dir));
+        }
     }
 
-    std::vector<double> CBaseCell::T_dir_dir_band(const Side t_Side,
-                                                  const CBeamDirection & t_Direction)
+    double CBaseCell::R_dir_dir(Side side, CBeamDirection const & dir)
     {
-        return makeBand(
-          [&](const size_t index) { return T_dir_dir_at_wavelength(t_Side, t_Direction, index); });
+        switch(m_Kind)
+        {
+            case CellKind::Specular:
+                return m_Material->getProperty(Property::R, side, dir, dir);
+            case CellKind::MaterialDirectionalDiffuse:
+                return m_Material ? m_Material->getProperty(Property::R, side, dir, dir) : 0;
+            default:
+                return 0;
+        }
     }
 
-    std::vector<double> CBaseCell::R_dir_dir_band(const Side t_Side,
-                                                  const CBeamDirection & t_Direction)
+    double CBaseCell::T_dir_dir_at_wavelength(Side side,
+                                              CBeamDirection const & dir,
+                                              std::size_t wavelengthIndex)
     {
-        return makeBand(
-          [&](const size_t index) { return R_dir_dir_at_wavelength(t_Side, t_Direction, index); });
+        switch(m_Kind)
+        {
+            case CellKind::Specular:
+                return m_Material->getBandProperty(Property::T, side, wavelengthIndex, dir, dir);
+            case CellKind::MaterialDirectionalDiffuse:
+                if(!m_Material)
+                {
+                    return 0;
+                }
+                return m_Material->getBandProperties(Property::T, side, dir, dir)[wavelengthIndex];
+            case CellKind::Venetian:
+                return m_Venetian->m_EnergiesBand[wavelengthIndex].getCell(side).T_dir_dir(
+                  rotateIfNeeded(m_CellRotation, dir));
+            default:
+                return T_dir_dir(side, dir);
+        }
     }
+
+    double CBaseCell::R_dir_dir_at_wavelength(Side side,
+                                              CBeamDirection const & dir,
+                                              std::size_t wavelengthIndex)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::Specular:
+                return m_Material->getBandProperty(Property::R, side, wavelengthIndex, dir, dir);
+            case CellKind::MaterialDirectionalDiffuse:
+                if(!m_Material)
+                {
+                    return 0;
+                }
+                return m_Material->getBandProperties(Property::R, side, dir, dir)[wavelengthIndex];
+            default:
+                return R_dir_dir(side, dir);
+        }
+    }
+
+    std::vector<double> CBaseCell::T_dir_dir_band(Side side, CBeamDirection const & dir)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::Specular:
+                return m_Material->getBandProperties(Property::T, side, dir, dir);
+            case CellKind::MaterialDirectionalDiffuse:
+                if(!m_Material)
+                {
+                    return {};
+                }
+                return m_Material->getBandProperties(Property::T, side, dir, dir);
+            default:
+            {
+                std::size_t const bandSize = m_Material->getBandSize();
+                std::vector<double> out;
+                out.reserve(bandSize);
+                for(std::size_t idx = 0; idx < bandSize; ++idx)
+                {
+                    out.push_back(T_dir_dir_at_wavelength(side, dir, idx));
+                }
+                return out;
+            }
+        }
+    }
+
+    std::vector<double> CBaseCell::R_dir_dir_band(Side side, CBeamDirection const & dir)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::Specular:
+                return m_Material->getBandProperties(Property::R, side, dir, dir);
+            case CellKind::MaterialDirectionalDiffuse:
+                if(!m_Material)
+                {
+                    return {};
+                }
+                return m_Material->getBandProperties(Property::R, side, dir, dir);
+            default:
+            {
+                std::size_t const bandSize = m_Material->getBandSize();
+                std::vector<double> out;
+                out.reserve(bandSize);
+                for(std::size_t idx = 0; idx < bandSize; ++idx)
+                {
+                    out.push_back(R_dir_dir_at_wavelength(side, dir, idx));
+                }
+                return out;
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //  single-direction diffuse  (Uniform / Woven / Venetian-uniform)
+    //////////////////////////////////////////////////////////////////////////////////
+
+    double CBaseCell::T_dir_dif(Side side, CBeamDirection const & dir)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::UniformDiffuse:
+                return (1.0 - T_dir_dir(side, dir)) * m_Material->getProperty(Property::T, side);
+            case CellKind::Woven:
+            {
+                double const cellT = T_dir_dir(side, dir);
+                double const tMaterial = (1.0 - cellT) * m_Material->getProperty(Property::T, side);
+                double const rScatterMat = m_Material->getProperty(Property::R, oppositeSide(side));
+                double const tScatter =
+                  wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterMat);
+                return tMaterial * (1.0 - cellT) + tScatter;
+            }
+            case CellKind::Venetian:
+                return m_Venetian->m_Energy.getCell(side).T_dir_dif(
+                  rotateIfNeeded(m_CellRotation, dir));
+            default:
+                return 0;
+        }
+    }
+
+    double CBaseCell::R_dir_dif(Side side, CBeamDirection const & dir)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::UniformDiffuse:
+                return (1.0 - T_dir_dir(side, dir)) * m_Material->getProperty(Property::R, side);
+            case CellKind::Woven:
+            {
+                double const rMaterial =
+                  (1.0 - T_dir_dir(side, dir)) * m_Material->getProperty(Property::R, side);
+                double const rScatterMat = m_Material->getProperty(Property::R, oppositeSide(side));
+                double const tScatter =
+                  wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterMat);
+                return rMaterial - tScatter;
+            }
+            case CellKind::Venetian:
+                return m_Venetian->m_Energy.getCell(side).R_dir_dif(
+                  rotateIfNeeded(m_CellRotation, dir));
+            default:
+                return 0;
+        }
+    }
+
+    double CBaseCell::T_dir_dif_at_wavelength(Side side,
+                                              CBeamDirection const & dir,
+                                              std::size_t wavelengthIndex)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::UniformDiffuse:
+            {
+                double const materialCover = 1.0 - T_dir_dir(side, dir);
+                return materialCover
+                       * m_Material->getBandProperty(Property::T, side, wavelengthIndex);
+            }
+            case CellKind::Woven:
+            {
+                double const tMaterial =
+                  (1.0 - T_dir_dir(side, dir))
+                  * m_Material->getBandProperty(Property::T, side, wavelengthIndex);
+                double const rScatterAtWavelength =
+                  m_Material->getBandProperties(Property::R, oppositeSide(side))[wavelengthIndex];
+                double const tScatter =
+                  wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterAtWavelength);
+                return tMaterial + tScatter;
+            }
+            case CellKind::Venetian:
+                // Per-wavelength Venetian: use the band-indexed CVenetianEnergy whose
+                // LayerProperties reflect the material's properties at this wavelength.
+                return m_Venetian->m_EnergiesBand[wavelengthIndex].getCell(side).T_dir_dif(
+                  rotateIfNeeded(m_CellRotation, dir));
+            default:
+                return T_dir_dif(side, dir);
+        }
+    }
+
+    double CBaseCell::R_dir_dif_at_wavelength(Side side,
+                                              CBeamDirection const & dir,
+                                              std::size_t wavelengthIndex)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::UniformDiffuse:
+            {
+                double const materialCover = 1.0 - T_dir_dir(side, dir);
+                return materialCover
+                       * m_Material->getBandProperty(Property::R, side, wavelengthIndex);
+            }
+            case CellKind::Woven:
+            {
+                double const rMaterial =
+                  (1.0 - T_dir_dir(side, dir))
+                  * m_Material->getBandProperty(Property::R, side, wavelengthIndex);
+                double const rScatterAtWavelength =
+                  m_Material->getBandProperties(Property::R, oppositeSide(side))[wavelengthIndex];
+                double const tScatter =
+                  wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterAtWavelength);
+                return rMaterial - tScatter;
+            }
+            case CellKind::Venetian:
+                return m_Venetian->m_EnergiesBand[wavelengthIndex].getCell(side).R_dir_dif(
+                  rotateIfNeeded(m_CellRotation, dir));
+            default:
+                return R_dir_dif(side, dir);
+        }
+    }
+
+    std::vector<double> CBaseCell::T_dir_dif_band(Side side, CBeamDirection const & dir)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::UniformDiffuse:
+            {
+                double const materialCover = 1.0 - T_dir_dir(side, dir);
+                auto materialBand = m_Material->getBandProperties(Property::T, side);
+                for(auto & value : materialBand)
+                {
+                    value *= materialCover;
+                }
+                return materialBand;
+            }
+            case CellKind::Woven:
+            {
+                // Element-wise sum of the Uniform single-direction band and the per-wavelength
+                // Tscatter term.
+                double const materialCover = 1.0 - T_dir_dir(side, dir);
+                auto materialBand = m_Material->getBandProperties(Property::T, side);
+                for(auto & value : materialBand)
+                {
+                    value *= materialCover;
+                }
+                auto rScatterBand = m_Material->getBandProperties(Property::R, oppositeSide(side));
+                std::size_t const n = std::min(materialBand.size(), rScatterBand.size());
+                for(std::size_t idx = 0; idx < n; ++idx)
+                {
+                    materialBand[idx] +=
+                      wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterBand[idx]);
+                }
+                return materialBand;
+            }
+            default:
+            {
+                std::size_t const bandSize = m_Material->getBandSize();
+                std::vector<double> out;
+                out.reserve(bandSize);
+                for(std::size_t idx = 0; idx < bandSize; ++idx)
+                {
+                    out.push_back(T_dir_dif_at_wavelength(side, dir, idx));
+                }
+                return out;
+            }
+        }
+    }
+
+    std::vector<double> CBaseCell::R_dir_dif_band(Side side, CBeamDirection const & dir)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::UniformDiffuse:
+            {
+                double const materialCover = 1.0 - T_dir_dir(side, dir);
+                auto materialBand = m_Material->getBandProperties(Property::R, side);
+                for(auto & value : materialBand)
+                {
+                    value *= materialCover;
+                }
+                return materialBand;
+            }
+            default:
+            {
+                std::size_t const bandSize = m_Material->getBandSize();
+                std::vector<double> out;
+                out.reserve(bandSize);
+                for(std::size_t idx = 0; idx < bandSize; ++idx)
+                {
+                    out.push_back(R_dir_dif_at_wavelength(side, dir, idx));
+                }
+                return out;
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //  two-direction diffuse  (Directional / Homogeneous / MaterialDirDif / Venetian-directional)
+    //////////////////////////////////////////////////////////////////////////////////
+
+    double CBaseCell::T_dir_dif(Side side,
+                                CBeamDirection const & incoming,
+                                CBeamDirection const & outgoing)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::DirectionalDiffuse:
+            {
+                double const cellT = T_dir_dir(side, incoming);
+                double const materialT =
+                  m_Material->getProperty(Property::T, side, incoming, outgoing);
+                return cellT + (1.0 - cellT) * materialT;
+            }
+            case CellKind::HomogeneousDiffuse:
+            {
+                double const cellT = T_dir_dir(side, CBeamDirection());
+                double const materialT = m_Material->getProperty(
+                  Property::T, side, CBeamDirection(), CBeamDirection(),
+                  OutgoingAggregation::Hemispherical);
+                return cellT + (1.0 - cellT) * materialT;
+            }
+            case CellKind::MaterialDirectionalDiffuse:
+                if(!m_Material || incoming == outgoing)
+                {
+                    return 0;
+                }
+                return m_Material->getProperty(Property::T, side, incoming, outgoing);
+            case CellKind::Venetian:
+                return m_Venetian->m_Energy.getCell(side).T_dir_dir(
+                  rotateIfNeeded(m_CellRotation, incoming),
+                  rotateIfNeeded(m_CellRotation, outgoing));
+            default:
+                return 0;
+        }
+    }
+
+    double CBaseCell::R_dir_dif(Side side,
+                                CBeamDirection const & incoming,
+                                CBeamDirection const & outgoing)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::DirectionalDiffuse:
+            {
+                double const cellT = T_dir_dir(side, incoming);
+                double const cellR = R_dir_dir(side, incoming);
+                double const materialR =
+                  m_Material->getProperty(Property::R, side, incoming, outgoing);
+                return cellR + (1.0 - cellT) * materialR;
+            }
+            case CellKind::HomogeneousDiffuse:
+            {
+                double const cellT = T_dir_dir(side, CBeamDirection());
+                double const cellR = R_dir_dir(side, CBeamDirection());
+                double const materialR = m_Material->getProperty(
+                  Property::R, side, CBeamDirection(), CBeamDirection(),
+                  OutgoingAggregation::Hemispherical);
+                return cellR + (1.0 - cellT) * materialR;
+            }
+            case CellKind::MaterialDirectionalDiffuse:
+                if(!m_Material || incoming == outgoing)
+                {
+                    return 0;
+                }
+                return m_Material->getProperty(Property::R, side, incoming, outgoing);
+            case CellKind::Venetian:
+                return m_Venetian->m_Energy.getCell(side).R_dir_dir(
+                  rotateIfNeeded(m_CellRotation, incoming),
+                  rotateIfNeeded(m_CellRotation, outgoing));
+            default:
+                return 0;
+        }
+    }
+
+    double CBaseCell::T_dir_dif_by_wavelength(Side side,
+                                              CBeamDirection const & incoming,
+                                              CBeamDirection const & outgoing,
+                                              std::size_t wavelengthIndex)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::DirectionalDiffuse:
+            {
+                double const cellT = T_dir_dir(side, incoming);
+                double const materialT = m_Material->getBandProperty(
+                  Property::T, side, wavelengthIndex, incoming, outgoing);
+                return cellT + (1.0 - cellT) * materialT;
+            }
+            case CellKind::HomogeneousDiffuse:
+            {
+                double const cellT = T_dir_dir(side, CBeamDirection());
+                double const materialT = m_Material->getBandProperty(
+                  Property::T, side, wavelengthIndex, CBeamDirection(), CBeamDirection(),
+                  OutgoingAggregation::Hemispherical);
+                return cellT + (1.0 - cellT) * materialT;
+            }
+            case CellKind::MaterialDirectionalDiffuse:
+                if(!m_Material || incoming == outgoing)
+                {
+                    return 0;
+                }
+                return m_Material
+                  ->getBandProperties(Property::T, side, incoming, outgoing)[wavelengthIndex];
+            case CellKind::Venetian:
+                return m_Venetian->m_EnergiesBand[wavelengthIndex].getCell(side).T_dir_dir(
+                  rotateIfNeeded(m_CellRotation, incoming),
+                  rotateIfNeeded(m_CellRotation, outgoing));
+            default:
+                return 0;
+        }
+    }
+
+    double CBaseCell::R_dir_dif_by_wavelength(Side side,
+                                              CBeamDirection const & incoming,
+                                              CBeamDirection const & outgoing,
+                                              std::size_t wavelengthIndex)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::DirectionalDiffuse:
+            {
+                double const cellT = T_dir_dir(side, incoming);
+                double const cellR = R_dir_dir(side, incoming);
+                double const materialR = m_Material->getBandProperty(
+                  Property::R, side, wavelengthIndex, incoming, outgoing);
+                return cellR + (1.0 - cellT) * materialR;
+            }
+            case CellKind::HomogeneousDiffuse:
+            {
+                double const cellT = T_dir_dir(side, CBeamDirection());
+                double const cellR = R_dir_dir(side, CBeamDirection());
+                double const materialR = m_Material->getBandProperty(
+                  Property::R, side, wavelengthIndex, CBeamDirection(), CBeamDirection(),
+                  OutgoingAggregation::Hemispherical);
+                return cellR + (1.0 - cellT) * materialR;
+            }
+            case CellKind::MaterialDirectionalDiffuse:
+                if(!m_Material || incoming == outgoing)
+                {
+                    return 0;
+                }
+                return m_Material
+                  ->getBandProperties(Property::R, side, incoming, outgoing)[wavelengthIndex];
+            case CellKind::Venetian:
+                return m_Venetian->m_EnergiesBand[wavelengthIndex].getCell(side).R_dir_dir(
+                  rotateIfNeeded(m_CellRotation, incoming),
+                  rotateIfNeeded(m_CellRotation, outgoing));
+            default:
+                return 0;
+        }
+    }
+
+    std::vector<double> CBaseCell::T_dir_dif_band(Side side,
+                                                  CBeamDirection const & incoming,
+                                                  CBeamDirection const & outgoing)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::DirectionalDiffuse:
+            {
+                double const cellT = T_dir_dir(side, incoming);
+                auto materialBand =
+                  m_Material->getBandProperties(Property::T, side, incoming, outgoing);
+                for(auto & value : materialBand)
+                {
+                    value = cellT + (1.0 - cellT) * value;
+                }
+                return materialBand;
+            }
+            default:
+            {
+                std::size_t const bandSize = m_Material->getBandSize();
+                std::vector<double> out;
+                out.reserve(bandSize);
+                for(std::size_t idx = 0; idx < bandSize; ++idx)
+                {
+                    out.push_back(T_dir_dif_by_wavelength(side, incoming, outgoing, idx));
+                }
+                return out;
+            }
+        }
+    }
+
+    std::vector<double> CBaseCell::R_dir_dif_band(Side side,
+                                                  CBeamDirection const & incoming,
+                                                  CBeamDirection const & outgoing)
+    {
+        switch(m_Kind)
+        {
+            case CellKind::DirectionalDiffuse:
+            {
+                double const cellT = T_dir_dir(side, incoming);
+                double const cellR = R_dir_dir(side, incoming);
+                auto materialBand =
+                  m_Material->getBandProperties(Property::R, side, incoming, outgoing);
+                for(auto & value : materialBand)
+                {
+                    value = cellR + (1.0 - cellT) * value;
+                }
+                return materialBand;
+            }
+            default:
+            {
+                std::size_t const bandSize = m_Material->getBandSize();
+                std::vector<double> out;
+                out.reserve(bandSize);
+                for(std::size_t idx = 0; idx < bandSize; ++idx)
+                {
+                    out.push_back(R_dir_dif_by_wavelength(side, incoming, outgoing, idx));
+                }
+                return out;
+            }
+        }
+    }
+
+    double CBaseCell::T_dif_dif(Side side)
+    {
+        assert(m_Kind == CellKind::Venetian && m_Venetian.has_value()
+               && "T_dif_dif is only meaningful for Venetian cells.");
+        return m_Venetian->m_Energy.getCell(side).T_dif_dif();
+    }
+
+    double CBaseCell::R_dif_dif(Side side)
+    {
+        assert(m_Kind == CellKind::Venetian && m_Venetian.has_value()
+               && "R_dif_dif is only meaningful for Venetian cells.");
+        return m_Venetian->m_Energy.getCell(side).R_dif_dif();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //  bookkeeping
+    //////////////////////////////////////////////////////////////////////////////////
 
     std::vector<double> CBaseCell::getBandWavelengths() const
     {
@@ -87,18 +709,12 @@ namespace SingleLayerOptics
         return m_Material->getBandWavelengths();
     }
 
-    void CBaseCell::setBandWavelengths(const std::vector<double> & wavelengths)
+    int CBaseCell::getBandIndex(double wavelength) const
     {
-        assert(m_Material != nullptr);
-        m_Material->setBandWavelengths(wavelengths);
+        return m_Material->getBandIndex(wavelength);
     }
 
-    int CBaseCell::getBandIndex(const double t_Wavelength) const
-    {
-        return m_Material->getBandIndex(t_Wavelength);
-    }
-
-    size_t CBaseCell::getBandSize() const
+    std::size_t CBaseCell::getBandSize() const
     {
         return m_Material->getBandSize();
     }
@@ -121,5 +737,53 @@ namespace SingleLayerOptics
     std::shared_ptr<CMaterial> CBaseCell::getMaterial()
     {
         return m_Material;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //  factories
+    //////////////////////////////////////////////////////////////////////////////////
+
+    CBaseCell makeSpecularCell(std::shared_ptr<CMaterial> material)
+    {
+        return CBaseCell(std::move(material), CSpecularCellDescription{}, CellKind::Specular);
+    }
+
+    CBaseCell makeUniformDiffuseCell(std::shared_ptr<CMaterial> material,
+                                     CellDescription description)
+    {
+        return CBaseCell(std::move(material), std::move(description), CellKind::UniformDiffuse);
+    }
+
+    CBaseCell makeDirectionalDiffuseCell(std::shared_ptr<CMaterial> material,
+                                         CellDescription description)
+    {
+        return CBaseCell(std::move(material), std::move(description), CellKind::DirectionalDiffuse);
+    }
+
+    CBaseCell makeHomogeneousDiffuseCell(std::shared_ptr<CMaterial> material,
+                                         CellDescription description)
+    {
+        return CBaseCell(std::move(material), std::move(description), CellKind::HomogeneousDiffuse);
+    }
+
+    CBaseCell makeMaterialDirectionalDiffuseCell(std::shared_ptr<CMaterial> material,
+                                                 CellDescription description)
+    {
+        return CBaseCell(
+          std::move(material), std::move(description), CellKind::MaterialDirectionalDiffuse);
+    }
+
+    CBaseCell makeWovenCell(std::shared_ptr<CMaterial> material,
+                            CWovenCellDescription description)
+    {
+        return CBaseCell(std::move(material), std::move(description), CellKind::Woven);
+    }
+
+    CBaseCell makeVenetianCell(std::shared_ptr<CMaterial> material,
+                               CVenetianCellDescription description,
+                               double rotation)
+    {
+        return CBaseCell(
+          std::move(material), std::move(description), CellKind::Venetian, rotation);
     }
 }   // namespace SingleLayerOptics

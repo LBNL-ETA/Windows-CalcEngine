@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestPerfectDiffuseCell2 : public testing::Test
 {
 private:
-    std::shared_ptr<CUniformDiffuseCell> m_Cell;
+    std::shared_ptr<CBaseCell> m_Cell;
 
 protected:
     virtual void SetUp()
@@ -23,11 +23,11 @@ protected:
         const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
 
         // make cell geometry
-        m_Cell = std::make_shared<CUniformDiffuseCell>(aMaterial, CFlatCellDescription{});
+        m_Cell = std::make_shared<CBaseCell>(makeUniformDiffuseCell(aMaterial, CFlatCellDescription{}));
     }
 
 public:
-    std::shared_ptr<CUniformDiffuseCell> GetCell()
+    std::shared_ptr<CBaseCell> GetCell()
     {
         return m_Cell;
     };
@@ -37,7 +37,7 @@ TEST_F(TestPerfectDiffuseCell2, TestPerfectDiffuse1)
 {
     SCOPED_TRACE("Begin Test: Perfect diffusing cell (Theta = 0, Phi = 0).");
 
-    std::shared_ptr<CUniformDiffuseCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
 
     double Theta = 0;   // deg
     double Phi = 0;     // deg
@@ -62,7 +62,7 @@ TEST_F(TestPerfectDiffuseCell2, TestPerfectDiffuse2)
 {
     SCOPED_TRACE("Begin Test: Perfect diffusing cell (Theta = 45, Phi = 0).");
 
-    std::shared_ptr<CUniformDiffuseCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
 
     double Theta = 45;   // deg
     double Phi = 0;      // deg
@@ -87,7 +87,7 @@ TEST_F(TestPerfectDiffuseCell2, TestPerfectDiffuse3)
 {
     SCOPED_TRACE("Begin Test: Perfect diffusing cell (Theta = 78, Phi = 45).");
 
-    std::shared_ptr<CUniformDiffuseCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
 
     double Theta = 78;   // deg
     double Phi = 45;     // deg
@@ -112,7 +112,7 @@ TEST_F(TestPerfectDiffuseCell2, TestPerfectDiffuse4)
 {
     SCOPED_TRACE("Begin Test: Perfect diffusing cell (Theta = 54, Phi = 270).");
 
-    std::shared_ptr<CUniformDiffuseCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
 
     double Theta = 54;   // deg
     double Phi = 270;    // deg

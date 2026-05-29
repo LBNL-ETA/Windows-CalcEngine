@@ -7,19 +7,18 @@
 
 namespace SingleLayerOptics
 {
-    class CSpecularCell;
+    class CBaseCell;
 
     // BSDF creation for specular layers.
     class CSpecularBSDFLayer : public CBSDFLayer
     {
     public:
-        CSpecularBSDFLayer(const std::shared_ptr<CSpecularCell> & t_Cell,
+        CSpecularBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                            const BSDFHemisphere & t_Hemisphere);
 
         bool isEmissivityPolynomialApplicable() const override;
 
     protected:
-        [[nodiscard]] std::shared_ptr<CSpecularCell> cellAsSpecular() const;
         void calcDiffuseDistribution(FenestrationCommon::Side aSide,
                                      const CBeamDirection & t_Direction,
                                      size_t t_DirectionIndex) override;

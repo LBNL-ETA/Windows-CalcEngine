@@ -1,15 +1,16 @@
+#include <utility>
+
 #include "SpecularLayer.hpp"
 
 namespace SingleLayerOptics
 {
-    SpecularLayer::SpecularLayer(const CSpecularCell & m_Cell) : m_Cell(m_Cell)
+    SpecularLayer::SpecularLayer(CBaseCell cell) : m_Cell(std::move(cell))
     {}
 
     std::shared_ptr<SpecularLayer>
       SpecularLayer::createLayer(const std::shared_ptr<CMaterial> & t_Material)
     {
-        auto aCell = CSpecularCell(t_Material);
-        return std::make_shared<SpecularLayer>(aCell);
+        return std::make_shared<SpecularLayer>(makeSpecularCell(t_Material));
     }
 
     std::vector<double> SpecularLayer::R_dir_dir_band(FenestrationCommon::Side t_Side,

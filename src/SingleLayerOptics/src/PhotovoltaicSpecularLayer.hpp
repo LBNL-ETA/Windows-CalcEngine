@@ -22,8 +22,7 @@ namespace SingleLayerOptics
 
         [[nodiscard]] FenestrationCommon::CSeries jscPrime(FenestrationCommon::Side t_Side) const;
 
-        explicit PhotovoltaicSpecularLayer(const CSpecularCell & cell,
-                                           const std::shared_ptr<CMaterial> & material);
+        PhotovoltaicSpecularLayer(CBaseCell cell, const std::shared_ptr<CMaterial> & material);
 
         void assignPowerTable(PVPowerPropertiesTable powerTable);
 

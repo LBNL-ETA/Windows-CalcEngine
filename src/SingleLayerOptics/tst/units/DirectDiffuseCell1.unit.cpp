@@ -10,7 +10,7 @@ using namespace FenestrationCommon;
 
 class TestDirectDiffuseCell1 : public testing::Test
 {
-    std::shared_ptr<CDirectionalDiffuseCell> m_Cell;
+    std::shared_ptr<CBaseCell> m_Cell;
 
 protected:
     void SetUp() override
@@ -23,11 +23,11 @@ protected:
         const auto aMaterial = Material::singleBandMaterial(Tfmat, Tbmat, Rfmat, Rbmat);
 
         m_Cell =
-          std::make_shared<CDirectionalDiffuseCell>(aMaterial, CSpecularCellDescription{});
+          std::make_shared<CBaseCell>(makeDirectionalDiffuseCell(aMaterial, CSpecularCellDescription{}));
     }
 
 public:
-    std::shared_ptr<CDirectionalDiffuseCell> GetCell()
+    std::shared_ptr<CBaseCell> GetCell()
     {
         return m_Cell;
     }

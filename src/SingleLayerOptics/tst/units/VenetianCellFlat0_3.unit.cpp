@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestVenetianCellFlat0_3 : public testing::Test
 {
 private:
-    CVenetianCell m_Cell{createMaterial(), *createCellDescription()};
+    CBaseCell m_Cell = makeVenetianCell(createMaterial(), *createCellDescription());
 
     static std::shared_ptr<CMaterial> createMaterial()
     {
@@ -36,7 +36,7 @@ protected:
     }
 
 public:
-    CVenetianCell & GetCell()
+    CBaseCell & GetCell()
     {
         return m_Cell;
     };

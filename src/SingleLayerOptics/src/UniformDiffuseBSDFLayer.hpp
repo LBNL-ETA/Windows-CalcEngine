@@ -6,17 +6,16 @@
 
 namespace SingleLayerOptics
 {
-    class CUniformDiffuseCell;
+    class CBaseCell;
 
     // All outgoing directions are uniformly distributed in all directions
     class CUniformDiffuseBSDFLayer : public CBSDFLayer
     {
     public:
-        CUniformDiffuseBSDFLayer(const std::shared_ptr<CUniformDiffuseCell> & t_Cell,
+        CUniformDiffuseBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                                  const BSDFHemisphere & t_Hemisphere);
 
     protected:
-        std::shared_ptr<CUniformDiffuseCell> cellAsUniformDiffuse() const;
         void calcDiffuseDistribution(FenestrationCommon::Side aSide,
                                      const CBeamDirection & t_Direction,
                                      size_t t_DirectionIndex) override;
