@@ -9,7 +9,7 @@ namespace SingleLayerOptics
 
     CMaterialDirectionalDiffuseCell::CMaterialDirectionalDiffuseCell(
       const std::shared_ptr<CMaterial> & t_MaterialProperties,
-      const std::shared_ptr<ICellDescription> & t_Cell) :
+      const CellDescription & t_Cell) :
         CBaseCell(t_MaterialProperties, t_Cell, 0),
         CDirectionalDiffuseCell(t_MaterialProperties, t_Cell, 0)
     {}

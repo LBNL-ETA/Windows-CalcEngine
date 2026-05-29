@@ -14,23 +14,17 @@ namespace SingleLayerOptics
     ////////////////////////////////////////////////////////////////////////////////////////////
 
     CVenetianBase::CVenetianBase(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                                 const std::shared_ptr<ICellDescription> & t_Cell,
+                                 const CellDescription & t_Cell,
                                  double rotation) :
         CUniformDiffuseCell(t_MaterialProperties, t_Cell, rotation),
         CDirectionalDiffuseCell(t_MaterialProperties, t_Cell, rotation)
     {}
 
-    std::shared_ptr<CVenetianCellDescription> CVenetianBase::getCellAsVenetian() const
+    const CVenetianCellDescription & CVenetianBase::getCellAsVenetian() const
     {
-        if(std::dynamic_pointer_cast<CVenetianCellDescription>(m_CellDescription) == nullptr)
-        {
-            assert("Incorrectly assigned cell description.");
-        }
-
-        std::shared_ptr<CVenetianCellDescription> aCell =
-          std::dynamic_pointer_cast<CVenetianCellDescription>(m_CellDescription);
-
-        return aCell;
+        assert(std::holds_alternative<CVenetianCellDescription>(m_CellDescription)
+               && "Incorrectly assigned cell description.");
+        return std::get<CVenetianCellDescription>(m_CellDescription);
     }
 
 
@@ -38,13 +32,11 @@ namespace SingleLayerOptics
     //  CVenetianCell
     ////////////////////////////////////////////////////////////////////////////////////////////
     CVenetianCell::CVenetianCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                                 const std::shared_ptr<ICellDescription> & t_Cell,
+                                 const CellDescription & t_Cell,
                                  const double rotation) :
         CBaseCell(t_MaterialProperties, t_Cell, rotation),
-        CVenetianBase(t_MaterialProperties, t_Cell, rotation),
-        m_BackwardFlowCellDescription(getCellAsVenetian()->getBackwardFlowCell())
+        CVenetianBase(t_MaterialProperties, t_Cell, rotation)
     {
-        assert(t_Cell != nullptr);
         assert(t_MaterialProperties != nullptr);
 
         generateVenetianEnergy();
@@ -52,9 +44,13 @@ namespace SingleLayerOptics
 
     void CVenetianCell::generateVenetianEnergy()
     {
-        const auto & venetianForwardGeometry{getCellAsVenetian()};
-        m_Energy =
-          CVenetianEnergy(*m_Material, venetianForwardGeometry, m_BackwardFlowCellDescription);
+        // Build the forward and backward geometry bundles once. The enclosure view factors and
+        // slat mesh depend only on geometry, so every band-wavelength CVenetianCellEnergy can
+        // share them — only the LayerProperties differ across the band.
+        auto forwardGeometry = makeVenetianGeometry(getCellAsVenetian());
+        auto backwardGeometry = makeVenetianGeometry(getCellAsVenetian().getBackwardFlowCell());
+
+        m_Energy = CVenetianEnergy(*m_Material, forwardGeometry, backwardGeometry);
         // Create energy states for entire material band
         m_EnergiesBand.clear();
         std::vector<RMaterialProperties> aMat = m_Material->getBandProperties();
@@ -69,9 +65,8 @@ namespace SingleLayerOptics
                 double Rf = aMat[i].getProperty(Property::R, Side::Front);
                 double Rb = aMat[i].getProperty(Property::R, Side::Back);
 
-                m_EnergiesBand.emplace_back(LayerProperties{Tf, Rf, Tb, Rb},
-                                            venetianForwardGeometry,
-                                            m_BackwardFlowCellDescription);
+                m_EnergiesBand.emplace_back(
+                  LayerProperties{Tf, Rf, Tb, Rb}, forwardGeometry, backwardGeometry);
             }
         }
     }

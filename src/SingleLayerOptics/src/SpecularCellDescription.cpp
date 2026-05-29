@@ -5,9 +5,6 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CSpecularCellDescription::CSpecularCellDescription()
-    {}
-
     double CSpecularCellDescription::Beam_dir_dir(const Side, const CBeamDirection &)
     {
         return 0;

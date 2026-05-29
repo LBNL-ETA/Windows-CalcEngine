@@ -13,7 +13,6 @@ namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
-    class ICellDescription;
     class CBeamDirection;
     class CMaterial;
 
@@ -21,7 +20,7 @@ namespace SingleLayerOptics
     {
     public:
         CMaterialDirectionalDiffuseCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                                        const std::shared_ptr<ICellDescription> & t_Cell);
+                                        const CellDescription & t_Cell);
 
         double T_dir_dir(FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_Direction) override;

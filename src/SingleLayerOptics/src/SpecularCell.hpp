@@ -12,8 +12,6 @@ namespace FenestrationCommon
 
 namespace SingleLayerOptics
 {
-    class CSpecularCellDescription;
-    class ICellDescription;
     class CBeamDirection;
 
     // Calculates spectral properties of specular layer over the given wavelength range and it also
@@ -22,7 +20,7 @@ namespace SingleLayerOptics
     {
     public:
         CSpecularCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                      const std::shared_ptr<ICellDescription> & t_Cell);
+                      const CellDescription & t_Cell);
 
         explicit CSpecularCell(const std::shared_ptr<CMaterial> & t_MaterialProperties);
 
@@ -49,9 +47,6 @@ namespace SingleLayerOptics
         double R_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
                                        const CBeamDirection & t_Direction,
                                        size_t wavelengthIndex) override;
-
-    protected:
-        [[nodiscard]] std::shared_ptr<CSpecularCellDescription> getCellAsSpecular() const;
     };
 
 }   // namespace SingleLayerOptics

@@ -25,10 +25,7 @@ protected:
         // make cell geometry
         const auto diameter = 6.35;   // mm
         const auto spacing = 19.05;   // mm
-        std::shared_ptr<ICellDescription> aCell =
-          std::make_shared<CWovenCellDescription>(diameter, spacing);
-
-        m_Cell = std::make_shared<CWovenCell>(aMaterial, aCell);
+        m_Cell = std::make_shared<CWovenCell>(aMaterial, CWovenCellDescription{diameter, spacing});
     }
 
 public:

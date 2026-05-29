@@ -64,7 +64,7 @@ namespace SingleLayerOptics
     //  CWovenCell
     ////////////////////////////////////////////////////////////////////////////////////////////
     CWovenCell::CWovenCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                           const std::shared_ptr<ICellDescription> & t_Cell) :
+                           const CellDescription & t_Cell) :
         CBaseCell(t_MaterialProperties, t_Cell), CUniformDiffuseCell(t_MaterialProperties, t_Cell)
     {}
 
@@ -137,17 +137,11 @@ namespace SingleLayerOptics
         return Rmaterial - Tsct;
     }
 
-    std::shared_ptr<CWovenCellDescription> CWovenCell::getCellAsWoven() const
+    const CWovenCellDescription & CWovenCell::getCellAsWoven() const
     {
-        if(std::dynamic_pointer_cast<CWovenCellDescription>(m_CellDescription) == nullptr)
-        {
-            assert("Incorrectly assigned cell description.");
-        }
-
-        std::shared_ptr<CWovenCellDescription> aCell =
-          std::dynamic_pointer_cast<CWovenCellDescription>(m_CellDescription);
-
-        return aCell;
+        assert(std::holds_alternative<CWovenCellDescription>(m_CellDescription)
+               && "Incorrectly assigned cell description.");
+        return std::get<CWovenCellDescription>(m_CellDescription);
     }
 
     double CWovenCell::Tscatter_single(const Side t_Side, const CBeamDirection & t_Direction) const
@@ -155,7 +149,7 @@ namespace SingleLayerOptics
         // Get matterial property from the opposite side of woven thread
         Side aScatterSide = oppositeSide(t_Side);
         double RScatter_mat = m_Material->getProperty(Property::R, aScatterSide);
-        return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, RScatter_mat);
+        return Helper::Tscatter(getCellAsWoven().gamma(), t_Direction, RScatter_mat);
     }
 
     std::vector<double> CWovenCell::T_scatter_band(const Side t_Side,
@@ -164,7 +158,7 @@ namespace SingleLayerOptics
         auto RScatterMat{m_Material->getBandProperties(Property::R, oppositeSide(t_Side))};
         std::vector<double> result(RScatterMat.size());
         std::ranges::transform(RScatterMat, result.begin(), [&](double r) {
-            return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, r);
+            return Helper::Tscatter(getCellAsWoven().gamma(), t_Direction, r);
         });
         return result;
     }
@@ -174,6 +168,6 @@ namespace SingleLayerOptics
                                               size_t i) const
     {
         const auto & Rband = m_Material->getBandProperties(Property::R, oppositeSide(t_Side));
-        return Helper::Tscatter(getCellAsWoven()->gamma(), t_Direction, Rband[i]);
+        return Helper::Tscatter(getCellAsWoven().gamma(), t_Direction, Rband[i]);
     }
 }   // namespace SingleLayerOptics

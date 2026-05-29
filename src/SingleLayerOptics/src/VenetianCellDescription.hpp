@@ -6,9 +6,8 @@
 #include <WCECommon.hpp>
 #include <WCEViewer.hpp>
 
-#include "CellDescription.hpp"
 #include "VenetianSlat.hpp"
-#include "VenetianSegments.hpp"
+#include "VenetianSegmentsTypes.hpp"
 #include "BSDFDirections.hpp"
 
 namespace SingleLayerOptics
@@ -19,16 +18,14 @@ namespace SingleLayerOptics
         Bottom = 1
     };
 
-    class CVenetianCellDescription : public ICellDescription
+    class CVenetianCellDescription
     {
     public:
-        virtual ~CVenetianCellDescription() = default;
-
         CVenetianCellDescription(const FenestrationCommon::Venetian::Geometry & t_Geometry,
                                  size_t t_NumOfSlatSegments);
 
         // Makes exact copy of cell description
-        [[nodiscard]] std::shared_ptr<CVenetianCellDescription> getBackwardFlowCell() const;
+        [[nodiscard]] CVenetianCellDescription getBackwardFlowCell() const;
         [[nodiscard]] size_t numberOfSegments() const;
         [[nodiscard]] double segmentLength(size_t Index) const;
         [[nodiscard]] double segmentAngle(size_t Index) const;
@@ -66,8 +63,7 @@ namespace SingleLayerOptics
                                                                 const CBeamDirection & t_Direction);
 
         // Direct to direct component of the ray
-        double Beam_dir_dir(FenestrationCommon::Side t_Side,
-                            const CBeamDirection & t_Direction) override;
+        double Beam_dir_dir(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
 
         [[nodiscard]] FenestrationCommon::Venetian::Geometry getVenetianGeometry() const;
         [[nodiscard]] size_t numOfSegments() const;

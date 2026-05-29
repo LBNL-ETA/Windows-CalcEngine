@@ -7,14 +7,13 @@
 namespace SingleLayerOptics
 {
     class CWovenCellDescription;
-    class ICellDescription;
     class CBeamDirection;
 
     class CWovenCell : public CUniformDiffuseCell
     {
     public:
         CWovenCell(const std::shared_ptr<CMaterial> & t_MaterialProperties,
-                   const std::shared_ptr<ICellDescription> & t_Cell);
+                   const CellDescription & t_Cell);
 
         double T_dir_dif(FenestrationCommon::Side t_Side,
                          const CBeamDirection & t_Direction) override;
@@ -34,7 +33,7 @@ namespace SingleLayerOptics
                                        size_t wavelengthIndex) override;
 
     private:
-        std::shared_ptr<CWovenCellDescription> getCellAsWoven() const;
+        const CWovenCellDescription & getCellAsWoven() const;
 
         double Tscatter_single(FenestrationCommon::Side t_Side,
                                const CBeamDirection & t_Direction) const;

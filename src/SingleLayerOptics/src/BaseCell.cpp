@@ -11,11 +11,11 @@ using FenestrationCommon::CSeries;
 
 namespace SingleLayerOptics
 {
-    CBaseCell::CBaseCell() : m_Material(nullptr), m_CellDescription(nullptr), m_CellRotation(0)
+    CBaseCell::CBaseCell() : m_Material(nullptr), m_CellRotation(0)
     {}
 
     CBaseCell::CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
-                         const std::shared_ptr<ICellDescription> & t_CellDescription,
+                         const CellDescription & t_CellDescription,
                          const double rotation) :
         m_Material(t_Material), m_CellDescription(t_CellDescription), m_CellRotation(rotation)
     {}
@@ -29,9 +29,10 @@ namespace SingleLayerOptics
     {
         if(m_CellRotation != 0)
         {
-            return m_CellDescription->Beam_dir_dir(t_Side, t_Direction.rotate(m_CellRotation));
+            return Beam_dir_dir(
+              m_CellDescription, t_Side, t_Direction.rotate(m_CellRotation));
         }
-        return m_CellDescription->Beam_dir_dir(t_Side, t_Direction);
+        return Beam_dir_dir(m_CellDescription, t_Side, t_Direction);
     }
 
     double CBaseCell::R_dir_dir(const Side, const CBeamDirection &)

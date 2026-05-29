@@ -78,20 +78,19 @@ namespace SingleLayerOptics
         return Helper::getSegmentProperty(m_Geometry, Index, &Viewer::CSegment2D::angle);
     }
 
-    std::shared_ptr<CVenetianCellDescription> CVenetianCellDescription::getBackwardFlowCell() const
+    CVenetianCellDescription CVenetianCellDescription::getBackwardFlowCell() const
     {
         auto venetianGeometry{m_VenetianGeometry};
         venetianGeometry.SlatTiltAngle = -venetianGeometry.SlatTiltAngle;
         size_t m_NumOfSlatSegments = m_Top.segments().size();
 
-        std::shared_ptr<CVenetianCellDescription> aBackwardCell =
-          std::make_shared<CVenetianCellDescription>(venetianGeometry, m_NumOfSlatSegments);
+        CVenetianCellDescription aBackwardCell{venetianGeometry, m_NumOfSlatSegments};
 
         if(!m_ProfileAngles.empty())
         {
-            aBackwardCell->preCalculateForProfileAngles(
+            aBackwardCell.preCalculateForProfileAngles(
               FenestrationCommon::Side::Front, m_ProfileAngles.at(FenestrationCommon::Side::Back));
-            aBackwardCell->preCalculateForProfileAngles(
+            aBackwardCell.preCalculateForProfileAngles(
               FenestrationCommon::Side::Back, m_ProfileAngles.at(FenestrationCommon::Side::Front));
         }
         return aBackwardCell;

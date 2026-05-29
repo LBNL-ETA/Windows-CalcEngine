@@ -15,7 +15,6 @@ namespace SingleLayerOptics
     class CLayerSingleComponent;
     class CMaterial;
     class CBSDFLayer;
-    class ICellDescription;
 
     enum class EmissivityPolynomials
     {
@@ -49,7 +48,7 @@ namespace SingleLayerOptics
                          double Rb_dif_dif);
 
         explicit CScatteringLayer(const std::shared_ptr<CMaterial> & t_Material,
-                                  std::shared_ptr<ICellDescription> t_Description = nullptr,
+                                  std::optional<CellDescription> t_Description = std::nullopt,
                                   DistributionMethod t_Method = DistributionMethod::UniformDiffuse);
 
         static CScatteringLayer createSpecularLayer(const std::shared_ptr<CMaterial> & t_Material);

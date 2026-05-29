@@ -34,7 +34,7 @@ protected:
         std::shared_ptr<CVenetianCellDescription> aCellDescription =
           std::make_shared<CVenetianCellDescription>(geometry, numOfSlatSegments);
 
-        m_Cell = std::make_shared<CVenetianCell>(aMaterial, aCellDescription);
+        m_Cell = std::make_shared<CVenetianCell>(aMaterial, *aCellDescription);
     }
 
 public:

@@ -1,5 +1,10 @@
 #pragma once
 
+#include <memory>
+
+#include "VenetianSegmentsTypes.hpp"
+#include "VenetianCellDescription.hpp"
+
 namespace Viewer
 {
     struct BeamViewFactor;
@@ -8,7 +13,6 @@ namespace Viewer
 
 namespace SingleLayerOptics
 {
-    class CVenetianCellDescription;
     class CBeamDirection;
     class CMaterial;
 
@@ -17,19 +21,6 @@ namespace SingleLayerOptics
     {
         double E_f{0.0};
         double E_b{0.0};
-    };
-
-    //! Keeps information about beam view factor and percentage view. Incoming beam value is
-    //! normalized to one.
-    //! @viewFactor Fraction of the incoming beam that slat is being hit with
-    //! @percentViewed Incoming beam will not always fully hit the slat. This is the percentage
-    //! of the slat that actually is being hit by the beam.
-    struct BeamSegmentView
-    {
-        BeamSegmentView() : viewFactor(0), percentViewed(0)
-        {}
-        double viewFactor;
-        double percentViewed;
     };
 
     struct SegmentIndexes
@@ -108,12 +99,26 @@ namespace SingleLayerOptics
                                  const FenestrationCommon::SquareMatrix & radiancesMatrix,
                                  const LayerProperties & properties);
 
+    //! Geometry-only bundle shared by every CVenetianCellEnergy built from the same cell
+    //! description. The enclosure view-factor matrix and the slat mesh depend only on the
+    //! geometry, so they are computed once here and reused across the band (where only the
+    //! per-wavelength LayerProperties differ).
+    struct VenetianGeometry
+    {
+        CVenetianCellDescription cell;
+        FenestrationCommon::SquareMatrix viewFactors;
+        SlatSegmentsMesh mesh;
+    };
+
+    [[nodiscard]] std::shared_ptr<VenetianGeometry>
+      makeVenetianGeometry(CVenetianCellDescription t_Cell);
+
     // Keeping intermediate results for backward and forward directions.
     class CVenetianCellEnergy
     {
     public:
         CVenetianCellEnergy();
-        CVenetianCellEnergy(const std::shared_ptr<CVenetianCellDescription> & t_Cell,
+        CVenetianCellEnergy(std::shared_ptr<VenetianGeometry> t_Geometry,
                             const LayerProperties & layerProperties);
 
         double T_dir_dir(const CBeamDirection & t_Direction);
@@ -150,10 +155,8 @@ namespace SingleLayerOptics
                                          const CBeamDirection & t_OutgoingDirection,
                                          const std::vector<double> & slatRadiances);
 
-        std::shared_ptr<CVenetianCellDescription> m_Cell;
+        std::shared_ptr<VenetianGeometry> m_Geometry;
         LayerProperties m_LayerProperties;
-
-        SlatSegmentsMesh m_SlatSegmentsMesh;
 
         //! This matrix is precalculated for the diffuse to diffuse part of the calculation.
         //! It is used to calculate the radiances for the slats and it is precalculated because it
@@ -172,22 +175,21 @@ namespace SingleLayerOptics
     public:
         CVenetianEnergy();
         CVenetianEnergy(const CMaterial & t_Material,
-                        const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
-                        const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
+                        std::shared_ptr<VenetianGeometry> t_ForwardFlowGeometry,
+                        std::shared_ptr<VenetianGeometry> t_BackwardFlowGeometry);
 
         CVenetianEnergy(const LayerProperties & layerProperties,
-                        const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
-                        const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
+                        std::shared_ptr<VenetianGeometry> t_ForwardFlowGeometry,
+                        std::shared_ptr<VenetianGeometry> t_BackwardFlowGeometry);
 
         [[nodiscard]] CVenetianCellEnergy & getCell(FenestrationCommon::Side t_Side);
 
     private:
         // construction of forward and backward cells from both constructors have identical part of
         // the code
-        void createForwardAndBackward(
-          const LayerProperties & layerProperties,
-          const std::shared_ptr<CVenetianCellDescription> & t_ForwardFlowGeometry,
-          const std::shared_ptr<CVenetianCellDescription> & t_BackwardFlowGeometry);
+        void createForwardAndBackward(const LayerProperties & layerProperties,
+                                      std::shared_ptr<VenetianGeometry> t_ForwardFlowGeometry,
+                                      std::shared_ptr<VenetianGeometry> t_BackwardFlowGeometry);
 
         std::map<FenestrationCommon::Side, CVenetianCellEnergy> m_CellEnergy;
     };

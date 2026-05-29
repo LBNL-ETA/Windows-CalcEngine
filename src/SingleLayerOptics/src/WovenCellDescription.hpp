@@ -1,19 +1,22 @@
 #pragma once
 
-#include "CellDescription.hpp"
+namespace FenestrationCommon
+{
+    enum class Side;
+}
 
 namespace SingleLayerOptics
 {
-    class CWovenCellDescription : public ICellDescription
+    class CBeamDirection;
+
+    class CWovenCellDescription
     {
     public:
-        virtual ~CWovenCellDescription() = default;
-        CWovenCellDescription(const double t_Diameter, const double t_Spacing);
+        CWovenCellDescription(double t_Diameter, double t_Spacing);
 
         double gamma() const;
 
-        double Beam_dir_dir(const FenestrationCommon::Side t_Side,
-                            const CBeamDirection & t_Direction) override;
+        double Beam_dir_dir(FenestrationCommon::Side t_Side, const CBeamDirection & t_Direction);
 
         [[nodiscard]] double diameter() const;
         [[nodiscard]] double spacing() const;
