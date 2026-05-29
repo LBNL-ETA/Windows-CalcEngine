@@ -9,10 +9,8 @@
 #include "BSDFDirections.hpp"
 #include "BSDFIntegrator.hpp"
 #include "BeamDirection.hpp"
-#include "DirectionalDiffuseBSDFLayer.hpp"
 #include "WCESpectralAveraging.hpp"
 #include "WCECommon.hpp"
-#include "SpecularBSDFLayer.hpp"
 
 using namespace SingleLayerOptics;
 using namespace FenestrationCommon;

@@ -1,27 +1,43 @@
 #include <stdexcept>
 #include <utility>
 
+#include <WCECommon.hpp>
+
 #include "BSDFLayerMaker.hpp"
 #include "BaseCell.hpp"
-#include "UniformDiffuseBSDFLayer.hpp"
-#include "DirectionalDiffuseBSDFLayer.hpp"
+#include "BSDFLayer.hpp"
 #include "CellDescription.hpp"
 #include "SpecularCellDescription.hpp"
-#include "SpecularBSDFLayer.hpp"
 #include "VenetianCellDescription.hpp"
 #include "PerforatedCellDescription.hpp"
 #include "WovenCellDescription.hpp"
 #include "FlatCellDescription.hpp"
-#include "PhotovoltaicSpecularBSDFLayer.hpp"
 
 namespace SingleLayerOptics
 {
+    using ConstantsData::WCE_PI;
+
+    namespace
+    {
+        //! Lambertian row-constant weighting: 1 / (pi - lambda), evaluated per incoming patch.
+        CBSDFLayer::WeightFn lambertianWeight()
+        {
+            return [](const double lam) { return 1.0 / (WCE_PI - lam); };
+        }
+
+        //! Matrix-style density conversion: 1 / lambda, evaluated per outgoing patch.
+        CBSDFLayer::WeightFn matrixWeight()
+        {
+            return [](const double lam) { return 1.0 / lam; };
+        }
+    }   // namespace
+
     std::shared_ptr<CBSDFLayer>
       CBSDFLayerMaker::getSpecularLayer(const std::shared_ptr<CMaterial> & t_Material,
                                         const BSDFHemisphere & t_BSDF)
     {
         auto aCell = std::make_shared<CBaseCell>(makeSpecularCell(t_Material));
-        return std::make_shared<CSpecularBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(aCell, t_BSDF, BSDFLayerKind::Specular, true);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -30,7 +46,8 @@ namespace SingleLayerOptics
     {
         auto aCell = std::make_shared<CBaseCell>(
           makeMaterialDirectionalDiffuseCell(t_Material, CSpecularCellDescription{}));
-        return std::make_shared<CMaterialDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(
+          aCell, t_BSDF, lambertianWeight(), WeightSource::Incoming, true);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -39,7 +56,7 @@ namespace SingleLayerOptics
                                                     PVPowerPropertiesTable powerTable)
     {
         auto aCell = std::make_shared<CBaseCell>(makeSpecularCell(t_Material));
-        auto aLayer = std::make_shared<PhotovoltaicSpecularBSDFLayer>(aCell, t_BSDF);
+        auto aLayer = std::make_shared<CBSDFLayer>(aCell, t_BSDF, BSDFLayerKind::Specular, true);
         aLayer->assignPowerTable(std::move(powerTable));
         return aLayer;
     }
@@ -54,7 +71,7 @@ namespace SingleLayerOptics
     {
         auto aCell = std::make_shared<CBaseCell>(
           makeUniformDiffuseCell(t_Material, CCircularCellDescription{x, y, thickness, radius}));
-        return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(aCell, t_BSDF, BSDFLayerKind::UniformDiffuse);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -68,7 +85,7 @@ namespace SingleLayerOptics
     {
         auto aCell = std::make_shared<CBaseCell>(makeUniformDiffuseCell(
           t_Material, CRectangularCellDescription{x, y, thickness, xHole, yHole}));
-        return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(aCell, t_BSDF, BSDFLayerKind::UniformDiffuse);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -121,9 +138,11 @@ namespace SingleLayerOptics
 
         if(method == DistributionMethod::UniformDiffuse)
         {
-            return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+            return std::make_shared<CBSDFLayer>(aCell, t_BSDF, BSDFLayerKind::UniformDiffuse);
         }
-        return std::make_shared<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
+        // DirectionalDiffuse: unit weight, per-outgoing-patch, emissivity polynomial applicable.
+        return std::make_shared<CBSDFLayer>(
+          aCell, t_BSDF, CBSDFLayer::WeightFn{}, WeightSource::Outgoing, true);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -132,7 +151,7 @@ namespace SingleLayerOptics
     {
         auto aCell = std::make_shared<CBaseCell>(
           makeUniformDiffuseCell(t_Material, CFlatCellDescription{}));
-        return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(aCell, t_BSDF, BSDFLayerKind::UniformDiffuse);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -141,7 +160,8 @@ namespace SingleLayerOptics
     {
         auto aCell = std::make_shared<CBaseCell>(
           makeHomogeneousDiffuseCell(t_Material, CFlatCellDescription{}));
-        return std::make_shared<CHomogeneousDiffuseBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(
+          aCell, t_BSDF, lambertianWeight(), WeightSource::Incoming, false);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -150,7 +170,8 @@ namespace SingleLayerOptics
     {
         auto aCell = std::make_shared<CBaseCell>(
           makeDirectionalDiffuseCell(t_Material, CFlatCellDescription{}));
-        return std::make_shared<CDirectionalDiffuseBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(
+          aCell, t_BSDF, CBSDFLayer::WeightFn{}, WeightSource::Outgoing, true);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -159,7 +180,8 @@ namespace SingleLayerOptics
     {
         auto aCell = std::make_shared<CBaseCell>(
           makeDirectionalDiffuseCell(t_Material, CFlatCellDescription{}));
-        return std::make_shared<CMatrixBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(
+          aCell, t_BSDF, matrixWeight(), WeightSource::Outgoing, false);
     }
 
     std::shared_ptr<CBSDFLayer>
@@ -170,7 +192,7 @@ namespace SingleLayerOptics
     {
         auto aCell = std::make_shared<CBaseCell>(
           makeWovenCell(t_Material, CWovenCellDescription{diameter, spacing}));
-        return std::make_shared<CUniformDiffuseBSDFLayer>(aCell, t_BSDF);
+        return std::make_shared<CBSDFLayer>(aCell, t_BSDF, BSDFLayerKind::UniformDiffuse);
     }
 
     CBSDFLayerMaker::CBSDFLayerMaker(const std::shared_ptr<CMaterial> & t_Material,

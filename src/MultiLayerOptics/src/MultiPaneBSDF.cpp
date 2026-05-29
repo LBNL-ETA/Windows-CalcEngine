@@ -22,11 +22,6 @@ using FenestrationCommon::CMatrixSeries;
 using SingleLayerOptics::CBSDFLayer;
 using SingleLayerOptics::BSDFDirection;
 
-namespace SingleLayerOptics
-{
-    class PhotovoltaicSpecularBSDFLayer;
-}
-
 namespace MultiLayerOptics
 {
     CMultiPaneBSDF::CMultiPaneBSDF(const std::vector<std::shared_ptr<CBSDFLayer>> & t_Layer,
