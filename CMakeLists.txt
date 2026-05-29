@@ -15,7 +15,7 @@ option(USE_PARALLEL_ALGORITHMS "Use parallel algorithms for STL operations" ON)
 # dependency. If a sibling working copy is missing, unset that variable here so
 # FetchContent falls back to the declared remote instead of erroring out.
 foreach(_lbnl_dep GOOGLETEST MIMALLOC)
-    if(DEFINED FETCHCONTENT_SOURCE_DIR_${_lbnl_dep})
+    if(FETCHCONTENT_SOURCE_DIR_${_lbnl_dep})
         if(NOT EXISTS "${FETCHCONTENT_SOURCE_DIR_${_lbnl_dep}}/CMakeLists.txt")
             message(STATUS
                 "Local sibling for ${_lbnl_dep} not found at "
