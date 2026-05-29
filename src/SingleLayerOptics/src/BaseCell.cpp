@@ -79,6 +79,38 @@ namespace SingleLayerOptics
                    && "Woven cell must carry a CWovenCellDescription.");
             return std::get<CWovenCellDescription>(description).gamma();
         }
+
+        //! wovenTscatter wrapped with the woven cell's gamma, for call sites that only
+        //! have the description + direction + reflectance.
+        [[nodiscard]] double wovenScatter(CellDescription const & description,
+                                          CBeamDirection const & direction,
+                                          double rScatter)
+        {
+            return wovenTscatter(wovenGamma(description), direction, rScatter);
+        }
+
+        //! Directional/Homogeneous blend: the cell's own component plus the material
+        //! contribution scaled by the open fraction of the cell (1 - direct-direct T).
+        [[nodiscard]] double combineDiffuse(double cellComponent,
+                                            double cellT,
+                                            double materialValue)
+        {
+            return cellComponent + (1.0 - cellT) * materialValue;
+        }
+
+        //! Build a per-wavelength band vector by evaluating perWavelength(idx) over the band.
+        template<class PerWavelengthFn>
+        [[nodiscard]] std::vector<double> buildBand(std::size_t bandSize,
+                                                    PerWavelengthFn && perWavelength)
+        {
+            std::vector<double> out;
+            out.reserve(bandSize);
+            for(std::size_t idx = 0; idx < bandSize; ++idx)
+            {
+                out.push_back(perWavelength(idx));
+            }
+            return out;
+        }
     }   // namespace
 
     CBaseCell::CBaseCell() : m_Material(nullptr), m_CellDescription(CSpecularCellDescription{})
@@ -238,16 +270,9 @@ namespace SingleLayerOptics
                 }
                 return m_Material->getBandProperties(Property::T, side, dir, dir);
             default:
-            {
-                std::size_t const bandSize = m_Material->getBandSize();
-                std::vector<double> out;
-                out.reserve(bandSize);
-                for(std::size_t idx = 0; idx < bandSize; ++idx)
-                {
-                    out.push_back(T_dir_dir_at_wavelength(side, dir, idx));
-                }
-                return out;
-            }
+                return buildBand(m_Material->getBandSize(), [&](std::size_t idx) {
+                    return T_dir_dir_at_wavelength(side, dir, idx);
+                });
         }
     }
 
@@ -264,16 +289,9 @@ namespace SingleLayerOptics
                 }
                 return m_Material->getBandProperties(Property::R, side, dir, dir);
             default:
-            {
-                std::size_t const bandSize = m_Material->getBandSize();
-                std::vector<double> out;
-                out.reserve(bandSize);
-                for(std::size_t idx = 0; idx < bandSize; ++idx)
-                {
-                    out.push_back(R_dir_dir_at_wavelength(side, dir, idx));
-                }
-                return out;
-            }
+                return buildBand(m_Material->getBandSize(), [&](std::size_t idx) {
+                    return R_dir_dir_at_wavelength(side, dir, idx);
+                });
         }
     }
 
@@ -293,7 +311,7 @@ namespace SingleLayerOptics
                 double const tMaterial = (1.0 - cellT) * m_Material->getProperty(Property::T, side);
                 double const rScatterMat = m_Material->getProperty(Property::R, oppositeSide(side));
                 double const tScatter =
-                  wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterMat);
+                  wovenScatter(m_CellDescription, dir, rScatterMat);
                 return tMaterial * (1.0 - cellT) + tScatter;
             }
             case CellKind::Venetian:
@@ -316,7 +334,7 @@ namespace SingleLayerOptics
                   (1.0 - T_dir_dir(side, dir)) * m_Material->getProperty(Property::R, side);
                 double const rScatterMat = m_Material->getProperty(Property::R, oppositeSide(side));
                 double const tScatter =
-                  wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterMat);
+                  wovenScatter(m_CellDescription, dir, rScatterMat);
                 return rMaterial - tScatter;
             }
             case CellKind::Venetian:
@@ -347,7 +365,7 @@ namespace SingleLayerOptics
                 double const rScatterAtWavelength =
                   m_Material->getBandProperties(Property::R, oppositeSide(side))[wavelengthIndex];
                 double const tScatter =
-                  wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterAtWavelength);
+                  wovenScatter(m_CellDescription, dir, rScatterAtWavelength);
                 return tMaterial + tScatter;
             }
             case CellKind::Venetian:
@@ -380,7 +398,7 @@ namespace SingleLayerOptics
                 double const rScatterAtWavelength =
                   m_Material->getBandProperties(Property::R, oppositeSide(side))[wavelengthIndex];
                 double const tScatter =
-                  wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterAtWavelength);
+                  wovenScatter(m_CellDescription, dir, rScatterAtWavelength);
                 return rMaterial - tScatter;
             }
             case CellKind::Venetian:
@@ -420,21 +438,14 @@ namespace SingleLayerOptics
                 for(std::size_t idx = 0; idx < n; ++idx)
                 {
                     materialBand[idx] +=
-                      wovenTscatter(wovenGamma(m_CellDescription), dir, rScatterBand[idx]);
+                      wovenScatter(m_CellDescription, dir, rScatterBand[idx]);
                 }
                 return materialBand;
             }
             default:
-            {
-                std::size_t const bandSize = m_Material->getBandSize();
-                std::vector<double> out;
-                out.reserve(bandSize);
-                for(std::size_t idx = 0; idx < bandSize; ++idx)
-                {
-                    out.push_back(T_dir_dif_at_wavelength(side, dir, idx));
-                }
-                return out;
-            }
+                return buildBand(m_Material->getBandSize(), [&](std::size_t idx) {
+                    return T_dir_dif_at_wavelength(side, dir, idx);
+                });
         }
     }
 
@@ -453,16 +464,9 @@ namespace SingleLayerOptics
                 return materialBand;
             }
             default:
-            {
-                std::size_t const bandSize = m_Material->getBandSize();
-                std::vector<double> out;
-                out.reserve(bandSize);
-                for(std::size_t idx = 0; idx < bandSize; ++idx)
-                {
-                    out.push_back(R_dir_dif_at_wavelength(side, dir, idx));
-                }
-                return out;
-            }
+                return buildBand(m_Material->getBandSize(), [&](std::size_t idx) {
+                    return R_dir_dif_at_wavelength(side, dir, idx);
+                });
         }
     }
 
@@ -481,7 +485,7 @@ namespace SingleLayerOptics
                 double const cellT = T_dir_dir(side, incoming);
                 double const materialT =
                   m_Material->getProperty(Property::T, side, incoming, outgoing);
-                return cellT + (1.0 - cellT) * materialT;
+                return combineDiffuse(cellT, cellT, materialT);
             }
             case CellKind::HomogeneousDiffuse:
             {
@@ -489,7 +493,7 @@ namespace SingleLayerOptics
                 double const materialT = m_Material->getProperty(
                   Property::T, side, CBeamDirection(), CBeamDirection(),
                   OutgoingAggregation::Hemispherical);
-                return cellT + (1.0 - cellT) * materialT;
+                return combineDiffuse(cellT, cellT, materialT);
             }
             case CellKind::MaterialDirectionalDiffuse:
                 if(!m_Material || incoming == outgoing)
@@ -518,7 +522,7 @@ namespace SingleLayerOptics
                 double const cellR = R_dir_dir(side, incoming);
                 double const materialR =
                   m_Material->getProperty(Property::R, side, incoming, outgoing);
-                return cellR + (1.0 - cellT) * materialR;
+                return combineDiffuse(cellR, cellT, materialR);
             }
             case CellKind::HomogeneousDiffuse:
             {
@@ -527,7 +531,7 @@ namespace SingleLayerOptics
                 double const materialR = m_Material->getProperty(
                   Property::R, side, CBeamDirection(), CBeamDirection(),
                   OutgoingAggregation::Hemispherical);
-                return cellR + (1.0 - cellT) * materialR;
+                return combineDiffuse(cellR, cellT, materialR);
             }
             case CellKind::MaterialDirectionalDiffuse:
                 if(!m_Material || incoming == outgoing)
@@ -556,7 +560,7 @@ namespace SingleLayerOptics
                 double const cellT = T_dir_dir(side, incoming);
                 double const materialT = m_Material->getBandProperty(
                   Property::T, side, wavelengthIndex, incoming, outgoing);
-                return cellT + (1.0 - cellT) * materialT;
+                return combineDiffuse(cellT, cellT, materialT);
             }
             case CellKind::HomogeneousDiffuse:
             {
@@ -564,7 +568,7 @@ namespace SingleLayerOptics
                 double const materialT = m_Material->getBandProperty(
                   Property::T, side, wavelengthIndex, CBeamDirection(), CBeamDirection(),
                   OutgoingAggregation::Hemispherical);
-                return cellT + (1.0 - cellT) * materialT;
+                return combineDiffuse(cellT, cellT, materialT);
             }
             case CellKind::MaterialDirectionalDiffuse:
                 if(!m_Material || incoming == outgoing)
@@ -595,7 +599,7 @@ namespace SingleLayerOptics
                 double const cellR = R_dir_dir(side, incoming);
                 double const materialR = m_Material->getBandProperty(
                   Property::R, side, wavelengthIndex, incoming, outgoing);
-                return cellR + (1.0 - cellT) * materialR;
+                return combineDiffuse(cellR, cellT, materialR);
             }
             case CellKind::HomogeneousDiffuse:
             {
@@ -604,7 +608,7 @@ namespace SingleLayerOptics
                 double const materialR = m_Material->getBandProperty(
                   Property::R, side, wavelengthIndex, CBeamDirection(), CBeamDirection(),
                   OutgoingAggregation::Hemispherical);
-                return cellR + (1.0 - cellT) * materialR;
+                return combineDiffuse(cellR, cellT, materialR);
             }
             case CellKind::MaterialDirectionalDiffuse:
                 if(!m_Material || incoming == outgoing)
@@ -635,21 +639,14 @@ namespace SingleLayerOptics
                   m_Material->getBandProperties(Property::T, side, incoming, outgoing);
                 for(auto & value : materialBand)
                 {
-                    value = cellT + (1.0 - cellT) * value;
+                    value = combineDiffuse(cellT, cellT, value);
                 }
                 return materialBand;
             }
             default:
-            {
-                std::size_t const bandSize = m_Material->getBandSize();
-                std::vector<double> out;
-                out.reserve(bandSize);
-                for(std::size_t idx = 0; idx < bandSize; ++idx)
-                {
-                    out.push_back(T_dir_dif_by_wavelength(side, incoming, outgoing, idx));
-                }
-                return out;
-            }
+                return buildBand(m_Material->getBandSize(), [&](std::size_t idx) {
+                    return T_dir_dif_by_wavelength(side, incoming, outgoing, idx);
+                });
         }
     }
 
@@ -667,21 +664,14 @@ namespace SingleLayerOptics
                   m_Material->getBandProperties(Property::R, side, incoming, outgoing);
                 for(auto & value : materialBand)
                 {
-                    value = cellR + (1.0 - cellT) * value;
+                    value = combineDiffuse(cellR, cellT, value);
                 }
                 return materialBand;
             }
             default:
-            {
-                std::size_t const bandSize = m_Material->getBandSize();
-                std::vector<double> out;
-                out.reserve(bandSize);
-                for(std::size_t idx = 0; idx < bandSize; ++idx)
-                {
-                    out.push_back(R_dir_dif_by_wavelength(side, incoming, outgoing, idx));
-                }
-                return out;
-            }
+                return buildBand(m_Material->getBandSize(), [&](std::size_t idx) {
+                    return R_dir_dif_by_wavelength(side, incoming, outgoing, idx);
+                });
         }
     }
 
