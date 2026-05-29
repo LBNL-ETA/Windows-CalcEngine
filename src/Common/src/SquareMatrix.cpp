@@ -2,25 +2,45 @@
 #include <cassert>
 #include <cmath>
 #include <algorithm>
+#include <cstdlib>
 
-// Routes global new/delete through mimalloc's per-thread heaps so large matrix
-// allocations are lock-free under multithreading. This TU is always linked, so
-// the override is pulled into any consuming executable. Windows-only; CMake gates
-// the dependency to WIN32 (mimalloc legal clearance is Windows-scoped).
-// C4559: mimalloc redeclares operator new/new[] adding __declspec(restrict),
-// which differs from the CRT's declaration. The redefinition is intentional
-// (that's how the allocator override works) and silenced locally.
+// This is the ONLY place mimalloc enters the build. The matrix buffers route
+// through mimalloc's per-thread heaps (lock-free, ~2x faster than the CRT
+// allocator on large matrices) via detail::matrixAlloc/matrixFree below. We
+// deliberately do NOT include <mimalloc-new-delete.h>: that overrides global
+// operator new/delete process-wide, which corrupts the heap in MFC/CRT host apps
+// (THERM/WINDOW) because new/delete and malloc/free would then straddle two
+// allocators. mimalloc legal clearance is Windows-scoped, so other platforms
+// fall back to the CRT allocator.
 #if defined(_WIN32)
-#  pragma warning(push)
-#  pragma warning(disable: 4559)
-#  include <mimalloc-new-delete.h>
-#  pragma warning(pop)
+#  include <mimalloc.h>
 #endif
 
 #include "SquareMatrix.hpp"
 
 namespace FenestrationCommon
 {
+    namespace detail
+    {
+        void * matrixAlloc(const std::size_t bytes) noexcept
+        {
+#if defined(_WIN32)
+            return mi_malloc(bytes);
+#else
+            return std::malloc(bytes);
+#endif
+        }
+
+        void matrixFree(void * const ptr) noexcept
+        {
+#if defined(_WIN32)
+            mi_free(ptr);
+#else
+            std::free(ptr);
+#endif
+        }
+    }   // namespace detail
+
     namespace
     {
         // Tile size for cache-blocked GEMM. 64 doubles == 512 bytes per row tile,
