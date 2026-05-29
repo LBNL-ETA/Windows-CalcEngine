@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SpecularCell.hpp"
+#include "BaseCell.hpp"
 
 namespace SingleLayerOptics
 {
@@ -40,10 +40,10 @@ namespace SingleLayerOptics
 
         void Flipped(bool flipped) override;
 
-        explicit SpecularLayer(const CSpecularCell & m_Cell);
+        explicit SpecularLayer(CBaseCell cell);
 
     protected:
-        CSpecularCell m_Cell;
+        CBaseCell m_Cell;
     };
 
 }   // namespace SingleLayerOptics

@@ -1,15 +1,15 @@
 #include <mutex>
 
 #include "PhotovoltaicSpecularBSDFLayer.hpp"
+#include "BaseCell.hpp"
 #include "MaterialDescription.hpp"
-#include "SpecularCell.hpp"
 
 std::mutex m_lockjscPrime;
 
 namespace SingleLayerOptics
 {
     PhotovoltaicSpecularBSDFLayer::PhotovoltaicSpecularBSDFLayer(
-      const std::shared_ptr<CSpecularCell> & t_Cell, const BSDFHemisphere & t_Hemisphere) :
+      const std::shared_ptr<CBaseCell> & t_Cell, const BSDFHemisphere & t_Hemisphere) :
         CSpecularBSDFLayer(t_Cell, t_Hemisphere)
     {
         const auto material(t_Cell->getMaterial());

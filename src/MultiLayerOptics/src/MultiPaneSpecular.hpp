@@ -12,8 +12,6 @@
 
 namespace SingleLayerOptics
 {
-    class CSpecularCell;
-
     class SpecularLayer;
 
 }   // namespace SingleLayerOptics

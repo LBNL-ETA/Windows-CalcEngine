@@ -1,9 +1,7 @@
-
 #include <cmath>
-#include <cassert>
 
 #include "UniformDiffuseBSDFLayer.hpp"
-#include "UniformDiffuseCell.hpp"
+#include "BaseCell.hpp"
 #include "BSDFIntegrator.hpp"
 #include "BSDFDirections.hpp"
 #include "WCECommon.hpp"
@@ -13,33 +11,23 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CUniformDiffuseBSDFLayer::CUniformDiffuseBSDFLayer(
-      const std::shared_ptr<CUniformDiffuseCell> & t_Cell, const BSDFHemisphere & t_Hemisphere) :
+    CUniformDiffuseBSDFLayer::CUniformDiffuseBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
+                                                       const BSDFHemisphere & t_Hemisphere) :
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
-
-    std::shared_ptr<CUniformDiffuseCell> CUniformDiffuseBSDFLayer::cellAsUniformDiffuse() const
-    {
-        std::shared_ptr<CUniformDiffuseCell> aCell =
-          std::dynamic_pointer_cast<CUniformDiffuseCell>(m_Cell);
-        assert(aCell != nullptr);
-        return aCell;
-    }
 
     void CUniformDiffuseBSDFLayer::calcDiffuseDistribution(const Side aSide,
                                                            const CBeamDirection & t_Direction,
                                                            const size_t t_DirectionIndex)
     {
-        std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
-
         auto & Tau = m_Results->getMatrix(aSide, PropertySurface::T);
         auto & Rho = m_Results->getMatrix(aSide, PropertySurface::R);
 
-        double aTau = aCell->T_dir_dif(aSide, t_Direction);
-        double Ref = aCell->R_dir_dif(aSide, t_Direction);
+        const double aTau = m_Cell->T_dir_dif(aSide, t_Direction);
+        const double Ref = m_Cell->R_dir_dif(aSide, t_Direction);
 
         const BSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
-        size_t size = aDirections.size();
+        const size_t size = aDirections.size();
 
         for(size_t j = 0; j < size; ++j)
         {
@@ -55,17 +43,15 @@ namespace SingleLayerOptics
                                                               const size_t t_DirectionIndex,
                                                               std::vector<BSDFIntegrator> & results)
     {
-        std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
-
-        std::vector<double> aTau = aCell->T_dir_dif_band(aSide, t_Direction);
-        std::vector<double> Ref = aCell->R_dir_dif_band(aSide, t_Direction);
+        std::vector<double> aTau = m_Cell->T_dir_dif_band(aSide, t_Direction);
+        std::vector<double> Ref = m_Cell->R_dir_dif_band(aSide, t_Direction);
 
         const BSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
-        size_t size = aDirections.size();
+        const size_t size = aDirections.size();
 
         for(size_t i = 0; i < size; ++i)
         {
-            size_t numWV = aTau.size();
+            const size_t numWV = aTau.size();
             for(size_t j = 0; j < numWV; ++j)
             {
                 using ConstantsData::WCE_PI;
@@ -85,13 +71,11 @@ namespace SingleLayerOptics
       size_t wavelengthIndex,
       BSDFIntegrator & results)
     {
-        std::shared_ptr<CUniformDiffuseCell> aCell = cellAsUniformDiffuse();
-
-        const auto aTau = aCell->T_dir_dif_at_wavelength(aSide, t_Direction, wavelengthIndex);
-        const auto Ref = aCell->R_dir_dif_at_wavelength(aSide, t_Direction, wavelengthIndex);
+        const auto aTau = m_Cell->T_dir_dif_at_wavelength(aSide, t_Direction, wavelengthIndex);
+        const auto Ref = m_Cell->R_dir_dif_at_wavelength(aSide, t_Direction, wavelengthIndex);
 
         const BSDFDirections aDirections = m_BSDFHemisphere.getDirections(BSDFDirection::Incoming);
-        size_t size = aDirections.size();
+        const size_t size = aDirections.size();
 
         for(size_t i = 0; i < size; ++i)
         {

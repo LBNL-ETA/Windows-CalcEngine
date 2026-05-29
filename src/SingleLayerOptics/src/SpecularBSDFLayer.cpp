@@ -1,7 +1,5 @@
-#include <cassert>
-
 #include "SpecularBSDFLayer.hpp"
-#include "SpecularCell.hpp"
+#include "BaseCell.hpp"
 #include "BSDFDirections.hpp"
 #include "WCECommon.hpp"
 #include "BeamDirection.hpp"
@@ -10,7 +8,7 @@ using namespace FenestrationCommon;
 
 namespace SingleLayerOptics
 {
-    CSpecularBSDFLayer::CSpecularBSDFLayer(const std::shared_ptr<CSpecularCell> & t_Cell,
+    CSpecularBSDFLayer::CSpecularBSDFLayer(const std::shared_ptr<CBaseCell> & t_Cell,
                                            const BSDFHemisphere & t_Hemisphere) :
         CBSDFLayer(t_Cell, t_Hemisphere)
     {}
@@ -18,14 +16,6 @@ namespace SingleLayerOptics
     bool CSpecularBSDFLayer::isEmissivityPolynomialApplicable() const
     {
         return true;
-    }
-
-
-    std::shared_ptr<CSpecularCell> CSpecularBSDFLayer::cellAsSpecular() const
-    {
-        std::shared_ptr<CSpecularCell> aCell = std::dynamic_pointer_cast<CSpecularCell>(m_Cell);
-        assert(aCell != nullptr);
-        return aCell;
     }
 
     void

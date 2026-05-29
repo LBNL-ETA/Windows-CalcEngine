@@ -11,7 +11,7 @@ using namespace FenestrationCommon;
 class TestWovenCell1 : public testing::Test
 {
 private:
-    std::shared_ptr<CWovenCell> m_Cell;
+    std::shared_ptr<CBaseCell> m_Cell;
 
 protected:
     virtual void SetUp()
@@ -25,11 +25,11 @@ protected:
         // make cell geometry
         const auto diameter = 6.35;   // mm
         const auto spacing = 19.05;   // mm
-        m_Cell = std::make_shared<CWovenCell>(aMaterial, CWovenCellDescription{diameter, spacing});
+        m_Cell = std::make_shared<CBaseCell>(makeWovenCell(aMaterial, CWovenCellDescription{diameter, spacing}));
     }
 
 public:
-    std::shared_ptr<CWovenCell> GetCell()
+    std::shared_ptr<CBaseCell> GetCell()
     {
         return m_Cell;
     };
@@ -39,7 +39,7 @@ TEST_F(TestWovenCell1, TestWoven1)
 {
     SCOPED_TRACE("Begin Test: Woven cell (Theta = 0, Phi = 0).");
 
-    std::shared_ptr<CWovenCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
 
     const double Theta{0};   // deg
     const double Phi{0};     // deg
@@ -64,7 +64,7 @@ TEST_F(TestWovenCell1, TestWoven2)
 {
     SCOPED_TRACE("Begin Test: Woven cell (Theta = 45, Phi = 0).");
 
-    std::shared_ptr<CWovenCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
 
     const double Theta{45};   // deg
     const double Phi{0};      // deg
@@ -89,7 +89,7 @@ TEST_F(TestWovenCell1, TestWoven3)
 {
     SCOPED_TRACE("Begin Test: Woven cell (Theta = 78, Phi = 45).");
 
-    std::shared_ptr<CWovenCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
 
     const double Theta = 78;   // deg
     const double Phi = 45;     // deg
@@ -114,7 +114,7 @@ TEST_F(TestWovenCell1, TestWoven4)
 {
     SCOPED_TRACE("Begin Test: Woven cell (Theta = 54, Phi = 270).");
 
-    std::shared_ptr<CWovenCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
 
     const double Theta = 54;   // deg
     const double Phi = 270;    // deg

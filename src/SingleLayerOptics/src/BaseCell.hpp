@@ -1,9 +1,12 @@
 #pragma once
 
+#include <cstddef>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "CellDescription.hpp"
+#include "VenetianSegments.hpp"
 
 namespace FenestrationCommon
 {
@@ -17,63 +20,138 @@ namespace SingleLayerOptics
     class CMaterial;
     class CBeamDirection;
 
-    // Handles optical layer "cell". Base behavior is to calculate specular (direct-direct)
-    // component of a light beam. Inherit from this class when want to create new shading type.
+    //! Closed set of optical cell variants. Replaces the former CBaseCell -> CSpecularCell /
+    //! CUniformDiffuseCell / CDirectionalDiffuseCell / CHomogeneousDiffuseCell /
+    //! CMaterialDirectionalDiffuseCell / CPerforatedCell / CWovenCell / CVenetianCell
+    //! inheritance tree (including the CVenetianBase virtual diamond).
+    enum class CellKind
+    {
+        Specular,
+        UniformDiffuse,
+        DirectionalDiffuse,
+        HomogeneousDiffuse,
+        MaterialDirectionalDiffuse,
+        Woven,
+        Venetian,
+    };
+
+    //! Per-wavelength energy machinery owned only by Venetian cells. The geometry-bundle
+    //! sharing introduced by PR #253 lives inside CVenetianEnergy / CVenetianCellEnergy.
+    struct VenetianEnergyState
+    {
+        CVenetianEnergy m_Energy;
+        std::vector<CVenetianEnergy> m_EnergiesBand;
+    };
+
+    //! Single non-virtual optical cell. The CellKind discriminant + CellDescription variant
+    //! + optional VenetianEnergyState carry everything the old hierarchy did. No virtuals,
+    //! no diamond. Methods dispatch by switching on m_Kind.
     class CBaseCell
     {
     public:
-        virtual ~CBaseCell() = default;
         CBaseCell();
-        CBaseCell(const std::shared_ptr<CMaterial> & t_Material,
-                  const CellDescription & t_CellDescription,
+        CBaseCell(std::shared_ptr<CMaterial> material,
+                  CellDescription description,
+                  CellKind kind,
                   double rotation = 0);
 
-        virtual void setSourceData(const FenestrationCommon::CSeries & t_SourceData);
+        void setSourceData(FenestrationCommon::CSeries const & sourceData);
+        void setBandWavelengths(std::vector<double> const & wavelengths);
 
-        // Direct to direct component of transmitted ray
-        // These dir_dir and dir_dir_band functions are returning only direct portion of the
-        // incoming beam that goes directly through cell without interfering (bouncing off) with
-        // material (Simon)
-        virtual double T_dir_dir(FenestrationCommon::Side t_Side,
-                                 const CBeamDirection & t_Direction);
-        virtual double R_dir_dir(FenestrationCommon::Side t_Side,
-                                 const CBeamDirection & t_Direction);
+        // ----- direct-direct -----
+        double T_dir_dir(FenestrationCommon::Side, CBeamDirection const &);
+        double R_dir_dir(FenestrationCommon::Side, CBeamDirection const &);
+        double T_dir_dir_at_wavelength(FenestrationCommon::Side,
+                                       CBeamDirection const &,
+                                       std::size_t wavelengthIndex);
+        double R_dir_dir_at_wavelength(FenestrationCommon::Side,
+                                       CBeamDirection const &,
+                                       std::size_t wavelengthIndex);
+        std::vector<double> T_dir_dir_band(FenestrationCommon::Side, CBeamDirection const &);
+        std::vector<double> R_dir_dir_band(FenestrationCommon::Side, CBeamDirection const &);
 
-        virtual double T_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
-                                               const CBeamDirection & t_Direction,
-                                               size_t wavelengthIndex);
+        // ----- single-direction diffuse (Uniform / Woven / Venetian-uniform) -----
+        double T_dir_dif(FenestrationCommon::Side, CBeamDirection const &);
+        double R_dir_dif(FenestrationCommon::Side, CBeamDirection const &);
+        std::vector<double> T_dir_dif_band(FenestrationCommon::Side, CBeamDirection const &);
+        std::vector<double> R_dir_dif_band(FenestrationCommon::Side, CBeamDirection const &);
+        double T_dir_dif_at_wavelength(FenestrationCommon::Side,
+                                       CBeamDirection const &,
+                                       std::size_t wavelengthIndex);
+        double R_dir_dif_at_wavelength(FenestrationCommon::Side,
+                                       CBeamDirection const &,
+                                       std::size_t wavelengthIndex);
 
-        virtual double R_dir_dir_at_wavelength(FenestrationCommon::Side t_Side,
-                                               const CBeamDirection & t_Direction,
-                                               size_t wavelengthIndex);
+        // ----- two-direction diffuse (Directional / Homogeneous / MaterialDirDif / Venetian-directional) -----
+        double T_dir_dif(FenestrationCommon::Side,
+                         CBeamDirection const & incoming,
+                         CBeamDirection const & outgoing);
+        double R_dir_dif(FenestrationCommon::Side,
+                         CBeamDirection const & incoming,
+                         CBeamDirection const & outgoing);
+        std::vector<double> T_dir_dif_band(FenestrationCommon::Side,
+                                           CBeamDirection const & incoming,
+                                           CBeamDirection const & outgoing);
+        std::vector<double> R_dir_dif_band(FenestrationCommon::Side,
+                                           CBeamDirection const & incoming,
+                                           CBeamDirection const & outgoing);
+        double T_dir_dif_by_wavelength(FenestrationCommon::Side,
+                                       CBeamDirection const & incoming,
+                                       CBeamDirection const & outgoing,
+                                       std::size_t wavelengthIndex);
+        double R_dir_dif_by_wavelength(FenestrationCommon::Side,
+                                       CBeamDirection const & incoming,
+                                       CBeamDirection const & outgoing,
+                                       std::size_t wavelengthIndex);
 
-        virtual std::vector<double> T_dir_dir_band(FenestrationCommon::Side t_Side,
-                                                   const CBeamDirection & t_Direction);
+        //! Venetian-only diffuse-diffuse properties (computed from the slat energy balance).
+        //! Asserts m_Kind == Venetian; not meaningful for other kinds.
+        double T_dif_dif(FenestrationCommon::Side);
+        double R_dif_dif(FenestrationCommon::Side);
 
-        virtual std::vector<double> R_dir_dir_band(FenestrationCommon::Side t_Side,
-                                                   const CBeamDirection & t_Direction);
-
+        // ----- bookkeeping -----
         std::vector<double> getBandWavelengths() const;
-        virtual void setBandWavelengths(const std::vector<double> & wavelengths);
-        int getBandIndex(double t_Wavelength) const;
-        size_t getBandSize() const;
-
+        int getBandIndex(double wavelength) const;
+        std::size_t getBandSize() const;
         double getMinLambda() const;
         double getMaxLambda() const;
-
         void Flipped(bool flipped);
-
         std::shared_ptr<CMaterial> getMaterial();
 
-    protected:
-        std::shared_ptr<CMaterial> m_Material;
-        CellDescription m_CellDescription;
-
-        // This indicates cell rotation in phi angle
-        double m_CellRotation;
+        [[nodiscard]] CellKind kind() const noexcept
+        {
+            return m_Kind;
+        }
+        [[nodiscard]] CellDescription const & description() const noexcept
+        {
+            return m_CellDescription;
+        }
 
     private:
-        template<class F>
-        std::vector<double> makeBand(F && f);
+        void generateVenetianEnergy();
+
+        std::shared_ptr<CMaterial> m_Material;
+        CellDescription m_CellDescription;
+        CellKind m_Kind{CellKind::Specular};
+        double m_CellRotation{0.0};
+        std::optional<VenetianEnergyState> m_Venetian;
     };
+
+    //! Factory functions — preferred construction path. Each pairs the right CellKind with
+    //! the description alternative the kind expects, and (for Venetian) triggers the energy
+    //! machinery setup inside the constructor.
+    CBaseCell makeSpecularCell(std::shared_ptr<CMaterial> material);
+    CBaseCell makeUniformDiffuseCell(std::shared_ptr<CMaterial> material,
+                                     CellDescription description);
+    CBaseCell makeDirectionalDiffuseCell(std::shared_ptr<CMaterial> material,
+                                         CellDescription description);
+    CBaseCell makeHomogeneousDiffuseCell(std::shared_ptr<CMaterial> material,
+                                         CellDescription description);
+    CBaseCell makeMaterialDirectionalDiffuseCell(std::shared_ptr<CMaterial> material,
+                                                 CellDescription description);
+    CBaseCell makeWovenCell(std::shared_ptr<CMaterial> material,
+                            CWovenCellDescription description);
+    CBaseCell makeVenetianCell(std::shared_ptr<CMaterial> material,
+                               CVenetianCellDescription description,
+                               double rotation = 0);
 }   // namespace SingleLayerOptics

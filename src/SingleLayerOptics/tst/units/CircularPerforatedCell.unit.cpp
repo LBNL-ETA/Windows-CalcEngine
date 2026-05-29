@@ -12,7 +12,7 @@ class TestCircularPerforatedCell : public testing::Test
 {
 private:
     std::shared_ptr<CCircularCellDescription> m_DescriptionCell;
-    std::shared_ptr<CPerforatedCell> m_PerforatedCell;
+    std::shared_ptr<CBaseCell> m_PerforatedCell;
 
 protected:
     virtual void SetUp()
@@ -30,11 +30,11 @@ protected:
         const auto radius = 5;      // mm
         m_DescriptionCell = std::make_shared<CCircularCellDescription>(x, y, thickness, radius);
 
-        m_PerforatedCell = std::make_shared<CPerforatedCell>(aMaterial, *m_DescriptionCell);
+        m_PerforatedCell = std::make_shared<CBaseCell>(makeUniformDiffuseCell(aMaterial, *m_DescriptionCell));
     }
 
 public:
-    std::shared_ptr<CPerforatedCell> GetCell()
+    std::shared_ptr<CBaseCell> GetCell()
     {
         return m_PerforatedCell;
     };
@@ -49,7 +49,7 @@ TEST_F(TestCircularPerforatedCell, TestCircular1)
 {
     SCOPED_TRACE("Begin Test: Circular perforated cell (Theta = 0, Phi = 0).");
 
-    std::shared_ptr<CPerforatedCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
     auto aCellDescription = GetDescription();
 
     double Theta = 0;   // deg
@@ -76,7 +76,7 @@ TEST_F(TestCircularPerforatedCell, TestCircular2)
 {
     SCOPED_TRACE("Begin Test: Rectangular perforated cell (Theta = 45, Phi = 0).");
 
-    std::shared_ptr<CPerforatedCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
     auto aCellDescription = GetDescription();
 
     double Theta = 45;   // deg
@@ -103,7 +103,7 @@ TEST_F(TestCircularPerforatedCell, TestCircular3)
 {
     SCOPED_TRACE("Begin Test: Rectangular perforated cell (Theta = 78, Phi = 45).");
 
-    std::shared_ptr<CPerforatedCell> aCell = GetCell();
+    std::shared_ptr<CBaseCell> aCell = GetCell();
     auto aCellDescription = GetDescription();
 
     double Theta = 78;   // deg
