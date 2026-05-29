@@ -111,8 +111,6 @@ namespace SingleLayerOptics
 
         // Energy calculations for material range (wavelengths)
         std::vector<CVenetianEnergy> m_EnergiesBand;
-
-        CVenetianCellDescription m_BackwardFlowCellDescription;
     };
 
 }   // namespace SingleLayerOptics
