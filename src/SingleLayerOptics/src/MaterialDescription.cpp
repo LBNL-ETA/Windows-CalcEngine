@@ -8,14 +8,18 @@
 #include "WCECommon.hpp"
 #include "OpticalSurface.hpp"
 
-std::mutex materialWL;
-std::mutex baseMaterialMutex;
-std::mutex materialSampleWL;
-std::mutex dualBandMaterialMutexRatio;
-std::mutex dualBandMaterialMutexRadiation;
-
 using namespace FenestrationCommon;
 using namespace SpectralAveraging;
+
+namespace
+{
+    // Internal-linkage guards (formerly global-scope mutexes).
+    std::mutex materialWL;
+    std::mutex baseMaterialMutex;
+    std::mutex materialSampleWL;
+    std::mutex dualBandMaterialMutexRatio;
+    std::mutex dualBandMaterialMutexRadiation;
+}   // namespace
 
 namespace SingleLayerOptics
 {
@@ -248,38 +252,12 @@ namespace SingleLayerOptics
     ////   CMaterialSingleBand
     ////////////////////////////////////////////////////////////////////////////////////
     CMaterialSingleBand::CMaterialSingleBand(double t_Tf, double t_Tb, double t_Rf, double t_Rb) :
-        CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
-    {
-        using SS = ScatteringSimple;
-
-        // Direct (specular) surfaces
-        m_Property(FenestrationCommon::Side::Front, SS::Direct) =
-          std::make_shared<CSurface>(t_Tf, t_Rf);
-        m_Property(FenestrationCommon::Side::Back, SS::Direct) =
-          std::make_shared<CSurface>(t_Tb, t_Rb);
-
-        // Diffuse defaults (safe zero initialization)
-        m_Property(FenestrationCommon::Side::Front, SS::Diffuse) =
-          std::make_shared<CSurface>(0.0, 0.0);
-        m_Property(FenestrationCommon::Side::Back, SS::Diffuse) =
-          std::make_shared<CSurface>(0.0, 0.0);
-    }
+        CMaterialSingleBand(MaterialSurfaceProperties{{t_Tf, t_Rf}, {t_Tb, t_Rb}})
+    {}
 
     CMaterialSingleBand::CMaterialSingleBand(MaterialSurfaceProperties properties) :
-        CMaterial(ConstantsData::MINLAMBDAVALUE, ConstantsData::MAXLAMBDAVALUE)
-    {
-        using SS = ScatteringSimple;
-
-        // Direct/specular surfaces from the passed-in values
-        m_Property(Side::Front, SS::Direct) =
-          std::make_shared<CSurface>(properties.front.T, properties.front.R);
-        m_Property(Side::Back, SS::Direct) =
-          std::make_shared<CSurface>(properties.back.T, properties.back.R);
-
-        // Diffuse entries default to 0 unless you later extend MaterialSurfaceProperties
-        m_Property(Side::Front, SS::Diffuse) = std::make_shared<CSurface>(0.0, 0.0);
-        m_Property(Side::Back, SS::Diffuse) = std::make_shared<CSurface>(0.0, 0.0);
-    }
+        CMaterialSingleBand(properties, MaterialSurfaceProperties{{0.0, 0.0}, {0.0, 0.0}})
+    {}
 
     CMaterialSingleBand::CMaterialSingleBand(MaterialSurfaceProperties direct,
                                              MaterialSurfaceProperties diffuse) :
@@ -287,13 +265,11 @@ namespace SingleLayerOptics
     {
         using SS = ScatteringSimple;
 
-        // Direct surfaces
         m_Property(Side::Front, SS::Direct) =
           std::make_shared<CSurface>(direct.front.T, direct.front.R);
         m_Property(Side::Back, SS::Direct) =
           std::make_shared<CSurface>(direct.back.T, direct.back.R);
 
-        // Diffuse surfaces
         m_Property(Side::Front, SS::Diffuse) =
           std::make_shared<CSurface>(diffuse.front.T, diffuse.front.R);
         m_Property(Side::Back, SS::Diffuse) =
@@ -477,8 +453,6 @@ namespace SingleLayerOptics
     std::shared_ptr<CMaterial>
       IMaterialDualBand::getMaterialFromWavelength(const double wavelength) const
     {
-        std::shared_ptr<CMaterial> result;
-
         CWavelengthRange range{WavelengthRange::Visible};
 
         return range.isInRange(wavelength) ? m_MaterialVisibleRange : m_MaterialScaledRange;
@@ -576,7 +550,6 @@ namespace SingleLayerOptics
 
         CMaterial::setBandWavelengths(wavelengths);
         m_AngularSample.setBandWavelengths(m_Wavelengths);
-        m_WavelengthsCalculated = true;
     }
 
     void CMaterialSample::Flipped(bool flipped)
@@ -812,7 +785,7 @@ namespace SingleLayerOptics
         if(colCt != hemisphereOutgoingCt)
         {
             std::stringstream msg;
-            msg << "Incompatible number of incoming directions.  BSDF matrix: << " << colCt
+            msg << "Incompatible number of outgoing directions.  BSDF matrix: << " << colCt
                 << " BSDF Hemispere: " << hemisphereOutgoingCt;
             throw std::runtime_error(msg.str());
         }
