@@ -33,7 +33,6 @@ cmake --preset local
 | Dependency | Expected path |
 |------------|--------------|
 | googletest | `../googletest` |
-| mimalloc | `../mimalloc` |
 
 Missing siblings fall back to the declared remote automatically, so `local` is safe to invoke even with only a subset of overrides checked out.
 
