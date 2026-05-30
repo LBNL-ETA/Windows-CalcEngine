@@ -14,7 +14,7 @@ option(USE_PARALLEL_ALGORITHMS "Use parallel algorithms for STL operations" ON)
 # FETCHCONTENT_SOURCE_DIR_<NAME> to ${sourceDir}/../<DepName> for each declared
 # dependency. If a sibling working copy is missing, unset that variable here so
 # FetchContent falls back to the declared remote instead of erroring out.
-foreach(_lbnl_dep GOOGLETEST MIMALLOC)
+foreach(_lbnl_dep GOOGLETEST)
     if(FETCHCONTENT_SOURCE_DIR_${_lbnl_dep})
         if(NOT EXISTS "${FETCHCONTENT_SOURCE_DIR_${_lbnl_dep}}/CMakeLists.txt")
             message(STATUS
@@ -104,24 +104,6 @@ if (DOWNLOAD_GTEST STREQUAL ON)
     endif()
 endif ()
 
-# Thread-caching allocator so large matrix allocations are lock-free per-thread
-# under multithreading. The global new/delete override lives in SquareMatrix.cpp.
-# Windows-only - legal clearance for mimalloc is currently Windows-scoped.
-if(WIN32)
-    include(FetchContent)
-    if(NOT TARGET mimalloc-static)
-        set(MI_OVERRIDE OFF CACHE BOOL "" FORCE)
-        set(MI_BUILD_SHARED OFF CACHE BOOL "" FORCE)
-        set(MI_BUILD_OBJECT OFF CACHE BOOL "" FORCE)
-        set(MI_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-        FetchContent_Declare(
-            mimalloc
-            GIT_REPOSITORY https://github.com/microsoft/mimalloc.git
-            GIT_TAG v2.1.7
-        )
-        FetchContent_MakeAvailable(mimalloc)
-    endif()
-endif()
 
 # foreach( _variableName ${SOURCES})
 #   message( STATUS "${_variableName}" )
@@ -204,10 +186,6 @@ else ()
         target_include_directories(${target_name} PUBLIC "src/SingleLayerOptics/include")
         target_include_directories(${target_name} PUBLIC "src/MultiLayerOptics/include")
     endif ()
-
-    if(WIN32)
-        target_link_libraries(${target_name} PUBLIC mimalloc-static)
-    endif()
 
     if (BUILD_WCE_TESTING)
         include_directories(src/helper)

@@ -15,16 +15,6 @@ LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
 
 add_library(${target_name} STATIC ${SOURCES})
 
-# SquareMatrix.cpp includes <mimalloc.h> on Windows and calls mi_malloc/mi_free
-# for the matrix buffers only (no global new/delete override, no mimalloc in any
-# header). The dependency is therefore PRIVATE: consumers link mimalloc-static
-# transitively for the symbols but never see its include directories. The
-# mimalloc-static target is declared in the top-level CMakeLists.txt under
-# `if(WIN32)`, so it only exists on Windows builds.
-if(WIN32 AND TARGET mimalloc-static)
-    target_link_libraries(${target_name} PRIVATE mimalloc-static)
-endif()
-
 # Install will be used by master projects to get information on destination of library files
 install(TARGETS ${target_name}
         RUNTIME DESTINATION bin
