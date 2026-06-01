@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <optional>
 
 #include <WCECommon.hpp>
 #include <WCESingleLayerOptics.hpp>
@@ -52,6 +53,11 @@ namespace MultiLayerOptics
         void calculate(const FenestrationCommon::ProgressCallback & callback = nullptr);
         void setCommonBandWavelengths(const std::vector<double> & value);
 
+        // Commit the baseline (matrix or union) wavelength grid to the layers if no grid has
+        // been committed yet. No-op once committed. Used to defer the per-layer band-setting
+        // out of construction until the final wavelength grid is known.
+        void commitBaseline();
+
         // Clear cached calculation results to free memory
         void invalidateCache();
 
@@ -82,7 +88,24 @@ namespace MultiLayerOptics
 
         FenestrationCommon::SquareMatrix m_Lambda;
 
-        std::vector<double> m_CombinedLayerWavelengths;
+        // The committed (or lazily memoized baseline) wavelength grid. Empty until first read
+        // or commit. Mutable so the const getters can memoize the baseline without forcing a
+        // commit onto the layers.
+        mutable std::vector<double> m_CombinedLayerWavelengths;
+
+        // Wavelength grid optionally provided at construction. When absent the baseline is the
+        // union of the layer wavelengths.
+        std::optional<std::vector<double>> m_MatrixWavelengths;
+
+        // True once the per-layer band wavelengths have been set on the layers.
+        bool m_BandsCommitted{false};
+
+        // Lazily computes and memoizes the baseline grid (matrix wavelengths or union of layer
+        // wavelengths) without touching the layers. Pure read.
+        const std::vector<double> & ensureBaseline() const;
+
+        // Commits the baseline grid onto the layers exactly once.
+        void ensureCommitted();
 
         bool hasCache() const;
         void ensureCache();

@@ -473,6 +473,10 @@ namespace MultiLayerOptics
                                                   const Side side,
                                                   const PropertySurface property)
     {
+        // Per-layer results are indexed by the committed band grid, so make sure the layers
+        // have had their band wavelengths set before querying them wavelength by wavelength.
+        m_EquivalentLayer.commitBaseline();
+
         const auto & layers = m_EquivalentLayer.getLayers();
         const auto & wavelengths = m_EquivalentLayer.getCommonWavelengths();
         const size_t idx = layerIndex - 1;
@@ -507,6 +511,12 @@ namespace MultiLayerOptics
                 < m_EquivalentLayer.getCommonWavelengths().size())
         {
             m_EquivalentLayer.setCommonBandWavelengths(calcProperties.CommonWavelengths.value());
+        }
+        else
+        {
+            // No reduction requested: commit the baseline (union or matrix) grid that the
+            // eager constructor used to set up front.
+            m_EquivalentLayer.commitBaseline();
         }
 
         m_CalculationProperties = calcProperties;

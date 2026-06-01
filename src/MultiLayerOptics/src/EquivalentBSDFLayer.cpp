@@ -9,21 +9,20 @@ using FenestrationCommon::CSeries;
 namespace MultiLayerOptics
 {
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(const std::vector<double> & t_CommonWavelengths) :
-        m_CombinedLayerWavelengths(t_CommonWavelengths)
+        m_CombinedLayerWavelengths(t_CommonWavelengths),
+        m_BandsCommitted(true)
     {}
 
     CEquivalentBSDFLayer::CEquivalentBSDFLayer(
       std::vector<std::shared_ptr<SingleLayerOptics::CBSDFLayer>> t_Layer,
       const std::optional<std::vector<double>> & matrixWavelengths) :
         m_Layer(std::move(t_Layer)),
-        m_Lambda(m_Layer[0]->getResults().lambdaMatrix()),
-        m_CombinedLayerWavelengths(matrixWavelengths.has_value() ? matrixWavelengths.value()
-                                                                 : unionOfLayerWavelengths(m_Layer))
+        m_Lambda(
+          m_Layer[0]->getDirections(SingleLayerOptics::BSDFDirection::Incoming).lambdaMatrix()),
+        m_MatrixWavelengths(matrixWavelengths)
     {
-        for(const auto & layer : m_Layer)
-        {
-            layer->setBandWavelengths(m_CombinedLayerWavelengths);
-        }
+        // Wavelength union and per-layer band-setting are deferred until the final grid is
+        // known (first of commitBaseline()/setCommonBandWavelengths/ensureCache).
     }
 
     const SingleLayerOptics::BSDFDirections &
@@ -34,17 +33,46 @@ namespace MultiLayerOptics
 
     std::vector<double> CEquivalentBSDFLayer::getCommonWavelengths() const
     {
-        return m_CombinedLayerWavelengths;
+        return ensureBaseline();
     }
 
     double CEquivalentBSDFLayer::getMinLambda() const
     {
-        return m_CombinedLayerWavelengths.front();
+        return ensureBaseline().front();
     }
 
     double CEquivalentBSDFLayer::getMaxLambda() const
     {
-        return m_CombinedLayerWavelengths.back();
+        return ensureBaseline().back();
+    }
+
+    const std::vector<double> & CEquivalentBSDFLayer::ensureBaseline() const
+    {
+        if(m_CombinedLayerWavelengths.empty())
+        {
+            m_CombinedLayerWavelengths = m_MatrixWavelengths.has_value()
+                                           ? m_MatrixWavelengths.value()
+                                           : unionOfLayerWavelengths(m_Layer);
+        }
+        return m_CombinedLayerWavelengths;
+    }
+
+    void CEquivalentBSDFLayer::ensureCommitted()
+    {
+        if(!m_BandsCommitted)
+        {
+            ensureBaseline();
+            for(const auto & layer : m_Layer)
+            {
+                layer->setBandWavelengths(m_CombinedLayerWavelengths);
+            }
+            m_BandsCommitted = true;
+        }
+    }
+
+    void CEquivalentBSDFLayer::commitBaseline()
+    {
+        ensureCommitted();
     }
 
     CMatrixSeries CEquivalentBSDFLayer::getTotalA(const Side t_Side)
@@ -118,6 +146,7 @@ namespace MultiLayerOptics
         {
             layer->setBandWavelengths(m_CombinedLayerWavelengths);
         }
+        m_BandsCommitted = true;
         invalidateCache();
     }
 
@@ -130,6 +159,7 @@ namespace MultiLayerOptics
     {
         if(!hasCache())
         {
+            ensureCommitted();
             calculate();
         }
     }
