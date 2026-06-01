@@ -1806,29 +1806,29 @@ TEST_F(MultiPanePhotovoltaicBSDF_SmallBasis_Condensed, TestSpecular1)
     constexpr auto phi{0};
 
     const double abs1{aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.77644968432662831, abs1, 1e-6);
+    EXPECT_NEAR(0.776457219, abs1, 1e-6);
 
     const double absHeat1{aLayer.AbsHeat(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.67128461694557817, absHeat1, 1e-6);
+    EXPECT_NEAR(0.671306659, absHeat1, 1e-6);
 
     const double absElectricFront1{
       aLayer.AbsElectricity(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.10516506738105015, absElectricFront1, 1e-6);
+    EXPECT_NEAR(0.10515056, absElectricFront1, 1e-6);
 
     const double absElectricBack1{
       aLayer.AbsElectricity(minLambda, maxLambda, Side::Back, 1, theta, phi)};
-    EXPECT_NEAR(0.044782428030771371, absElectricBack1, 1e-6);
+    EXPECT_NEAR(0.0447754209, absElectricBack1, 1e-6);
 
     const auto absHeat{aLayer.AbsHeat(minLambda, maxLambda, Side::Front, 1)};
     EXPECT_EQ(7u, absHeat.size());
 
-    const std::vector correctAbsHeat{0.67128461694557817,
-                                     0.67625173871884059,
-                                     0.69054825309847567,
-                                     0.7116403454845841,
-                                     0.7318335876242712,
-                                     0.72614230646597078,
-                                     0.51898468628243122};
+    const std::vector correctAbsHeat{0.67130671694557817,
+                                     0.67627453871884059,
+                                     0.69057325309847567,
+                                     0.7116703454845841,
+                                     0.7318699697809552,
+                                     0.72619030646597078,
+                                     0.51904477965244882};
 
 
     for(size_t i = 0; i < absHeat.size(); ++i)

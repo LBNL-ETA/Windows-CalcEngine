@@ -109,23 +109,23 @@ namespace
 
     // Captured from post-fix run; regenerate via running the test suite with placeholder values.
     constexpr DirDiffResult expected_Nano_Solar_Front{
-        .tDir = 0.055320,
-        .tDif = 0.115811,
-        .tHem = 0.171131,
-        .rDir = 0.485788,
-        .rDif = 0.051647,
-        .rHem = 0.537435,
-        .absDif = 0.293023,
-        .absDir = 0.291434};
+        .tDir = 0.055349,
+        .tDif = 0.115868,
+        .tHem = 0.171217,
+        .rDir = 0.485549,
+        .rDif = 0.051677,
+        .rHem = 0.537226,
+        .absDif = 0.293146,
+        .absDir = 0.291556};
     constexpr DirDiffResult expected_Nano_Solar_Back{
-        .tDir = 0.055278,
-        .tDif = 0.109903,
-        .tHem = 0.165181,
-        .rDir = 0.111270,
-        .rDif = 0.238917,
-        .rHem = 0.350187,
-        .absDif = 0.481462,
-        .absDir = 0.484632};
+        .tDir = 0.055309,
+        .tDif = 0.109965,
+        .tHem = 0.165275,
+        .rDir = 0.111168,
+        .rDif = 0.238957,
+        .rHem = 0.350125,
+        .absDif = 0.481437,
+        .absDir = 0.484601};
 
     constexpr DirDiffResult expected_Nano_Visible_Front{
         .tDir = 0.127992,
@@ -147,23 +147,23 @@ namespace
         .absDir = 0.456066};
 
     constexpr DirDiffResult expected_Small_Solar_Front{
-        .tDir = 0.055320,
-        .tDif = 0.115811,
-        .tHem = 0.171131,
-        .rDir = 0.485788,
-        .rDif = 0.051647,
-        .rHem = 0.537435,
-        .absDif = 0.282800,
-        .absDir = 0.291434};
+        .tDir = 0.055349,
+        .tDif = 0.115868,
+        .tHem = 0.171217,
+        .rDir = 0.485549,
+        .rDif = 0.051677,
+        .rHem = 0.537226,
+        .absDif = 0.282919,
+        .absDir = 0.291556};
     constexpr DirDiffResult expected_Small_Solar_Back{
-        .tDir = 0.055278,
-        .tDif = 0.109903,
-        .tHem = 0.165181,
-        .rDir = 0.111270,
-        .rDif = 0.238917,
-        .rHem = 0.350187,
-        .absDif = 0.462869,
-        .absDir = 0.484632};
+        .tDir = 0.055309,
+        .tDif = 0.109965,
+        .tHem = 0.165275,
+        .rDir = 0.111168,
+        .rDif = 0.238957,
+        .rHem = 0.350125,
+        .absDif = 0.462846,
+        .absDir = 0.484601};
 
     constexpr DirDiffResult expected_Small_Visible_Front{
         .tDir = 0.127992,

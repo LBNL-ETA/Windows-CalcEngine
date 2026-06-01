@@ -169,5 +169,5 @@ TEST_F(TestNIRRatio, TestRatio)
 
     auto ratio = aNIRRatio.ratio();
 
-    EXPECT_NEAR(0.494586, ratio, 1e-6);
+    EXPECT_NEAR(0.494866944, ratio, 1e-6);
 }

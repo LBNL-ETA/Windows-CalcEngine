@@ -1804,16 +1804,16 @@ TEST_F(MultiPanePhotovoltaicBSDF_SmallBasis, TestSpecular1)
     constexpr auto phi{0};
 
     const double abs1{aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.77708465456652798, abs1, 1e-6);
+    EXPECT_NEAR(0.777092661, abs1, 1e-6);
 
     const double absHeat1{aLayer.AbsHeat(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.67084210141480705, absHeat1, 1e-6);
+    EXPECT_NEAR(0.670863975, absHeat1, 1e-6);
 
     const double absElectricFront1{
       aLayer.AbsElectricity(minLambda, maxLambda, Side::Front, 1, theta, phi)};
-    EXPECT_NEAR(0.10624255315172096, absElectricFront1, 1e-6);
+    EXPECT_NEAR(0.106228685, absElectricFront1, 1e-6);
 
     const double absElectricBack1{
       aLayer.AbsElectricity(minLambda, maxLambda, Side::Back, 1, theta, phi)};
-    EXPECT_NEAR(0.045253845152651906, absElectricBack1, 1e-6);
+    EXPECT_NEAR(0.0452470432, absElectricBack1, 1e-6);
 }

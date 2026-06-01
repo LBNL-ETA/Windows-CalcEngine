@@ -55,19 +55,19 @@ TEST_F(MultiPaneSpecular_NFRC913, TestAngle0)
 
     const double T = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.51342298768469985, T, 1e-6);
+    EXPECT_NEAR(0.513398587, T, 1e-6);
 
     const double Rf = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.055073132534210208, Rf, 1e-6);
+    EXPECT_NEAR(0.0550761015, Rf, 1e-6);
 
     const double Rb = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Back, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.055073132534210208, Rb, 1e-6);
+    EXPECT_NEAR(0.0550761015, Rb, 1e-6);
 
     const double Abs1 = aLayer.getAbsorptanceLayer(
       minLambda, maxLambda, 1, Side::Front, ScatteringSimple::Direct, angle, 0);
-    EXPECT_NEAR(0.43150387978108995, Abs1, 1e-6);
+    EXPECT_NEAR(0.431525312, Abs1, 1e-6);
 }
 
 TEST_F(MultiPaneSpecular_NFRC913, TestAngle10)
@@ -83,19 +83,19 @@ TEST_F(MultiPaneSpecular_NFRC913, TestAngle10)
 
     const double T = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.51173299377184223, T, 1e-6);
+    EXPECT_NEAR(0.511708764, T, 1e-6);
 
     const double Rf = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.055025523768065188, Rf, 1e-6);
+    EXPECT_NEAR(0.0550285057, Rf, 1e-6);
 
     const double Rb = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Back, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.055025523768065188, Rb, 1e-6);
+    EXPECT_NEAR(0.0550285057, Rb, 1e-6);
 
     const double Abs1 = aLayer.getAbsorptanceLayer(
       minLambda, maxLambda, 1, Side::Front, ScatteringSimple::Direct, angle, 0);
-    EXPECT_NEAR(0.43324148246009242, Abs1, 1e-6);
+    EXPECT_NEAR(0.433262731, Abs1, 1e-6);
 }
 
 TEST_F(MultiPaneSpecular_NFRC913, TestAngle20)
@@ -111,19 +111,19 @@ TEST_F(MultiPaneSpecular_NFRC913, TestAngle20)
 
     const double T = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::T, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.50653889463475887, T, 1e-6);
+    EXPECT_NEAR(0.506515196, T, 1e-6);
 
     const double Rf = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Front, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.055131883007555345, Rf, 1e-6);
+    EXPECT_NEAR(0.0551349092, Rf, 1e-6);
 
     const double Rb = aLayer.getPropertySurface(
       minLambda, maxLambda, PropertySurface::R, Side::Back, Scattering::DirectDirect, angle, 0);
-    EXPECT_NEAR(0.055131883007555345, Rb, 1e-6);
+    EXPECT_NEAR(0.0551349092, Rb, 1e-6);
 
     const double Abs1 = aLayer.getAbsorptanceLayer(
       minLambda, maxLambda, 1, Side::Front, ScatteringSimple::Direct, angle, 0);
-    EXPECT_NEAR(0.43832922235768595, Abs1, 1e-6);
+    EXPECT_NEAR(0.438349895, Abs1, 1e-6);
 }
 
 TEST_F(MultiPaneSpecular_NFRC913, TestAngleHemispherical10)
@@ -138,20 +138,20 @@ TEST_F(MultiPaneSpecular_NFRC913, TestAngleHemispherical10)
 
     double Tfhem =
       aLayer.getHemisphericalProperty(Side::Front, Property::T, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.43975094746820914, Tfhem, 1e-6);
+    EXPECT_NEAR(0.439732506, Tfhem, 1e-6);
 
     double Tbhem =
       aLayer.getHemisphericalProperty(Side::Back, Property::T, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.43975094746820914, Tbhem, 1e-6);
+    EXPECT_NEAR(0.439732506, Tbhem, 1e-6);
 
     double Rfhem =
       aLayer.getHemisphericalProperty(Side::Front, Property::R, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.106320, Rfhem, 1e-6);
+    EXPECT_NEAR(0.106323118, Rfhem, 1e-6);
 
     double Rbhem =
       aLayer.getHemisphericalProperty(Side::Back, Property::R, aAngles, minLambda, maxLambda);
-    EXPECT_NEAR(0.106320, Rbhem, 1e-6);
+    EXPECT_NEAR(0.106323118, Rbhem, 1e-6);
 
     double Abs1 = aLayer.AbsHemispherical(1, aAngles, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.44375524165517327, Abs1, 1e-6);
+    EXPECT_NEAR(0.443769781, Abs1, 1e-6);
 }

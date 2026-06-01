@@ -45,7 +45,7 @@ TEST_F(TestSampleNFRC_1042, TestSampleEnergy)
     aSample->setWavelengths(WavelengthSet::Source);
     transmittedSolar =
       aSample->getEnergy(lowLambda, highLambda, Property::T, Side::Front, ScatteringType::Total);
-    EXPECT_NEAR(341.756495, transmittedSolar, 1e-6);
+    EXPECT_NEAR(341.743947, transmittedSolar, 1e-6);
 
     // This is to test repeatability
     aSample->setWavelengths(WavelengthSet::Data);

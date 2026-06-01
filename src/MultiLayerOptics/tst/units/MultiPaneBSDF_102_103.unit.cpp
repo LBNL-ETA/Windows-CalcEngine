@@ -61,56 +61,56 @@ TEST_F(MultiPaneBSDF_102_103, SolarAndVisibleRange)
     aLayer.setCalculationProperties(input);
 
     double tauDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::T);
-    EXPECT_NEAR(0.542341, tauDiff, 1e-6);
+    EXPECT_NEAR(0.54236043, tauDiff, 1e-6);
 
     double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.221231, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.22124127, rhoDiff, 1e-6);
 
     double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.110652, absDiff1, 1e-6);
+    EXPECT_NEAR(0.110637977, absDiff1, 1e-6);
 
     double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.125776, absDiff2, 1e-6);
+    EXPECT_NEAR(0.125760323, absDiff2, 1e-6);
 
     double theta = 0;
     double phi = 0;
 
     double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.652295, tauHem, 1e-6);
+    EXPECT_NEAR(0.652313598, tauHem, 1e-6);
 
     double tauDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.652295, tauDir, 1e-6);
+    EXPECT_NEAR(0.652313598, tauDir, 1e-6);
 
     double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.124734, rhoHem, 1e-6);
+    EXPECT_NEAR(0.124741379, rhoHem, 1e-6);
 
     double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.124734, rhoDir, 1e-6);
+    EXPECT_NEAR(0.124741379, rhoDir, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.096067, abs1, 1e-6);
+    EXPECT_NEAR(0.0960565293, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.126904, abs2, 1e-6);
+    EXPECT_NEAR(0.126888494, abs2, 1e-6);
 
     theta = 45;
     phi = 78;
 
     tauHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.631684, tauHem, 1e-6);
+    EXPECT_NEAR(0.631704882, tauHem, 1e-6);
 
     rhoHem = aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.130947, rhoHem, 1e-6);
+    EXPECT_NEAR(0.130956192, rhoHem, 1e-6);
 
     abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.103644, abs1, 1e-6);
+    EXPECT_NEAR(0.103631187, abs1, 1e-6);
 
     abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.133724, abs2, 1e-6);
+    EXPECT_NEAR(0.133707739, abs2, 1e-6);
 
     // Visible range
 

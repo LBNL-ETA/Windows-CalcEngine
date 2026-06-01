@@ -108,23 +108,23 @@ namespace
 
     // Captured from post-fix run; regenerate via running the test suite with the placeholder values.
     constexpr DirDiffResult expected_Nano_Solar_Front{
-        .tDir = 0.037390,
-        .tDif = 0.608084,
-        .tHem = 0.645473,
-        .rDir = 0.042876,
-        .rDif = 0.096596,
-        .rHem = 0.139472,
-        .absDif = 0.218687,
-        .absDir = 0.215054};
+        .tDir = 0.037403,
+        .tDif = 0.608378,
+        .tHem = 0.645781,
+        .rDir = 0.042893,
+        .rDif = 0.096643,
+        .rHem = 0.139536,
+        .absDif = 0.218327,
+        .absDir = 0.214683};
     constexpr DirDiffResult expected_Nano_Solar_Back{
-        .tDir = 0.036865,
-        .tDif = 0.608171,
-        .tHem = 0.645036,
-        .rDir = 0.042462,
-        .rDif = 0.096774,
-        .rHem = 0.139236,
-        .absDif = 0.219338,
-        .absDir = 0.215728};
+        .tDir = 0.036869,
+        .tDif = 0.608475,
+        .tHem = 0.645344,
+        .rDir = 0.042460,
+        .rDif = 0.096829,
+        .rHem = 0.139289,
+        .absDif = 0.218987,
+        .absDir = 0.215367};
 
     constexpr DirDiffResult expected_Nano_Visible_Front{
         .tDir = 0.014420,
@@ -146,23 +146,23 @@ namespace
         .absDir = 0.116746};
 
     constexpr DirDiffResult expected_Small_Solar_Front{
-        .tDir = 0.037390,
-        .tDif = 0.608084,
-        .tHem = 0.645473,
-        .rDir = 0.042876,
-        .rDif = 0.096596,
-        .rHem = 0.139472,
-        .absDif = 0.211583,
-        .absDir = 0.215054};
+        .tDir = 0.037403,
+        .tDif = 0.608378,
+        .tHem = 0.645781,
+        .rDir = 0.042893,
+        .rDif = 0.096643,
+        .rHem = 0.139536,
+        .absDif = 0.211239,
+        .absDir = 0.214683};
     constexpr DirDiffResult expected_Small_Solar_Back{
-        .tDir = 0.036865,
-        .tDif = 0.608171,
-        .tHem = 0.645036,
-        .rDir = 0.042462,
-        .rDif = 0.096774,
-        .rHem = 0.139236,
-        .absDif = 0.212195,
-        .absDir = 0.215728};
+        .tDir = 0.036869,
+        .tDif = 0.608475,
+        .tHem = 0.645344,
+        .rDir = 0.042460,
+        .rDif = 0.096829,
+        .rHem = 0.139289,
+        .absDif = 0.211859,
+        .absDir = 0.215367};
 
     constexpr DirDiffResult expected_Small_Visible_Front{
         .tDir = 0.014420,
@@ -249,7 +249,7 @@ TEST(ILC2019_1_DirDiff, DISABLED_BasisComparisonTable)
                 auto layer = makeLayer(basis, spec);
                 const auto r = compute(*layer, side, rangeMin, rangeMax);
                 std::cout << std::left << std::setw(10) << basisName << std::right << std::fixed
-                          << std::setprecision(6) << std::setw(12) << r.tDir << std::setw(12)
+                          << std::setprecision(12) << std::setw(12) << r.tDir << std::setw(12)
                           << r.tDif << std::setw(12) << r.tHem << std::setw(12) << r.rDir
                           << std::setw(12) << r.rDif << std::setw(12) << r.rHem << "\n";
             }

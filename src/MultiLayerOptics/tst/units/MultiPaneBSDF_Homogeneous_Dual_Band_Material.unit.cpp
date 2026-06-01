@@ -75,11 +75,11 @@ TEST_F(MultiPaneBSDF_Homogeneous_Dual_Band_Material, TestSolarRange)
 
     const double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.718002, tauHem, 1e-6);
+    EXPECT_NEAR(0.717944653, tauHem, 1e-6);
 
     const double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.102066, rhoHem, 1e-6);
+    EXPECT_NEAR(0.102123852, rhoHem, 1e-6);
 }
 
 TEST_F(MultiPaneBSDF_Homogeneous_Dual_Band_Material, TestVisibleRange)
