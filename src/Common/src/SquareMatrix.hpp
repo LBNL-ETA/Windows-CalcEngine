@@ -86,5 +86,17 @@ namespace FenestrationCommon
     SquareMatrix multiplyWithDiagonalMatrix(const SquareMatrix & tMatrix,
                                             const std::vector<double> & tInput);
 
+    // Output-parameter variants: write the product into a pre-sized `out`
+    // (must be the same size), fully overwriting it with no zero-fill. Let
+    // callers reuse a scratch matrix across calls instead of allocating one
+    // per call. The value-returning overloads above delegate to these.
+    void multiplyWithDiagonalMatrix(const std::vector<double> & tInput,
+                                    const SquareMatrix & tMatrix,
+                                    SquareMatrix & out);
+
+    void multiplyWithDiagonalMatrix(const SquareMatrix & tMatrix,
+                                    const std::vector<double> & tInput,
+                                    SquareMatrix & out);
+
 
 }   // namespace FenestrationCommon

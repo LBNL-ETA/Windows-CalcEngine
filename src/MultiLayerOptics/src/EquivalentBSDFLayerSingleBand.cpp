@@ -9,19 +9,31 @@ namespace MultiLayerOptics
 {
     namespace
     {
-        // Builds the matrix M = (I - lambda*Rb * lambda*Rf), shared by both
-        // interReflectance() and interReflectanceFactor().
+        // Builds the matrix (I - lambda*Rb * lambda*Rf), shared by both
+        // interReflectance() and interReflectanceFactor(). The diagonal scalings
+        // write into reused buffers via the out-overloads, and (I - M) is formed
+        // in place on the product (negate, then add 1 on the diagonal), so no
+        // separate identity or subtraction temporary is allocated.
         SquareMatrix buildInterReflectanceMatrix(const std::vector<double> & t_Lambda,
                                                  const SquareMatrix & t_Rb,
                                                  const SquareMatrix & t_Rf)
         {
             const auto size = t_Lambda.size();
-            const auto lRb = multiplyWithDiagonalMatrix(t_Lambda, t_Rb);
-            const auto lRf = multiplyWithDiagonalMatrix(t_Lambda, t_Rf);
-            auto M = lRb * lRf;
-            SquareMatrix I(size);
-            I.setIdentity();
-            return I - M;
+            SquareMatrix lRb(size);
+            SquareMatrix lRf(size);
+            multiplyWithDiagonalMatrix(t_Lambda, t_Rb, lRb);
+            multiplyWithDiagonalMatrix(t_Lambda, t_Rf, lRf);
+
+            SquareMatrix result = lRb * lRf;
+            for(std::size_t row = 0; row < size; ++row)
+            {
+                for(std::size_t col = 0; col < size; ++col)
+                {
+                    result(row, col) = -result(row, col);
+                }
+                result(row, row) += 1.0;
+            }
+            return result;
         }
     }   // namespace
 

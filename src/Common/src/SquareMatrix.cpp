@@ -421,17 +421,47 @@ namespace FenestrationCommon
         return res;
     }
 
+    void multiplyWithDiagonalMatrix(const std::vector<double> & tInput,
+                                    const SquareMatrix & tMatrix,
+                                    SquareMatrix & out)
+    {
+        const std::size_t size = tInput.size();
+        if(tMatrix.size() != size || out.size() != size)
+        {
+            throw std::runtime_error("multiplyWithDiagonalMatrix: size mismatch.");
+        }
+        for(std::size_t row = 0; row < size; ++row)
+        {
+            for(std::size_t col = 0; col < size; ++col)
+            {
+                out(row, col) = tMatrix(row, col) * tInput[row];
+            }
+        }
+    }
+
+    void multiplyWithDiagonalMatrix(const SquareMatrix & tMatrix,
+                                    const std::vector<double> & tInput,
+                                    SquareMatrix & out)
+    {
+        const std::size_t size = tInput.size();
+        if(tMatrix.size() != size || out.size() != size)
+        {
+            throw std::runtime_error("multiplyWithDiagonalMatrix: size mismatch.");
+        }
+        for(std::size_t row = 0; row < size; ++row)
+        {
+            for(std::size_t col = 0; col < size; ++col)
+            {
+                out(row, col) = tMatrix(row, col) * tInput[col];
+            }
+        }
+    }
+
     SquareMatrix multiplyWithDiagonalMatrix(const std::vector<double> & tInput,
                                             const SquareMatrix & tMatrix)
     {
         SquareMatrix res{tInput.size()};
-        for(size_t i = 0; i < tInput.size(); ++i)
-        {
-            for(size_t j = 0; j < tInput.size(); ++j)
-            {
-                res(i, j) = tMatrix(i, j) * tInput[i];
-            }
-        }
+        multiplyWithDiagonalMatrix(tInput, tMatrix, res);
         return res;
     }
 
@@ -439,13 +469,7 @@ namespace FenestrationCommon
                                             const std::vector<double> & tInput)
     {
         SquareMatrix res{tInput.size()};
-        for(size_t i = 0; i < tInput.size(); ++i)
-        {
-            for(size_t j = 0; j < tInput.size(); ++j)
-            {
-                res(i, j) = tMatrix(i, j) * tInput[j];
-            }
-        }
+        multiplyWithDiagonalMatrix(tMatrix, tInput, res);
         return res;
     }
 
