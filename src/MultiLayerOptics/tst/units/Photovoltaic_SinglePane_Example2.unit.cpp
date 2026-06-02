@@ -1811,8 +1811,8 @@ TEST_F(Photovoltaic_DoublePane_Example2, Test1)
     EXPECT_NEAR(0.2, T, 1e-6);
 
     const double absHeat = aLayer.AbsHeat(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.670842, absHeat, 1e-6);
+    EXPECT_NEAR(0.670863721, absHeat, 1e-6);
 
     const double absEl1 = aLayer.AbsElectricity(1, angle, minLambda, maxLambda, Side::Front);
-    EXPECT_NEAR(0.106243, absEl1, 1e-6);
+    EXPECT_NEAR(0.10622894, absEl1, 1e-6);
 }

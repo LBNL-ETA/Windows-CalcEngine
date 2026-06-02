@@ -152,7 +152,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     size_t size = aT.size();
 
     std::vector correctResults{
-      20.704876, 2.687626, 1.488459, 1.184225, 1.151644, 1.300791, 1.147333};
+      20.705032, 2.687647, 1.488471, 1.184235, 1.151656, 1.300806, 1.147355};
 
     EXPECT_EQ(correctResults.size(), aT.size());
     for(size_t i = 0; i < size; ++i)
@@ -163,7 +163,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Back Reflectance matrix
     SquareMatrix aRb = aLayer.getMatrix(minLambda, maxLambda, Side::Back, PropertySurface::R);
 
-    correctResults = {1.859298, 0.241631, 0.136087, 0.118094, 0.153194, 0.343296, 1.685091};
+    correctResults = {1.859394, 0.241643, 0.136094, 0.118099, 0.153200, 0.343305, 1.685113};
 
     EXPECT_EQ(correctResults.size(), aRb.size());
     for(size_t i = 0; i < size; ++i)
@@ -174,7 +174,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Front absorptance layer 1
     auto aAbsF = aLayer.Abs(minLambda, maxLambda, Side::Front, 1);
 
-    correctResults = {0.091741, 0.092681, 0.095468, 0.099922, 0.105427, 0.110123, 0.104253};
+    correctResults = {0.091731, 0.092671, 0.095457, 0.099911, 0.105415, 0.110109, 0.104239};
 
     EXPECT_EQ(correctResults.size(), aAbsF.size());
     for(size_t i = 0; i < size; ++i)
@@ -196,7 +196,7 @@ TEST_F(MultiPaneBSDF_102_VenetianUniformMultiWL, TestBSDF1)
     // Back absorptance layer 1
     auto aAbsB = aLayer.Abs(minLambda, maxLambda, Side::Back, 1);
 
-    correctResults = {0.091580, 0.092517, 0.095294, 0.099735, 0.105219, 0.109895, 0.104039};
+    correctResults = {0.091570, 0.092506, 0.095284, 0.099723, 0.105207, 0.109882, 0.104025};
 
     EXPECT_EQ(correctResults.size(), aAbsB.size());
     for(size_t i = 0; i < size; ++i)

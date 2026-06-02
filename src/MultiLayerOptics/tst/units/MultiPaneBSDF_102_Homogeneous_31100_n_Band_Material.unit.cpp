@@ -64,13 +64,13 @@ TEST_F(MultiPaneBSDF_102_Homogeneous_31100_n_Band_Material, TestBSDF1)
     EXPECT_NEAR(0.0, tauDiff, 1e-6);
 
     const double rhoDiff = aLayer.DiffDiff(minLambda, maxLambda, Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.597424, rhoDiff, 1e-6);
+    EXPECT_NEAR(0.597431192, rhoDiff, 1e-6);
 
     const double absDiff1 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 1);
-    EXPECT_NEAR(0.155962, absDiff1, 1e-6);
+    EXPECT_NEAR(0.155939099, absDiff1, 1e-6);
 
     const double absDiff2 = aLayer.AbsDiff(minLambda, maxLambda, Side::Front, 2);
-    EXPECT_NEAR(0.246614, absDiff2, 1e-6);
+    EXPECT_NEAR(0.246629709, absDiff2, 1e-6);
 
     constexpr double theta = 0;
     constexpr double phi = 0;
@@ -85,15 +85,15 @@ TEST_F(MultiPaneBSDF_102_Homogeneous_31100_n_Band_Material, TestBSDF1)
 
     const double rhoHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.571367, rhoHem, 1e-6);
+    EXPECT_NEAR(0.571372425, rhoHem, 1e-6);
 
     const double rhoDir =
       aLayer.DirDir(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.088339, rhoDir, 1e-6);
+    EXPECT_NEAR(0.0883430922, rhoDir, 1e-6);
 
     const double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.152635, abs1, 1e-6);
+    EXPECT_NEAR(0.152612182, abs1, 1e-6);
 
     const double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
-    EXPECT_NEAR(0.275998, abs2, 1e-6);
+    EXPECT_NEAR(0.276015394, abs2, 1e-6);
 }

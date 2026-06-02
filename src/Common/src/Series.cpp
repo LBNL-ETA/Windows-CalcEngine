@@ -315,18 +315,31 @@ namespace FenestrationCommon
     {
         double const TOLERANCE = 1e-6;   // introduced because of rounding error
         double total = 0;
-        for(auto & aPoint : m_Series)
+        const std::size_t cnt = m_Series.size();
+        for(std::size_t idx = 0; idx < cnt; ++idx)
         {
-            double wavelength = aPoint.x();
-            // Last point must be excluded because of ranges. Each wavelength represent range from
-            // wavelength one to wavelength two. Summing value of the last wavelength in array would
-            // be wrong because it would include one additional range after the end of spectrum. For
-            // example, summing all the data from 0.38 to 0.78 would include visible range. However,
-            // including 0.78 in sum would add extra value from 0.78 to 0.79.
-            if(((wavelength >= (minLambda - TOLERANCE) && wavelength < (maxLambda - TOLERANCE))
-                || (minLambda == 0 && maxLambda == 0)))
+            const double wavelength = m_Series[idx].x();
+            // Each entry holds the integral of the interval [wavelength, nextWavelength], keyed at
+            // its left endpoint. Summing the value at the last wavelength would add one extra range
+            // past the end of the spectrum, so the left endpoint must be strictly below maxLambda.
+            // For example, summing 0.38 to 0.78 must not add the 0.78 to 0.79 range.
+            if(minLambda == 0 && maxLambda == 0)
             {
-                total += aPoint.value();
+                total += m_Series[idx].value();
+                continue;
+            }
+            if(wavelength >= (minLambda - TOLERANCE) && wavelength < (maxLambda - TOLERANCE))
+            {
+                // Drop the final interval when it straddles maxLambda: integration stops at the
+                // last full interval inside the range rather than over-running to the next grid
+                // point past maxLambda (e.g. an ASTM solar grid with 2.494 then 2.537 must stop at
+                // 2.494 for a 2.5 cutoff, not integrate on to 2.537).
+                const bool hasNext = (idx + 1 < cnt);
+                const double rightEdge = hasNext ? m_Series[idx + 1].x() : wavelength;
+                if(rightEdge <= maxLambda + TOLERANCE)
+                {
+                    total += m_Series[idx].value();
+                }
             }
         }
         return total;

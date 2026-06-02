@@ -473,29 +473,29 @@ TEST_F(MultiPaneBSDF_102_XMLLayer_QuarterBasis, TestBSDFMatrixAsInput)
 
     double tauHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::T, theta, phi);
-    EXPECT_NEAR(0.662790, tauHem, 1e-6);
+    EXPECT_NEAR(0.662795203, tauHem, 1e-6);
 
     double rhoFrontHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Front, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.081886, rhoFrontHem, 1e-6);
+    EXPECT_NEAR(0.0818902417, rhoFrontHem, 1e-6);
 
     double rhoBackHem =
       aLayer.DirHem(minLambda, maxLambda, Side::Back, PropertySurface::R, theta, phi);
-    EXPECT_NEAR(0.054989, rhoBackHem, 1e-6);
+    EXPECT_NEAR(0.0549919231, rhoBackHem, 1e-6);
 
     double abs1 = aLayer.Abs(minLambda, maxLambda, Side::Front, 1, theta, phi);
-    EXPECT_NEAR(0.092253, abs1, 1e-6);
+    EXPECT_NEAR(0.0922428469, abs1, 1e-6);
 
     double abs2 = aLayer.Abs(minLambda, maxLambda, Side::Front, 2, theta, phi);
     EXPECT_NEAR(0.163071, abs2, 1e-6);
 
     auto absHeatDirect = aLayer.getAbsorptanceLayersHeat(
       minLambda, maxLambda, Side::Front, ScatteringSimple::Direct, 0, 0);
-    EXPECT_NEAR(0.092253, absHeatDirect[0], 1e-6);
+    EXPECT_NEAR(0.0922428469, absHeatDirect[0], 1e-6);
     EXPECT_NEAR(0.163071, absHeatDirect[1], 1e-6);
 
     auto absHeatDiffuse = aLayer.getAbsorptanceLayersHeat(
       minLambda, maxLambda, Side::Front, ScatteringSimple::Diffuse, 0, 0);
-    EXPECT_NEAR(0.102450, absHeatDiffuse[0], 1e-6);
+    EXPECT_NEAR(0.102437584, absHeatDiffuse[0], 1e-6);
     EXPECT_NEAR(0.156131, absHeatDiffuse[1], 1e-6);
 }
