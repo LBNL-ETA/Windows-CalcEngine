@@ -508,15 +508,14 @@ namespace FenestrationCommon
         }
 
         const std::size_t n = m_size;
-        SquareMatrix X(n);
+        // Start X as a copy of B: avoids the wasted zero-fill of SquareMatrix(n)
+        // plus the explicit per-row copy below. Row i is untouched until
+        // iteration i, so X[i] still equals B[i] when elimination reaches it.
+        SquareMatrix X(B);
 
-        // Step 1: solve L * Y = B (L unit-diagonal). Stored in-place into X.
+        // Step 1: solve L * Y = B (L unit-diagonal), in place in X (== B).
         for(std::size_t i = 0; i < n; ++i)
         {
-            for(std::size_t j = 0; j < n; ++j)
-            {
-                X.m_Matrix[i][j] = B.m_Matrix[i][j];
-            }
             for(std::size_t k = 0; k < i; ++k)
             {
                 const double lik = m_LU[i][k];
