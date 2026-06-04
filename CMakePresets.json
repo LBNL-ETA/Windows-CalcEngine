@@ -28,10 +28,10 @@
         {
             "name": "local",
             "hidden": true,
-            "description": "Base: prefers sibling working copies of dependencies (../<RepoName>); falls back to remote per-dep when missing. Inherited by local-debug, local-release, and script-generated compiler presets.",
+            "description": "Development mode: build this project and its dependency graph from sibling working copies (../<Name>) when checked out, each falling back to its remote when absent. Sets LBNL_LOCAL_SIBLINGS, a cache flag that cascades into sub-builds so the whole tree resolves locally; `default` leaves it off so everything comes from remotes. Inherited by local-debug, local-release, and script-generated compiler presets.",
             "inherits": "default",
             "cacheVariables": {
-                "FETCHCONTENT_SOURCE_DIR_GOOGLETEST": "${sourceDir}/../googletest"
+                "LBNL_LOCAL_SIBLINGS": { "type": "BOOL", "value": "ON" }
             }
         },
         {

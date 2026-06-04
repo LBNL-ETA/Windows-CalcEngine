@@ -18,8 +18,8 @@ All dependencies are downloaded automatically via CMake FetchContent on first co
 
 | Preset | When to use it |
 |---|---|
-| `default` | First-time configure; CI. Fetches everything from declared remotes. Picks the system default compiler (MSVC on Windows, system `cc`/`c++` on Linux/macOS). |
-| `local` | Consume sibling working copies of dependencies instead of fetching them. |
+| `default` | First-time configure; CI and releases. **Always** fetches every dependency from its declared remote — never touches local disk. Picks the system default compiler (MSVC on Windows, system `cc`/`c++` on Linux/macOS). |
+| `local` | Development mode: build against sibling working copies on disk when present (see below). |
 
 Examples:
 
@@ -28,13 +28,22 @@ cmake --preset default
 cmake --preset local
 ```
 
-`local` expects a sibling directory layout — e.g. `../googletest` next to `../Windows-CalcEngine`. Currently overridden:
+#### Local development mode (`local`)
 
-| Dependency | Expected path |
-|------------|--------------|
+The `local` preset sets a single cache flag, `LBNL_LOCAL_SIBLINGS=ON`. When it is on, each repo's CMakeLists prefers a **sibling working copy** of its *direct* dependencies — here just `../googletest` next to `../Windows-CalcEngine` — over fetching them:
+
+| Direct dependency | Expected path |
+|-------------------|--------------|
 | googletest | `../googletest` |
 
-Missing siblings fall back to the declared remote automatically, so `local` is safe to invoke even with only a subset of overrides checked out.
+Key properties:
+
+- **`default` never uses local repos.** The flag is off, so `default` builds are always pure-remote and reproducible — use them for CI and releases. (Build dirs differ per preset, so a prior `local` configure can't leak into a `default` one.)
+- **Per-dependency fallback.** A sibling that isn't checked out falls back to its declared remote independently, so `local` is safe to invoke even with only a subset of siblings present.
+- **It propagates.** `LBNL_LOCAL_SIBLINGS` is a cache variable, so it cascades into dependency sub-builds. When Windows-CalcEngine is itself consumed as a sibling by another LBNL project in local mode, it honors the flag and wires up its own direct deps in turn. Each repo only ever names its own direct deps; it never needs to know another repo's internals.
+- **Develop, then release.** Local builds intentionally use your working copies, which may differ from the pinned `GIT_TAG`s. Get the graph green locally, then bump each repo's pinned version and release one at a time.
+
+(MSVC `/MP` parallel compilation is enabled by the project's compiler-flags module for all targets and dependencies.)
 
 For compiler-specific presets (`gcc-13`, `clang-18`, `vs2022`, etc.), see "Per-machine compiler presets" below — each developer maintains their own `CMakeUserPresets.json` with one preset per toolchain they actually want to use.
 

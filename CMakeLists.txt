@@ -10,20 +10,27 @@ set(CMAKE_CXX_STANDARD 20)
 option(FORCE_SINGLE_PROJECT "Force compilation as a single project, regardless of parent" ON)
 option(USE_PARALLEL_ALGORITHMS "Use parallel algorithms for STL operations" ON)
 
-# Graceful local-sibling fallback: the `local` CMake preset sets
-# FETCHCONTENT_SOURCE_DIR_<NAME> to ${sourceDir}/../<DepName> for each declared
-# dependency. If a sibling working copy is missing, unset that variable here so
-# FetchContent falls back to the declared remote instead of erroring out.
-foreach(_lbnl_dep GOOGLETEST)
-    if(FETCHCONTENT_SOURCE_DIR_${_lbnl_dep})
-        if(NOT EXISTS "${FETCHCONTENT_SOURCE_DIR_${_lbnl_dep}}/CMakeLists.txt")
-            message(STATUS
-                "Local sibling for ${_lbnl_dep} not found at "
-                "${FETCHCONTENT_SOURCE_DIR_${_lbnl_dep}}; falling back to remote.")
-            unset(FETCHCONTENT_SOURCE_DIR_${_lbnl_dep} CACHE)
+# Local development mode. The `local` preset sets LBNL_LOCAL_SIBLINGS=ON (a cache
+# variable, so it cascades into FetchContent sub-builds). When it is on, prefer a
+# sibling working copy (../<Name>) of each of THIS project's direct dependencies,
+# so the whole dependency graph can be built from local disk during development.
+# A dependency whose sibling is not checked out falls back to its declared remote,
+# independently. Propagation: a sibling dependency that also honors this flag wires
+# up its own siblings in turn. When the flag is off (e.g. the `default` preset),
+# nothing here runs and every dependency comes from its remote.
+if(LBNL_LOCAL_SIBLINGS)
+    foreach(_sibling "googletest=GOOGLETEST")
+        string(REPLACE "=" ";" _sibling "${_sibling}")
+        list(GET _sibling 0 _sibling_dir)
+        list(GET _sibling 1 _sibling_var)
+        if(NOT FETCHCONTENT_SOURCE_DIR_${_sibling_var}
+           AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../${_sibling_dir}/CMakeLists.txt")
+            set(FETCHCONTENT_SOURCE_DIR_${_sibling_var}
+                "${CMAKE_CURRENT_SOURCE_DIR}/../${_sibling_dir}")
+            message(STATUS "[local] ${_sibling_dir} -> ${FETCHCONTENT_SOURCE_DIR_${_sibling_var}}")
         endif()
-    endif()
-endforeach()
+    endforeach()
+endif()
 
 if (USE_PARALLEL_ALGORITHMS)
     add_compile_definitions(USE_PARALLEL_ALGORITHMS)
