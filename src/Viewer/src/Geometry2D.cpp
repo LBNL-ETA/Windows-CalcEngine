@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <functional>
 
 #include "Geometry2D.hpp"
 #include "ViewSegment2D.hpp"
@@ -52,28 +53,34 @@ namespace Viewer
         return m_Segments.back().endPoint();
     }
 
+    namespace
+    {
+        // Boundary point used to connect an enclosure to its neighbours: the extreme-in-x
+        // endpoint of whichever of the first/last segments is itself the extreme in x. comp is
+        // std::less for the leftmost point (entry) and std::greater for the rightmost (exit).
+        // On ties the first segment and the end point are kept, matching the original behavior.
+        template<typename Compare>
+        CPoint2D enclosureBoundaryPoint(const CSegment2D & frontSegment,
+                                        const CSegment2D & backSegment,
+                                        Compare comp)
+        {
+            const auto & segment =
+              comp(backSegment.centerPoint().x(), frontSegment.centerPoint().x()) ? backSegment
+                                                                                  : frontSegment;
+            const auto startPoint = segment.startPoint();
+            const auto endPoint = segment.endPoint();
+            return comp(startPoint.x(), endPoint.x()) ? startPoint : endPoint;
+        }
+    }   // namespace
+
     CPoint2D CGeometry2D::entryPoint() const
     {
-        auto xStart = m_Segments.front().centerPoint().x();
-        auto xEnd = m_Segments.back().centerPoint().x();
-        const CPoint2D startPoint{xStart <= xEnd ? m_Segments.front().startPoint()
-                                                 : m_Segments.back().startPoint()};
-        const CPoint2D endPoint{xStart <= xEnd ? m_Segments.front().endPoint()
-                                               : m_Segments.back().endPoint()};
-
-        return startPoint.x() < endPoint.x() ? startPoint : endPoint;
+        return enclosureBoundaryPoint(m_Segments.front(), m_Segments.back(), std::less<>{});
     }
 
     CPoint2D CGeometry2D::exitPoint() const
     {
-        auto xStart = m_Segments.front().centerPoint().x();
-        auto xEnd = m_Segments.back().centerPoint().x();
-        const CPoint2D startPoint{xStart >= xEnd ? m_Segments.front().startPoint()
-                                                 : m_Segments.back().startPoint()};
-        const CPoint2D endPoint{xStart >= xEnd ? m_Segments.front().endPoint()
-                                               : m_Segments.back().endPoint()};
-
-        return startPoint.x() > endPoint.x() ? startPoint : endPoint;
+        return enclosureBoundaryPoint(m_Segments.front(), m_Segments.back(), std::greater<>{});
     }
 
     const std::vector<CViewSegment2D> & CGeometry2D::segments() const
