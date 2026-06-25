@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../src/EnclosureViewFactorInput.hpp"
+#include "../src/EnclosureViewFactors.hpp"
 #include "../src/Geometry2D.hpp"
 #include "../src/Geometry2DBeam.hpp"
 #include "../src/Point2D.hpp"
