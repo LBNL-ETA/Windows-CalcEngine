@@ -13,7 +13,7 @@
 using namespace Viewer;
 
 // Opt-in micro-benchmark (DISABLED_ so it never runs in CI). Run it explicitly with:
-//   Windows-CalcEngine_tests --gtest_also_run_disabled_tests \
+//   Windows-CalcEngine_tests --gtest_also_run_disabled_tests
 //       --gtest_filter=EnclosureViewFactorsBench.DISABLED_GridDensitySweep
 // It reproduces the conrad "speed vs grid density" tables on a blocking-heavy fixture and is the
 // tool for choosing the grid-density heuristic. It asserts nothing about wall-clock time.
