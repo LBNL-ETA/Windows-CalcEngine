@@ -1,8 +1,10 @@
 #include <algorithm>
 #include <cstddef>
+#include <initializer_list>
 #include <vector>
 
 #include "EnclosureViewFactors.hpp"
+#include "SpatialGrid.hpp"
 #include "ViewFactorMath.hpp"
 #include "ViewerConstants.hpp"
 
@@ -24,6 +26,32 @@ namespace Viewer
             double length;
             std::size_t enclosureId;
         };
+
+        struct Bounds
+        {
+            double minX;
+            double minY;
+            double maxX;
+            double maxY;
+        };
+
+        // Axis-aligned bounding box of a segment pair. It contains the connecting rays and the
+        // seg1-seg2 polygon, so it is the correct region to query the grid for both blocking tests.
+        Bounds pairBounds(const CSegment2D & segmentA, const CSegment2D & segmentB)
+        {
+            const std::initializer_list<double> xCoords{segmentA.startPoint().x(),
+                                                        segmentA.endPoint().x(),
+                                                        segmentB.startPoint().x(),
+                                                        segmentB.endPoint().x()};
+            const std::initializer_list<double> yCoords{segmentA.startPoint().y(),
+                                                        segmentA.endPoint().y(),
+                                                        segmentB.startPoint().y(),
+                                                        segmentB.endPoint().y()};
+            return {.minX = std::min(xCoords),
+                    .minY = std::min(yCoords),
+                    .maxX = std::max(xCoords),
+                    .maxY = std::max(yCoords)};
+        }
 
         // CGeometry2D::pointInSegmentsView, over plain CSegment2D.
         bool pointInSegmentsView(const CSegment2D & segmentA,
@@ -49,10 +77,12 @@ namespace Viewer
             });
         }
 
-        // CGeometry2D::thirdSurfaceShadowing (full test on the connecting rays).
+        // CGeometry2D::thirdSurfaceShadowing (full test on the connecting rays), restricted to the
+        // grid candidates for the pair's bounding box.
         bool thirdSurfaceShadowing(const CSegment2D & segmentA,
                                    const CSegment2D & segmentB,
-                                   const std::vector<CSegment2D> & blockers)
+                                   const std::vector<CSegment2D> & blockers,
+                                   const SpatialGrid & grid)
         {
             std::vector<CSegment2D> rays;
             const CSegment2D r11{segmentA.startPoint(), segmentB.endPoint()};
@@ -70,7 +100,12 @@ namespace Viewer
                 return false;
             }
 
-            const auto blocks = [&](const CSegment2D & blocker) {
+            const auto bounds = pairBounds(segmentA, segmentB);
+            const auto candidates =
+              grid.candidatesForBoundingBox(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY);
+
+            const auto blocks = [&](const std::size_t idx) {
+                const auto & blocker = blockers[idx];
                 if(blocker == segmentA || blocker == segmentB)
                 {
                     return false;
@@ -83,16 +118,23 @@ namespace Viewer
                        || pointInSegmentsView(segmentA, segmentB, blocker.endPoint());
             };
 
-            return std::ranges::any_of(blockers, blocks);
+            return std::ranges::any_of(candidates, blocks);
         }
 
-        // CGeometry2D::thirdSurfaceShadowingSimple (center-line test, used while subdividing).
+        // CGeometry2D::thirdSurfaceShadowingSimple (center-line test, used while subdividing),
+        // restricted to the grid candidates for the pair's bounding box.
         bool thirdSurfaceShadowingSimple(const CSegment2D & segmentA,
                                          const CSegment2D & segmentB,
-                                         const std::vector<CSegment2D> & blockers)
+                                         const std::vector<CSegment2D> & blockers,
+                                         const SpatialGrid & grid)
         {
             const CSegment2D centerLine{segmentA.centerPoint(), segmentB.centerPoint()};
-            return std::ranges::any_of(blockers, [&](const CSegment2D & blocker) {
+            const auto bounds = pairBounds(segmentA, segmentB);
+            const auto candidates =
+              grid.candidatesForBoundingBox(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY);
+
+            return std::ranges::any_of(candidates, [&](const std::size_t idx) {
+                const auto & blocker = blockers[idx];
                 return blocker != segmentA && blocker != segmentB
                        && centerLine.intersectionWithSegment(blocker);
             });
@@ -102,6 +144,7 @@ namespace Viewer
         double subdividedCoefficient(const CSegment2D & segmentA,
                                      const CSegment2D & segmentB,
                                      const std::vector<CSegment2D> & blockers,
+                                     const SpatialGrid & grid,
                                      const std::size_t subdivision)
         {
             const auto subsA = detail::subdivide(segmentA, subdivision);
@@ -113,7 +156,7 @@ namespace Viewer
                 for(const auto & subB : subsB)
                 {
                     if(detail::selfShadow(subA, subB) == Shadowing::No
-                       && !thirdSurfaceShadowingSimple(subA, subB, blockers))
+                       && !thirdSurfaceShadowingSimple(subA, subB, blockers, grid))
                     {
                         coefficient += detail::crossStringCoefficient(subA, subB);
                     }
@@ -127,6 +170,7 @@ namespace Viewer
         double pairCoefficient(const CSegment2D & segmentA,
                                const CSegment2D & segmentB,
                                const std::vector<CSegment2D> & blockers,
+                               const SpatialGrid & grid,
                                const std::size_t subdivision)
         {
             const auto shadow = detail::selfShadow(segmentA, segmentB);
@@ -135,12 +179,12 @@ namespace Viewer
                 return 0.0;
             }
 
-            const auto blocked = thirdSurfaceShadowing(segmentA, segmentB, blockers);
+            const auto blocked = thirdSurfaceShadowing(segmentA, segmentB, blockers, grid);
             if(!blocked && shadow == Shadowing::No)
             {
                 return detail::crossStringCoefficient(segmentA, segmentB);
             }
-            return subdividedCoefficient(segmentA, segmentB, blockers, subdivision);
+            return subdividedCoefficient(segmentA, segmentB, blockers, grid, subdivision);
         }
 
         std::vector<EngineSegment> buildSegments(const std::vector<RadiationSegment> & segments)
@@ -199,11 +243,17 @@ namespace Viewer
     {
         const auto engineSegments = buildSegments(segments);
         const auto blockerSegments = buildBlockers(engineSegments, blockers);
+        const auto cellsPerAxis = options.gridCellsPerAxis.value_or(
+          SpatialGrid::suggestCellsPerAxis(blockerSegments.size()));
+        const auto grid = SpatialGrid::build(blockerSegments, cellsPerAxis);
         const auto size = engineSegments.size();
 
         SquareMatrix viewFactors{size};
-        for(std::size_t row = 0; row < size; ++row)
-        {
+
+        // Each row is independent and writes only its own upper-triangle cells (row, col) and
+        // their mirror (col, row) for col > row, so distinct rows touch disjoint cells - the
+        // parallel pass is race-free without locks (the matrix is pre-sized and never resized).
+        const auto computeRow = [&](const std::size_t row) {
             for(std::size_t col = row + 1; col < size; ++col)
             {
                 if(engineSegments[row].enclosureId != engineSegments[col].enclosureId)
@@ -214,9 +264,22 @@ namespace Viewer
                 const auto coefficient = pairCoefficient(engineSegments[row].geometry,
                                                           engineSegments[col].geometry,
                                                           blockerSegments,
+                                                          grid,
                                                           options.subdivision);
                 viewFactors(row, col) = coefficient / (2.0 * engineSegments[row].length);
                 viewFactors(col, row) = coefficient / (2.0 * engineSegments[col].length);
+            }
+        };
+
+        if(options.multithread && size > 1)
+        {
+            FenestrationCommon::executeInParallel<std::size_t>(0, size - 1, computeRow);
+        }
+        else
+        {
+            for(std::size_t row = 0; row < size; ++row)
+            {
+                computeRow(row);
             }
         }
 

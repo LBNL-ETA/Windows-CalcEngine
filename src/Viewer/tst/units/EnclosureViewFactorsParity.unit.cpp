@@ -88,6 +88,79 @@ TEST(EnclosureViewFactorsParity, BlockingSurfaceOpenGeometry)
     });
 }
 
+// The spatial grid must not change the answer: a 1x1 grid (brute force), the auto density, and a
+// fine grid all produce identical matrices on a geometry with real third-surface blocking.
+TEST(EnclosureViewFactors, GridMatchesBruteForce)
+{
+    std::vector<RadiationSegment> segments;
+    const std::vector<CPoint2D> vertices{{0, 0}, {0, 3}, {3, 3}, {3, 1}, {1, 1}, {1, 0}};
+    for(size_t idx = 0; idx < vertices.size(); ++idx)
+    {
+        segments.push_back({.startPoint = vertices[idx],
+                            .endPoint = vertices[(idx + 1) % vertices.size()],
+                            .emissivity = 0.9,
+                            .enclosureId = 0u});
+    }
+
+    const auto brute =
+      computeEnclosureViewFactors(
+        segments, {}, {.enforceClosure = false, .leastSquaresSmoothing = false, .gridCellsPerAxis = 1u})
+        .viewFactors;
+    const auto autoGrid =
+      computeEnclosureViewFactors(
+        segments, {}, {.enforceClosure = false, .leastSquaresSmoothing = false})
+        .viewFactors;
+    const auto fineGrid =
+      computeEnclosureViewFactors(
+        segments, {}, {.enforceClosure = false, .leastSquaresSmoothing = false, .gridCellsPerAxis = 8u})
+        .viewFactors;
+
+    ASSERT_EQ(brute.size(), autoGrid.size());
+    for(size_t row = 0; row < brute.size(); ++row)
+    {
+        for(size_t col = 0; col < brute.size(); ++col)
+        {
+            EXPECT_NEAR(brute(row, col), autoGrid(row, col), 1e-12);
+            EXPECT_NEAR(brute(row, col), fineGrid(row, col), 1e-12);
+        }
+    }
+}
+
+// Threading must not change the result: the serial and parallel paths produce a bit-identical
+// matrix (each row writes disjoint cells, so there is no race and no reordering of arithmetic).
+TEST(EnclosureViewFactors, SerialAndParallelAgree)
+{
+    std::vector<RadiationSegment> segments;
+    constexpr double pi = 3.14159265358979323846;
+    constexpr size_t sides = 40;
+    for(size_t idx = 0; idx < sides; ++idx)
+    {
+        const double angle0 = -2.0 * pi * static_cast<double>(idx) / static_cast<double>(sides);
+        const double angle1 = -2.0 * pi * static_cast<double>(idx + 1) / static_cast<double>(sides);
+        segments.push_back({.startPoint = {std::cos(angle0), std::sin(angle0)},
+                            .endPoint = {std::cos(angle1), std::sin(angle1)},
+                            .emissivity = 0.9,
+                            .enclosureId = 0u});
+    }
+
+    const auto serial =
+      computeEnclosureViewFactors(segments, {}, {.enforceClosure = false, .multithread = false})
+        .viewFactors;
+    const auto parallel =
+      computeEnclosureViewFactors(segments, {}, {.enforceClosure = false, .multithread = true})
+        .viewFactors;
+
+    ASSERT_EQ(serial.size(), parallel.size());
+    for(size_t row = 0; row < serial.size(); ++row)
+    {
+        for(size_t col = 0; col < serial.size(); ++col)
+        {
+            EXPECT_EQ(serial(row, col), parallel(row, col))
+              << "serial and parallel differ at (" << row << ", " << col << ")";
+        }
+    }
+}
+
 // New capability beyond CGeometry2D: two separate enclosures in one call must not see each
 // other (block-diagonal matrix), and each closed block must still close to one.
 TEST(EnclosureViewFactors, MultiEnclosureIsBlockDiagonal)
