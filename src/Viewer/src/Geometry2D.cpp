@@ -14,7 +14,7 @@ namespace Viewer
     void CGeometry2D::appendSegment(const CViewSegment2D & t_Segment)
     {
         m_Segments.push_back(t_Segment);
-        m_ViewFactorsCalculated = false;
+        m_ViewFactors.reset();
     }
 
     void CGeometry2D::appendGeometry2D(const CGeometry2D & t_Geometry2D)
@@ -23,14 +23,17 @@ namespace Viewer
         {
             m_Segments.push_back(aSegment);
         }
-        m_ViewFactorsCalculated = false;
+        m_ViewFactors.reset();
     }
 
     SquareMatrix CGeometry2D::viewFactors()
     {
-        checkViewFactors();
+        if(!m_ViewFactors.has_value())
+        {
+            m_ViewFactors = calculateViewFactors();
+        }
 
-        return m_ViewFactors;
+        return *m_ViewFactors;
     }
 
     CGeometry2D CGeometry2D::Translate(double const t_x, double const t_y) const
@@ -227,45 +230,42 @@ namespace Viewer
     // 	return y;
     // }
 
-    void CGeometry2D::checkViewFactors()
+    SquareMatrix CGeometry2D::calculateViewFactors() const
     {
-        if(!m_ViewFactorsCalculated)
+        const auto size = m_Segments.size();
+
+        // View factor matrix. It is already initialized to zeros
+        SquareMatrix viewFactors{size};
+        for(auto i = 0u; i < size; ++i)
         {
-            auto size = m_Segments.size();
-
-            // View factor matrix. It is already initialized to zeros
-            m_ViewFactors = SquareMatrix(size);
-            for(auto i = 0u; i < size; ++i)
+            for(auto j = i; j < size; ++j)
             {
-                for(auto j = i; j < size; ++j)
+                if(i != j)
                 {
-                    if(i != j)
+                    auto selfShadowing = m_Segments[i].selfShadowing(m_Segments[j]);
+                    if(selfShadowing != Shadowing::Total)
                     {
-                        auto selfShadowing = m_Segments[i].selfShadowing(m_Segments[j]);
-                        if(selfShadowing != Shadowing::Total)
+                        auto shadowedByThirdSurface =
+                          thirdSurfaceShadowing(m_Segments[i], m_Segments[j]);
+                        auto vfCoeff = 0.0;
+
+                        if(!shadowedByThirdSurface && (selfShadowing == Shadowing::No))
                         {
-                            auto shadowedByThirdSurface =
-                              thirdSurfaceShadowing(m_Segments[i], m_Segments[j]);
-                            auto vfCoeff = 0.0;
-
-                            if(!shadowedByThirdSurface && (selfShadowing == Shadowing::No))
-                            {
-                                vfCoeff = m_Segments[i].viewFactorCoefficient(m_Segments[j]);
-                            }
-                            else if(shadowedByThirdSurface || selfShadowing == Shadowing::Partial)
-                            {
-                                vfCoeff = viewFactorCoeff(m_Segments[i], m_Segments[j]);
-                            }
-
-                            m_ViewFactors(i, j) = vfCoeff / (2 * m_Segments[i].length());
-                            m_ViewFactors(j, i) = vfCoeff / (2 * m_Segments[j].length());
+                            vfCoeff = m_Segments[i].viewFactorCoefficient(m_Segments[j]);
                         }
+                        else if(shadowedByThirdSurface || selfShadowing == Shadowing::Partial)
+                        {
+                            vfCoeff = viewFactorCoeff(m_Segments[i], m_Segments[j]);
+                        }
+
+                        viewFactors(i, j) = vfCoeff / (2 * m_Segments[i].length());
+                        viewFactors(j, i) = vfCoeff / (2 * m_Segments[j].length());
                     }
                 }
             }
-
-            m_ViewFactorsCalculated = true;
         }
+
+        return viewFactors;
     }
 
 }   // namespace Viewer

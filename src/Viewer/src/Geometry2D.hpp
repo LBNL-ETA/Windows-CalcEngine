@@ -1,6 +1,6 @@
-#ifndef GEOMETRY2D_H
-#define GEOMETRY2D_H
+#pragma once
 
+#include <optional>
 #include <vector>
 
 #include <WCECommon.hpp>
@@ -19,7 +19,7 @@ namespace Viewer
         FenestrationCommon::SquareMatrix viewFactors();
 
         // Shifts all segments for given coordinates
-        CGeometry2D Translate(double const t_x, double const t_y) const;
+        [[nodiscard]] CGeometry2D Translate(double t_x, double t_y) const;
 
         // First and last point function are necessary to make connection between different
         // enclosures
@@ -42,33 +42,30 @@ namespace Viewer
                                         CPoint2D const & t_Point);
 
         // Calculates third surface blocking.
-        bool thirdSurfaceShadowing(CViewSegment2D const & t_Segment1,
-                                   CViewSegment2D const & t_Segment2) const;
+        [[nodiscard]] bool thirdSurfaceShadowing(CViewSegment2D const & t_Segment1,
+                                                 CViewSegment2D const & t_Segment2) const;
 
         // Simplified version for fast calculation of third surface shadowing. Used for subsurfaces
-        bool thirdSurfaceShadowingSimple(const CViewSegment2D & t_Segment1,
-                                         const CViewSegment2D & t_Segment2) const;
+        [[nodiscard]] bool thirdSurfaceShadowingSimple(const CViewSegment2D & t_Segment1,
+                                                       const CViewSegment2D & t_Segment2) const;
 
         // Calculate view factor between two segments. This routine will check third surface
         // shadowing as well. It will divide segments into subsurfaces by default
-        double viewFactorCoeff(const CViewSegment2D & t_Segment1,
-                               const CViewSegment2D & t_Segment2) const;
+        [[nodiscard]] double viewFactorCoeff(const CViewSegment2D & t_Segment1,
+                                             const CViewSegment2D & t_Segment2) const;
 
         // returns Y coordinate of intersection with Y axis for line going through t_Point and for
         // given tangens of profile angle static double intersectionWithYAxis( double const tanPhi,
         // CPoint2D const& t_Point );
 
-        // Checks if view factors are valid for current geometry
-        void checkViewFactors();
+        // Computes the view-factor matrix for the current geometry (no caching).
+        [[nodiscard]] FenestrationCommon::SquareMatrix calculateViewFactors() const;
 
         std::vector<CViewSegment2D> m_Segments;
 
-        // Holds state for the view factors. No need to recalculate them every time since it is
-        // time consuming operation.
-        FenestrationCommon::SquareMatrix m_ViewFactors;
-        bool m_ViewFactorsCalculated{false};
+        // Cached view factors; empty until first computed, cleared whenever segments change.
+        // Recalculating them is expensive, so the result is memoized here.
+        std::optional<FenestrationCommon::SquareMatrix> m_ViewFactors;
     };
 
 }   // namespace Viewer
-
-#endif

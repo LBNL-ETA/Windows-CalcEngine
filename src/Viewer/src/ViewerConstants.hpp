@@ -1,5 +1,4 @@
-#ifndef VIEWERCONSTANTS_H
-#define VIEWERCONSTANTS_H
+#pragma once
 
 namespace Viewer
 {
@@ -18,5 +17,3 @@ namespace Viewer
     }   // namespace ViewerConstants
 
 }   // namespace Viewer
-
-#endif

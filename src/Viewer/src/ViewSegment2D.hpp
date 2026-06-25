@@ -1,5 +1,4 @@
-#ifndef VIEWSEGMENT2D_H
-#define VIEWSEGMENT2D_H
+#pragma once
 
 #include <vector>
 
@@ -54,5 +53,3 @@ namespace Viewer
     };
 
 }   // namespace Viewer
-
-#endif
