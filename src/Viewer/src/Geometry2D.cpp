@@ -1,4 +1,4 @@
-#include <cassert>
+#include <algorithm>
 
 #include "Geometry2D.hpp"
 #include "ViewSegment2D.hpp"
@@ -10,9 +10,6 @@ using namespace FenestrationCommon;
 
 namespace Viewer
 {
-    CGeometry2D::CGeometry2D() : m_ViewFactorsCalculated(false)
-    {}
-
     void CGeometry2D::appendSegment(const CViewSegment2D & t_Segment)
     {
         m_Segments.push_back(t_Segment);
@@ -21,7 +18,7 @@ namespace Viewer
 
     void CGeometry2D::appendGeometry2D(const CGeometry2D & t_Geometry2D)
     {
-        for(auto aSegment : (t_Geometry2D.m_Segments))
+        for(const auto & aSegment : t_Geometry2D.m_Segments)
         {
             m_Segments.push_back(aSegment);
         }
@@ -38,12 +35,9 @@ namespace Viewer
     CGeometry2D CGeometry2D::Translate(double const t_x, double const t_y) const
     {
         CGeometry2D aEnclosure;
-        for(auto aSegment : m_Segments)
-        {
-            const auto newSegment{aSegment.translate(t_x, t_y)};
-            CViewSegment2D newEnSegment{newSegment.startPoint(), newSegment.endPoint()};
-            aEnclosure.appendSegment(newEnSegment);
-        }
+        std::ranges::transform(m_Segments,
+                               std::back_inserter(aEnclosure.m_Segments),
+                               [&](const auto & aSegment) { return aSegment.translate(t_x, t_y); });
 
         return aEnclosure;
     }
@@ -114,7 +108,7 @@ namespace Viewer
         // it will not be considered to be part of blocking surface. Otherwise, program would search
         // for blocking surfaces and perform double integration over the both surfaces.
         auto inSide = true;
-        for(auto aSegment : aPolygon)
+        for(const auto & aSegment : aPolygon)
         {
             inSide = inSide && (aSegment.position(t_Point) == PointPosition::Visible);
             if(!inSide)
@@ -129,65 +123,56 @@ namespace Viewer
     bool CGeometry2D::thirdSurfaceShadowing(CViewSegment2D const & t_Segment1,
                                             CViewSegment2D const & t_Segment2) const
     {
-        auto intersection = false;
-
-        // Form cross segments
-        std::vector<std::shared_ptr<CViewSegment2D>> intSegments;
-        auto r11 = std::make_shared<CViewSegment2D>(t_Segment1.startPoint(), t_Segment2.endPoint());
-        if(r11->length() > 0)
+        // Form cross segments (skip degenerate zero-length rays).
+        std::vector<CViewSegment2D> intSegments;
+        const CViewSegment2D r11{t_Segment1.startPoint(), t_Segment2.endPoint()};
+        if(r11.length() > 0)
         {
             intSegments.push_back(r11);
         }
-        auto r22 = std::make_shared<CViewSegment2D>(t_Segment1.endPoint(), t_Segment2.startPoint());
-        if(r22->length() > 0)
+        const CViewSegment2D r22{t_Segment1.endPoint(), t_Segment2.startPoint()};
+        if(r22.length() > 0)
         {
             intSegments.push_back(r22);
         }
 
-        for(auto aSegment : m_Segments)
+        if(intSegments.empty())
         {
-            for(auto iSegment : intSegments)
-            {
-                if(aSegment != t_Segment1 && aSegment != t_Segment2)
-                {
-                    intersection = intersection || iSegment->intersectionWithSegment(aSegment);
-                    intersection =
-                      intersection
-                      || pointInSegmentsView(t_Segment1, t_Segment2, aSegment.startPoint());
-                    intersection =
-                      intersection
-                      || pointInSegmentsView(t_Segment1, t_Segment2, aSegment.endPoint());
-                    if(intersection)
-                    {
-                        return intersection;
-                    }
-                }
-            }
+            return false;
         }
 
-        return intersection;
+        const auto blocksView = [&](const CViewSegment2D & aSegment)
+        {
+            if(aSegment == t_Segment1 || aSegment == t_Segment2)
+            {
+                return false;
+            }
+
+            const auto crossesRay = [&](const CViewSegment2D & iSegment)
+            {
+                return iSegment.intersectionWithSegment(aSegment);
+            };
+
+            return std::ranges::any_of(intSegments, crossesRay)
+                   || pointInSegmentsView(t_Segment1, t_Segment2, aSegment.startPoint())
+                   || pointInSegmentsView(t_Segment1, t_Segment2, aSegment.endPoint());
+        };
+
+        return std::ranges::any_of(m_Segments, blocksView);
     }
 
     bool CGeometry2D::thirdSurfaceShadowingSimple(const CViewSegment2D & t_Segment1,
                                                   const CViewSegment2D & t_Segment2) const
     {
-        auto intersection = false;
+        const CViewSegment2D centerLine{t_Segment1.centerPoint(), t_Segment2.centerPoint()};
 
-        CViewSegment2D centerLine{t_Segment1.centerPoint(), t_Segment2.centerPoint()};
-
-        for(auto aSegment : m_Segments)
+        const auto blocksCenterLine = [&](const CViewSegment2D & aSegment)
         {
-            if(aSegment != t_Segment1 && aSegment != t_Segment2)
-            {
-                intersection = intersection || centerLine.intersectionWithSegment(aSegment);
-                if(intersection)
-                {
-                    break;
-                }
-            }
-        }
+            return aSegment != t_Segment1 && aSegment != t_Segment2
+                   && centerLine.intersectionWithSegment(aSegment);
+        };
 
-        return intersection;
+        return std::ranges::any_of(m_Segments, blocksCenterLine);
     }
 
     double CGeometry2D::viewFactorCoeff(const CViewSegment2D & t_Segment1,

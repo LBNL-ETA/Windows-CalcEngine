@@ -1,7 +1,6 @@
 #ifndef VIEWSEGMENT2D_H
 #define VIEWSEGMENT2D_H
 
-#include <memory>
 #include <vector>
 
 #include "Segment2D.hpp"
@@ -22,7 +21,7 @@ namespace Viewer
         OnLine
     };
 
-    class CViewSegment2D : public CSegment2D, public std::enable_shared_from_this<CViewSegment2D>
+    class CViewSegment2D : public CSegment2D
     {
     public:
         CViewSegment2D() = default;
@@ -47,7 +46,7 @@ namespace Viewer
         std::vector<CViewSegment2D> subSegments(size_t numSegments) const;
 
         // Translates segment for given coordinates
-        CViewSegment2D translate(double t_x, double t_y);
+        [[nodiscard]] CViewSegment2D translate(double t_x, double t_y) const;
 
     private:
         // How much segment is self shadowed (No, Partial, Total)

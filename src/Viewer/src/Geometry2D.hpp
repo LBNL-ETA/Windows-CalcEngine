@@ -2,7 +2,6 @@
 #define GEOMETRY2D_H
 
 #include <vector>
-#include <memory>
 
 #include <WCECommon.hpp>
 
@@ -15,8 +14,6 @@ namespace Viewer
     class CGeometry2D
     {
     public:
-        CGeometry2D();
-
         void appendSegment(const CViewSegment2D & t_Segment);
         void appendGeometry2D(const CGeometry2D & t_Geometry2D);
         FenestrationCommon::SquareMatrix viewFactors();
@@ -69,7 +66,7 @@ namespace Viewer
         // Holds state for the view factors. No need to recalculate them every time since it is
         // time consuming operation.
         FenestrationCommon::SquareMatrix m_ViewFactors;
-        bool m_ViewFactorsCalculated;
+        bool m_ViewFactorsCalculated{false};
     };
 
 }   // namespace Viewer
