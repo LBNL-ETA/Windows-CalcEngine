@@ -31,7 +31,7 @@ namespace
         // Raw options: no closure / smoothing, serial, so the result matches CGeometry2D's raw
         // matrix. Subdivision is left at its default to match CGeometry2D.
         const ViewFactorOptions rawOptions{
-          .enforceClosure = false, .leastSquaresSmoothing = false, .multithread = false};
+          .leastSquaresSmoothing = false, .multithread = false};
         const auto result = computeEnclosureViewFactors(segments, {}, rawOptions);
 
         ASSERT_EQ(legacyVF.size(), result.viewFactors.size());
@@ -104,15 +104,15 @@ TEST(EnclosureViewFactors, GridMatchesBruteForce)
 
     const auto brute =
       computeEnclosureViewFactors(
-        segments, {}, {.enforceClosure = false, .leastSquaresSmoothing = false, .gridCellsPerAxis = 1u})
+        segments, {}, {.leastSquaresSmoothing = false, .gridCellsPerAxis = 1u})
         .viewFactors;
     const auto autoGrid =
       computeEnclosureViewFactors(
-        segments, {}, {.enforceClosure = false, .leastSquaresSmoothing = false})
+        segments, {}, {.leastSquaresSmoothing = false})
         .viewFactors;
     const auto fineGrid =
       computeEnclosureViewFactors(
-        segments, {}, {.enforceClosure = false, .leastSquaresSmoothing = false, .gridCellsPerAxis = 8u})
+        segments, {}, {.leastSquaresSmoothing = false, .gridCellsPerAxis = 8u})
         .viewFactors;
 
     ASSERT_EQ(brute.size(), autoGrid.size());
@@ -144,10 +144,10 @@ TEST(EnclosureViewFactors, SerialAndParallelAgree)
     }
 
     const auto serial =
-      computeEnclosureViewFactors(segments, {}, {.enforceClosure = false, .multithread = false})
+      computeEnclosureViewFactors(segments, {}, {.multithread = false})
         .viewFactors;
     const auto parallel =
-      computeEnclosureViewFactors(segments, {}, {.enforceClosure = false, .multithread = true})
+      computeEnclosureViewFactors(segments, {}, {.multithread = true})
         .viewFactors;
 
     ASSERT_EQ(serial.size(), parallel.size());
@@ -181,7 +181,7 @@ TEST(EnclosureViewFactors, MultiEnclosureIsBlockDiagonal)
     addSquare(10.0, 1);
 
     const ViewFactorOptions rawOptions{
-      .enforceClosure = false, .leastSquaresSmoothing = false, .multithread = false};
+      .leastSquaresSmoothing = false, .multithread = false};
     const auto viewFactors = computeEnclosureViewFactors(segments, {}, rawOptions).viewFactors;
 
     ASSERT_EQ(8u, viewFactors.size());

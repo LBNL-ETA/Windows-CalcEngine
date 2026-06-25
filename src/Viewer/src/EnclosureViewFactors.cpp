@@ -5,6 +5,7 @@
 
 #include "EnclosureViewFactors.hpp"
 #include "SpatialGrid.hpp"
+#include "ViewFactorClosure.hpp"
 #include "ViewFactorMath.hpp"
 #include "ViewerConstants.hpp"
 
@@ -219,7 +220,9 @@ namespace Viewer
             return result;
         }
 
-        std::vector<double> rowSumErrors(const SquareMatrix & viewFactors)
+        // Per-row deficit (1 - row sum). For an open enclosure this is the view factor to the
+        // environment; for a closed enclosure it is the small closure residual.
+        std::vector<double> environmentViewFactors(const SquareMatrix & viewFactors)
         {
             const auto size = viewFactors.size();
             std::vector<double> result(size, 0.0);
@@ -283,9 +286,25 @@ namespace Viewer
             }
         }
 
-        // Reciprocity is implicit (one coefficient feeds both off-diagonal entries). Per-enclosure
-        // row-sum closure and optional least-squares smoothing (options.enforceClosure /
-        // leastSquaresSmoothing) are applied in a later step.
-        return {.viewFactors = viewFactors, .rowSumError = rowSumErrors(viewFactors)};
+        // Reciprocity is implicit (one coefficient feeds both off-diagonal entries). Optional
+        // least-squares smoothing closes the closed enclosures (rows -> 1); open enclosures keep
+        // their deficit as the environment view factor.
+        if(options.leastSquaresSmoothing)
+        {
+            std::vector<double> areas;
+            std::vector<std::size_t> enclosureIds;
+            areas.reserve(size);
+            enclosureIds.reserve(size);
+            for(const auto & segment : engineSegments)
+            {
+                areas.push_back(segment.length);
+                enclosureIds.push_back(segment.enclosureId);
+            }
+            viewFactors =
+              smoothViewFactors(viewFactors, areas, enclosureIds, options.openEnclosureIds);
+        }
+
+        return {.viewFactors = viewFactors,
+                .environmentViewFactor = environmentViewFactors(viewFactors)};
     }
 }   // namespace Viewer

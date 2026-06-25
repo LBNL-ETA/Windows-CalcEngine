@@ -87,7 +87,7 @@ TEST(EnclosureViewFactorsBench, DISABLED_RealisticSizes)
         const auto segments = makeCombEnclosure(teeth, subdivision);
 
         const auto timeIt = [&](bool multithread) {
-            const ViewFactorOptions options{.enforceClosure = false, .multithread = multithread};
+            const ViewFactorOptions options{.multithread = multithread};
             const auto start = std::chrono::steady_clock::now();
             const auto result = computeEnclosureViewFactors(segments, {}, options);
             const auto stop = std::chrono::steady_clock::now();
@@ -108,7 +108,7 @@ TEST(EnclosureViewFactorsBench, DISABLED_GridDensitySweep)
 
     const auto timeRun = [&](std::size_t cells, bool multithread) {
         const ViewFactorOptions options{
-          .enforceClosure = false, .gridCellsPerAxis = cells, .multithread = multithread};
+          .gridCellsPerAxis = cells, .multithread = multithread};
         const auto start = std::chrono::steady_clock::now();
         const auto viewFactors = computeEnclosureViewFactors(segments, {}, options).viewFactors;
         const auto stop = std::chrono::steady_clock::now();

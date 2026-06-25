@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <optional>
+#include <set>
 
 #include "Point2D.hpp"
 #include "ViewerConstants.hpp"
@@ -33,11 +34,13 @@ namespace Viewer
     // closed enclosures, no smoothing, and the legacy subdivision count.
     struct ViewFactorOptions
     {
-        // Drive each enclosure's row sums to one (closed-enclosure closure).
-        bool enforceClosure{true};
-
-        // Apply optional least-squares view-factor smoothing (the GUI checkbox).
+        // Apply least-squares view-factor smoothing to closed enclosures (the GUI checkbox).
         bool leastSquaresSmoothing{false};
+
+        // Enclosure ids that are open to an environment (auto-enclosure). Their per-row deficit is
+        // the view factor to that environment, so they are excluded from smoothing. Closed by
+        // default (empty set).
+        std::set<std::size_t> openEnclosureIds{};
 
         // Number of sub-segments used when a pair is partially blocked.
         std::size_t subdivision{static_cast<std::size_t>(ViewerConstants::NUM_OF_SEGMENTS)};

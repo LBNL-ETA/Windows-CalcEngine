@@ -10,12 +10,13 @@ namespace Viewer
 {
     // Result of computeEnclosureViewFactors. The matrix is block-diagonal over enclosures,
     // sized to all radiation segments and indexed in input order; cross-enclosure entries are
-    // exactly zero. rowSumError holds the per-row (1 - row sum) residual before closure, kept
-    // for diagnostics and tests.
+    // exactly zero. environmentViewFactor holds the per-row (1 - row sum): for an open (auto)
+    // enclosure this is the view factor to the environment (the room); for a closed enclosure it
+    // is the (small) closure residual, near zero after smoothing.
     struct EnclosureViewFactorResult
     {
         FenestrationCommon::SquareMatrix viewFactors;
-        std::vector<double> rowSumError;
+        std::vector<double> environmentViewFactor;
     };
 
     // Computes radiation view factors for one or more closed enclosures. Pure: it owns no
