@@ -93,7 +93,7 @@ namespace Tarcog::ISO15099
         //! Keeping frame information on both sides of the frame. This is needed for geometry
         //! calculations. Optional must be used or infinite loop will be created withing Frame
         //! constructor (Frame calling itself over and over again)
-        std::map<FrameSide, std::optional<std::reference_wrapper<const Frame>>> frame;
+        std::map<FrameSide, std::optional<std::reference_wrapper<const Frame>>> frame{};
 
         double dividerArea{0};
         size_t numberOfDividers{0U};

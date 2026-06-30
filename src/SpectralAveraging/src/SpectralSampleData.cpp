@@ -13,9 +13,11 @@ namespace SpectralAveraging
     ////     SampleData
     ////////////////////////////////////////////////////////////////////////////
 
-    CSeries SampleData::properties(const Property prop, const Side side, const ScatteringType type)
+    CSeries SampleData::properties(const Property, const Side, const ScatteringType)
     {
-        return properties(prop, side, type);
+        // Base has no spectral data of its own; derived classes (e.g. CSpectralSampleData)
+        // override this. Returning empty avoids the self-recursion of the previous stub.
+        return {};
     }
 
     bool SampleData::Flipped() const

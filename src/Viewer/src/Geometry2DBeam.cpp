@@ -328,7 +328,7 @@ namespace Viewer
                 for(size_t s = 0; s < m_Geometries2D[e].segments().size(); ++s)
                 {
                     auto currentSegment = m_Geometries2D[e].segments()[s];
-                    if(currentSegment == beamRay.closestSegmentHit(beamPosition))
+                    if(currentSegment == closestSegment)
                     {
                         viewFactor = currentHeight / totalHeight;
                         projectedBeamHeight = projectedBeamHeight * currentHeight;

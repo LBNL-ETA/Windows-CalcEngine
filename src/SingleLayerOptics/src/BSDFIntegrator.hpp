@@ -24,6 +24,7 @@ namespace SingleLayerOptics
     public:
         BSDFIntegrator() = default;
         BSDFIntegrator(const BSDFIntegrator & t_Integrator) = default;
+        BSDFIntegrator & operator=(const BSDFIntegrator & t_Integrator) = default;
         BSDFIntegrator(const BSDFDirections & t_Directions);
 
         void resetCalculatedResults();
