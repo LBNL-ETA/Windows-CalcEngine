@@ -20,6 +20,7 @@ from compare_radiance import (PROPS, RING_EDGES, RING_PATCHES, candidates, dir_h
 
 ORIENTATION = "  phi+  0 mirror"
 LABELS = {"v0": "v0, R 0.5 / 0.5, T 0", "v1": "v1, Rf 0.8 / Rb 0.2, T 0",
+          "v2": "v2, Rf 0.2 / Rb 0.8, T 0", "v3": "v3, R 0.5 / 0.5, T 0, curved (rise 1 mm)",
           "v4": "v4, R 0.5 / 0.5, T 0.2", "v5": "v5, Rf 0.7 / Rb 0.2, T 0.2"}
 
 
@@ -37,7 +38,7 @@ def engine_matrices(results: Path, case: str, wavelength: str = "0.540000") -> d
 
 def main() -> int:
     runs, results = Path(sys.argv[1]), Path(sys.argv[2])
-    cases = sys.argv[3:] or ["v0", "v1", "v4", "v5"]
+    cases = sys.argv[3:] or ["v0", "v1", "v2", "v3", "v4", "v5"]
     lam = klems_lambda()
     ring = np.repeat(np.arange(len(RING_PATCHES)), RING_PATCHES)
     centres = [0.0] + [(a + b) / 2 for a, b in zip(RING_EDGES[1:], RING_EDGES[2:])]
@@ -65,13 +66,30 @@ def main() -> int:
             cells = " | ".join(f"{diff[ring == r].max():.3f}" for r in range(len(RING_PATCHES)))
             print(f"| {case} | {p.capitalize()} | {cells} |")
 
-    print("\n### Direct-direct part, max |Radiance - engines| per incoming ring (same geometry in every case)\n")
-    rad, eng = radiance_matrices(runs, cases[0]), engine_matrices(results, cases[0])
-    print("| Property | " + " | ".join(f"{c:.1f} deg" for c in centres) + " |")
-    print("|---|" + "---|" * len(centres))
-    for p in ("tf", "tb"):
-        diff = np.abs(np.diag(rad[p]) * lam - np.diag(eng[p]) * lam)
-        print(f"| {p.capitalize()} | " + " | ".join(f"{diff[ring == r].max():.3f}" for r in range(len(RING_PATCHES))) + " |")
+    print("\n### Direct-direct part, max |Radiance - engines| per incoming ring (flat cases share one geometry)\n")
+    print("| Case | Property | " + " | ".join(f"{c:.1f} deg" for c in centres) + " |")
+    print("|---|---|" + "---|" * len(centres))
+    for case in [c for c in cases if c in ("v0", "v3")]:
+        rad, eng = radiance_matrices(runs, case), engine_matrices(results, case)
+        for p in ("tf", "tb"):
+            diff = np.abs(np.diag(rad[p]) * lam - np.diag(eng[p]) * lam)
+            print(f"| {case} | {p.capitalize()} | " + " | ".join(f"{diff[ring == r].max():.3f}" for r in range(len(RING_PATCHES))) + " |")
+
+    print("\n### Cases where legacy and WCE differ: Radiance / WCE / legacy (normal-incidence dir-hem, hemispherical)\n")
+    print("| Case | Tf | Tb | Rf | Rb |")
+    print("|---|---|---|---|---|")
+    for case in cases:
+        rad, wce = radiance_matrices(runs, case), engine_matrices(results, case)
+        legacy = {p: load_text(results / case / "Tarcog" / f"Layer2_{p.capitalize()}_0.540000.csv") for p in PROPS}
+        # legacy and WCE always differ in the angular distribution; list only cases where
+        # the integrated values differ (curved slats)
+        if max(float(np.abs(dir_hem(wce[p], lam) - dir_hem(legacy[p], lam)).max()) for p in PROPS) < 1e-3:
+            continue
+        cells = []
+        for p in PROPS:
+            cells.append(f"{dir_hem(rad[p], lam)[0]:.4f} / {dir_hem(wce[p], lam)[0]:.4f} / {dir_hem(legacy[p], lam)[0]:.4f}<br>"
+                         f"{hemispherical(rad[p], lam):.4f} / {hemispherical(wce[p], lam):.4f} / {hemispherical(legacy[p], lam):.4f}")
+        print(f"| {LABELS.get(case, case)} | " + " | ".join(cells) + " |")
     return 0
 
 

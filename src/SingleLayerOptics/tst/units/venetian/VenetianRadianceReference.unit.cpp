@@ -14,7 +14,8 @@ using namespace FenestrationCommon;
 // Venetian blind BSDFs against an independent ray-traced reference.
 //
 // The reference matrices were produced with Radiance (genfmtx, Klems full basis, 20000
-// rays per patch, 12 ambient bounces) for the same flat-slat geometry; see
+// rays per patch, 12 ambient bounces) for the same geometry (curved slats as a 12-facet
+// polygon strip); see
 // docs/validation/venetian_radiance.md for the setup, the conventions and how the
 // reference files are regenerated. Each reference CSV has 145 rows (incoming patch, this
 // library's Klems-full ordering) and 13 columns: patch index, then for Tf, Tb, Rf, Rb the
@@ -42,14 +43,15 @@ protected:
     static constexpr size_t kLastPatchWithin45 = 68;    // rings 0..4 of the Klems full basis
     static constexpr size_t kLastPatchWithin65 = 116;   // rings 5..6
 
-    static std::shared_ptr<CBSDFLayer>
-      makeShade(const double Tmat, const double Rfmat, const double Rbmat)
+    static std::shared_ptr<CBSDFLayer> makeShade(const double Tmat,
+                                                 const double Rfmat,
+                                                 const double Rbmat,
+                                                 const double curvatureRadius = 0.0)
     {
         const auto aMaterial = Material::singleBandMaterial(Tmat, Tmat, Rfmat, Rbmat);
         const auto slatWidth = 0.016;     // m
         const auto slatSpacing = 0.012;   // m
         const auto slatTiltAngle = 45;    // deg, interior edge up
-        const auto curvatureRadius = 0;
         const size_t numOfSlatSegments = 5;
         const auto aBSDF = BSDFHemisphere::create(BSDFBasis::Full);
         return CBSDFLayerMaker::getVenetianLayer(aMaterial,
@@ -114,9 +116,10 @@ protected:
     static void checkAgainstRadiance(const double Tmat,
                                      const double Rfmat,
                                      const double Rbmat,
-                                     const std::string & referenceFile)
+                                     const std::string & referenceFile,
+                                     const double curvatureRadius = 0.0)
     {
-        auto results = makeShade(Tmat, Rfmat, Rbmat)->getResults();
+        auto results = makeShade(Tmat, Rfmat, Rbmat, curvatureRadius)->getResults();
         const auto reference = Helper::readMatrixFromCSV(
           std::string(TEST_DATA_DIR_SINGLE_LAYER_OPTICS) + "/data/radiance/" + referenceFile);
         checkProperty(results, reference, Side::Front, PropertySurface::T, "Tf");
@@ -138,6 +141,12 @@ TEST_F(TestVenetianRadianceReference, OpaqueAsymmetricSlats)
     checkAgainstRadiance(0.0, 0.8, 0.2, "venetian_flat45_Rf0.8_Rb0.2.csv");
 }
 
+TEST_F(TestVenetianRadianceReference, OpaqueAsymmetricSlatsMirrored)
+{
+    SCOPED_TRACE("Flat slats 16/12 mm, 45 deg, Rf 0.2 / Rb 0.8, against Radiance.");
+    checkAgainstRadiance(0.0, 0.2, 0.8, "venetian_flat45_Rf0.2_Rb0.8.csv");
+}
+
 TEST_F(TestVenetianRadianceReference, TranslucentSymmetricSlats)
 {
     SCOPED_TRACE("Flat slats 16/12 mm, 45 deg, T 0.2, R 0.5 both faces, against Radiance.");
@@ -148,4 +157,10 @@ TEST_F(TestVenetianRadianceReference, TranslucentAsymmetricSlats)
 {
     SCOPED_TRACE("Flat slats 16/12 mm, 45 deg, T 0.2, Rf 0.7 / Rb 0.2, against Radiance.");
     checkAgainstRadiance(0.2, 0.7, 0.2, "venetian_flat45_T0.2_Rf0.7_Rb0.2.csv");
+}
+
+TEST_F(TestVenetianRadianceReference, CurvedOpaqueSymmetricSlats)
+{
+    SCOPED_TRACE("Curved slats 16/12 mm, 45 deg, rise 1 mm (radius 32.5 mm), R 0.5, against Radiance.");
+    checkAgainstRadiance(0.0, 0.5, 0.5, "venetian_curved45_rise1mm_R0.5.csv", 0.0325);
 }

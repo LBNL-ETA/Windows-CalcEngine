@@ -36,7 +36,57 @@ genfmtx -w window.rad -ncp slats.rad -o Output.mtx -vb -s -rs kf -ss kf -refl -w
   blocks, values in 1/sr), read by `scripts/compare_radiance.py`. The `sol_*` text files
   found in the awning folder are not produced by this invocation.
 
-## Geometry (`scripts/make_slats.py`)
+## Slat geometry
+
+Every case uses the same blind; only the slat material (and, for v3, the curvature) changes.
+
+| Parameter | Value | Note |
+|---|---|---|
+| Slat width (chord) | 16 mm | WINDOW `m_SlatWidth`; WCE `slatWidth` 0.016 m |
+| Slat spacing (pitch) | 12 mm | distance between the pivot lines of neighbouring slats; WCE `slatSpacing` 0.012 m |
+| Tilt | +45 deg | slat rises from the exterior edge to the interior edge (WCE and legacy convention for positive tilt) |
+| Curvature | flat (v0, v1, v2, v4, v5); rise 1.0 mm (v3) | radius (rise^2 + (w/2)^2) / (2 rise) = 32.5 mm, crown up, as a positive radius in the engines |
+| Slat thickness | 0 | the engines model zero-thickness slats; Radiance uses single polygons |
+| Segments per slat (engines) | 5 | WINDOW default `VenetianNsegments`; WCE `numOfSlatSegments` |
+| Method (engines) | Directional diffuse | WINDOW `VenetianSOLCalcMethod` 2; WCE `DistributionMethod::DirectionalDiffuse` |
+| Angular basis | Klems full, 145 x 145 | both engines and Radiance |
+| Slat faces | up face = material front (Rf), down face = material back (Rb) | same in WINDOW, WCE, legacy and in the Radiance model |
+
+Vertical cross-section, exterior on the right (+z), looking along the slats (x):
+
+```
+   y (up)                 interior            exterior
+   ^                      (window side, -z)   (+z)
+   |
+   |   interior edge  o
+   |   (high)          \   up face = material front (Rf)
+   |                    \
+   |                     \   slat n+1, chord 16 mm, tilt 45 deg
+   |                      \
+   |                       o  exterior edge (low)
+   |   pitch 12 mm
+   |                   o
+   |                    \   down face = material back (Rb)
+   |                     \
+   |                      \   slat n
+   |                       \
+   |                        o
+   +------------------------------------------------------> z (toward exterior)
+ window plane (z = 0)                light from the exterior arrives travelling toward -z
+```
+
+(The sketch is schematic; at 45 deg the slat's horizontal depth and vertical rise are both
+16 mm x cos 45 = 11.3 mm, so adjacent slats overlap in projection and there is no direct
+line of sight at normal incidence except through the small gap: dir-dir transmittance
+about 0.057 at normal incidence in every engine and in Radiance.)
+
+Radiance model (`scripts/make_slats.py`): window polygon 1.2 m x 1.5 m in the x-y plane at
+z = 0; slats as polygons running along x, interior edge at z = 1 mm in front of the window
+plane, the stack extending 10 cm beyond the window on every side (142 slats); for v3 each
+slat is a 12-facet polygon strip along the circular arc. Only window-side (-z) incidence is
+sampled directly; exterior incidence comes from the mirrored-tilt run (see below).
+
+## Radiance model details (`scripts/make_slats.py`)
 
 - Window polygon 1.2 m x 1.5 m in the x-y plane at z = 0; the exterior is +z.
 - Slats run along x; slats and stack extend 10 cm beyond the window on every side, so the
@@ -50,7 +100,7 @@ genfmtx -w window.rad -ncp slats.rad -o Output.mtx -vb -s -rs kf -ss kf -refl -w
   `mixfunc ... "if(Rdot,1,0)" .` (foreground material on the side the normal points to).
   Translucent slats: `trans` with colour R + T and `trans` parameter T/(R+T), no specular
   parts.
-- Curved slats: polygon strip (`--rise`, `--facets`); not run yet.
+- Curved slats: polygon strip (`--rise`, `--facets`), crown up for a positive rise, as a positive radius in the engines.
 
 ## Cases
 
@@ -58,10 +108,12 @@ genfmtx -w window.rad -ncp slats.rad -o Output.mtx -vb -s -rs kf -ss kf -refl -w
 |---|---|---|---|---|
 | v0 | 0.5 | 0.5 | 0 | control; `v0_c20000` repeats it with 20000 samples for the noise floor |
 | v1 | 0.8 | 0.2 | 0 | asymmetric opaque |
+| v2 | 0.2 | 0.8 | 0 | mirror material of v1 |
+| v3 | 0.5 | 0.5 | 0 | curved slats, rise 1.0 mm (radius 32.5 mm), 12 facets in Radiance |
 | v4 | 0.5 | 0.5 | 0.2 | translucent symmetric |
 | v5 | 0.7 | 0.2 | 0.2 | translucent asymmetric |
 
-Flat slats 16 mm wide, 12 mm spacing, 45 degree tilt in every case. Each case also has a
+Slats 16 mm wide, 12 mm spacing, 45 degree tilt in every case; flat except v3. Each case also has a
 `<case>_mirror` run with the tilt negated (see below). WINDOW debug matrices for the same
 cases (legacy and WCE 1.0.77, 0.54 um) are in `D:\Documents\Results Change\results\<case>`
 (`Tarcog\Layer2_*.csv`, `WinCalc\Solar\Layer_2\*.csv`).
@@ -107,19 +159,21 @@ The comparisons below therefore separate the direct (diagonal) and diffuse parts
 
 ### Integrated values and diffuse part (official runs, `-ab 12 -c 20000`)
 
-Legacy and WCE 1.0.77 agree with each other to 4e-7 in these quantities, so one engine
-column is shown. The tables are produced by `scripts/summarize.py`.
+The tables are produced by `scripts/summarize.py` from the run outputs and WINDOW's debug
+matrices (legacy and WCE 1.0.77).
 
-**Integrated values, Radiance / engines** (first line: directional-hemispherical at normal incidence; second line: hemispherical)
+**Integrated values, Radiance / engines** (first line: directional-hemispherical at normal incidence; second line: hemispherical). For the flat cases legacy and WCE are identical to 4e-7; for the curved case see the last table.
 
 | Case | Tf | Tb | Rf | Rb |
 |---|---|---|---|---|
 | v0, R 0.5 / 0.5, T 0 | 0.1338 / 0.1341<br>0.2831 / 0.2796 | 0.1347 / 0.1341<br>0.2828 / 0.2796 | 0.2643 / 0.2665<br>0.2327 / 0.2354 | 0.2625 / 0.2665<br>0.2328 / 0.2354 |
 | v1, Rf 0.8 / Rb 0.2, T 0 | 0.1360 / 0.1358<br>0.2726 / 0.2686 | 0.0983 / 0.0976<br>0.2722 / 0.2686 | 0.4085 / 0.4115<br>0.3541 / 0.3572 | 0.1052 / 0.1068<br>0.0986 / 0.1002 |
+| v2, Rf 0.2 / Rb 0.8, T 0 | 0.0978 / 0.0976<br>0.2726 / 0.2686 | 0.1368 / 0.1358<br>0.2723 / 0.2686 | 0.1059 / 0.1068<br>0.0986 / 0.1002 | 0.4053 / 0.4115<br>0.3542 / 0.3572 |
+| v3, R 0.5 / 0.5, T 0, curved (rise 1 mm) | 0.1312 / 0.1316<br>0.2741 / 0.2710 | 0.1312 / 0.1312<br>0.2738 / 0.2710 | 0.2792 / 0.2805<br>0.2509 / 0.2526 | 0.2557 / 0.2600<br>0.2241 / 0.2273 |
 | v4, R 0.5 / 0.5, T 0.2 | 0.2648 / 0.2665<br>0.3737 / 0.3717 | 0.2667 / 0.2665<br>0.3734 / 0.3717 | 0.3304 / 0.3337<br>0.2963 / 0.3010 | 0.3284 / 0.3337<br>0.2964 / 0.3010 |
 | v5, Rf 0.7 / Rb 0.2, T 0.2 | 0.2514 / 0.2523<br>0.3503 / 0.3478 | 0.2150 / 0.2145<br>0.3500 / 0.3478 | 0.4381 / 0.4421<br>0.3834 / 0.3884 | 0.1375 / 0.1398<br>0.1363 / 0.1390 |
 
-**Diffuse part of the per-patch directional-hemispherical value, max |Radiance - engines| per incoming ring**
+**Diffuse part of the per-patch directional-hemispherical value, max |Radiance - WCE| per incoming ring**
 
 | Case | Property | 0.0 deg | 10.0 deg | 20.0 deg | 30.0 deg | 40.0 deg | 50.0 deg | 60.0 deg | 70.0 deg | 82.5 deg |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -131,6 +185,14 @@ column is shown. The tables are produced by `scripts/summarize.py`.
 | v1 | Tb | 0.000 | 0.001 | 0.001 | 0.001 | 0.001 | 0.015 | 0.009 | 0.069 | 0.023 |
 | v1 | Rf | 0.003 | 0.007 | 0.007 | 0.010 | 0.007 | 0.014 | 0.012 | 0.049 | 0.073 |
 | v1 | Rb | 0.002 | 0.003 | 0.002 | 0.002 | 0.002 | 0.006 | 0.004 | 0.020 | 0.034 |
+| v2 | Tf | 0.001 | 0.001 | 0.001 | 0.001 | 0.001 | 0.016 | 0.009 | 0.071 | 0.022 |
+| v2 | Tb | 0.000 | 0.001 | 0.003 | 0.004 | 0.003 | 0.006 | 0.005 | 0.021 | 0.030 |
+| v2 | Rf | 0.001 | 0.002 | 0.002 | 0.003 | 0.002 | 0.006 | 0.003 | 0.020 | 0.034 |
+| v2 | Rb | 0.006 | 0.012 | 0.008 | 0.006 | 0.006 | 0.014 | 0.012 | 0.051 | 0.074 |
+| v3 | Tf | 0.001 | 0.003 | 0.002 | 0.001 | 0.002 | 0.012 | 0.008 | 0.041 | 0.018 |
+| v3 | Tb | 0.001 | 0.002 | 0.002 | 0.002 | 0.002 | 0.005 | 0.005 | 0.044 | 0.016 |
+| v3 | Rf | 0.001 | 0.004 | 0.004 | 0.006 | 0.004 | 0.004 | 0.007 | 0.020 | 0.039 |
+| v3 | Rb | 0.004 | 0.008 | 0.005 | 0.005 | 0.005 | 0.007 | 0.010 | 0.028 | 0.048 |
 | v4 | Tf | 0.002 | 0.004 | 0.003 | 0.003 | 0.003 | 0.018 | 0.012 | 0.059 | 0.066 |
 | v4 | Tb | 0.001 | 0.003 | 0.003 | 0.003 | 0.003 | 0.018 | 0.011 | 0.062 | 0.067 |
 | v4 | Rf | 0.003 | 0.006 | 0.006 | 0.008 | 0.006 | 0.017 | 0.011 | 0.058 | 0.068 |
@@ -140,20 +202,44 @@ column is shown. The tables are produced by `scripts/summarize.py`.
 | v5 | Rf | 0.004 | 0.008 | 0.008 | 0.010 | 0.008 | 0.019 | 0.014 | 0.064 | 0.078 |
 | v5 | Rb | 0.002 | 0.004 | 0.003 | 0.002 | 0.002 | 0.011 | 0.007 | 0.036 | 0.064 |
 
-**Direct-direct part, max |Radiance - engines| per incoming ring** (the geometry is the same in every case, so one case suffices)
+**Direct-direct part, max |Radiance - WCE| per incoming ring** (the flat cases share one geometry)
 
-| Property | 0.0 deg | 10.0 deg | 20.0 deg | 30.0 deg | 40.0 deg | 50.0 deg | 60.0 deg | 70.0 deg | 82.5 deg |
-|---|---|---|---|---|---|---|---|---|---|
-| Tf | 0.001 | 0.009 | 0.010 | 0.012 | 0.008 | 0.063 | 0.036 | 0.207 | 0.205 |
-| Tb | 0.001 | 0.015 | 0.004 | 0.009 | 0.006 | 0.062 | 0.039 | 0.215 | 0.208 |
+| Case | Property | 0.0 deg | 10.0 deg | 20.0 deg | 30.0 deg | 40.0 deg | 50.0 deg | 60.0 deg | 70.0 deg | 82.5 deg |
+|---|---|---|---|---|---|---|---|---|---|---|
+| v0 | Tf | 0.001 | 0.009 | 0.010 | 0.012 | 0.008 | 0.063 | 0.036 | 0.207 | 0.205 |
+| v0 | Tb | 0.001 | 0.015 | 0.004 | 0.009 | 0.006 | 0.062 | 0.039 | 0.215 | 0.208 |
+| v3 | Tf | 0.001 | 0.009 | 0.010 | 0.012 | 0.009 | 0.038 | 0.032 | 0.151 | 0.195 |
+| v3 | Tb | 0.001 | 0.015 | 0.004 | 0.007 | 0.008 | 0.039 | 0.036 | 0.159 | 0.196 |
 
-Reading: at normal incidence transmittance agrees to 0.002 or better in all cases and
-reflectance to 0.002 to 0.005 (Radiance lower); hemispherical values agree to 0.002 to 0.005
-with Radiance consistently higher in T and lower in R, a real but small model difference
-between a five-segment two-dimensional radiosity cell and a ray-traced blind (about 1.3 %
-relative). The diffuse part per incoming patch agrees to 0.010 or better up to 45 degrees
-and to 0.019 up to 65 degrees; beyond that the engines' patch-centre evaluation of the
-beam cut-off dominates and the comparison is not meaningful per patch.
+**Curved slats, where legacy and WCE differ: Radiance / WCE / legacy** (first line normal incidence, second line hemispherical)
+
+| Case | Tf | Tb | Rf | Rb |
+|---|---|---|---|---|
+| v0, R 0.5 / 0.5, T 0 | 0.1338 / 0.1341 / 0.1341<br>0.2831 / 0.2796 / 0.2796 | 0.1347 / 0.1341 / 0.1341<br>0.2828 / 0.2796 / 0.2796 | 0.2643 / 0.2665 / 0.2665<br>0.2327 / 0.2354 / 0.2354 | 0.2625 / 0.2665 / 0.2665<br>0.2328 / 0.2354 / 0.2354 |
+| v1, Rf 0.8 / Rb 0.2, T 0 | 0.1360 / 0.1358 / 0.1358<br>0.2726 / 0.2686 / 0.2686 | 0.0983 / 0.0976 / 0.0976<br>0.2722 / 0.2686 / 0.2686 | 0.4085 / 0.4115 / 0.4115<br>0.3541 / 0.3572 / 0.3572 | 0.1052 / 0.1068 / 0.1068<br>0.0986 / 0.1002 / 0.1002 |
+| v2, Rf 0.2 / Rb 0.8, T 0 | 0.0978 / 0.0976 / 0.0976<br>0.2726 / 0.2686 / 0.2686 | 0.1368 / 0.1358 / 0.1358<br>0.2723 / 0.2686 / 0.2686 | 0.1059 / 0.1068 / 0.1068<br>0.0986 / 0.1002 / 0.1002 | 0.4053 / 0.4115 / 0.4115<br>0.3542 / 0.3572 / 0.3572 |
+| v3, R 0.5 / 0.5, T 0, curved (rise 1 mm) | 0.1312 / 0.1316 / 0.1217<br>0.2741 / 0.2710 / 0.2683 | 0.1312 / 0.1312 / 0.1250<br>0.2738 / 0.2710 / 0.2683 | 0.2792 / 0.2805 / 0.2805<br>0.2509 / 0.2526 / 0.2526 | 0.2557 / 0.2600 / 0.2758<br>0.2241 / 0.2273 / 0.2355 |
+| v4, R 0.5 / 0.5, T 0.2 | 0.2648 / 0.2665 / 0.2665<br>0.3737 / 0.3717 / 0.3717 | 0.2667 / 0.2665 / 0.2665<br>0.3734 / 0.3717 / 0.3717 | 0.3304 / 0.3337 / 0.3337<br>0.2963 / 0.3010 / 0.3010 | 0.3284 / 0.3337 / 0.3337<br>0.2964 / 0.3010 / 0.3010 |
+| v5, Rf 0.7 / Rb 0.2, T 0.2 | 0.2514 / 0.2523 / 0.2523<br>0.3503 / 0.3478 / 0.3478 | 0.2150 / 0.2145 / 0.2145<br>0.3500 / 0.3478 / 0.3478 | 0.4381 / 0.4421 / 0.4421<br>0.3834 / 0.3884 / 0.3884 | 0.1375 / 0.1398 / 0.1398<br>0.1363 / 0.1390 / 0.1390 |
+
+Reading:
+
+- **Flat slats, all materials (v0, v1, v2, v4, v5):** at normal incidence transmittance
+  agrees to 0.002 or better and reflectance to 0.002 to 0.006 (Radiance lower);
+  hemispherical values agree to 0.002 to 0.005 with Radiance consistently higher in T and
+  lower in R. That is a real but small model difference between a five-segment
+  two-dimensional radiosity cell and a ray-traced blind, about 1.3 % relative, identical in
+  legacy and WCE. The asymmetric cases confirm the face assignment: v1 and v2 are exact
+  mirrors of each other in Radiance as in the engines.
+- **Curved slats (v3):** WCE agrees with Radiance as well as for flat slats (normal-incidence
+  Tf 0.1316 vs 0.1312, hemispherical 0.2710 vs 0.2741; Rb 0.2600 vs 0.2557). Legacy does
+  not: its normal-incidence Tf is 0.1217 (0.0095 low), Tb 0.1250, and its Rb 0.2758 is 0.02
+  high. The 0.01 difference between the engines for curved slats noted earlier is therefore a
+  legacy error in the curved-slat view factors, and the statement in issue #1760 that WCE
+  computes them correctly is supported.
+- **Diffuse part per incoming patch:** within 0.010 up to 45 degrees and 0.019 up to 65
+  degrees in every case; beyond that the engines' patch-centre evaluation of the beam
+  cut-off dominates and per-patch comparison is not meaningful.
 
 ### WCE unit tests
 
@@ -166,10 +252,12 @@ diffuse part for Tf, Tb, Rf, Rb; provenance in the sibling `.txt`):
 - diffuse part per incoming patch within 0.015 up to 45 degrees and 0.030 from 45 to 65;
 - nothing asserted on the direct-direct part beyond 45 degrees, for the reason above.
 
-The tolerances are about 1.5 times the observed differences.
+Six cases: v0, v1, v2, v4, v5 flat and v3 curved. The tolerances are about 1.5 times the
+observed differences.
 
 ## Open
 
-- Curved slats (v3): extend `make_slats.py --rise`, run, add a fifth test.
+- Legacy curved-slat view factors: quantify over tilt and rise, and decide whether the legacy engine is corrected or the difference is only documented (results-change document).
+
 - Direct-direct patch-centre evaluation at grazing incidence: document as a known limitation
   of both engines, or patch-average the dir-dir term.
