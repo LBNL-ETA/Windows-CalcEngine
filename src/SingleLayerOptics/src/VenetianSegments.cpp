@@ -224,45 +224,76 @@ namespace SingleLayerOptics
         return aIrradiances;
     }
 
+    namespace Helper
+    {
+        //! Direct-beam irradiance on every face, in the row order of the energy matrix
+        //! (see formIrradianceMatrix): up-facing faces front[0..n-1] of the bottom slat, the
+        //! interior and exterior openings, then down-facing faces back[1..n] of the top slat.
+        std::vector<double> beamIrradianceSource(const std::vector<SegmentIrradiance> & beam)
+        {
+            std::vector<double> rightSide;
+            rightSide.reserve(2 * beam.size() + 2);
+            for(const auto & segment : beam)
+            {
+                rightSide.push_back(-segment.E_f);
+            }
+            // The openings carry no direct beam here; the dir-dir part is handled separately.
+            rightSide.push_back(0.0);
+            rightSide.push_back(0.0);
+            for(const auto & segment : beam)
+            {
+                rightSide.push_back(-segment.E_b);
+            }
+            return rightSide;
+        }
+
+        //! Radiosity leaving each face, from the total irradiance on every face. front[i]
+        //! (up-facing, bottom slat) and back[i+1] (down-facing, top slat) are the two sides of
+        //! the same slat element, so transmission couples them, as in formIrradianceMatrix.
+        std::vector<double> faceRadiosities(const std::vector<double> & totalIrradiance,
+                                            const size_t numberOfSlatSegments,
+                                            const LayerProperties & properties)
+        {
+            std::vector<double> radiosity(totalIrradiance.size(), 0.0);
+            const size_t backOffset = numberOfSlatSegments + 2;
+            for(size_t idx = 0; idx < numberOfSlatSegments; ++idx)
+            {
+                const double irradianceUp = totalIrradiance[idx];
+                const double irradianceDown = totalIrradiance[backOffset + idx];
+                radiosity[idx] = properties.Rf * irradianceUp + properties.Tb * irradianceDown;
+                radiosity[backOffset + idx] =
+                  properties.Rb * irradianceDown + properties.Tf * irradianceUp;
+            }
+            return radiosity;
+        }
+    }   // namespace Helper
+
     std::vector<double>
       directUniformSlatRadiances(const std::vector<SegmentIrradiance> & vector,
                                  const FenestrationCommon::SquareMatrix & radiancesMatrix,
                                  const LayerProperties & properties)
     {
-        // Forming left side of the equations for direct to direct radiances solution.
-        // Radiances matrix is already formed and used in several different places.
-        std::vector<double> rightSide;
-        rightSide.reserve(radiancesMatrix.size() + 2 * vector.size() + 2);
+        // The energy matrix maps incident fluxes to incident fluxes, with the property of the
+        // source face attached to every view factor (see formIrradianceMatrix). Its source term
+        // is therefore the direct-beam irradiance on each face, and the radiosities follow from
+        // the total irradiance. Feeding it a radiosity source and reading the solution as
+        // radiosities is only equivalent when both slat faces have the same reflectance and the
+        // slat is opaque.
+        const auto totalIrradiance =
+          solveSystem(radiancesMatrix, Helper::beamIrradianceSource(vector));
 
-        // Iterating through the vector backward
-        std::for_each(std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
-            rightSide.push_back(-properties.Tb * segment.E_b - properties.Rf * segment.E_f);
-        });
+        auto solution = Helper::faceRadiosities(totalIrradiance, vector.size(), properties);
 
-        // Indoor is ignored and set to zero
-        rightSide.push_back(0);
-        rightSide.push_back(0);
+        const size_t numberOfSlatSegments = vector.size();
+        assert(solution.size() == 2 * numberOfSlatSegments + 2);
 
-        // Iterating through the vector forward
-        std::for_each(std::begin(vector), std::end(vector), [&](const SegmentIrradiance & segment) {
-            rightSide.push_back(-properties.Tf * segment.E_f - properties.Rb * segment.E_b);
-        });
+        // Remove the two opening entries
+        solution.erase(solution.begin() + numberOfSlatSegments,
+                       solution.begin() + numberOfSlatSegments + 2);
 
-        // Solve the system and get the solution vector
-        std::vector<double> solution = solveSystem(radiancesMatrix, rightSide);
-
-        size_t n = vector.size();
-
-        // Remove the two middle items from the solution vector
-        if(solution.size() > n + 1)
-        {
-            solution.erase(solution.begin() + n, solution.begin() + n + 2);
-        }
-
-        // Switch the first and second halves of the solution
-        auto mid = solution.begin() + solution.size() / 2;
+        // Reorder to getSlats(): top slat left to right, then bottom slat right to left
+        const auto mid = solution.begin() + static_cast<std::ptrdiff_t>(numberOfSlatSegments);
         std::rotate(solution.begin(), mid, solution.end());
-
         std::reverse(mid, solution.end());
 
         return solution;

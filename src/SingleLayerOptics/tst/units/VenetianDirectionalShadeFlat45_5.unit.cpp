@@ -65,10 +65,10 @@ TEST_F(TestVenetianDirectionalShadeFlat45_5, TestVenetian1)
     BSDFIntegrator aResults = aShade->getResults();
 
     const double tauDiff = aResults.DiffDiff(Side::Front, PropertySurface::T);
-    EXPECT_NEAR(0.386680, tauDiff, 1e-6);
+    EXPECT_NEAR(0.391647, tauDiff, 1e-6);
 
     const double RfDiff = aResults.DiffDiff(Side::Front, PropertySurface::R);
-    EXPECT_NEAR(0.3855669, RfDiff, 1e-6);
+    EXPECT_NEAR(0.3864169, RfDiff, 1e-6);
 
     const auto aT = aResults.getMatrix(Side::Front, PropertySurface::T);
 
