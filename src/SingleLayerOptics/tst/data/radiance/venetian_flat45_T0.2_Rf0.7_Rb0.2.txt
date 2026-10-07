@@ -1,0 +1,4 @@
+source runs: v5, v5_mirror
+recipe: -ab 12 -c 20000 -n 16
+columns: patch, tf_dirhem, tf_direct, tf_diffuse, tb_dirhem, tb_direct, tb_diffuse, rf_dirhem, rf_direct, rf_diffuse, rb_dirhem, rb_direct, rb_diffuse
+hemispherical: tf 0.350279, tb 0.349977, rf 0.383414, rb 0.136314
