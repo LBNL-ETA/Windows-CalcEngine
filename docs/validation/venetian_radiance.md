@@ -115,8 +115,14 @@ sampled directly; exterior incidence comes from the mirrored-tilt run (see below
 | v3 | 0.5 | 0.5 | 0 | curved slats, rise 1.0 mm (radius 32.5 mm), 12 facets in Radiance |
 | v4 | 0.5 | 0.5 | 0.2 | translucent symmetric |
 | v5 | 0.7 | 0.2 | 0.2 | translucent asymmetric |
+| t0 | 0.5 | 0.5 | 0 | horizontal slats (tilt 0) |
+| tm45 | 0.8 | 0.2 | 0 | tilt -45 (exterior edge up), asymmetric |
+| t80 | 0.5 | 0.5 | 0 | tilt 80, nearly closed |
+| wide | 0.5 | 0.5 | 0 | spacing 16 mm (spacing/width 1.0), tilt 45 |
+| curved3 | 0.8 | 0.2 | 0 | curved slats, rise 3.0 mm (radius 12.2 mm), asymmetric |
+| t0trans | 0.7 | 0.2 | 0.2 | horizontal slats, translucent asymmetric |
 
-Slats 16 mm wide, 12 mm spacing, 45 degree tilt in every case; flat except v3. Each case also has a
+Slats 16 mm wide; 12 mm spacing, 45 degree tilt and flat unless the table says otherwise. The v-cases have WINDOW debug matrices (legacy and WCE 1.0.77); the extended cases (t0 to t0trans) are compared with WCE's own output written by the unit tests (`WCE_VENETIAN_DUMP_DIR`), without WINDOW. Each case also has a
 `<case>_mirror` run with the tilt negated (see below). WINDOW debug matrices for the same
 cases (legacy and WCE 1.0.77, 0.54 um) are in `D:\Documents\Results Change\results\<case>`
 (`Tarcog\Layer2_*.csv`, `WinCalc\Solar\Layer_2\*.csv`).
@@ -162,12 +168,13 @@ The comparisons below therefore separate the direct (diagonal) and diffuse parts
 
 ### Integrated values and diffuse part (official runs, `-ab 12 -c 20000`)
 
-The tables are produced by `scripts/summarize.py` from the run outputs and WINDOW's debug
-matrices (legacy and WCE 1.0.77).
+The tables are produced by `scripts/summarize.py` from the run outputs, WCE's own columns written by the
+unit tests, and WINDOW's debug matrices where they exist (legacy). The same data, per patch, is in the
+workbook `Venetian Radiance Validation.xlsx` (`scripts/export_xlsx.py`).
 
 #### Integrated values: Radiance reference against WCE
 
-Normal incidence is the directional-hemispherical value for the central Klems patch; hemispherical is the diffuse-diffuse value. Difference = WCE - Radiance. For the flat cases legacy equals WCE to 4e-7; the curved case is tabulated separately below.
+Cases as in the Cases table. Normal is the directional-hemispherical value for the central Klems patch, hemisph. the diffuse-diffuse value; Diff. is WCE minus Radiance. Where WINDOW dumps exist, legacy equals WCE to 4e-7 for flat slats; curved cases are tabulated separately.
 
 **Front transmittance Tf**
 
@@ -179,6 +186,12 @@ Normal incidence is the directional-hemispherical value for the central Klems pa
 | v3 | 0.1312 | 0.1316 | +0.0004 | 0.2741 | 0.2710 | -0.0032 |
 | v4 | 0.2648 | 0.2665 | +0.0016 | 0.3737 | 0.3717 | -0.0019 |
 | v5 | 0.2514 | 0.2523 | +0.0009 | 0.3503 | 0.3478 | -0.0024 |
+| t0 | 0.9598 | 1.0000 | +0.0402 | 0.4263 | 0.4391 | +0.0128 |
+| tm45 | 0.0984 | 0.0976 | -0.0008 | 0.2722 | 0.2686 | -0.0036 |
+| t80 | 0.0074 | 0.0096 | +0.0022 | 0.0340 | 0.0410 | +0.0070 |
+| wide | 0.3474 | 0.3517 | +0.0043 | 0.3738 | 0.3723 | -0.0015 |
+| curved3 | 0.1129 | 0.1139 | +0.0009 | 0.1950 | 0.1952 | +0.0002 |
+| t0trans | 0.9626 | 1.0000 | +0.0374 | 0.4600 | 0.4708 | +0.0108 |
 
 **Back transmittance Tb**
 
@@ -190,6 +203,12 @@ Normal incidence is the directional-hemispherical value for the central Klems pa
 | v3 | 0.1312 | 0.1312 | +0.0000 | 0.2738 | 0.2710 | -0.0028 |
 | v4 | 0.2667 | 0.2665 | -0.0002 | 0.3734 | 0.3717 | -0.0017 |
 | v5 | 0.2150 | 0.2145 | -0.0005 | 0.3500 | 0.3478 | -0.0021 |
+| t0 | 0.9598 | 1.0000 | +0.0402 | 0.4263 | 0.4391 | +0.0128 |
+| tm45 | 0.1360 | 0.1358 | -0.0002 | 0.2726 | 0.2686 | -0.0040 |
+| t80 | 0.0075 | 0.0096 | +0.0021 | 0.0338 | 0.0410 | +0.0072 |
+| wide | 0.3473 | 0.3517 | +0.0043 | 0.3740 | 0.3723 | -0.0018 |
+| curved3 | 0.0848 | 0.0852 | +0.0004 | 0.1947 | 0.1952 | +0.0004 |
+| t0trans | 0.9626 | 1.0000 | +0.0374 | 0.4600 | 0.4708 | +0.0108 |
 
 **Front reflectance Rf**
 
@@ -201,6 +220,12 @@ Normal incidence is the directional-hemispherical value for the central Klems pa
 | v3 | 0.2792 | 0.2805 | +0.0012 | 0.2509 | 0.2526 | +0.0017 |
 | v4 | 0.3304 | 0.3337 | +0.0033 | 0.2963 | 0.3010 | +0.0047 |
 | v5 | 0.4381 | 0.4421 | +0.0040 | 0.3834 | 0.3884 | +0.0050 |
+| t0 | 0.0078 | 0.0000 | -0.0078 | 0.1286 | 0.1237 | -0.0049 |
+| tm45 | 0.1051 | 0.1068 | +0.0017 | 0.0986 | 0.1002 | +0.0016 |
+| t80 | 0.4556 | 0.4483 | -0.0073 | 0.4343 | 0.4276 | -0.0067 |
+| wide | 0.2293 | 0.2293 | +0.0000 | 0.2180 | 0.2208 | +0.0028 |
+| curved3 | 0.5189 | 0.5167 | -0.0021 | 0.4855 | 0.4818 | -0.0037 |
+| t0trans | 0.0106 | 0.0000 | -0.0106 | 0.1729 | 0.1666 | -0.0062 |
 
 **Back reflectance Rb**
 
@@ -212,6 +237,12 @@ Normal incidence is the directional-hemispherical value for the central Klems pa
 | v3 | 0.2557 | 0.2600 | +0.0043 | 0.2241 | 0.2273 | +0.0032 |
 | v4 | 0.3284 | 0.3337 | +0.0053 | 0.2964 | 0.3010 | +0.0046 |
 | v5 | 0.1375 | 0.1398 | +0.0022 | 0.1363 | 0.1390 | +0.0027 |
+| t0 | 0.0078 | 0.0000 | -0.0078 | 0.1286 | 0.1237 | -0.0049 |
+| tm45 | 0.4085 | 0.4115 | +0.0030 | 0.3541 | 0.3572 | +0.0032 |
+| t80 | 0.4542 | 0.4483 | -0.0058 | 0.4341 | 0.4276 | -0.0065 |
+| wide | 0.2280 | 0.2293 | +0.0013 | 0.2180 | 0.2208 | +0.0028 |
+| curved3 | 0.1006 | 0.1025 | +0.0020 | 0.1160 | 0.1165 | +0.0005 |
+| t0trans | 0.0106 | 0.0000 | -0.0106 | 0.1729 | 0.1666 | -0.0062 |
 
 #### v3, R 0.5 / 0.5, T 0, curved (rise 1 mm): Radiance against WCE and legacy
 
@@ -240,6 +271,12 @@ Largest |WCE - Radiance| over the patches of each ring (ring centre theta in the
 | v3 | 0.001 | 0.003 | 0.002 | 0.001 | 0.002 | 0.012 | 0.008 | 0.041 | 0.018 |
 | v4 | 0.002 | 0.004 | 0.003 | 0.003 | 0.003 | 0.018 | 0.012 | 0.059 | 0.066 |
 | v5 | 0.002 | 0.003 | 0.002 | 0.003 | 0.003 | 0.011 | 0.011 | 0.037 | 0.073 |
+| t0 | 0.008 | 0.008 | 0.009 | 0.010 | 0.012 | 0.018 | 0.025 | 0.059 | 0.104 |
+| tm45 | 0.000 | 0.001 | 0.001 | 0.001 | 0.001 | 0.015 | 0.009 | 0.069 | 0.023 |
+| t80 | 0.002 | 0.002 | 0.003 | 0.003 | 0.004 | 0.004 | 0.004 | 0.004 | 0.086 |
+| wide | 0.001 | 0.001 | 0.001 | 0.002 | 0.004 | 0.010 | 0.005 | 0.035 | 0.025 |
+| curved3 | 0.002 | 0.003 | 0.003 | 0.003 | 0.003 | 0.006 | 0.010 | 0.022 | 0.029 |
+| t0trans | 0.011 | 0.011 | 0.012 | 0.014 | 0.017 | 0.024 | 0.034 | 0.080 | 0.142 |
 
 **Back transmittance Tb**
 
@@ -251,6 +288,12 @@ Largest |WCE - Radiance| over the patches of each ring (ring centre theta in the
 | v3 | 0.001 | 0.002 | 0.002 | 0.002 | 0.002 | 0.005 | 0.005 | 0.044 | 0.016 |
 | v4 | 0.001 | 0.003 | 0.003 | 0.003 | 0.003 | 0.018 | 0.011 | 0.062 | 0.067 |
 | v5 | 0.001 | 0.003 | 0.002 | 0.002 | 0.002 | 0.019 | 0.012 | 0.071 | 0.036 |
+| t0 | 0.008 | 0.008 | 0.009 | 0.010 | 0.012 | 0.018 | 0.025 | 0.059 | 0.104 |
+| tm45 | 0.001 | 0.001 | 0.003 | 0.004 | 0.003 | 0.006 | 0.005 | 0.020 | 0.030 |
+| t80 | 0.002 | 0.003 | 0.003 | 0.003 | 0.004 | 0.004 | 0.004 | 0.004 | 0.088 |
+| wide | 0.000 | 0.001 | 0.001 | 0.002 | 0.003 | 0.010 | 0.006 | 0.033 | 0.026 |
+| curved3 | 0.001 | 0.002 | 0.002 | 0.002 | 0.002 | 0.004 | 0.016 | 0.043 | 0.023 |
+| t0trans | 0.011 | 0.011 | 0.012 | 0.014 | 0.017 | 0.024 | 0.034 | 0.080 | 0.142 |
 
 **Front reflectance Rf**
 
@@ -262,6 +305,12 @@ Largest |WCE - Radiance| over the patches of each ring (ring centre theta in the
 | v3 | 0.001 | 0.004 | 0.004 | 0.006 | 0.004 | 0.004 | 0.007 | 0.020 | 0.039 |
 | v4 | 0.003 | 0.006 | 0.006 | 0.008 | 0.006 | 0.017 | 0.011 | 0.058 | 0.068 |
 | v5 | 0.004 | 0.008 | 0.008 | 0.010 | 0.008 | 0.019 | 0.014 | 0.064 | 0.078 |
+| t0 | 0.008 | 0.008 | 0.008 | 0.010 | 0.012 | 0.017 | 0.025 | 0.058 | 0.138 |
+| tm45 | 0.002 | 0.003 | 0.002 | 0.002 | 0.002 | 0.006 | 0.004 | 0.020 | 0.034 |
+| t80 | 0.007 | 0.010 | 0.011 | 0.011 | 0.011 | 0.010 | 0.010 | 0.006 | 0.091 |
+| wide | 0.000 | 0.005 | 0.004 | 0.004 | 0.006 | 0.009 | 0.011 | 0.032 | 0.030 |
+| curved3 | 0.002 | 0.005 | 0.006 | 0.006 | 0.008 | 0.015 | 0.016 | 0.018 | 0.050 |
+| t0trans | 0.011 | 0.011 | 0.012 | 0.014 | 0.017 | 0.023 | 0.034 | 0.079 | 0.186 |
 
 **Back reflectance Rb**
 
@@ -273,37 +322,60 @@ Largest |WCE - Radiance| over the patches of each ring (ring centre theta in the
 | v3 | 0.004 | 0.008 | 0.005 | 0.005 | 0.005 | 0.007 | 0.010 | 0.028 | 0.048 |
 | v4 | 0.005 | 0.010 | 0.006 | 0.005 | 0.006 | 0.017 | 0.012 | 0.060 | 0.068 |
 | v5 | 0.002 | 0.004 | 0.003 | 0.002 | 0.002 | 0.011 | 0.007 | 0.036 | 0.064 |
+| t0 | 0.008 | 0.008 | 0.008 | 0.010 | 0.012 | 0.017 | 0.025 | 0.058 | 0.138 |
+| tm45 | 0.003 | 0.007 | 0.007 | 0.010 | 0.007 | 0.014 | 0.012 | 0.049 | 0.073 |
+| t80 | 0.006 | 0.010 | 0.011 | 0.011 | 0.011 | 0.011 | 0.010 | 0.005 | 0.095 |
+| wide | 0.001 | 0.005 | 0.003 | 0.004 | 0.007 | 0.009 | 0.010 | 0.032 | 0.029 |
+| curved3 | 0.002 | 0.002 | 0.002 | 0.002 | 0.003 | 0.006 | 0.005 | 0.014 | 0.055 |
+| t0trans | 0.011 | 0.011 | 0.012 | 0.014 | 0.017 | 0.023 | 0.034 | 0.079 | 0.186 |
 
 #### Direct-direct term, per incoming ring
 
-Largest |WCE - Radiance| of the direct-direct contribution (diagonal element times lambda). The flat cases share one geometry, so the flat control and the curved case suffice.
+Largest |WCE - Radiance| of the direct-direct contribution (diagonal element times lambda), front transmittance. The cut-off geometry differs with tilt, spacing and curvature.
 
-| Case | Prop. | 0° | 10° | 20° | 30° | 40° | 50° | 60° | 70° | 82.5° |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| v0 | Tf | 0.001 | 0.009 | 0.010 | 0.012 | 0.008 | 0.063 | 0.036 | 0.207 | 0.205 |
-| v0 | Tb | 0.001 | 0.015 | 0.004 | 0.009 | 0.006 | 0.062 | 0.039 | 0.215 | 0.208 |
-| v3 | Tf | 0.001 | 0.009 | 0.010 | 0.012 | 0.009 | 0.038 | 0.032 | 0.151 | 0.195 |
-| v3 | Tb | 0.001 | 0.015 | 0.004 | 0.007 | 0.008 | 0.039 | 0.036 | 0.159 | 0.196 |
+| Case | 0° | 10° | 20° | 30° | 40° | 50° | 60° | 70° | 82.5° |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| v0 | 0.001 | 0.009 | 0.010 | 0.012 | 0.008 | 0.063 | 0.036 | 0.207 | 0.205 |
+| v1 | 0.001 | 0.009 | 0.010 | 0.012 | 0.008 | 0.063 | 0.036 | 0.207 | 0.205 |
+| v2 | 0.001 | 0.009 | 0.010 | 0.012 | 0.008 | 0.063 | 0.036 | 0.207 | 0.205 |
+| v3 | 0.001 | 0.009 | 0.010 | 0.012 | 0.009 | 0.038 | 0.032 | 0.151 | 0.195 |
+| v4 | 0.001 | 0.009 | 0.010 | 0.012 | 0.008 | 0.063 | 0.037 | 0.207 | 0.205 |
+| v5 | 0.001 | 0.009 | 0.010 | 0.012 | 0.008 | 0.063 | 0.036 | 0.207 | 0.205 |
+| t0 | 0.048 | 0.050 | 0.051 | 0.061 | 0.075 | 0.106 | 0.154 | 0.357 | 0.746 |
+| tm45 | 0.001 | 0.014 | 0.004 | 0.009 | 0.005 | 0.062 | 0.039 | 0.215 | 0.208 |
+| t80 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.001 | 0.006 | 0.010 | 0.230 |
+| wide | 0.004 | 0.011 | 0.006 | 0.008 | 0.018 | 0.049 | 0.032 | 0.162 | 0.159 |
+| curved3 | 0.001 | 0.003 | 0.009 | 0.010 | 0.014 | 0.045 | 0.030 | 0.132 | 0.133 |
+| t0trans | 0.048 | 0.050 | 0.051 | 0.061 | 0.075 | 0.106 | 0.154 | 0.357 | 0.746 |
 
 
 Reading:
 
-- **Flat slats, all materials (v0, v1, v2, v4, v5):** at normal incidence transmittance
-  agrees to 0.002 or better and reflectance to 0.002 to 0.006 (Radiance lower);
-  hemispherical values agree to 0.002 to 0.005 with Radiance consistently higher in T and
-  lower in R. That is a real but small model difference between a five-segment
-  two-dimensional radiosity cell and a ray-traced blind, about 1.3 % relative, identical in
-  legacy and WCE. The asymmetric cases confirm the face assignment: v1 and v2 are exact
-  mirrors of each other in Radiance as in the engines.
-- **Curved slats (v3):** WCE agrees with Radiance as well as for flat slats (normal-incidence
-  Tf 0.1316 vs 0.1312, hemispherical 0.2710 vs 0.2741; Rb 0.2600 vs 0.2557). Legacy does
-  not: its normal-incidence Tf is 0.1217 (0.0095 low), Tb 0.1250, and its Rb 0.2758 is 0.02
-  high. The 0.01 difference between the engines for curved slats noted earlier is therefore a
-  legacy error in the curved-slat view factors, and the statement in issue #1760 that WCE
-  computes them correctly is supported.
-- **Diffuse part per incoming patch:** within 0.010 up to 45 degrees and 0.019 up to 65
-  degrees in every case; beyond that the engines' patch-centre evaluation of the beam
-  cut-off dominates and per-patch comparison is not meaningful.
+- **Tilted flat slats, all materials (v0, v1, v2, v4, v5, tm45, wide):** at normal incidence transmittance
+  agrees to 0.004 or better and reflectance to 0.006 (Radiance lower); hemispherical values agree to
+  0.002 to 0.005 with Radiance consistently higher in T and lower in R. That is a real but small model
+  difference between a five-segment two-dimensional radiosity cell and a ray-traced blind, about 1.3 %
+  relative, identical in legacy and WCE. The asymmetric cases confirm the face assignment both ways:
+  v1, v2 and tm45 are exact mirrors of each other in Radiance as in the engines.
+- **Curved slats (v3, curved3):** WCE agrees with Radiance as well as for flat slats (v3 Tf normal 0.1316
+  vs 0.1312; curved3 0.1139 vs 0.1129, hemispherical 0.1952 vs 0.1950). Legacy does not (v3): its
+  normal-incidence Tf is 0.1217 (0.0095 low), Tb 0.1250, and its Rb 0.2758 is 0.02 high. The 0.01
+  difference between the engines for curved slats noted earlier is therefore a legacy error in the
+  curved-slat view factors, and the statement in issue #1760 that WCE computes them correctly is
+  supported.
+- **Nearly closed slats (t80):** the diffuse part agrees to 0.004 up to 70 degrees; the totals differ
+  by 0.007 in hemispherical T (0.034 vs 0.041, so 20 % relative on a small number) and 0.007 in R,
+  because what little the closed blind transmits passes at grazing angles where the direct-direct term
+  is evaluated at the patch centre.
+- **Horizontal slats (t0, t0trans):** the clearest display of the patch-centre limitation. At exactly
+  normal incidence nothing is lit, so the engines give direct transmittance 1.000 and zero reflection;
+  Radiance, averaging the 0 to 5 degree patch, gives 0.960 and 0.008. Hemispherical T is 0.013 (opaque)
+  and 0.011 (translucent) too high in the engines. The diffuse part also deviates more than for tilted
+  slats (0.011 to 0.017 up to 40 degrees, 0.034 at 60), because the lit fraction of a horizontal slat
+  changes fastest within a patch. This affects legacy and WCE identically.
+- **Diffuse part per incoming patch, tilted slats:** within 0.010 up to 45 degrees and 0.025 up to 65
+  degrees in every case; beyond that the engines' patch-centre evaluation of the beam cut-off dominates
+  and per-patch comparison is not meaningful.
 
 ### WCE unit tests
 
@@ -312,16 +384,22 @@ case the way WINDOW does (DirectionalDiffuse, Klems full, five segments) and ass
 against `tst/data/radiance/<case>.csv` (145 rows: patch index, then dir-hem, direct and
 diffuse part for Tf, Tb, Rf, Rb; provenance in the sibling `.txt`):
 
-- hemispherical values and normal-incidence dir-hem within 0.008;
-- diffuse part per incoming patch within 0.015 up to 45 degrees and 0.030 from 45 to 65;
-- nothing asserted on the direct-direct part beyond 45 degrees, for the reason above.
+- the diffuse part (dir-hem minus the direct-direct term) of the hemispherical value and of
+  the normal-incidence value within 0.008;
+- the diffuse part per incoming patch within 0.020 up to 45 degrees and 0.040 from 45 to 65 (tilted slats stay within 0.010 / 0.025; horizontal slats reach 0.017 / 0.034, see above);
+- the totals, which include the direct-direct term, only loosely: 0.020 hemispherical and
+  0.050 at normal incidence. The direct-direct term is where the engines' patch-centre
+  evaluation of the beam cut-off shows (0.040 at normal incidence for horizontal slats), and
+  it is reported in the tables rather than asserted tightly.
 
-Six cases: v0, v1, v2, v4, v5 flat and v3 curved. The tolerances are about 1.5 times the
-observed differences.
+Twelve cases: the six v-cases and the six extended ones. Running the tests with the
+environment variable `WCE_VENETIAN_DUMP_DIR` set writes WCE's own columns in the reference
+layout, which `scripts/summarize.py --wce-dumps=<dir>` uses for the tables.
 
 ## Open
 
 - Legacy curved-slat view factors: quantify over tilt and rise, and decide whether the legacy engine is corrected or the difference is only documented (results-change document).
+- Patch-centre evaluation of the beam irradiance and cut-off: for horizontal slats it costs 0.04 in normal-incidence transmittance and 0.013 hemispherical in both engines. Patch-averaging the direct term (and the beam irradiance) in WCE would remove it; a Development decision.
 
 - Direct-direct patch-centre evaluation at grazing incidence: document as a known limitation
   of both engines, or patch-average the dir-dir term.

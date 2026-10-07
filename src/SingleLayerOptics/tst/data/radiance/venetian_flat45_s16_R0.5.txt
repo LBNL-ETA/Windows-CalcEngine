@@ -1,0 +1,4 @@
+source runs: wide, wide_mirror
+recipe: -ab 12 -c 20000 -n 16
+columns: patch, tf_dirhem, tf_direct, tf_diffuse, tb_dirhem, tb_direct, tb_diffuse, rf_dirhem, rf_direct, rf_diffuse, rb_dirhem, rb_direct, rb_diffuse
+hemispherical: tf 0.373778, tb 0.374018, rf 0.217984, rb 0.217968
