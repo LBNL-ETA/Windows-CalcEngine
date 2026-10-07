@@ -41,6 +41,7 @@ if (BUILD_WCE_TESTING)
             "../helper/optical/*.hpp"
             "../helper/optical/*.cpp"
             "tst/units/*.cpp"
+            "tst/units/*/*.cpp"
     )
 
     CREATE_TEST_TARGETS_WCE(${target_name} "${test_src}" "")

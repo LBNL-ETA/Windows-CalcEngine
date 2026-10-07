@@ -241,7 +241,7 @@ else ()
             LIST(APPEND test_src ${all_test_src})
 
             include_directories(src/SingleLayerOptics/include)
-            file(GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/SingleLayerOptics/tst/units/*.cpp")
+            file(GLOB_RECURSE all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/SingleLayerOptics/tst/units/*.cpp")
             LIST(REMOVE_ITEM all_test_src "src/SingleLayerOptics/tst/units/main.cpp")
             LIST(APPEND test_src ${all_test_src})
 
