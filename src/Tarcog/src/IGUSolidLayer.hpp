@@ -106,7 +106,14 @@ namespace Tarcog::ISO15099
         [[nodiscard]] bool hasMeasuredDeflection() const;
         void setMeasuredDeflection();
 
+        //! Sets the conductivity of the layer. A shading layer with openings solves with a
+        //! conductivity mixed from this value and the gas next to it.
         void setConductivity(double t_Conductivity);
+
+        //! Conductivity of the layer before a shading layer mixes it with the gas next to it.
+        //! For any other layer it is the conductivity the layer solves with.
+        [[nodiscard]] double materialConductivity() const;
+
         void setDeflectionMaterial(const DeflectionMaterial & mat);
 
         void assignEffectiveMultipliers(

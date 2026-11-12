@@ -343,7 +343,19 @@ namespace Tarcog::ISO15099
     void CIGUSolidLayer::setConductivity(double t_Conductivity)
     {
         m_Conductivity = t_Conductivity;
+        if(isShadeLayer())
+        {
+            // A shading layer recomputes m_Conductivity on every solve from the material
+            // conductivity and the gas next to it, so the new value has to replace the
+            // material conductivity or the next solve discards it.
+            m_MaterialConductivity = t_Conductivity;
+        }
         resetCalculated();
+    }
+
+    double CIGUSolidLayer::materialConductivity() const
+    {
+        return isShadeLayer() ? m_MaterialConductivity : m_Conductivity;
     }
 
     double CIGUSolidLayer::youngsModulus() const
