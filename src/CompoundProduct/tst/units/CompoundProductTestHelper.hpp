@@ -1,5 +1,6 @@
 #pragma once
 
+#include <initializer_list>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -30,6 +31,15 @@ namespace CompoundProductTest
             EXPECT_NEAR(actual[index].value(), expected[index], tolerance)
               << "at wavelength " << actual[index].x();
         }
+    }
+
+    //! Values written in braces. Without this overload a list with one value is ambiguous for
+    //! some compilers, because both a vector and a series can be created from it.
+    inline void expectNear(const FenestrationCommon::CSeries & actual,
+                           const std::initializer_list<double> expected,
+                           const double tolerance)
+    {
+        expectNear(actual, std::vector<double>{expected}, tolerance);
     }
 
     inline void expectNear(const FenestrationCommon::CSeries & actual,

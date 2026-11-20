@@ -68,7 +68,7 @@ namespace CompoundProduct
     {
         double wavelength{0};
         Warning warning{Warning::NoData};
-        std::string source;
+        std::string source{};
     };
 
     //! \brief Limits used to decide when a measured value does not carry enough information.
