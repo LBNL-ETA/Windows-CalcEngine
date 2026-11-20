@@ -28,4 +28,6 @@ if (${BUILD_WCE_OPTICAL})
     set(LINK_TO_SingleLayerOptics SingleLayerOptics)
 
     add_subdirectory(MultiLayerOptics)
+
+    add_subdirectory(CompoundProduct)
 endif ()

@@ -1,0 +1,377 @@
+#include <algorithm>
+#include <iterator>
+#include <optional>
+#include <ranges>
+#include <stdexcept>
+#include <string>
+#include <variant>
+
+#include "Actions.hpp"
+#include "Construction.hpp"
+#include "Deconstruction.hpp"
+
+using FenestrationCommon::Side;
+
+namespace CompoundProduct
+{
+    namespace
+    {
+        //! Names of the two measurements of a coated pane, as they are reported in diagnostics.
+        struct CoatedPaneNames
+        {
+            std::string measured;
+            std::string substrate;
+        };
+
+        [[nodiscard]] CoatedPaneNames namesOf(const std::string & coatedPane)
+        {
+            return {.measured = coatedPane + ".measured", .substrate = coatedPane + ".substrate"};
+        }
+
+        //! Diagnostics of one step, marked with the name of the input that the step used.
+        [[nodiscard]] std::vector<Diagnostic> from(const std::string & source,
+                                                   const std::vector<Diagnostic> & diagnostics)
+        {
+            std::vector<Diagnostic> result;
+            std::ranges::transform(diagnostics,
+                                   std::back_inserter(result),
+                                   [&](const Diagnostic & diagnostic) {
+                                       return Diagnostic{.wavelength = diagnostic.wavelength,
+                                                         .warning = diagnostic.warning,
+                                                         .source = source};
+                                   });
+            return result;
+        }
+
+        [[nodiscard]] std::vector<Diagnostic>
+          allDiagnostics(const std::vector<std::vector<Diagnostic>> & steps)
+        {
+            std::vector<Diagnostic> result;
+            std::ranges::copy(steps | std::views::join, std::back_inserter(result));
+            return result;
+        }
+
+        //! Internal properties of an uncoated pane that the caller gave under the given name.
+        [[nodiscard]] WithDiagnostics<Monolithic> glassOf(const ExternalProperties & uncoatedPane,
+                                                          const std::string & name,
+                                                          const ActionOptions & options)
+        {
+            const auto glass{deconstructMonolithic(
+              uncoatedPane, options.substrateReflectance, options.tolerances)};
+            return {.value = glass.value, .diagnostics = from(name, glass.diagnostics)};
+        }
+
+        [[nodiscard]] Bulk bulkOf(const Monolithic & pane)
+        {
+            return {.internalTransmittance = pane.internalTransmittance};
+        }
+
+        //! Pane with the given glass and with the coating on one of its sides.
+        [[nodiscard]] Stack coatedPaneStack(const Interface & glassSurface,
+                                            const Bulk & glass,
+                                            const Interface & coating,
+                                            const Side coatedSide)
+        {
+            if(coatedSide == Side::Front)
+            {
+                return {.interfaces = {coating, glassSurface}, .bulks = {glass}};
+            }
+            return {.interfaces = {glassSurface, coating}, .bulks = {glass}};
+        }
+
+        //! Coating that faces the air, from the measurement of its pane and from the glass of
+        //! that pane. The result is oriented for targetSide: its reflectance towards the glass
+        //! stays towards the glass.
+        [[nodiscard]] WithDiagnostics<Interface> coatingOf(const CoatedPane & source,
+                                                           const Monolithic & sourceGlass,
+                                                           const Side targetSide,
+                                                           const std::string & measuredName,
+                                                           const ActionOptions & options)
+        {
+            const auto coating{deconstructCoating(
+              source.measured, sourceGlass, source.coatedSide, options.tolerances)};
+            return {.value = source.coatedSide == targetSide ? coating.value
+                                                             : flipped(coating.value),
+                    .diagnostics = from(measuredName, coating.diagnostics)};
+        }
+
+        //! The same, with the deconstruction of the substrate of the source pane.
+        [[nodiscard]] WithDiagnostics<Interface> coatingOf(const CoatedPane & source,
+                                                           const Side targetSide,
+                                                           const CoatedPaneNames & names,
+                                                           const ActionOptions & options)
+        {
+            const auto glass{glassOf(source.substrate, names.substrate, options)};
+            const auto coating{coatingOf(source, glass.value, targetSide, names.measured, options)};
+            return {.value = coating.value,
+                    .diagnostics = allDiagnostics({glass.diagnostics, coating.diagnostics})};
+        }
+
+        //! Uncoated substrate, given under substrateName, with the coating of the source pane.
+        [[nodiscard]] WithDiagnostics<ExternalProperties>
+          coatedSubstrate(const ExternalProperties & substrate,
+                          const std::string & substrateName,
+                          const CoatedPane & coatingSource,
+                          const CoatedPaneNames & sourceNames,
+                          const Side coatedSide,
+                          const ActionOptions & options)
+        {
+            const auto coating{coatingOf(coatingSource, coatedSide, sourceNames, options)};
+            const auto glass{glassOf(substrate, substrateName, options)};
+            const auto stack{coatedPaneStack(
+              uncoatedInterface(glass.value), bulkOf(glass.value), coating.value, coatedSide)};
+            return {.value = construct(stack),
+                    .diagnostics = allDiagnostics({coating.diagnostics, glass.diagnostics})};
+        }
+    }   // namespace
+
+    WithDiagnostics<ExternalProperties>
+      changeUncoatedPaneThickness(const UncoatedPane & pane,
+                                  const double newThickness,
+                                  const ActionOptions & options)
+    {
+        const auto glass{glassOf(pane.measured, "pane.measured", options)};
+        const auto surface{uncoatedInterface(glass.value)};
+        const Stack stack{
+          .interfaces = {surface, surface},
+          .bulks = {withThickness(bulkOf(glass.value), pane.thickness, newThickness)}};
+        return {.value = construct(stack), .diagnostics = glass.diagnostics};
+    }
+
+    WithDiagnostics<ExternalProperties> changeCoatedPaneThickness(const CoatedPane & pane,
+                                                                  const double newThickness,
+                                                                  const ActionOptions & options)
+    {
+        const auto names{namesOf("pane")};
+        const auto glass{glassOf(pane.substrate, names.substrate, options)};
+        const auto coating{
+          coatingOf(pane, glass.value, pane.coatedSide, names.measured, options)};
+        const auto stack{
+          coatedPaneStack(uncoatedInterface(glass.value),
+                          withThickness(bulkOf(glass.value), pane.thickness, newThickness),
+                          coating.value,
+                          pane.coatedSide)};
+        return {.value = construct(stack),
+                .diagnostics = allDiagnostics({glass.diagnostics, coating.diagnostics})};
+    }
+
+    WithDiagnostics<ExternalProperties> applyCoating(const ExternalProperties & substrate,
+                                                     const CoatedPane & coatingSource,
+                                                     const Side coatedSide,
+                                                     const ActionOptions & options)
+    {
+        return coatedSubstrate(
+          substrate, "substrate", coatingSource, namesOf("coatingSource"), coatedSide, options);
+    }
+
+    WithDiagnostics<ExternalProperties> changeSubstrate(const ExternalProperties & coatedPane,
+                                                        const ExternalProperties & substrate,
+                                                        const ExternalProperties & newSubstrate,
+                                                        const Side coatedSide,
+                                                        const ActionOptions & options)
+    {
+        const CoatedPane coatingSource{
+          .measured = coatedPane, .substrate = substrate, .coatedSide = coatedSide, .thickness = 0.0};
+        const CoatedPaneNames names{.measured = "coatedPane", .substrate = "substrate"};
+        return coatedSubstrate(
+          newSubstrate, "newSubstrate", coatingSource, names, coatedSide, options);
+    }
+
+    WithDiagnostics<ExternalProperties> coatBothSides(const ExternalProperties & substrate,
+                                                      const CoatedPane & frontCoatingSource,
+                                                      const CoatedPane & backCoatingSource,
+                                                      const ActionOptions & options)
+    {
+        const auto front{
+          coatingOf(frontCoatingSource, Side::Front, namesOf("frontCoatingSource"), options)};
+        const auto back{
+          coatingOf(backCoatingSource, Side::Back, namesOf("backCoatingSource"), options)};
+        const auto glass{glassOf(substrate, "substrate", options)};
+        const Stack stack{.interfaces = {front.value, back.value},
+                          .bulks = {bulkOf(glass.value)}};
+        return {.value = construct(stack),
+                .diagnostics = allDiagnostics(
+                  {front.diagnostics, back.diagnostics, glass.diagnostics})};
+    }
+
+    WithDiagnostics<Bulk> makeInterlayer(const ExternalProperties & laminate,
+                                         const ExternalProperties & frontPane,
+                                         const ExternalProperties & backPane,
+                                         const ActionOptions & options)
+    {
+        const auto front{glassOf(frontPane, "frontPane", options)};
+        const auto back{glassOf(backPane, "backPane", options)};
+        const auto interlayer{
+          deconstructInterlayer(laminate, front.value, back.value, options.tolerances)};
+        return {.value = interlayer.value,
+                .diagnostics = allDiagnostics({front.diagnostics,
+                                               back.diagnostics,
+                                               from("laminate", interlayer.diagnostics)})};
+    }
+
+    Interlayer withThickness(const Interlayer & interlayer, const double newThickness)
+    {
+        const Bulk bulk{.internalTransmittance = interlayer.internalTransmittance};
+        return {.internalTransmittance =
+                  withThickness(bulk, interlayer.thickness, newThickness).internalTransmittance,
+                .thickness = newThickness};
+    }
+
+    namespace
+    {
+        //! Measured properties of the reference laminate seen with its coated pane in front.
+        [[nodiscard]] ExternalProperties coatedPaneInFront(const ReferenceLaminate & reference)
+        {
+            if(reference.coatedPanePosition == Side::Front)
+            {
+                return reference.measured;
+            }
+            return {.transmittance = reference.measured.transmittance,
+                    .reflectanceFront = reference.measured.reflectanceBack,
+                    .reflectanceBack = reference.measured.reflectanceFront};
+        }
+
+        //! Coating that touches an interlayer, from a reference laminate. The result is oriented
+        //! for the side of the pane on which the coating sits: its reflectance towards the glass
+        //! stays towards the glass.
+        [[nodiscard]] WithDiagnostics<Interface> coatingOf(const ReferenceLaminate & reference,
+                                                           const Side sideOfPane,
+                                                           const std::string & name,
+                                                           const ActionOptions & options)
+        {
+            const auto coatedGlass{
+              glassOf(reference.coatedPaneSubstrate, name + ".coatedPaneSubstrate", options)};
+            const auto otherGlass{glassOf(reference.uncoatedPane, name + ".uncoatedPane", options)};
+            const auto coating{deconstructEmbeddedCoating(coatedPaneInFront(reference),
+                                                          coatedGlass.value,
+                                                          otherGlass.value,
+                                                          reference.interlayer,
+                                                          options.tolerances)};
+            return {.value = sideOfPane == Side::Front ? flipped(coating.value) : coating.value,
+                    .diagnostics = allDiagnostics({coatedGlass.diagnostics,
+                                                   otherGlass.diagnostics,
+                                                   from(name + ".measured", coating.diagnostics)})};
+        }
+
+        //! Surface of a pane that touches an interlayer: the given coating, or an uncoated
+        //! surface that does not reflect.
+        [[nodiscard]] WithDiagnostics<Interface>
+          surfaceAtInterlayer(const std::optional<ReferenceLaminate> & coating,
+                              const Side sideOfPane,
+                              const std::string & name,
+                              const std::vector<double> & wavelengths,
+                              const ActionOptions & options)
+        {
+            if(coating.has_value())
+            {
+                return coatingOf(coating.value(), sideOfPane, name, options);
+            }
+            return {.value = indexMatchedInterface(wavelengths), .diagnostics = {}};
+        }
+
+        void requireNoCoatingFromAir(const std::optional<Interface> & coating)
+        {
+            if(coating.has_value())
+            {
+                throw std::runtime_error(
+                  "Compound product: a coating of a coated pane was measured in the air and "
+                  "cannot touch an interlayer. Give the pane as an uncoated pane and give the "
+                  "coating as an embedded coating with its reference laminate.");
+            }
+        }
+    }   // namespace
+
+    Laminate::Pane Laminate::paneOf(const UncoatedPane & pane,
+                                    const std::string & name,
+                                    const ActionOptions & options)
+    {
+        const auto glass{glassOf(pane.measured, name + ".measured", options)};
+        return {.glass = glass.value,
+                .coatingOnFront = std::nullopt,
+                .coatingOnBack = std::nullopt,
+                .diagnostics = glass.diagnostics};
+    }
+
+    Laminate::Pane Laminate::paneOf(const CoatedPane & pane,
+                                    const std::string & name,
+                                    const ActionOptions & options)
+    {
+        const auto glass{glassOf(pane.substrate, name + ".substrate", options)};
+        const auto coating{
+          coatingOf(pane, glass.value, pane.coatedSide, name + ".measured", options)};
+        const auto onFront{pane.coatedSide == Side::Front};
+        return {.glass = glass.value,
+                .coatingOnFront = onFront ? std::optional{coating.value} : std::nullopt,
+                .coatingOnBack = onFront ? std::nullopt : std::optional{coating.value},
+                .diagnostics = allDiagnostics({glass.diagnostics, coating.diagnostics})};
+    }
+
+    Laminate::Laminate(const Pane & frontPane, const ActionOptions & options) :
+        m_Stack{.interfaces = {frontPane.coatingOnFront.value_or(
+                  uncoatedInterface(frontPane.glass))},
+                .bulks = {bulkOf(frontPane.glass)}},
+        m_LastGlass{frontPane.glass},
+        m_CoatingOnLastBack{frontPane.coatingOnBack},
+        m_Diagnostics{frontPane.diagnostics},
+        m_Options{options}
+    {}
+
+    Laminate::Laminate(const UncoatedPane & frontPane, const ActionOptions & options) :
+        Laminate(paneOf(frontPane, "pane[0]", options), options)
+    {}
+
+    Laminate::Laminate(const CoatedPane & frontPane, const ActionOptions & options) :
+        Laminate(paneOf(frontPane, "pane[0]", options), options)
+    {}
+
+    std::string Laminate::nextPaneName() const
+    {
+        return "pane[" + std::to_string(m_NumberOfPanes) + "]";
+    }
+
+    Laminate Laminate::added(const Interlayer & interlayer,
+                             const Pane & pane,
+                             const EmbeddedCoatings & coatings) const
+    {
+        requireNoCoatingFromAir(m_CoatingOnLastBack);
+        requireNoCoatingFromAir(pane.coatingOnFront);
+        const auto name{"interlayer[" + std::to_string(m_NumberOfPanes - 1) + "]"};
+        const auto wavelengths{m_LastGlass.surfaceReflectance.getXArray()};
+        const auto inFront{surfaceAtInterlayer(
+          coatings.onPaneInFront, Side::Back, name + ".onPaneInFront", wavelengths, m_Options)};
+        const auto behind{surfaceAtInterlayer(
+          coatings.onPaneBehind, Side::Front, name + ".onPaneBehind", wavelengths, m_Options)};
+        auto result{*this};
+        result.m_Stack.interfaces.push_back(inFront.value);
+        result.m_Stack.bulks.push_back({.internalTransmittance = interlayer.internalTransmittance});
+        result.m_Stack.interfaces.push_back(behind.value);
+        result.m_Stack.bulks.push_back(bulkOf(pane.glass));
+        result.m_LastGlass = pane.glass;
+        result.m_CoatingOnLastBack = pane.coatingOnBack;
+        result.m_Diagnostics = allDiagnostics(
+          {m_Diagnostics, inFront.diagnostics, behind.diagnostics, pane.diagnostics});
+        result.m_NumberOfPanes = m_NumberOfPanes + 1;
+        return result;
+    }
+
+    Laminate Laminate::add(const Interlayer & interlayer,
+                           const UncoatedPane & pane,
+                           const EmbeddedCoatings & coatings) const
+    {
+        return added(interlayer, paneOf(pane, nextPaneName(), m_Options), coatings);
+    }
+
+    Laminate Laminate::add(const Interlayer & interlayer,
+                           const CoatedPane & pane,
+                           const EmbeddedCoatings & coatings) const
+    {
+        return added(interlayer, paneOf(pane, nextPaneName(), m_Options), coatings);
+    }
+
+    WithDiagnostics<ExternalProperties> Laminate::spectra() const
+    {
+        auto stack{m_Stack};
+        stack.interfaces.push_back(m_CoatingOnLastBack.value_or(uncoatedInterface(m_LastGlass)));
+        return {.value = construct(stack), .diagnostics = m_Diagnostics};
+    }
+}   // namespace CompoundProduct

@@ -167,6 +167,10 @@ else ()
         file(GLOB SOURCES_CPP "src/MultiLayerOptics/src/*.cpp")
         file(GLOB SOURCES_HPP "src/MultiLayerOptics/src/*.hpp")
         LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
+
+        file(GLOB SOURCES_CPP "src/CompoundProduct/src/*.cpp")
+        file(GLOB SOURCES_HPP "src/CompoundProduct/src/*.hpp")
+        LIST(APPEND SOURCES ${SOURCES_HPP} ${SOURCES_CPP})
     endif ()
 
     add_library(${target_name} STATIC ${SOURCES}
@@ -192,6 +196,7 @@ else ()
         target_include_directories(${target_name} PUBLIC "src/SpectralAveraging/include")
         target_include_directories(${target_name} PUBLIC "src/SingleLayerOptics/include")
         target_include_directories(${target_name} PUBLIC "src/MultiLayerOptics/include")
+        target_include_directories(${target_name} PUBLIC "src/CompoundProduct/include")
     endif ()
 
     if (BUILD_WCE_TESTING)
@@ -248,6 +253,13 @@ else ()
             include_directories(src/MultiLayerOptics/include)
             file(GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "src/MultiLayerOptics/tst/units/*.cpp")
             LIST(REMOVE_ITEM all_test_src "src/MultiLayerOptics/tst/units/main.cpp")
+            LIST(APPEND test_src ${all_test_src})
+
+            include_directories(src/CompoundProduct/include)
+            file(GLOB all_test_src RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+                    "src/CompoundProduct/tst/units/*.cpp"
+                    "src/CompoundProduct/tst/units/*.hpp")
+            LIST(REMOVE_ITEM all_test_src "src/CompoundProduct/tst/units/main.cpp")
             LIST(APPEND test_src ${all_test_src})
         endif ()
 
