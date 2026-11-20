@@ -13,6 +13,8 @@ namespace CompoundProduct
     // and constructs the result. The diagnostics of all steps are returned with the result, in
     // the order of the steps. The source of a diagnostic is the name of the input whose
     // deconstruction raised it, written as in the call: "substrate", "coatingSource.measured".
+    // For a member function of a pane the members of that pane are named without a prefix:
+    // "measured", "substrate".
     // For a laminate the panes and the interlayers are numbered from the front, starting with
     // zero: "pane[1].measured", "interlayer[0].onPaneInFront.measured".
     //
@@ -28,10 +30,27 @@ namespace CompoundProduct
     // Measured products as they are given to the actions. thickness is the thickness at which
     // the product was measured. It is used only when an action changes the thickness.
 
+    struct CoatedPane;
+
     struct UncoatedPane
     {
         ExternalProperties measured;
         double thickness{0};
+
+        //! \brief Pane of the same glass at a different thickness.
+        //!
+        //! newThickness must be given in the unit of thickness. This pane is not changed.
+        [[nodiscard]] WithDiagnostics<UncoatedPane>
+          atThickness(double newThickness, const ActionOptions & options = {}) const;
+
+        //! \brief This glass with the coating of another pane on one of its sides.
+        //!
+        //! The coating may be placed on a different side than it has on coatingSource. Its
+        //! reflectance towards the glass stays towards the glass. This pane is not changed.
+        [[nodiscard]] WithDiagnostics<CoatedPane>
+          withCoating(const CoatedPane & coatingSource,
+                      FenestrationCommon::Side coatedSide,
+                      const ActionOptions & options = {}) const;
     };
 
     //! \brief Pane with a coating that faces the air.
@@ -46,6 +65,20 @@ namespace CompoundProduct
         ExternalProperties substrate;
         FenestrationCommon::Side coatedSide{FenestrationCommon::Side::Back};
         double thickness{0};
+
+        //! \brief Pane with the same coating and the same glass at a different thickness.
+        //!
+        //! The spectra of the pane and of its substrate are both calculated for the new
+        //! thickness. newThickness must be given in the unit of thickness. This pane is not
+        //! changed.
+        [[nodiscard]] WithDiagnostics<CoatedPane>
+          atThickness(double newThickness, const ActionOptions & options = {}) const;
+
+        //! \brief Pane with the same coating, on the same side, on a different glass.
+        //!
+        //! This pane is not changed.
+        [[nodiscard]] WithDiagnostics<CoatedPane>
+          onSubstrate(const UncoatedPane & newSubstrate, const ActionOptions & options = {}) const;
     };
 
     //! \brief Measured laminate of three layers that gives the properties of a coating between
@@ -67,44 +100,12 @@ namespace CompoundProduct
     {
         FenestrationCommon::CSeries internalTransmittance;
         double thickness{0};
+
+        //! \brief The same interlayer at a different thickness.
+        //!
+        //! newThickness must be given in the unit of thickness. This interlayer is not changed.
+        [[nodiscard]] Interlayer atThickness(double newThickness) const;
     };
-
-    //! \brief Uncoated pane of the same glass at a different thickness.
-    //!
-    //! newThickness must be given in the unit of the thickness of the pane.
-    [[nodiscard]] WithDiagnostics<ExternalProperties>
-      changeUncoatedPaneThickness(const UncoatedPane & pane,
-                                  double newThickness,
-                                  const ActionOptions & options = {});
-
-    //! \brief Coated pane with the same coating and the same glass at a different thickness.
-    //!
-    //! newThickness must be given in the unit of the thickness of the pane.
-    [[nodiscard]] WithDiagnostics<ExternalProperties>
-      changeCoatedPaneThickness(const CoatedPane & pane,
-                                double newThickness,
-                                const ActionOptions & options = {});
-
-    //! \brief Uncoated substrate with the coating of another pane on one of its sides.
-    //!
-    //! The coating may be placed on a different side than it has on coatingSource. Its
-    //! reflectance towards the glass stays towards the glass.
-    [[nodiscard]] WithDiagnostics<ExternalProperties>
-      applyCoating(const ExternalProperties & substrate,
-                   const CoatedPane & coatingSource,
-                   FenestrationCommon::Side coatedSide,
-                   const ActionOptions & options = {});
-
-    //! \brief Coated pane that carries the coating of coatedPane on a different substrate.
-    //!
-    //! substrate is the uncoated glass of coatedPane and has its thickness. newSubstrate is the
-    //! uncoated glass of the result. The coating stays on coatedSide.
-    [[nodiscard]] WithDiagnostics<ExternalProperties>
-      changeSubstrate(const ExternalProperties & coatedPane,
-                      const ExternalProperties & substrate,
-                      const ExternalProperties & newSubstrate,
-                      FenestrationCommon::Side coatedSide,
-                      const ActionOptions & options = {});
 
     //! \brief Uncoated substrate with one coating on its front and another on its back side.
     [[nodiscard]] WithDiagnostics<ExternalProperties>
@@ -113,19 +114,16 @@ namespace CompoundProduct
                     const CoatedPane & backCoatingSource,
                     const ActionOptions & options = {});
 
-    //! \brief Internal transmittance of an interlayer from a measured laminate of two uncoated
-    //! panes and from the measured panes.
+    //! \brief Interlayer from a measured laminate of two uncoated panes and from the measured
+    //! panes.
     //!
-    //! The result is valid for the thickness that the interlayer has in the laminate.
-    [[nodiscard]] WithDiagnostics<Bulk> makeInterlayer(const ExternalProperties & laminate,
-                                                       const ExternalProperties & frontPane,
-                                                       const ExternalProperties & backPane,
-                                                       const ActionOptions & options = {});
-
-    //! \brief The same interlayer at a different thickness.
-    //!
-    //! newThickness must be given in the unit of the thickness of the interlayer.
-    [[nodiscard]] Interlayer withThickness(const Interlayer & interlayer, double newThickness);
+    //! interlayerThickness is the thickness that the interlayer has in the laminate.
+    [[nodiscard]] WithDiagnostics<Interlayer>
+      makeInterlayer(const ExternalProperties & laminate,
+                     const ExternalProperties & frontPane,
+                     const ExternalProperties & backPane,
+                     double interlayerThickness,
+                     const ActionOptions & options = {});
 
     //! \brief Coatings that touch one interlayer of a laminate.
     //!

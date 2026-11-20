@@ -125,56 +125,57 @@ namespace CompoundProduct
         }
     }   // namespace
 
-    WithDiagnostics<ExternalProperties>
-      changeUncoatedPaneThickness(const UncoatedPane & pane,
-                                  const double newThickness,
-                                  const ActionOptions & options)
+    WithDiagnostics<UncoatedPane> UncoatedPane::atThickness(const double newThickness,
+                                                            const ActionOptions & options) const
     {
-        const auto glass{glassOf(pane.measured, "pane.measured", options)};
+        const auto glass{glassOf(measured, "measured", options)};
         const auto surface{uncoatedInterface(glass.value)};
-        const Stack stack{
-          .interfaces = {surface, surface},
-          .bulks = {withThickness(bulkOf(glass.value), pane.thickness, newThickness)}};
-        return {.value = construct(stack), .diagnostics = glass.diagnostics};
+        const Stack stack{.interfaces = {surface, surface},
+                          .bulks = {withThickness(bulkOf(glass.value), thickness, newThickness)}};
+        return {.value = {.measured = construct(stack), .thickness = newThickness},
+                .diagnostics = glass.diagnostics};
     }
 
-    WithDiagnostics<ExternalProperties> changeCoatedPaneThickness(const CoatedPane & pane,
-                                                                  const double newThickness,
-                                                                  const ActionOptions & options)
+    WithDiagnostics<CoatedPane> UncoatedPane::withCoating(const CoatedPane & coatingSource,
+                                                          const Side coatedSide,
+                                                          const ActionOptions & options) const
     {
-        const auto names{namesOf("pane")};
-        const auto glass{glassOf(pane.substrate, names.substrate, options)};
-        const auto coating{
-          coatingOf(pane, glass.value, pane.coatedSide, names.measured, options)};
-        const auto stack{
-          coatedPaneStack(uncoatedInterface(glass.value),
-                          withThickness(bulkOf(glass.value), pane.thickness, newThickness),
-                          coating.value,
-                          pane.coatedSide)};
-        return {.value = construct(stack),
+        const auto coated{coatedSubstrate(
+          measured, "measured", coatingSource, namesOf("coatingSource"), coatedSide, options)};
+        return {.value = {.measured = coated.value,
+                          .substrate = measured,
+                          .coatedSide = coatedSide,
+                          .thickness = thickness},
+                .diagnostics = coated.diagnostics};
+    }
+
+    WithDiagnostics<CoatedPane> CoatedPane::atThickness(const double newThickness,
+                                                        const ActionOptions & options) const
+    {
+        const auto glass{glassOf(substrate, "substrate", options)};
+        const auto coating{coatingOf(*this, glass.value, coatedSide, "measured", options)};
+        const auto surface{uncoatedInterface(glass.value)};
+        const auto resized{withThickness(bulkOf(glass.value), thickness, newThickness)};
+        return {.value = {.measured = construct(
+                            coatedPaneStack(surface, resized, coating.value, coatedSide)),
+                          .substrate =
+                            construct({.interfaces = {surface, surface}, .bulks = {resized}}),
+                          .coatedSide = coatedSide,
+                          .thickness = newThickness},
                 .diagnostics = allDiagnostics({glass.diagnostics, coating.diagnostics})};
     }
 
-    WithDiagnostics<ExternalProperties> applyCoating(const ExternalProperties & substrate,
-                                                     const CoatedPane & coatingSource,
-                                                     const Side coatedSide,
-                                                     const ActionOptions & options)
+    WithDiagnostics<CoatedPane> CoatedPane::onSubstrate(const UncoatedPane & newSubstrate,
+                                                        const ActionOptions & options) const
     {
-        return coatedSubstrate(
-          substrate, "substrate", coatingSource, namesOf("coatingSource"), coatedSide, options);
-    }
-
-    WithDiagnostics<ExternalProperties> changeSubstrate(const ExternalProperties & coatedPane,
-                                                        const ExternalProperties & substrate,
-                                                        const ExternalProperties & newSubstrate,
-                                                        const Side coatedSide,
-                                                        const ActionOptions & options)
-    {
-        const CoatedPane coatingSource{
-          .measured = coatedPane, .substrate = substrate, .coatedSide = coatedSide, .thickness = 0.0};
-        const CoatedPaneNames names{.measured = "coatedPane", .substrate = "substrate"};
-        return coatedSubstrate(
-          newSubstrate, "newSubstrate", coatingSource, names, coatedSide, options);
+        const CoatedPaneNames names{.measured = "measured", .substrate = "substrate"};
+        const auto coated{coatedSubstrate(
+          newSubstrate.measured, "newSubstrate.measured", *this, names, coatedSide, options)};
+        return {.value = {.measured = coated.value,
+                          .substrate = newSubstrate.measured,
+                          .coatedSide = coatedSide,
+                          .thickness = newSubstrate.thickness},
+                .diagnostics = coated.diagnostics};
     }
 
     WithDiagnostics<ExternalProperties> coatBothSides(const ExternalProperties & substrate,
@@ -194,26 +195,28 @@ namespace CompoundProduct
                   {front.diagnostics, back.diagnostics, glass.diagnostics})};
     }
 
-    WithDiagnostics<Bulk> makeInterlayer(const ExternalProperties & laminate,
-                                         const ExternalProperties & frontPane,
-                                         const ExternalProperties & backPane,
-                                         const ActionOptions & options)
+    WithDiagnostics<Interlayer> makeInterlayer(const ExternalProperties & laminate,
+                                               const ExternalProperties & frontPane,
+                                               const ExternalProperties & backPane,
+                                               const double interlayerThickness,
+                                               const ActionOptions & options)
     {
         const auto front{glassOf(frontPane, "frontPane", options)};
         const auto back{glassOf(backPane, "backPane", options)};
         const auto interlayer{
           deconstructInterlayer(laminate, front.value, back.value, options.tolerances)};
-        return {.value = interlayer.value,
+        return {.value = {.internalTransmittance = interlayer.value.internalTransmittance,
+                          .thickness = interlayerThickness},
                 .diagnostics = allDiagnostics({front.diagnostics,
                                                back.diagnostics,
                                                from("laminate", interlayer.diagnostics)})};
     }
 
-    Interlayer withThickness(const Interlayer & interlayer, const double newThickness)
+    Interlayer Interlayer::atThickness(const double newThickness) const
     {
-        const Bulk bulk{.internalTransmittance = interlayer.internalTransmittance};
+        const Bulk bulk{.internalTransmittance = internalTransmittance};
         return {.internalTransmittance =
-                  withThickness(bulk, interlayer.thickness, newThickness).internalTransmittance,
+                  withThickness(bulk, thickness, newThickness).internalTransmittance,
                 .thickness = newThickness};
     }
 

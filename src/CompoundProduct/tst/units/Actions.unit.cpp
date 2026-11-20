@@ -146,87 +146,109 @@ namespace
 class CompoundProductActions : public testing::TestWithParam<Side>
 {};
 
-TEST_P(CompoundProductActions, ChangeSubstrate)
+TEST_P(CompoundProductActions, OnSubstrate)
 {
     const auto coatedSide{GetParam()};
-    const auto measured{coatedPane(originalGlass(), bulkOf(originalGlass()), coatedSide)};
 
-    const auto result{changeSubstrate(
-      measured, uncoatedPane(originalGlass()), uncoatedPane(otherGlass()), coatedSide)};
+    const auto result{coatingSource(coatedSide).onSubstrate(otherPane())};
 
     EXPECT_TRUE(result.diagnostics.empty());
-    expectSameProduct(
-      result.value, coatedPane(otherGlass(), bulkOf(otherGlass()), coatedSide), Tolerance);
+    expectSameProduct(result.value.measured,
+                      coatedPane(otherGlass(), bulkOf(otherGlass()), coatedSide),
+                      Tolerance);
+    expectSameProduct(result.value.substrate, uncoatedPane(otherGlass()), Tolerance);
+    EXPECT_EQ(result.value.coatedSide, coatedSide);
+    EXPECT_DOUBLE_EQ(result.value.thickness, OtherGlassThickness);
 }
 
-TEST_P(CompoundProductActions, ChangeSubstrateToTheSameGlassReturnsMeasuredPane)
+TEST_P(CompoundProductActions, OnTheSameGlassReturnsTheSamePane)
 {
     const auto coatedSide{GetParam()};
-    const auto measured{coatedPane(originalGlass(), bulkOf(originalGlass()), coatedSide)};
-    const auto substrate{uncoatedPane(originalGlass())};
+    const auto pane{coatingSource(coatedSide)};
 
-    const auto result{changeSubstrate(measured, substrate, substrate, coatedSide)};
+    const auto result{pane.onSubstrate(originalPane())};
 
-    expectSameProduct(result.value, measured, Tolerance);
+    expectSameProduct(result.value.measured, pane.measured, Tolerance);
 }
 
-TEST_P(CompoundProductActions, ChangeCoatedPaneThickness)
+TEST_P(CompoundProductActions, CoatedPaneAtThickness)
 {
     const auto coatedSide{GetParam()};
     constexpr double NewThickness{6.0};
 
-    const auto result{changeCoatedPaneThickness(coatingSource(coatedSide), NewThickness)};
+    const auto result{coatingSource(coatedSide).atThickness(NewThickness)};
 
     const auto thickGlass{
       withThickness(bulkOf(originalGlass()), OriginalGlassThickness, NewThickness)};
+    const auto surface{uncoatedInterface(originalGlass())};
     EXPECT_TRUE(result.diagnostics.empty());
-    expectSameProduct(result.value, coatedPane(originalGlass(), thickGlass, coatedSide), Tolerance);
+    expectSameProduct(
+      result.value.measured, coatedPane(originalGlass(), thickGlass, coatedSide), Tolerance);
+    expectSameProduct(result.value.substrate,
+                      construct({.interfaces = {surface, surface}, .bulks = {thickGlass}}),
+                      Tolerance);
+    EXPECT_EQ(result.value.coatedSide, coatedSide);
+    EXPECT_DOUBLE_EQ(result.value.thickness, NewThickness);
 }
 
-TEST_P(CompoundProductActions, UnchangedThicknessReturnsMeasuredPane)
+TEST_P(CompoundProductActions, CoatedPaneAtItsOwnThicknessIsTheSamePane)
 {
     const auto coatedSide{GetParam()};
-    const auto measured{coatedPane(originalGlass(), bulkOf(originalGlass()), coatedSide)};
+    const auto pane{coatingSource(coatedSide)};
 
-    const auto result{
-      changeCoatedPaneThickness(coatingSource(coatedSide), OriginalGlassThickness)};
+    const auto result{pane.atThickness(OriginalGlassThickness)};
 
-    expectSameProduct(result.value, measured, Tolerance);
+    expectSameProduct(result.value.measured, pane.measured, Tolerance);
+    expectSameProduct(result.value.substrate, pane.substrate, Tolerance);
+}
+
+TEST_P(CompoundProductActions, CoatedPaneAtThicknessCanBeResizedAgain)
+{
+    const auto coatedSide{GetParam()};
+    const auto pane{coatingSource(coatedSide)};
+
+    const auto result{pane.atThickness(6.0).value.atThickness(OriginalGlassThickness)};
+
+    expectSameProduct(result.value.measured, pane.measured, Tolerance);
+}
+
+TEST_P(CompoundProductActions, WithCoatingOnTheSameSide)
+{
+    const auto coatedSide{GetParam()};
+
+    const auto result{otherPane().withCoating(coatingSource(coatedSide), coatedSide)};
+
+    expectSameProduct(result.value.measured,
+                      coatedPane(otherGlass(), bulkOf(otherGlass()), coatedSide),
+                      Tolerance);
+    expectSameProduct(result.value.substrate, uncoatedPane(otherGlass()), Tolerance);
+    EXPECT_EQ(result.value.coatedSide, coatedSide);
+    EXPECT_DOUBLE_EQ(result.value.thickness, OtherGlassThickness);
 }
 
 INSTANTIATE_TEST_SUITE_P(BothSides, CompoundProductActions, testing::Values(Side::Front, Side::Back));
 
-TEST(CompoundProductActionsThickness, ChangeUncoatedPaneThickness)
+TEST(CompoundProductActionsThickness, UncoatedPaneAtThickness)
 {
-    const auto result{changeUncoatedPaneThickness(originalPane(), 6.0)};
+    const auto result{originalPane().atThickness(6.0)};
 
     const auto surface{uncoatedInterface(originalGlass())};
     const Stack expected{.interfaces = {surface, surface},
                          .bulks = {withThickness(
                            bulkOf(originalGlass()), OriginalGlassThickness, 6.0)}};
     EXPECT_TRUE(result.diagnostics.empty());
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value.measured, construct(expected), Tolerance);
+    EXPECT_DOUBLE_EQ(result.value.thickness, 6.0);
 }
 
-TEST_P(CompoundProductActions, ApplyCoatingOnTheSameSide)
+TEST(CompoundProductActionsCoating, WithCoatingOnTheOtherSideKeepsGlassSideTowardsGlass)
 {
-    const auto coatedSide{GetParam()};
-
-    const auto result{
-      applyCoating(uncoatedPane(otherGlass()), coatingSource(coatedSide), coatedSide)};
-
-    expectSameProduct(
-      result.value, coatedPane(otherGlass(), bulkOf(otherGlass()), coatedSide), Tolerance);
-}
-
-TEST(CompoundProductActionsCoating, ApplyCoatingOnTheOtherSideKeepsGlassSideTowardsGlass)
-{
-    const auto result{
-      applyCoating(uncoatedPane(otherGlass()), coatingSource(Side::Back), Side::Front)};
+    const auto result{otherPane().withCoating(coatingSource(Side::Back), Side::Front)};
 
     const Stack expected{.interfaces = {flipped(coating()), uncoatedInterface(otherGlass())},
                          .bulks = {bulkOf(otherGlass())}};
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value.measured, construct(expected), Tolerance);
+    EXPECT_EQ(result.value.coatedSide, Side::Front);
 }
 
 TEST(CompoundProductActionsCoating, CoatBothSides)
@@ -256,22 +278,27 @@ TEST(CompoundProductActionsLaminate, MakeInterlayer)
                                         uncoatedInterface(otherGlass())},
                          .bulks = {bulkOf(originalGlass()), interlayer(), bulkOf(otherGlass())}};
 
-    const auto result{makeInterlayer(
-      construct(laminate), uncoatedPane(originalGlass()), uncoatedPane(otherGlass()))};
+    const auto result{makeInterlayer(construct(laminate),
+                                     uncoatedPane(originalGlass()),
+                                     uncoatedPane(otherGlass()),
+                                     InterlayerThickness)};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(
       result.value.internalTransmittance, interlayer().internalTransmittance, Tolerance);
+    EXPECT_DOUBLE_EQ(result.value.thickness, InterlayerThickness);
 }
 
 TEST(CompoundProductActionsDiagnostics, OpaqueSubstrateIsReported)
 {
     const Monolithic opaqueGlass{.surfaceReflectance = series(wavelengths, {0.04, 0.05}),
                                  .internalTransmittance = series(wavelengths, {0.0, 0.6})};
-    const auto measured{coatedPane(opaqueGlass, bulkOf(opaqueGlass), Side::Back)};
+    const CoatedPane pane{.measured = coatedPane(opaqueGlass, bulkOf(opaqueGlass), Side::Back),
+                          .substrate = uncoatedPane(opaqueGlass),
+                          .coatedSide = Side::Back,
+                          .thickness = 3.0};
 
-    const auto result{changeSubstrate(
-      measured, uncoatedPane(opaqueGlass), uncoatedPane(otherGlass()), Side::Back)};
+    const auto result{pane.onSubstrate(otherPane())};
 
     ASSERT_FALSE(result.diagnostics.empty());
     EXPECT_DOUBLE_EQ(result.diagnostics.front().wavelength, wavelengths.front());
@@ -286,15 +313,15 @@ TEST(CompoundProductActionsOptions, SubstrateReflectanceChoiceIsUsed)
     const ActionOptions frontReflectance{.substrateReflectance = ReflectanceChoice::Front,
                                          .tolerances = {}};
 
-    const auto result{changeUncoatedPaneThickness(pane, 6.0, frontReflectance)};
+    const auto result{pane.atThickness(6.0, frontReflectance)};
 
     const auto glass{deconstructMonolithic(measured, ReflectanceChoice::Front).value};
     const Stack expected{.interfaces = {uncoatedInterface(glass), uncoatedInterface(glass)},
                          .bulks = {withThickness(bulkOf(glass), 3.0, 6.0)}};
-    expectSameProduct(result.value, construct(expected), Tolerance);
-    const auto withAverage{changeUncoatedPaneThickness(pane, 6.0)};
-    EXPECT_GT(std::abs(result.value.reflectanceFront[0].value()
-                       - withAverage.value.reflectanceFront[0].value()),
+    expectSameProduct(result.value.measured, construct(expected), Tolerance);
+    const auto withAverage{pane.atThickness(6.0)};
+    EXPECT_GT(std::abs(result.value.measured.reflectanceFront[0].value()
+                       - withAverage.value.measured.reflectanceFront[0].value()),
               1e-4);
 }
 
@@ -459,7 +486,7 @@ TEST(CompoundProductLaminate, PaneWithACoatingOnEachSide)
 
 TEST(CompoundProductLaminate, InterlayerAtNewThickness)
 {
-    const auto thick{withThickness(interlayerLayer(), 2.0 * InterlayerThickness)};
+    const auto thick{interlayerLayer().atThickness(2.0 * InterlayerThickness)};
 
     const auto result{Laminate(originalPane()).add(thick, otherPane()).spectra()};
 
