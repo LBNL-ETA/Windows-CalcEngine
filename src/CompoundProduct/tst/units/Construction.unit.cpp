@@ -67,7 +67,7 @@ TEST(CompoundProductConstruction, FlippedStackSwapsReflectances)
 
 TEST(CompoundProductConstruction, JoinedStacksEqualOneStack)
 {
-    const auto between{indexMatchedInterface(wavelengths)};
+    const auto between{nonReflectingInterface(wavelengths)};
     const auto result{joined(monolithicStack(), coatedStack(), between)};
 
     ASSERT_EQ(result.interfaces.size(), 3U);
@@ -87,7 +87,7 @@ TEST(CompoundProductConstruction, TwoIndexMatchedPanesEqualOneThickPane)
 {
     const Bulk pane{.internalTransmittance = glass().internalTransmittance};
     const Stack two{.interfaces = {uncoatedInterface(glass()),
-                                   indexMatchedInterface(wavelengths),
+                                   nonReflectingInterface(wavelengths),
                                    uncoatedInterface(glass())},
                     .bulks = {pane, pane}};
     const Stack thick{.interfaces = {uncoatedInterface(glass()), uncoatedInterface(glass())},

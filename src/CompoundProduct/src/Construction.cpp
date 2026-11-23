@@ -108,14 +108,7 @@ namespace CompoundProduct
                   wavelengths, [&](const size_t index) { return points[index].reflectanceBack; })};
     }
 
-    Interface uncoatedInterface(const Monolithic & substrate)
-    {
-        return {.transmittance = 1.0 - substrate.surfaceReflectance,
-                .reflectanceFront = substrate.surfaceReflectance,
-                .reflectanceBack = substrate.surfaceReflectance};
-    }
-
-    Interface indexMatchedInterface(const std::vector<double> & wavelengths)
+    Interface nonReflectingInterface(const std::vector<double> & wavelengths)
     {
         const auto constant{[&](const double value) {
             return Helper::makeSeries(wavelengths, [=](const size_t) { return value; });

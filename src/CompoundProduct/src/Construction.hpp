@@ -12,11 +12,8 @@ namespace CompoundProduct
     //! if the series are not given at the same wavelengths.
     [[nodiscard]] ExternalProperties construct(const Stack & stack);
 
-    //! \brief Interface between a monolithic material and air.
-    [[nodiscard]] Interface uncoatedInterface(const Monolithic & substrate);
-
     //! \brief Interface that does not reflect (for example glass to interlayer).
-    [[nodiscard]] Interface indexMatchedInterface(const std::vector<double> & wavelengths);
+    [[nodiscard]] Interface nonReflectingInterface(const std::vector<double> & wavelengths);
 
     [[nodiscard]] Interface flipped(const Interface & layerInterface);
     [[nodiscard]] Stack flipped(const Stack & stack);

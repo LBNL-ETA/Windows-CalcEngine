@@ -66,6 +66,11 @@ namespace CompoundProduct
             return {.internalTransmittance = pane.internalTransmittance};
         }
 
+        [[nodiscard]] Bulk bulkOf(const Interlayer & interlayer)
+        {
+            return {.internalTransmittance = interlayer.internalTransmittance};
+        }
+
         //! Pane with the given glass and with the coating on one of its sides.
         [[nodiscard]] Stack coatedPaneStack(const Interface & glassSurface,
                                             const Bulk & glass,
@@ -214,9 +219,8 @@ namespace CompoundProduct
 
     Interlayer Interlayer::atThickness(const double newThickness) const
     {
-        const Bulk bulk{.internalTransmittance = internalTransmittance};
         return {.internalTransmittance =
-                  withThickness(bulk, thickness, newThickness).internalTransmittance,
+                  withThickness(bulkOf(*this), thickness, newThickness).internalTransmittance,
                 .thickness = newThickness};
     }
 
@@ -248,7 +252,7 @@ namespace CompoundProduct
             const auto coating{deconstructEmbeddedCoating(coatedPaneInFront(reference),
                                                           coatedGlass.value,
                                                           otherGlass.value,
-                                                          reference.interlayer,
+                                                          bulkOf(reference.interlayer),
                                                           options.tolerances)};
             return {.value = sideOfPane == Side::Front ? flipped(coating.value) : coating.value,
                     .diagnostics = allDiagnostics({coatedGlass.diagnostics,
@@ -269,7 +273,7 @@ namespace CompoundProduct
             {
                 return coatingOf(coating.value(), sideOfPane, name, options);
             }
-            return {.value = indexMatchedInterface(wavelengths), .diagnostics = {}};
+            return {.value = nonReflectingInterface(wavelengths), .diagnostics = {}};
         }
 
         void requireNoCoatingFromAir(const std::optional<Interface> & coating)
@@ -346,7 +350,7 @@ namespace CompoundProduct
           coatings.onPaneBehind, Side::Front, name + ".onPaneBehind", wavelengths, m_Options)};
         auto result{*this};
         result.m_Stack.interfaces.push_back(inFront.value);
-        result.m_Stack.bulks.push_back({.internalTransmittance = interlayer.internalTransmittance});
+        result.m_Stack.bulks.push_back(bulkOf(interlayer));
         result.m_Stack.interfaces.push_back(behind.value);
         result.m_Stack.bulks.push_back(bulkOf(pane.glass));
         result.m_LastGlass = pane.glass;

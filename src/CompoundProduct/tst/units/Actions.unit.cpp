@@ -117,14 +117,15 @@ namespace
     {
         const Stack stack{.interfaces = {uncoatedInterface(originalGlass()),
                                          embedded,
-                                         indexMatchedInterface(wavelengths),
+                                         nonReflectingInterface(wavelengths),
                                          uncoatedInterface(otherGlass())},
                           .bulks = {bulkOf(originalGlass()),
                                     referenceInterlayer(),
                                     bulkOf(otherGlass())}};
         return {.measured = construct(stack),
                 .coatedPaneSubstrate = uncoatedPane(originalGlass()),
-                .interlayer = referenceInterlayer(),
+                .interlayer = {.internalTransmittance = referenceInterlayer().internalTransmittance,
+                               .thickness = InterlayerThickness},
                 .uncoatedPane = uncoatedPane(otherGlass()),
                 .coatedPanePosition = Side::Front};
     }
@@ -271,7 +272,7 @@ TEST(CompoundProductActionsCoating, CoatBothSides)
 
 TEST(CompoundProductActionsLaminate, MakeInterlayer)
 {
-    const auto noReflection{indexMatchedInterface(wavelengths)};
+    const auto noReflection{nonReflectingInterface(wavelengths)};
     const Stack laminate{.interfaces = {uncoatedInterface(originalGlass()),
                                         noReflection,
                                         noReflection,
@@ -343,7 +344,7 @@ namespace
 
     Interface noReflection()
     {
-        return indexMatchedInterface(wavelengths);
+        return nonReflectingInterface(wavelengths);
     }
 }   // namespace
 

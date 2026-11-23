@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "CompoundProductTypes.hpp"
+#include "Deconstruction.hpp"
 
 namespace CompoundProduct
 {
@@ -81,6 +82,17 @@ namespace CompoundProduct
           onSubstrate(const UncoatedPane & newSubstrate, const ActionOptions & options = {}) const;
     };
 
+    struct Interlayer
+    {
+        FenestrationCommon::CSeries internalTransmittance;
+        double thickness{0};
+
+        //! \brief The same interlayer at a different thickness.
+        //!
+        //! newThickness must be given in the unit of thickness. This interlayer is not changed.
+        [[nodiscard]] Interlayer atThickness(double newThickness) const;
+    };
+
     //! \brief Measured laminate of three layers that gives the properties of a coating between
     //! glass and interlayer: a coated pane, an interlayer and an uncoated pane.
     //!
@@ -91,20 +103,9 @@ namespace CompoundProduct
     {
         ExternalProperties measured;
         ExternalProperties coatedPaneSubstrate;
-        Bulk interlayer;
+        Interlayer interlayer;
         ExternalProperties uncoatedPane;
         FenestrationCommon::Side coatedPanePosition{FenestrationCommon::Side::Front};
-    };
-
-    struct Interlayer
-    {
-        FenestrationCommon::CSeries internalTransmittance;
-        double thickness{0};
-
-        //! \brief The same interlayer at a different thickness.
-        //!
-        //! newThickness must be given in the unit of thickness. This interlayer is not changed.
-        [[nodiscard]] Interlayer atThickness(double newThickness) const;
     };
 
     //! \brief Uncoated substrate with one coating on its front and another on its back side.

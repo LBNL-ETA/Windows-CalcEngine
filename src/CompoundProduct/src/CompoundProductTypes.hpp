@@ -32,16 +32,6 @@ namespace CompoundProduct
         FenestrationCommon::CSeries internalTransmittance;
     };
 
-    //! \brief Internal properties of a monolithic product.
-    //!
-    //! The two surfaces (interfaces with air) are identical and do not absorb, so that the surface
-    //! transmittance is one minus the surface reflectance.
-    struct Monolithic
-    {
-        FenestrationCommon::CSeries surfaceReflectance;
-        FenestrationCommon::CSeries internalTransmittance;
-    };
-
     //! \brief Bulk layers separated by interfaces, ordered from the front to the back.
     //!
     //! Number of interfaces is always the number of bulk layers plus one.
