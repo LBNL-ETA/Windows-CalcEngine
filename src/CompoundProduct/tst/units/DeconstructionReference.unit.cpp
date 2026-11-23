@@ -23,7 +23,8 @@ namespace
                                const std::vector<double> & reflectanceFront,
                                const std::vector<double> & reflectanceBack)
     {
-        return {.transmittance = series(wavelengths, transmittance),
+        return {.transmittanceFront = series(wavelengths, transmittance),
+                .transmittanceBack = series(wavelengths, transmittance),
                 .reflectanceFront = series(wavelengths, reflectanceFront),
                 .reflectanceBack = series(wavelengths, reflectanceBack)};
     }
@@ -68,12 +69,12 @@ namespace
 
     Monolithic glass()
     {
-        return deconstructMonolithic(substrate(), ReflectanceChoice::Average, noTolerances()).value;
+        return substrate().deconstructMonolithic(ReflectanceChoice::Average, noTolerances()).value;
     }
 
     Bulk interlayer()
     {
-        return deconstructInterlayer(laminate(), glass(), glass(), noTolerances()).value;
+        return laminate().deconstructInterlayer(glass(), glass(), noTolerances()).value;
     }
 }   // namespace
 
@@ -101,10 +102,10 @@ TEST(CompoundProductReference, Monolithic)
 
 TEST(CompoundProductReference, Coating)
 {
-    const auto result{deconstructCoating(coated(), glass(), Side::Back, noTolerances())};
+    const auto result{coated().deconstructCoating(glass(), Side::Back, noTolerances())};
 
     EXPECT_TRUE(result.diagnostics.empty());
-    expectNear(result.value.transmittance,
+    expectNear(result.value.transmittanceFront,
                {0.004630088170958243,
                 0.01658043287962344,
                 0.35585801667909017,
@@ -144,12 +145,12 @@ TEST(CompoundProductReference, Interlayer)
 
 TEST(CompoundProductReference, EmbeddedCoating)
 {
-    const auto result{deconstructEmbeddedCoating(
-      laminateWithEmbeddedCoating(), glass(), glass(), interlayer(), noTolerances())};
+    const auto result{laminateWithEmbeddedCoating().deconstructEmbeddedCoating(
+      glass(), glass(), interlayer(), noTolerances())};
 
     // Reflectance on the interlayer side is 17 and 63 at the first two wavelengths, where the
     // laminate is opaque. Comparison there is relative to the size of the number.
-    expectNear(result.value.transmittance,
+    expectNear(result.value.transmittanceFront,
                {0.6662455635617535,
                 0.499025315004059,
                 0.3555399988619099,
@@ -178,25 +179,28 @@ TEST(CompoundProductReference, EmbeddedCoating)
 TEST(CompoundProductReference, DoubleMonolithicISO9050Example)
 {
     const std::vector<double> single{0.3};
-    const ExternalProperties measured{.transmittance = series(single, {0.269229}),
+    const ExternalProperties measured{.transmittanceFront = series(single, {0.269229}),
+                                      .transmittanceBack = series(single, {0.269229}),
                                       .reflectanceFront = series(single, {0.242135}),
                                       .reflectanceBack = series(single, {0.236891})};
-    const Interface frontSurface{.transmittance = series(single, {0.6}),
+    const Interface frontSurface{.transmittanceFront = series(single, {0.6}),
+                                 .transmittanceBack = series(single, {0.6}),
                                  .reflectanceFront = series(single, {0.2}),
                                  .reflectanceBack = series(single, {0.15})};
-    const Interface backSurface{.transmittance = series(single, {0.66}),
+    const Interface backSurface{.transmittanceFront = series(single, {0.66}),
+                                .transmittanceBack = series(single, {0.66}),
                                 .reflectanceFront = series(single, {0.12}),
                                 .reflectanceBack = series(single, {0.18})};
 
     const auto result{
-      deconstructDoubleMonolithic(measured,
-                                  frontSurface,
+      measured.deconstructDoubleMonolithic(frontSurface,
                                   Bulk{.internalTransmittance = series(single, {0.94})},
                                   backSurface,
                                   Bulk{.internalTransmittance = series(single, {0.83})})};
 
     EXPECT_TRUE(result.diagnostics.empty());
-    expectNear(result.value.transmittance, {0.85}, 1e-5);
+    expectNear(result.value.transmittanceFront, {0.85}, 1e-5);
+    expectNear(result.value.transmittanceBack, {0.85}, 1e-5);
     expectNear(result.value.reflectanceFront, {0.07}, 1e-5);
     expectNear(result.value.reflectanceBack, {0.09}, 1e-5);
 }
@@ -207,8 +211,8 @@ TEST(CompoundProductReference, DoubleMonolithicISO9050Example)
 
 TEST(CompoundProductDiagnostics, CoatingBehindWeaklyTransmittingSubstrate)
 {
-    const auto substrateGlass{deconstructMonolithic(substrate()).value};
-    const auto result{deconstructCoating(coated(), substrateGlass, Side::Back)};
+    const auto substrateGlass{substrate().deconstructMonolithic().value};
+    const auto result{coated().deconstructCoating(substrateGlass, Side::Back)};
 
     // Substrate internal transmittance at 0.300 is 0.225, which is below the threshold. Plain
     // equation gives substrate side reflectance of 4.85 there.
@@ -230,11 +234,12 @@ TEST(CompoundProductDiagnostics, CoatingBehindWeaklyTransmittingSubstrate)
 TEST(CompoundProductDiagnostics, OpaqueMonolithic)
 {
     const std::vector<double> lambdas{0.3, 0.5, 5.0};
-    const ExternalProperties measured{.transmittance = series(lambdas, {0.0, 0.9, 0.0}),
+    const ExternalProperties measured{.transmittanceFront = series(lambdas, {0.0, 0.9, 0.0}),
+                                      .transmittanceBack = series(lambdas, {0.0, 0.9, 0.0}),
                                       .reflectanceFront = series(lambdas, {0.07, 0.08, 0.0}),
                                       .reflectanceBack = series(lambdas, {0.07, 0.08, 0.0})};
 
-    const auto result{deconstructMonolithic(measured)};
+    const auto result{measured.deconstructMonolithic()};
 
     ASSERT_EQ(result.diagnostics.size(), 2U);
     EXPECT_TRUE(hasWarning(result.diagnostics, 0.3, Warning::OpaqueLayer));
@@ -249,21 +254,22 @@ TEST(CompoundProductDiagnostics, OpaqueSubstrateUnderCoating)
     const std::vector<double> single{0.3};
     const Monolithic opaque{.surfaceReflectance = series(single, {0.07}),
                             .internalTransmittance = series(single, {0.0})};
-    const ExternalProperties measured{.transmittance = series(single, {0.0}),
+    const ExternalProperties measured{.transmittanceFront = series(single, {0.0}),
+                                      .transmittanceBack = series(single, {0.0}),
                                       .reflectanceFront = series(single, {0.07}),
                                       .reflectanceBack = series(single, {0.4})};
 
-    const auto result{deconstructCoating(measured, opaque, Side::Back)};
+    const auto result{measured.deconstructCoating(opaque, Side::Back)};
 
     EXPECT_TRUE(hasWarning(result.diagnostics, 0.3, Warning::OpaqueSubstrate));
-    EXPECT_NEAR(result.value.transmittance[0].value(), 0.0, 1e-12);
+    EXPECT_NEAR(result.value.transmittanceFront[0].value(), 0.0, 1e-12);
     EXPECT_NEAR(result.value.reflectanceBack[0].value(), 0.4, 1e-12);
 }
 
 TEST(CompoundProductDiagnostics, OpaqueLaminate)
 {
-    const auto substrateGlass{deconstructMonolithic(substrate()).value};
-    const auto result{deconstructInterlayer(laminate(), substrateGlass, substrateGlass)};
+    const auto substrateGlass{substrate().deconstructMonolithic().value};
+    const auto result{laminate().deconstructInterlayer(substrateGlass, substrateGlass)};
 
     // Laminate transmittance at 0.300 is 0.003, which is above the limit of detection, but the
     // panes do not transmit enough for a reliable result.
@@ -277,5 +283,5 @@ TEST(CompoundProductDiagnostics, DifferentWavelengthsThrow)
     const Monolithic other{.surfaceReflectance = series({0.3, 0.5}, {0.04, 0.04}),
                            .internalTransmittance = series({0.3, 0.5}, {0.9, 0.9})};
 
-    EXPECT_THROW((void)deconstructCoating(coated(), other, Side::Back), std::runtime_error);
+    EXPECT_THROW((void)coated().deconstructCoating(other, Side::Back), std::runtime_error);
 }

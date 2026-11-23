@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <iterator>
 #include <ranges>
 #include <stdexcept>
 
@@ -12,100 +13,161 @@ namespace CompoundProduct
 {
     namespace
     {
-        //! External properties of the part of the stack that has been processed so far.
+        //! External properties of the part of the assembly that has been processed so far.
         struct PointProperties
         {
-            double transmittance{0};
+            double transmittanceFront{0};
+            double transmittanceBack{0};
             double reflectanceFront{0};
             double reflectanceBack{0};
         };
 
-        [[nodiscard]] PointProperties interfaceAt(const Interface & layerInterface, const size_t index)
+        [[nodiscard]] PointProperties interfaceAt(const Interface & layerInterface,
+                                                  const size_t index)
         {
-            return {.transmittance = layerInterface.transmittance[index].value(),
+            return {.transmittanceFront = layerInterface.transmittanceFront[index].value(),
+                    .transmittanceBack = layerInterface.transmittanceBack[index].value(),
                     .reflectanceFront = layerInterface.reflectanceFront[index].value(),
                     .reflectanceBack = layerInterface.reflectanceBack[index].value()};
         }
 
-        //! Adds one bulk layer and the interface behind it to already processed part of stack.
-        [[nodiscard]] PointProperties addLayer(const PointProperties & previous,
-                                               const double internalTransmittance,
-                                               const PointProperties & layerInterface)
+        //! Adds one bulk layer and the part "back" behind it to the part "front". The result is
+        //! one part.
+        [[nodiscard]] PointProperties add(const PointProperties & front,
+                                          const double internalTransmittance,
+                                          const PointProperties & back)
         {
             const auto tauSquared{internalTransmittance * internalTransmittance};
-            const auto denominator{Helper::nonZero(
-              1.0 - previous.reflectanceBack * layerInterface.reflectanceFront * tauSquared)};
-            return {.transmittance = previous.transmittance * layerInterface.transmittance
-                                     * internalTransmittance / denominator,
-                    .reflectanceFront = previous.reflectanceFront
-                                        + previous.transmittance * previous.transmittance
-                                            * layerInterface.reflectanceFront * tauSquared
+            const auto denominator{
+              Helper::nonZero(1.0 - front.reflectanceBack * back.reflectanceFront * tauSquared)};
+            const auto frontRoundTrip{front.transmittanceFront * front.transmittanceBack};
+            const auto backRoundTrip{back.transmittanceFront * back.transmittanceBack};
+            return {.transmittanceFront = front.transmittanceFront * back.transmittanceFront
+                                          * internalTransmittance / denominator,
+                    .transmittanceBack = front.transmittanceBack * back.transmittanceBack
+                                         * internalTransmittance / denominator,
+                    .reflectanceFront = front.reflectanceFront
+                                        + frontRoundTrip * back.reflectanceFront * tauSquared
                                             / denominator,
-                    .reflectanceBack = layerInterface.reflectanceBack
-                                       + layerInterface.transmittance * layerInterface.transmittance
-                                           * previous.reflectanceBack * tauSquared / denominator};
+                    .reflectanceBack = back.reflectanceBack
+                                       + backRoundTrip * front.reflectanceBack * tauSquared
+                                           / denominator};
         }
 
-        [[nodiscard]] PointProperties constructAt(const Stack & stack, const size_t index)
+        //! Interfaces and bulk layers of an assembly, from the front to the back. The number of
+        //! interfaces is the number of bulk layers plus one. Assembly keeps this rule.
+        struct Components
         {
-            auto result{interfaceAt(stack.interfaces.front(), index)};
-            for(const auto layer : std::views::iota(size_t{0}, stack.bulks.size()))
+            const std::vector<Interface> & interfaces;
+            const std::vector<Bulk> & bulks;
+        };
+
+        [[nodiscard]] PointProperties constructAt(const Components & components, const size_t index)
+        {
+            auto result{interfaceAt(components.interfaces.front(), index)};
+            for(const auto layer : std::views::iota(size_t{0}, components.bulks.size()))
             {
-                result = addLayer(result,
-                                  stack.bulks[layer].internalTransmittance[index].value(),
-                                  interfaceAt(stack.interfaces[layer + 1], index));
+                result = add(result,
+                             components.bulks[layer].internalTransmittance[index].value(),
+                             interfaceAt(components.interfaces[layer + 1], index));
             }
             return result;
         }
 
-        [[nodiscard]] std::vector<const CSeries *> allSeries(const Stack & stack)
+        [[nodiscard]] std::vector<const CSeries *> allSeries(const Components & components)
         {
             std::vector<const CSeries *> result;
-            for(const auto & layerInterface : stack.interfaces)
+            for(const auto & layerInterface : components.interfaces)
             {
-                result.push_back(&layerInterface.transmittance);
+                result.push_back(&layerInterface.transmittanceFront);
+                result.push_back(&layerInterface.transmittanceBack);
                 result.push_back(&layerInterface.reflectanceFront);
                 result.push_back(&layerInterface.reflectanceBack);
             }
-            for(const auto & bulk : stack.bulks)
+            for(const auto & bulk : components.bulks)
             {
                 result.push_back(&bulk.internalTransmittance);
             }
             return result;
         }
 
-        void validate(const Stack & stack)
+        [[nodiscard]] std::vector<PointProperties> constructAllPoints(const Components & components)
         {
-            if(stack.interfaces.size() != stack.bulks.size() + 1)
-            {
-                throw std::runtime_error("Compound product: number of interfaces must be number "
-                                         "of bulk layers plus one.");
-            }
-            Helper::requireSameWavelengths(allSeries(stack));
+            const auto size{components.interfaces.front().transmittanceFront.size()};
+            std::vector<PointProperties> points(size);
+            std::ranges::transform(
+              std::views::iota(size_t{0}, size), points.begin(), [&](const size_t index) {
+                  return constructAt(components, index);
+              });
+            return points;
         }
 
-        [[nodiscard]] std::vector<PointProperties> constructAllPoints(const Stack & stack)
+        [[nodiscard]] ExternalProperties construct(const Components & components)
         {
-            const auto size{stack.interfaces.front().transmittance.size()};
-            std::vector<PointProperties> points(size);
-            std::ranges::transform(std::views::iota(size_t{0}, size),
-                                   points.begin(),
-                                   [&](const size_t index) { return constructAt(stack, index); });
-            return points;
+            Helper::requireSameWavelengths(allSeries(components));
+            const auto wavelengths{components.interfaces.front().transmittanceFront.getXArray()};
+            const auto points{constructAllPoints(components)};
+            const auto series{[&](double PointProperties::* member) {
+                return Helper::makeSeries(
+                  wavelengths, [&](const size_t index) { return points[index].*member; });
+            }};
+            return {.transmittanceFront = series(&PointProperties::transmittanceFront),
+                    .transmittanceBack = series(&PointProperties::transmittanceBack),
+                    .reflectanceFront = series(&PointProperties::reflectanceFront),
+                    .reflectanceBack = series(&PointProperties::reflectanceBack)};
+        }
+
+        //! A part that is known only as a whole acts in an assembly as one interface with the
+        //! external properties of the part.
+        [[nodiscard]] Interface asInterface(const ExternalProperties & part)
+        {
+            return {.transmittanceFront = part.transmittanceFront,
+                    .transmittanceBack = part.transmittanceBack,
+                    .reflectanceFront = part.reflectanceFront,
+                    .reflectanceBack = part.reflectanceBack};
         }
     }   // namespace
 
-    ExternalProperties construct(const Stack & stack)
+    Assembly::Assembly(const Interface & frontPart) : m_Interfaces{frontPart}
+    {}
+
+    Assembly::Assembly(const ExternalProperties & frontPart) : m_Interfaces{asInterface(frontPart)}
+    {}
+
+    Assembly Assembly::add(const Bulk & bulk, const Interface & part) const
     {
-        validate(stack);
-        const auto wavelengths{stack.interfaces.front().transmittance.getXArray()};
-        const auto points{constructAllPoints(stack)};
-        return {.transmittance = Helper::makeSeries(
-                  wavelengths, [&](const size_t index) { return points[index].transmittance; }),
-                .reflectanceFront = Helper::makeSeries(
-                  wavelengths, [&](const size_t index) { return points[index].reflectanceFront; }),
-                .reflectanceBack = Helper::makeSeries(
-                  wavelengths, [&](const size_t index) { return points[index].reflectanceBack; })};
+        return add(bulk, Assembly{part});
+    }
+
+    Assembly Assembly::add(const Bulk & bulk, const ExternalProperties & part) const
+    {
+        return add(bulk, Assembly{part});
+    }
+
+    Assembly Assembly::add(const Bulk & bulk, const Assembly & part) const
+    {
+        auto result{*this};
+        result.m_Bulks.push_back(bulk);
+        std::ranges::copy(part.m_Interfaces, std::back_inserter(result.m_Interfaces));
+        std::ranges::copy(part.m_Bulks, std::back_inserter(result.m_Bulks));
+        return result;
+    }
+
+    Assembly Assembly::flipped() const
+    {
+        auto result{*this};
+        std::ranges::reverse(result.m_Bulks);
+        std::ranges::transform(m_Interfaces | std::views::reverse,
+                               result.m_Interfaces.begin(),
+                               [](const Interface & layerInterface) {
+                                   return layerInterface.flipped();
+                               });
+        return result;
+    }
+
+    ExternalProperties Assembly::externalProperties() const
+    {
+        return construct(Components{.interfaces = m_Interfaces, .bulks = m_Bulks});
     }
 
     Interface nonReflectingInterface(const std::vector<double> & wavelengths)
@@ -113,43 +175,26 @@ namespace CompoundProduct
         const auto constant{[&](const double value) {
             return Helper::makeSeries(wavelengths, [=](const size_t) { return value; });
         }};
-        return {.transmittance = constant(1.0),
+        return {.transmittanceFront = constant(1.0),
+                .transmittanceBack = constant(1.0),
                 .reflectanceFront = constant(0.0),
                 .reflectanceBack = constant(0.0)};
     }
 
-    Interface flipped(const Interface & layerInterface)
+    Interface Interface::flipped() const
     {
-        return {.transmittance = layerInterface.transmittance,
-                .reflectanceFront = layerInterface.reflectanceBack,
-                .reflectanceBack = layerInterface.reflectanceFront};
+        return {.transmittanceFront = transmittanceBack,
+                .transmittanceBack = transmittanceFront,
+                .reflectanceFront = reflectanceBack,
+                .reflectanceBack = reflectanceFront};
     }
 
-    Stack flipped(const Stack & stack)
+    ExternalProperties ExternalProperties::flipped() const
     {
-        Stack result;
-        std::ranges::transform(stack.interfaces | std::views::reverse,
-                               std::back_inserter(result.interfaces),
-                               [](const Interface & layerInterface) { return flipped(layerInterface); });
-        std::ranges::copy(stack.bulks | std::views::reverse, std::back_inserter(result.bulks));
-        return result;
-    }
-
-    Stack joined(const Stack & front, const Stack & back, const Interface & between)
-    {
-        if(front.interfaces.empty() || back.interfaces.empty())
-        {
-            throw std::runtime_error("Compound product: cannot join an empty stack.");
-        }
-        Stack result;
-        std::ranges::copy(front.interfaces | std::views::take(front.interfaces.size() - 1),
-                          std::back_inserter(result.interfaces));
-        result.interfaces.push_back(between);
-        std::ranges::copy(back.interfaces | std::views::drop(1),
-                          std::back_inserter(result.interfaces));
-        std::ranges::copy(front.bulks, std::back_inserter(result.bulks));
-        std::ranges::copy(back.bulks, std::back_inserter(result.bulks));
-        return result;
+        return {.transmittanceFront = transmittanceBack,
+                .transmittanceBack = transmittanceFront,
+                .reflectanceFront = reflectanceBack,
+                .reflectanceBack = reflectanceFront};
     }
 
     Bulk withThickness(const Bulk & bulk, const double oldThickness, const double newThickness)
@@ -171,12 +216,14 @@ namespace CompoundProduct
         std::vector<double> result;
         for(const auto & product : products)
         {
-            std::ranges::copy(product.transmittance.getXArray(), std::back_inserter(result));
+            std::ranges::copy(product.transmittanceFront.getXArray(),
+                              std::back_inserter(result));
         }
         std::ranges::sort(result);
-        const auto duplicates{std::ranges::unique(result, [](const double left, const double right) {
-            return std::abs(left - right) < Helper::WavelengthTolerance;
-        })};
+        const auto duplicates{
+          std::ranges::unique(result, [](const double left, const double right) {
+              return std::abs(left - right) < Helper::WavelengthTolerance;
+          })};
         result.erase(duplicates.begin(), duplicates.end());
         return result;
     }

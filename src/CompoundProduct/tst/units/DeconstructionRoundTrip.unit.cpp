@@ -3,7 +3,8 @@
 #include "CompoundProductTestHelper.hpp"
 
 // Every test builds a product from chosen internal properties, deconstructs the result and
-// expects to get the chosen internal properties back.
+// expects to get the chosen internal properties back. The coatings have different front and back
+// transmittances, so that every deconstruction is tested with four properties.
 
 using namespace CompoundProduct;
 using namespace CompoundProductTest;
@@ -38,30 +39,40 @@ namespace
 
     Interface coating()
     {
-        return {.transmittance = series(wavelengths, {0.5, 0.6}),
+        return {.transmittanceFront = series(wavelengths, {0.5, 0.6}),
+                .transmittanceBack = series(wavelengths, {0.45, 0.55}),
                 .reflectanceFront = series(wavelengths, {0.1, 0.2}),
                 .reflectanceBack = series(wavelengths, {0.3, 0.25})};
     }
 
     Interface otherCoating()
     {
-        return {.transmittance = series(wavelengths, {0.7, 0.4}),
+        return {.transmittanceFront = series(wavelengths, {0.7, 0.4}),
+                .transmittanceBack = series(wavelengths, {0.65, 0.5}),
                 .reflectanceFront = series(wavelengths, {0.15, 0.3}),
                 .reflectanceBack = series(wavelengths, {0.2, 0.35})};
     }
 
-    // Front pane with a coating towards the air and an interface to an interlayer.
-    Stack coatedFrontPane()
+    Interface noReflection()
     {
-        return {.interfaces = {otherCoating(), nonReflectingInterface(wavelengths)},
-                .bulks = {bulkOf(frontGlass())}};
+        return nonReflectingInterface(wavelengths);
+    }
+
+    Interface surfaceOf(const Monolithic & monolithic)
+    {
+        return uncoatedInterface(monolithic);
+    }
+
+    // Front pane with a coating towards the air and an interface to an interlayer.
+    Assembly coatedFrontPane()
+    {
+        return Assembly(otherCoating()).add(bulkOf(frontGlass()), noReflection());
     }
 
     // Back pane with an interface to an interlayer and a bare surface towards the air.
-    Stack uncoatedBackPane()
+    Assembly uncoatedBackPane()
     {
-        return {.interfaces = {nonReflectingInterface(wavelengths), uncoatedInterface(backGlass())},
-                .bulks = {bulkOf(backGlass())}};
+        return Assembly(noReflection()).add(bulkOf(backGlass()), surfaceOf(backGlass()));
     }
 }   // namespace
 
@@ -69,72 +80,83 @@ namespace
 // this product.
 TEST(CompoundProductRoundTrip, InterfaceInsideLaminateOfThreePanes)
 {
-    const auto noReflection{nonReflectingInterface(wavelengths)};
     const auto middleGlass{bulkOf(backGlass())};
-    const Stack whole{.interfaces = {otherCoating(),
-                                     noReflection,
-                                     noReflection,
-                                     coating(),
-                                     noReflection,
-                                     uncoatedInterface(backGlass())},
-                      .bulks = {bulkOf(frontGlass()),
-                                interlayer(),
-                                middleGlass,
-                                interlayer(),
-                                bulkOf(backGlass())}};
-    const Stack frontPart{.interfaces = {otherCoating(), noReflection, noReflection},
-                          .bulks = {bulkOf(frontGlass()), interlayer()}};
+    const auto frontPart{coatedFrontPane().add(interlayer(), noReflection())};
+    const auto whole{
+      frontPart.add(middleGlass, coating()).add(interlayer(), uncoatedBackPane())};
 
-    const auto result{deconstructInterface(
-      construct(whole),
-      {.externalProperties = construct(frontPart), .bulkToUnknownInterface = middleGlass},
-      {.externalProperties = construct(uncoatedBackPane()),
-       .bulkToUnknownInterface = interlayer()})};
+    const auto result{whole.externalProperties().deconstructInterface(
+      {.externalProperties = frontPart.externalProperties(), .bulkToRemainingPart = middleGlass},
+      {.externalProperties = uncoatedBackPane().externalProperties(),
+       .bulkToRemainingPart = interlayer()})};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, coating(), Tolerance);
 }
 
-TEST(CompoundProductRoundTrip, LastInterface)
+// The remaining part of the two tests below has two interfaces and one bulk layer. A removal
+// returns it as a whole.
+TEST(CompoundProductRoundTrip, PartBehind)
 {
-    const Stack stack{.interfaces = {otherCoating(), coating()}, .bulks = {bulkOf(frontGlass())}};
-    const Stack frontPart{.interfaces = {otherCoating()}, .bulks = {}};
+    const Assembly frontPart{otherCoating()};
+    const auto remainingPart{Assembly(coating()).add(bulkOf(backGlass()), surfaceOf(backGlass()))};
+    const auto whole{frontPart.add(bulkOf(frontGlass()), remainingPart)};
 
-    const auto result{deconstructLastInterface(
-      construct(stack),
-      {.externalProperties = construct(frontPart),
-       .bulkToUnknownInterface = bulkOf(frontGlass())})};
+    const auto result{whole.externalProperties().deconstructPartBehind(
+      {.externalProperties = frontPart.externalProperties(),
+       .bulkToRemainingPart = bulkOf(frontGlass())})};
 
     EXPECT_TRUE(result.diagnostics.empty());
-    expectNear(result.value, coating(), Tolerance);
+    expectNear(result.value, remainingPart.externalProperties(), Tolerance);
 }
 
-TEST(CompoundProductRoundTrip, FirstInterface)
+// A laminate with a different front pane. The front surface and the glass of the old front pane
+// are removed. The remaining part (coating, interlayer, back pane) is used as a whole and is
+// never taken apart.
+TEST(CompoundProductRoundTrip, RemainingPartIsUsedInAnAssembly)
 {
-    const Stack stack{.interfaces = {coating(), otherCoating()}, .bulks = {bulkOf(frontGlass())}};
-    const Stack backPart{.interfaces = {otherCoating()}, .bulks = {}};
+    const auto behindFrontGlass{Assembly(coating()).add(interlayer(), uncoatedBackPane())};
+    const Assembly oldFrontSurface{surfaceOf(frontGlass())};
+    const auto measuredLaminate{
+      oldFrontSurface.add(bulkOf(frontGlass()), behindFrontGlass).externalProperties()};
 
-    const auto result{deconstructFirstInterface(
-      construct(stack),
-      {.externalProperties = construct(backPart),
-       .bulkToUnknownInterface = bulkOf(frontGlass())})};
+    const auto remaining{measuredLaminate.deconstructPartBehind(
+      {.externalProperties = oldFrontSurface.externalProperties(),
+       .bulkToRemainingPart = bulkOf(frontGlass())})};
+    const auto newLaminate{Assembly(surfaceOf(backGlass()))
+                             .add(bulkOf(backGlass()), remaining.value)
+                             .externalProperties()};
+
+    const auto expected{Assembly(surfaceOf(backGlass()))
+                          .add(bulkOf(backGlass()), behindFrontGlass)
+                          .externalProperties()};
+    EXPECT_TRUE(remaining.diagnostics.empty());
+    expectNear(newLaminate, expected, Tolerance);
+}
+
+TEST(CompoundProductRoundTrip, PartInFrontOf)
+{
+    const Assembly backPart{otherCoating()};
+    const auto remainingPart{
+      Assembly(surfaceOf(frontGlass())).add(bulkOf(frontGlass()), coating())};
+    const auto whole{remainingPart.add(bulkOf(backGlass()), backPart)};
+
+    const auto result{whole.externalProperties().deconstructPartInFrontOf(
+      {.externalProperties = backPart.externalProperties(),
+       .bulkToRemainingPart = bulkOf(backGlass())})};
 
     EXPECT_TRUE(result.diagnostics.empty());
-    expectNear(result.value, coating(), Tolerance);
+    expectNear(result.value, remainingPart.externalProperties(), Tolerance);
 }
 
 // An interlayer between a coated front pane and a back pane. The case of the sources needs two
 // uncoated panes.
 TEST(CompoundProductRoundTrip, BulkBetweenCoatedPanes)
 {
-    const Stack whole{.interfaces = {otherCoating(),
-                                     nonReflectingInterface(wavelengths),
-                                     nonReflectingInterface(wavelengths),
-                                     uncoatedInterface(backGlass())},
-                      .bulks = {bulkOf(frontGlass()), interlayer(), bulkOf(backGlass())}};
+    const auto whole{coatedFrontPane().add(interlayer(), uncoatedBackPane())};
 
-    const auto result{deconstructBulk(
-      construct(whole), construct(coatedFrontPane()), construct(uncoatedBackPane()))};
+    const auto result{whole.externalProperties().deconstructBulk(
+      coatedFrontPane().externalProperties(), uncoatedBackPane().externalProperties())};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value.internalTransmittance, interlayer().internalTransmittance, Tolerance);
@@ -142,11 +164,10 @@ TEST(CompoundProductRoundTrip, BulkBetweenCoatedPanes)
 
 TEST(CompoundProductRoundTrip, Monolithic)
 {
-    const Stack stack{
-      .interfaces = {uncoatedInterface(frontGlass()), uncoatedInterface(frontGlass())},
-      .bulks = {bulkOf(frontGlass())}};
+    const auto pane{
+      Assembly(surfaceOf(frontGlass())).add(bulkOf(frontGlass()), surfaceOf(frontGlass()))};
 
-    const auto result{deconstructMonolithic(construct(stack))};
+    const auto result{pane.externalProperties().deconstructMonolithic()};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value.surfaceReflectance, frontGlass().surfaceReflectance, Tolerance);
@@ -155,10 +176,9 @@ TEST(CompoundProductRoundTrip, Monolithic)
 
 TEST(CompoundProductRoundTrip, CoatingOnBack)
 {
-    const Stack stack{.interfaces = {uncoatedInterface(frontGlass()), coating()},
-                      .bulks = {bulkOf(frontGlass())}};
+    const auto pane{Assembly(surfaceOf(frontGlass())).add(bulkOf(frontGlass()), coating())};
 
-    const auto result{deconstructCoating(construct(stack), frontGlass(), Side::Back)};
+    const auto result{pane.externalProperties().deconstructCoating(frontGlass(), Side::Back)};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, coating(), Tolerance);
@@ -166,10 +186,9 @@ TEST(CompoundProductRoundTrip, CoatingOnBack)
 
 TEST(CompoundProductRoundTrip, CoatingOnFront)
 {
-    const Stack stack{.interfaces = {coating(), uncoatedInterface(frontGlass())},
-                      .bulks = {bulkOf(frontGlass())}};
+    const auto pane{Assembly(coating()).add(bulkOf(frontGlass()), surfaceOf(frontGlass()))};
 
-    const auto result{deconstructCoating(construct(stack), frontGlass(), Side::Front)};
+    const auto result{pane.externalProperties().deconstructCoating(frontGlass(), Side::Front)};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, coating(), Tolerance);
@@ -177,14 +196,12 @@ TEST(CompoundProductRoundTrip, CoatingOnFront)
 
 TEST(CompoundProductRoundTrip, Interlayer)
 {
-    const auto noReflection{nonReflectingInterface(wavelengths)};
-    const Stack stack{.interfaces = {uncoatedInterface(frontGlass()),
-                                     noReflection,
-                                     noReflection,
-                                     uncoatedInterface(backGlass())},
-                      .bulks = {bulkOf(frontGlass()), interlayer(), bulkOf(backGlass())}};
+    const auto laminate{Assembly(surfaceOf(frontGlass()))
+                          .add(bulkOf(frontGlass()), noReflection())
+                          .add(interlayer(), uncoatedBackPane())};
 
-    const auto result{deconstructInterlayer(construct(stack), frontGlass(), backGlass())};
+    const auto result{
+      laminate.externalProperties().deconstructInterlayer(frontGlass(), backGlass())};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value.internalTransmittance, interlayer().internalTransmittance, Tolerance);
@@ -192,14 +209,12 @@ TEST(CompoundProductRoundTrip, Interlayer)
 
 TEST(CompoundProductRoundTrip, EmbeddedCoating)
 {
-    const Stack stack{.interfaces = {uncoatedInterface(frontGlass()),
-                                     coating(),
-                                     nonReflectingInterface(wavelengths),
-                                     uncoatedInterface(backGlass())},
-                      .bulks = {bulkOf(frontGlass()), interlayer(), bulkOf(backGlass())}};
+    const auto laminate{Assembly(surfaceOf(frontGlass()))
+                          .add(bulkOf(frontGlass()), coating())
+                          .add(interlayer(), uncoatedBackPane())};
 
-    const auto result{
-      deconstructEmbeddedCoating(construct(stack), frontGlass(), backGlass(), interlayer())};
+    const auto result{laminate.externalProperties().deconstructEmbeddedCoating(
+      frontGlass(), backGlass(), interlayer())};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, coating(), Tolerance);
@@ -207,12 +222,12 @@ TEST(CompoundProductRoundTrip, EmbeddedCoating)
 
 TEST(CompoundProductRoundTrip, DoubleMonolithicUncoatedSurfaces)
 {
-    const Stack stack{.interfaces = {uncoatedInterface(frontGlass()),
-                                     coating(),
-                                     uncoatedInterface(backGlass())},
-                      .bulks = {bulkOf(frontGlass()), bulkOf(backGlass())}};
+    const auto layers{Assembly(surfaceOf(frontGlass()))
+                        .add(bulkOf(frontGlass()), coating())
+                        .add(bulkOf(backGlass()), surfaceOf(backGlass()))};
 
-    const auto result{deconstructDoubleMonolithic(construct(stack), frontGlass(), backGlass())};
+    const auto result{
+      layers.externalProperties().deconstructDoubleMonolithic(frontGlass(), backGlass())};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, coating(), Tolerance);
@@ -220,17 +235,22 @@ TEST(CompoundProductRoundTrip, DoubleMonolithicUncoatedSurfaces)
 
 TEST(CompoundProductRoundTrip, DoubleMonolithicAbsorbingSurfaces)
 {
-    const Interface frontSurface{.transmittance = series(wavelengths, {0.6, 0.7}),
+    const Interface frontSurface{.transmittanceFront = series(wavelengths, {0.6, 0.7}),
+                                 .transmittanceBack = series(wavelengths, {0.6, 0.7}),
                                  .reflectanceFront = series(wavelengths, {0.2, 0.1}),
                                  .reflectanceBack = series(wavelengths, {0.15, 0.12})};
-    const Interface backSurface{.transmittance = series(wavelengths, {0.66, 0.8}),
+    const Interface backSurface{.transmittanceFront = series(wavelengths, {0.66, 0.8}),
+                                .transmittanceBack = series(wavelengths, {0.66, 0.8}),
                                 .reflectanceFront = series(wavelengths, {0.12, 0.07}),
                                 .reflectanceBack = series(wavelengths, {0.18, 0.09})};
-    const Stack stack{.interfaces = {frontSurface, coating(), backSurface},
-                      .bulks = {bulkOf(frontGlass()), bulkOf(backGlass())}};
+    const auto layers{Assembly(frontSurface)
+                        .add(bulkOf(frontGlass()), coating())
+                        .add(bulkOf(backGlass()), backSurface)};
 
-    const auto result{deconstructDoubleMonolithic(
-      construct(stack), frontSurface, bulkOf(frontGlass()), backSurface, bulkOf(backGlass()))};
+    const auto result{layers.externalProperties().deconstructDoubleMonolithic(frontSurface,
+                                                  bulkOf(frontGlass()),
+                                                  backSurface,
+                                                  bulkOf(backGlass()))};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, coating(), Tolerance);

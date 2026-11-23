@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "CompoundProductTypes.hpp"
+#include "Construction.hpp"
 #include "Deconstruction.hpp"
 
 namespace CompoundProduct
@@ -16,8 +17,8 @@ namespace CompoundProduct
     // deconstruction raised it, written as in the call: "substrate", "coatingSource.measured".
     // For a member function of a pane the members of that pane are named without a prefix:
     // "measured", "substrate".
-    // For a laminate the panes and the interlayers are numbered from the front, starting with
-    // zero: "pane[1].measured", "interlayer[0].onPaneInFront.measured".
+    // For a laminate the panes are numbered from the front, starting with zero:
+    // "pane[1].measured".
     //
     // All functions throw std::runtime_error if the inputs are not given at the same wavelengths.
 
@@ -93,21 +94,6 @@ namespace CompoundProduct
         [[nodiscard]] Interlayer atThickness(double newThickness) const;
     };
 
-    //! \brief Measured laminate of three layers that gives the properties of a coating between
-    //! glass and interlayer: a coated pane, an interlayer and an uncoated pane.
-    //!
-    //! coatedPaneSubstrate is the uncoated glass of the coated pane of this laminate.
-    //! coatedPanePosition tells whether the coated pane is the front or the back pane of the
-    //! measured laminate.
-    struct ReferenceLaminate
-    {
-        ExternalProperties measured;
-        ExternalProperties coatedPaneSubstrate;
-        Interlayer interlayer;
-        ExternalProperties uncoatedPane;
-        FenestrationCommon::Side coatedPanePosition{FenestrationCommon::Side::Front};
-    };
-
     //! \brief Uncoated substrate with one coating on its front and another on its back side.
     [[nodiscard]] WithDiagnostics<ExternalProperties>
       coatBothSides(const ExternalProperties & substrate,
@@ -129,12 +115,19 @@ namespace CompoundProduct
     //! \brief Coatings that touch one interlayer of a laminate.
     //!
     //! onPaneInFront is a coating on the back surface of the pane in front of the interlayer.
-    //! onPaneBehind is a coating on the front surface of the pane behind the interlayer. Each
-    //! coating is given by a reference laminate. An empty member means an uncoated surface.
+    //! onPaneBehind is a coating on the front surface of the pane behind the interlayer. An empty
+    //! member means an uncoated surface.
+    //!
+    //! Each coating is given as it sits in the laminate: its reflectanceFront is seen by light
+    //! that travels from the front of the laminate to the back. The properties of a coating
+    //! depend on the material that it touches, so the coating must have been deconstructed from
+    //! a product in which it touches an interlayer (ExternalProperties::deconstructEmbeddedCoating
+    //! or deconstructInterface). A coating that was deconstructed from a pane in the air must not
+    //! be given here.
     struct EmbeddedCoatings
     {
-        std::optional<ReferenceLaminate> onPaneInFront;
-        std::optional<ReferenceLaminate> onPaneBehind;
+        std::optional<Interface> onPaneInFront;
+        std::optional<Interface> onPaneBehind;
     };
 
     //! \brief Laminate that is built one pane at a time, from the front to the back.
@@ -144,8 +137,8 @@ namespace CompoundProduct
     //! It is assumed that there is no reflection between an uncoated glass surface and an
     //! interlayer. A CoatedPane brings a coating that faces the air, so it can only be the
     //! first pane with the coating on its front side or the last pane with the coating on its
-    //! back side. A coating that touches an interlayer is given in EmbeddedCoatings, and its
-    //! pane is given as an UncoatedPane.
+    //! back side. A coating that touches an interlayer is given in EmbeddedCoatings as an
+    //! Interface, and its pane is given as an UncoatedPane.
     class Laminate
     {
     public:
@@ -177,19 +170,22 @@ namespace CompoundProduct
             std::vector<Diagnostic> diagnostics;
         };
 
-        [[nodiscard]] static Pane
-          paneOf(const UncoatedPane & pane, const std::string & name, const ActionOptions & options);
+        [[nodiscard]] static Pane paneOf(const UncoatedPane & pane,
+                                         const std::string & name,
+                                         const ActionOptions & options);
         [[nodiscard]] static Pane
           paneOf(const CoatedPane & pane, const std::string & name, const ActionOptions & options);
 
         Laminate(const Pane & frontPane, const ActionOptions & options);
 
         [[nodiscard]] std::string nextPaneName() const;
-        [[nodiscard]] Laminate
-          added(const Interlayer & interlayer, const Pane & pane, const EmbeddedCoatings & coatings) const;
+        [[nodiscard]] Laminate added(const Interlayer & interlayer,
+                                     const Pane & pane,
+                                     const EmbeddedCoatings & coatings) const;
 
-        //! All components except the last interface, which depends on what follows the last pane.
-        Stack m_Stack;
+        //! Everything in front of the glass of the last pane. The back surface of the last pane
+        //! depends on what follows it.
+        Assembly m_InFrontOfLastGlass;
         Monolithic m_LastGlass;
         std::optional<Interface> m_CoatingOnLastBack;
         std::vector<Diagnostic> m_Diagnostics;

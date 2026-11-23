@@ -21,7 +21,8 @@ namespace CompoundProduct
 
         struct MeasuredPoint
         {
-            double transmittance{0};
+            double transmittanceFront{0};
+            double transmittanceBack{0};
             double reflectanceFront{0};
             double reflectanceBack{0};
         };
@@ -34,7 +35,8 @@ namespace CompoundProduct
 
         struct InterfacePoint
         {
-            double transmittance{0};
+            double transmittanceFront{0};
+            double transmittanceBack{0};
             double reflectanceFront{0};
             double reflectanceBack{0};
         };
@@ -49,7 +51,8 @@ namespace CompoundProduct
         [[nodiscard]] MeasuredPoint measuredAt(const ExternalProperties & measured,
                                                const size_t index)
         {
-            return {.transmittance = measured.transmittance[index].value(),
+            return {.transmittanceFront = measured.transmittanceFront[index].value(),
+                    .transmittanceBack = measured.transmittanceBack[index].value(),
                     .reflectanceFront = measured.reflectanceFront[index].value(),
                     .reflectanceBack = measured.reflectanceBack[index].value()};
         }
@@ -93,14 +96,16 @@ namespace CompoundProduct
                                                            const std::vector<Warning> & warnings,
                                                            const Tolerances & tolerances)
         {
-            const auto allPhysical{Helper::isPhysical(point.transmittance)
+            const auto allPhysical{Helper::isPhysical(point.transmittanceFront)
+                                   && Helper::isPhysical(point.transmittanceBack)
                                    && Helper::isPhysical(point.reflectanceFront)
                                    && Helper::isPhysical(point.reflectanceBack)};
             if(!tolerances.clampToPhysical || allPhysical)
             {
                 return {.value = point, .warnings = warnings};
             }
-            return {.value = {.transmittance = std::clamp(point.transmittance, 0.0, 1.0),
+            return {.value = {.transmittanceFront = std::clamp(point.transmittanceFront, 0.0, 1.0),
+                              .transmittanceBack = std::clamp(point.transmittanceBack, 0.0, 1.0),
                               .reflectanceFront = std::clamp(point.reflectanceFront, 0.0, 1.0),
                               .reflectanceBack = std::clamp(point.reflectanceBack, 0.0, 1.0)},
                     .warnings = appended(warnings, true, Warning::UnphysicalClamped)};
@@ -117,20 +122,29 @@ namespace CompoundProduct
         /// General form: a known part is removed from a measured product.
         ///
         /// A part is a section of a product that begins and ends with an interface. It has the
-        /// same three external properties as a measured product, so it is a MeasuredPoint.
+        /// same four external properties as a measured product, so it is a MeasuredPoint.
         ///////////////////////////////////////////////////////////////////////////
 
         [[nodiscard]] MeasuredPoint flippedPoint(const MeasuredPoint & point)
         {
-            return {.transmittance = point.transmittance,
+            return {.transmittanceFront = point.transmittanceBack,
+                    .transmittanceBack = point.transmittanceFront,
                     .reflectanceFront = point.reflectanceBack,
                     .reflectanceBack = point.reflectanceFront};
+        }
+
+        //! Transmittance of a product that has one transmittance by nature (an uncoated pane, or
+        //! a product whose unknown is a bulk layer): the mean of the two measured ones.
+        [[nodiscard]] double meanTransmittance(const MeasuredPoint & point)
+        {
+            return 0.5 * (point.transmittanceFront + point.transmittanceBack);
         }
 
         //! Surface of uncoated glass towards the air, as a part.
         [[nodiscard]] MeasuredPoint bareSurface(const double reflectance)
         {
-            return {.transmittance = 1 - reflectance,
+            return {.transmittanceFront = 1 - reflectance,
+                    .transmittanceBack = 1 - reflectance,
                     .reflectanceFront = reflectance,
                     .reflectanceBack = reflectance};
         }
@@ -138,14 +152,16 @@ namespace CompoundProduct
         //! A part that consists of one interface.
         [[nodiscard]] InterfacePoint asInterface(const MeasuredPoint & part)
         {
-            return {.transmittance = part.transmittance,
+            return {.transmittanceFront = part.transmittanceFront,
+                    .transmittanceBack = part.transmittanceBack,
                     .reflectanceFront = part.reflectanceFront,
                     .reflectanceBack = part.reflectanceBack};
         }
 
         [[nodiscard]] MeasuredPoint asPart(const InterfacePoint & layerInterface)
         {
-            return {.transmittance = layerInterface.transmittance,
+            return {.transmittanceFront = layerInterface.transmittanceFront,
+                    .transmittanceBack = layerInterface.transmittanceBack,
                     .reflectanceFront = layerInterface.reflectanceFront,
                     .reflectanceBack = layerInterface.reflectanceBack};
         }
@@ -161,18 +177,21 @@ namespace CompoundProduct
             const auto reflectanceFront{
               added
               / Helper::nonZero(bulkSquared
-                                * (front.transmittance * front.transmittance
+                                * (front.transmittanceFront * front.transmittanceBack
                                    + front.reflectanceBack * added))};
             const auto interReflection{
               Helper::nonZero(1 - front.reflectanceBack * reflectanceFront * bulkSquared)};
-            const auto transmittance{whole.transmittance * interReflection
-                                     / Helper::nonZero(front.transmittance * bulk)};
-            const auto reflectanceBack{whole.reflectanceBack
-                                       - transmittance * transmittance * front.reflectanceBack
-                                           * bulkSquared / interReflection};
-            return {.transmittance = transmittance,
+            const auto transmittanceFront{whole.transmittanceFront * interReflection
+                                          / Helper::nonZero(front.transmittanceFront * bulk)};
+            const auto transmittanceBack{whole.transmittanceBack * interReflection
+                                         / Helper::nonZero(front.transmittanceBack * bulk)};
+            return {.transmittanceFront = transmittanceFront,
+                    .transmittanceBack = transmittanceBack,
                     .reflectanceFront = reflectanceFront,
-                    .reflectanceBack = reflectanceBack};
+                    .reflectanceBack = whole.reflectanceBack
+                                       - transmittanceFront * transmittanceBack
+                                           * front.reflectanceBack * bulkSquared
+                                           / interReflection};
         }
 
         //! The part of "whole" that remains when the known part "back" and the bulk layer in
@@ -185,12 +204,16 @@ namespace CompoundProduct
         }
 
         //! Internal transmittance of the bulk layer between two known parts, from the
-        //! transmittance of the whole product.
-        [[nodiscard]] double bulkBetween(const double transmittance,
+        //! transmittance of the whole product. Each direction of the light gives one equation
+        //! for the same unknown. The mean of the two equations is solved.
+        [[nodiscard]] double bulkBetween(const MeasuredPoint & whole,
                                          const MeasuredPoint & front,
                                          const MeasuredPoint & back)
         {
-            const auto linear{front.transmittance * back.transmittance};
+            const auto transmittance{meanTransmittance(whole)};
+            const auto linear{0.5
+                              * (front.transmittanceFront * back.transmittanceFront
+                                 + front.transmittanceBack * back.transmittanceBack)};
             const auto quadratic{transmittance * front.reflectanceBack * back.reflectanceFront};
             if(std::abs(quadratic) < Helper::SmallNumber)
             {
@@ -234,11 +257,11 @@ namespace CompoundProduct
                                                             const MeasuredPoint & back,
                                                             const Tolerances & tol)
         {
-            if(std::abs(measured.transmittance) < tol.limitOfDetection)
+            if(std::abs(meanTransmittance(measured)) < tol.limitOfDetection)
             {
                 return {.value = 0.0, .warnings = {Warning::OpaqueLayer}};
             }
-            return physical(bulkBetween(measured.transmittance, front, back), {}, tol);
+            return physical(bulkBetween(measured, front, back), {}, tol);
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -288,7 +311,8 @@ namespace CompoundProduct
           const MeasuredPoint & measured, const ReflectanceChoice choice, const Tolerances & tol)
         {
             const auto reflectance{chosenReflectance(measured, choice)};
-            const auto opaque{std::abs(measured.transmittance) < tol.limitOfDetection};
+            const auto transmittance{meanTransmittance(measured)};
+            const auto opaque{std::abs(transmittance) < tol.limitOfDetection};
             if(opaque && std::abs(measured.reflectanceFront) < tol.limitOfDetection
                && std::abs(measured.reflectanceBack) < tol.limitOfDetection)
             {
@@ -299,9 +323,9 @@ namespace CompoundProduct
                 return {.value = {.surfaceReflectance = reflectance, .internalTransmittance = 0.0},
                         .warnings = {Warning::OpaqueLayer}};
             }
-            const auto surface{interfaceReflectance(measured.transmittance, reflectance)};
-            const auto [tau, warnings]{physical(
-              internalTransmittance(measured.transmittance, reflectance, surface), {}, tol)};
+            const auto surface{interfaceReflectance(transmittance, reflectance)};
+            const auto [tau, warnings]{
+              physical(internalTransmittance(transmittance, reflectance, surface), {}, tol)};
             return {.value = {.surfaceReflectance = surface, .internalTransmittance = tau},
                     .warnings = warnings};
         }
@@ -330,7 +354,8 @@ namespace CompoundProduct
             if(std::abs(substrate.internalTransmittance) < tol.limitOfDetection)
             {
                 // Nothing is known about the substrate side. Coating is assumed to be opaque.
-                return {.value = {.transmittance = 0.0,
+                return {.value = {.transmittanceFront = 0.0,
+                                  .transmittanceBack = 0.0,
                                   .reflectanceFront = 1.0,
                                   .reflectanceBack = coated.reflectanceBack},
                         .warnings = {Warning::OpaqueSubstrate}};
@@ -344,9 +369,7 @@ namespace CompoundProduct
         [[nodiscard]] PointResult<InterfacePoint>
           flippedResult(const PointResult<InterfacePoint> & result)
         {
-            return {.value = {.transmittance = result.value.transmittance,
-                              .reflectanceFront = result.value.reflectanceBack,
-                              .reflectanceBack = result.value.reflectanceFront},
+            return {.value = asInterface(flippedPoint(asPart(result.value))),
                     .warnings = result.warnings};
         }
 
@@ -359,17 +382,18 @@ namespace CompoundProduct
         [[nodiscard]] MeasuredPoint paneInFrontOfInterlayer(const MonolithicPoint & pane)
         {
             const auto tau{pane.internalTransmittance};
-            return {.transmittance = (1 - pane.surfaceReflectance) * tau,
+            return {.transmittanceFront = (1 - pane.surfaceReflectance) * tau,
+                    .transmittanceBack = (1 - pane.surfaceReflectance) * tau,
                     .reflectanceFront = pane.surfaceReflectance,
                     .reflectanceBack = pane.surfaceReflectance * tau * tau};
         }
 
         //! Interlayer is the bulk layer between the two panes.
-        [[nodiscard]] double solveInterlayer(const double transmittance,
+        [[nodiscard]] double solveInterlayer(const MeasuredPoint & laminate,
                                              const MonolithicPoint & front,
                                              const MonolithicPoint & back)
         {
-            return bulkBetween(transmittance,
+            return bulkBetween(laminate,
                                paneInFrontOfInterlayer(front),
                                flippedPoint(paneInFrontOfInterlayer(back)));
         }
@@ -384,13 +408,13 @@ namespace CompoundProduct
                 return {.value = 0.0, .warnings = {Warning::NoData}};
             }
             const auto panes{front.internalTransmittance * back.internalTransmittance};
-            if(std::abs(laminate.transmittance) < tol.limitOfDetection
+            if(std::abs(meanTransmittance(laminate)) < tol.limitOfDetection
                || panes < Helper::SmallNumber)
             {
                 return {.value = 0.0, .warnings = {Warning::InsensitiveInterlayer}};
             }
             const auto insensitive{std::sqrt(panes) < tol.interlayerSensitivityThreshold};
-            return physical(solveInterlayer(laminate.transmittance, front, back),
+            return physical(solveInterlayer(laminate, front, back),
                             appended({}, insensitive, Warning::InsensitiveInterlayer),
                             tol);
         }
@@ -419,7 +443,8 @@ namespace CompoundProduct
                                                         const bool interlayerSide,
                                                         const bool substrateSide)
         {
-            return {.transmittance = interlayerSide ? 0.0 : coating.transmittance,
+            return {.transmittanceFront = interlayerSide ? 0.0 : coating.transmittanceFront,
+                    .transmittanceBack = interlayerSide ? 0.0 : coating.transmittanceBack,
                     .reflectanceFront = substrateSide ? 0.0 : coating.reflectanceFront,
                     .reflectanceBack = interlayerSide ? 0.0 : coating.reflectanceBack};
         }
@@ -474,7 +499,8 @@ namespace CompoundProduct
 
         [[nodiscard]] bool noData(const ThickLayerPoint & layer, const Tolerances & tolerances)
         {
-            return std::abs(layer.surface.transmittance) < tolerances.limitOfDetection
+            return std::abs(layer.surface.transmittanceFront) < tolerances.limitOfDetection
+                   && std::abs(layer.surface.transmittanceBack) < tolerances.limitOfDetection
                    && std::abs(layer.internalTransmittance) < tolerances.limitOfDetection;
         }
 
@@ -500,7 +526,8 @@ namespace CompoundProduct
                                                    const Bulk & bulk,
                                                    const size_t index)
         {
-            return {.surface = {.transmittance = surface.transmittance[index].value(),
+            return {.surface = {.transmittanceFront = surface.transmittanceFront[index].value(),
+                                .transmittanceBack = surface.transmittanceBack[index].value(),
                                 .reflectanceFront = surface.reflectanceFront[index].value(),
                                 .reflectanceBack = surface.reflectanceBack[index].value()},
                     .internalTransmittance = bulk.internalTransmittance[index].value()};
@@ -545,7 +572,8 @@ namespace CompoundProduct
                 return Helper::makeSeries(
                   wavelengths, [&](const size_t index) { return points[index].value.*member; });
             }};
-            return {.value = {.transmittance = series(&InterfacePoint::transmittance),
+            return {.value = {.transmittanceFront = series(&InterfacePoint::transmittanceFront),
+                              .transmittanceBack = series(&InterfacePoint::transmittanceBack),
                               .reflectanceFront = series(&InterfacePoint::reflectanceFront),
                               .reflectanceBack = series(&InterfacePoint::reflectanceBack)},
                     .diagnostics = diagnosticsOf(wavelengths, points)};
@@ -553,7 +581,10 @@ namespace CompoundProduct
 
         [[nodiscard]] std::vector<const CSeries *> seriesOf(const ExternalProperties & measured)
         {
-            return {&measured.transmittance, &measured.reflectanceFront, &measured.reflectanceBack};
+            return {&measured.transmittanceFront,
+                    &measured.transmittanceBack,
+                    &measured.reflectanceFront,
+                    &measured.reflectanceBack};
         }
 
         [[nodiscard]] std::vector<const CSeries *>
@@ -572,7 +603,7 @@ namespace CompoundProduct
         [[nodiscard]] std::vector<const CSeries *> seriesOf(const KnownPart & known)
         {
             auto result{seriesOf(known.externalProperties)};
-            result.push_back(&known.bulkToUnknownInterface.internalTransmittance);
+            result.push_back(&known.bulkToRemainingPart.internalTransmittance);
             return result;
         }
 
@@ -585,15 +616,16 @@ namespace CompoundProduct
             }
             return KnownPartPoint{
               .part = measuredAt(known->externalProperties, index),
-              .bulk = known->bulkToUnknownInterface.internalTransmittance[index].value()};
+              .bulk = known->bulkToRemainingPart.internalTransmittance[index].value()};
         }
 
         //! Interface with a known part on one side or on both sides. A side without a known
         //! part is a null pointer.
-        [[nodiscard]] WithDiagnostics<Interface> interfaceNextTo(const ExternalProperties & measured,
-                                                               const KnownPart * frontPart,
-                                                               const KnownPart * backPart,
-                                                               const Tolerances & tolerances)
+        [[nodiscard]] WithDiagnostics<Interface>
+          interfaceNextTo(const ExternalProperties & measured,
+                          const KnownPart * frontPart,
+                          const KnownPart * backPart,
+                          const Tolerances & tolerances)
         {
             auto allSeries{seriesOf(measured)};
             for(const auto * known : {frontPart, backPart})
@@ -604,7 +636,7 @@ namespace CompoundProduct
                 }
             }
             Helper::requireSameWavelengths(allSeries);
-            const auto wavelengths{measured.transmittance.getXArray()};
+            const auto wavelengths{measured.transmittanceFront.getXArray()};
             const auto points{
               evaluate<InterfacePoint>(wavelengths.size(), [&](const size_t index) {
                   return deconstructInterfaceAt(measuredAt(measured, index),
@@ -614,49 +646,61 @@ namespace CompoundProduct
               })};
             return toInterface(wavelengths, points);
         }
+
+        //! The result of a removal is a part. A part and an interface hold the same four
+        //! properties.
+        [[nodiscard]] WithDiagnostics<ExternalProperties>
+          asPart(const WithDiagnostics<Interface> & remaining)
+        {
+            return {.value = {.transmittanceFront = remaining.value.transmittanceFront,
+                              .transmittanceBack = remaining.value.transmittanceBack,
+                              .reflectanceFront = remaining.value.reflectanceFront,
+                              .reflectanceBack = remaining.value.reflectanceBack},
+                    .diagnostics = remaining.diagnostics};
+        }
     }   // namespace
 
     Interface uncoatedInterface(const Monolithic & substrate)
     {
-        return {.transmittance = 1.0 - substrate.surfaceReflectance,
+        return {.transmittanceFront = 1.0 - substrate.surfaceReflectance,
+                .transmittanceBack = 1.0 - substrate.surfaceReflectance,
                 .reflectanceFront = substrate.surfaceReflectance,
                 .reflectanceBack = substrate.surfaceReflectance};
     }
 
-    WithDiagnostics<Interface> deconstructInterface(const ExternalProperties & measured,
-                                                  const KnownPart & frontPart,
-                                                  const KnownPart & backPart,
-                                                  const Tolerances & tolerances)
+    WithDiagnostics<Interface>
+      ExternalProperties::deconstructInterface(const KnownPart & frontPart,
+                                               const KnownPart & backPart,
+                                               const Tolerances & tolerances) const
     {
-        return interfaceNextTo(measured, &frontPart, &backPart, tolerances);
+        return interfaceNextTo(*this, &frontPart, &backPart, tolerances);
     }
 
-    WithDiagnostics<Interface> deconstructLastInterface(const ExternalProperties & measured,
-                                                      const KnownPart & frontPart,
-                                                      const Tolerances & tolerances)
+    WithDiagnostics<ExternalProperties>
+      ExternalProperties::deconstructPartBehind(const KnownPart & frontPart,
+                                                const Tolerances & tolerances) const
     {
-        return interfaceNextTo(measured, &frontPart, nullptr, tolerances);
+        return asPart(interfaceNextTo(*this, &frontPart, nullptr, tolerances));
     }
 
-    WithDiagnostics<Interface> deconstructFirstInterface(const ExternalProperties & measured,
-                                                       const KnownPart & backPart,
-                                                       const Tolerances & tolerances)
+    WithDiagnostics<ExternalProperties>
+      ExternalProperties::deconstructPartInFrontOf(const KnownPart & backPart,
+                                                   const Tolerances & tolerances) const
     {
-        return interfaceNextTo(measured, nullptr, &backPart, tolerances);
+        return asPart(interfaceNextTo(*this, nullptr, &backPart, tolerances));
     }
 
-    WithDiagnostics<Bulk> deconstructBulk(const ExternalProperties & measured,
-                                        const ExternalProperties & frontPart,
-                                        const ExternalProperties & backPart,
-                                        const Tolerances & tolerances)
+    WithDiagnostics<Bulk> ExternalProperties::deconstructBulk(const ExternalProperties & frontPart,
+                                                              const ExternalProperties & backPart,
+                                                              const Tolerances & tolerances) const
     {
-        auto allSeries{seriesOf(measured)};
+        auto allSeries{seriesOf(*this)};
         std::ranges::copy(seriesOf(frontPart), std::back_inserter(allSeries));
         std::ranges::copy(seriesOf(backPart), std::back_inserter(allSeries));
         Helper::requireSameWavelengths(allSeries);
-        const auto wavelengths{measured.transmittance.getXArray()};
+        const auto wavelengths{transmittanceFront.getXArray()};
         const auto points{evaluate<double>(wavelengths.size(), [&](const size_t index) {
-            return deconstructBulkAt(measuredAt(measured, index),
+            return deconstructBulkAt(measuredAt(*this, index),
                                      measuredAt(frontPart, index),
                                      measuredAt(backPart, index),
                                      tolerances);
@@ -666,15 +710,15 @@ namespace CompoundProduct
                 .diagnostics = diagnosticsOf(wavelengths, points)};
     }
 
-    WithDiagnostics<Monolithic> deconstructMonolithic(const ExternalProperties & measured,
-                                                    const ReflectanceChoice choice,
-                                                    const Tolerances & tolerances)
+    WithDiagnostics<Monolithic>
+      ExternalProperties::deconstructMonolithic(const ReflectanceChoice choice,
+                                                const Tolerances & tolerances) const
     {
-        Helper::requireSameWavelengths(seriesOf(measured));
-        const auto wavelengths{measured.transmittance.getXArray()};
+        Helper::requireSameWavelengths(seriesOf(*this));
+        const auto wavelengths{transmittanceFront.getXArray()};
         const auto points{
           evaluate<MonolithicPoint>(wavelengths.size(), [&](const size_t index) {
-              return deconstructMonolithicAt(measuredAt(measured, index), choice, tolerances);
+              return deconstructMonolithicAt(measuredAt(*this, index), choice, tolerances);
           })};
         const auto series{[&](double MonolithicPoint::* member) {
             return Helper::makeSeries(
@@ -686,17 +730,17 @@ namespace CompoundProduct
                 .diagnostics = diagnosticsOf(wavelengths, points)};
     }
 
-    WithDiagnostics<Interface> deconstructCoating(const ExternalProperties & coated,
-                                                const Monolithic & substrate,
-                                                const Side coatedSide,
-                                                const Tolerances & tolerances)
+    WithDiagnostics<Interface>
+      ExternalProperties::deconstructCoating(const Monolithic & substrate,
+                                             const Side coatedSide,
+                                             const Tolerances & tolerances) const
     {
-        Helper::requireSameWavelengths(seriesOf(coated, {&substrate}));
-        const auto wavelengths{coated.transmittance.getXArray()};
+        Helper::requireSameWavelengths(seriesOf(*this, {&substrate}));
+        const auto wavelengths{transmittanceFront.getXArray()};
         const auto onFront{coatedSide == Side::Front};
         const auto points{
           evaluate<InterfacePoint>(wavelengths.size(), [&](const size_t index) {
-              const auto measured{measuredAt(coated, index)};
+              const auto measured{measuredAt(*this, index)};
               const auto result{
                 deconstructCoatingAt(onFront ? flippedPoint(measured) : measured,
                                      monolithicAt(substrate, index),
@@ -706,15 +750,15 @@ namespace CompoundProduct
         return toInterface(wavelengths, points);
     }
 
-    WithDiagnostics<Bulk> deconstructInterlayer(const ExternalProperties & laminate,
-                                              const Monolithic & front,
-                                              const Monolithic & back,
-                                              const Tolerances & tolerances)
+    WithDiagnostics<Bulk>
+      ExternalProperties::deconstructInterlayer(const Monolithic & front,
+                                                const Monolithic & back,
+                                                const Tolerances & tolerances) const
     {
-        Helper::requireSameWavelengths(seriesOf(laminate, {&front, &back}));
-        const auto wavelengths{laminate.transmittance.getXArray()};
+        Helper::requireSameWavelengths(seriesOf(*this, {&front, &back}));
+        const auto wavelengths{transmittanceFront.getXArray()};
         const auto points{evaluate<double>(wavelengths.size(), [&](const size_t index) {
-            return deconstructInterlayerAt(measuredAt(laminate, index),
+            return deconstructInterlayerAt(measuredAt(*this, index),
                                            monolithicAt(front, index),
                                            monolithicAt(back, index),
                                            tolerances);
@@ -724,19 +768,19 @@ namespace CompoundProduct
                 .diagnostics = diagnosticsOf(wavelengths, points)};
     }
 
-    WithDiagnostics<Interface> deconstructEmbeddedCoating(const ExternalProperties & laminate,
-                                                        const Monolithic & front,
-                                                        const Monolithic & back,
-                                                        const Bulk & interlayer,
-                                                        const Tolerances & tolerances)
+    WithDiagnostics<Interface>
+      ExternalProperties::deconstructEmbeddedCoating(const Monolithic & front,
+                                                     const Monolithic & back,
+                                                     const Bulk & interlayer,
+                                                     const Tolerances & tolerances) const
     {
-        auto allSeries{seriesOf(laminate, {&front, &back})};
+        auto allSeries{seriesOf(*this, {&front, &back})};
         allSeries.push_back(&interlayer.internalTransmittance);
         Helper::requireSameWavelengths(allSeries);
-        const auto wavelengths{laminate.transmittance.getXArray()};
+        const auto wavelengths{transmittanceFront.getXArray()};
         const auto points{
           evaluate<InterfacePoint>(wavelengths.size(), [&](const size_t index) {
-              return deconstructEmbeddedCoatingAt(measuredAt(laminate, index),
+              return deconstructEmbeddedCoatingAt(measuredAt(*this, index),
                                                   monolithicAt(front, index),
                                                   monolithicAt(back, index),
                                                   interlayer.internalTransmittance[index].value(),
@@ -745,27 +789,28 @@ namespace CompoundProduct
         return toInterface(wavelengths, points);
     }
 
-    WithDiagnostics<Interface> deconstructDoubleMonolithic(const ExternalProperties & measured,
-                                                         const Interface & frontSurface,
-                                                         const Bulk & frontBulk,
-                                                         const Interface & backSurface,
-                                                         const Bulk & backBulk,
-                                                         const Tolerances & tolerances)
+    WithDiagnostics<Interface>
+      ExternalProperties::deconstructDoubleMonolithic(const Interface & frontSurface,
+                                                      const Bulk & frontBulk,
+                                                      const Interface & backSurface,
+                                                      const Bulk & backBulk,
+                                                      const Tolerances & tolerances) const
     {
-        auto allSeries{seriesOf(measured)};
+        auto allSeries{seriesOf(*this)};
         for(const auto * surface : {&frontSurface, &backSurface})
         {
-            allSeries.push_back(&surface->transmittance);
+            allSeries.push_back(&surface->transmittanceFront);
+            allSeries.push_back(&surface->transmittanceBack);
             allSeries.push_back(&surface->reflectanceFront);
             allSeries.push_back(&surface->reflectanceBack);
         }
         allSeries.push_back(&frontBulk.internalTransmittance);
         allSeries.push_back(&backBulk.internalTransmittance);
         Helper::requireSameWavelengths(allSeries);
-        const auto wavelengths{measured.transmittance.getXArray()};
+        const auto wavelengths{transmittanceFront.getXArray()};
         const auto points{
           evaluate<InterfacePoint>(wavelengths.size(), [&](const size_t index) {
-              return deconstructDoubleMonolithicAt(measuredAt(measured, index),
+              return deconstructDoubleMonolithicAt(measuredAt(*this, index),
                                                    thickLayerAt(frontSurface, frontBulk, index),
                                                    thickLayerAt(backSurface, backBulk, index),
                                                    tolerances);
@@ -773,13 +818,12 @@ namespace CompoundProduct
         return toInterface(wavelengths, points);
     }
 
-    WithDiagnostics<Interface> deconstructDoubleMonolithic(const ExternalProperties & measured,
-                                                         const Monolithic & front,
-                                                         const Monolithic & back,
-                                                         const Tolerances & tolerances)
+    WithDiagnostics<Interface>
+      ExternalProperties::deconstructDoubleMonolithic(const Monolithic & front,
+                                                      const Monolithic & back,
+                                                      const Tolerances & tolerances) const
     {
         return deconstructDoubleMonolithic(
-          measured,
           uncoatedInterface(front),
           Bulk{.internalTransmittance = front.internalTransmittance},
           uncoatedInterface(back),

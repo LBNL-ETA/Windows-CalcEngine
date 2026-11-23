@@ -6,23 +6,46 @@
 
 namespace CompoundProduct
 {
-    //! \brief Calculates external properties of a stack of bulk layers and interfaces.
+    //! \brief A product that is assembled from parts, from the front to the back.
     //!
-    //! Throws std::runtime_error if number of interfaces is not number of bulk layers plus one or
-    //! if the series are not given at the same wavelengths.
-    [[nodiscard]] ExternalProperties construct(const Stack & stack);
+    //! An assembly starts with one part. Every step adds one bulk layer and the part behind it,
+    //! so that parts and bulk layers always alternate:
+    //!
+    //!     Assembly(frontPart).add(bulk, part).add(bulk, part).externalProperties()
+    //!
+    //! A part is given in one of three ways: as one Interface, as another Assembly, or as
+    //! ExternalProperties of a part that is known only as a whole (a measured product, or the
+    //! result of deconstructPartBehind and deconstructPartInFrontOf).
+    //!
+    //! An assembly is the only way to write a product. A product in which two interfaces touch,
+    //! or which ends with a bulk layer, cannot be written.
+    //!
+    //! add and flipped do not change the assembly. They return a new one.
+    class Assembly
+    {
+    public:
+        explicit Assembly(const Interface & frontPart);
+        explicit Assembly(const ExternalProperties & frontPart);
+
+        [[nodiscard]] Assembly add(const Bulk & bulk, const Interface & part) const;
+        [[nodiscard]] Assembly add(const Bulk & bulk, const ExternalProperties & part) const;
+        [[nodiscard]] Assembly add(const Bulk & bulk, const Assembly & part) const;
+
+        //! The same assembly seen from its back side.
+        [[nodiscard]] Assembly flipped() const;
+
+        //! Throws std::runtime_error if the parts are not given at the same wavelengths.
+        [[nodiscard]] ExternalProperties externalProperties() const;
+
+    private:
+        //! Components from the front to the back. The number of interfaces is always the number
+        //! of bulk layers plus one.
+        std::vector<Interface> m_Interfaces;
+        std::vector<Bulk> m_Bulks;
+    };
 
     //! \brief Interface that does not reflect (for example glass to interlayer).
     [[nodiscard]] Interface nonReflectingInterface(const std::vector<double> & wavelengths);
-
-    [[nodiscard]] Interface flipped(const Interface & layerInterface);
-    [[nodiscard]] Stack flipped(const Stack & stack);
-
-    //! \brief Puts stack "back" behind stack "front".
-    //!
-    //! The last interface of the front stack and the first interface of the back stack are
-    //! replaced by the interface "between".
-    [[nodiscard]] Stack joined(const Stack & front, const Stack & back, const Interface & between);
 
     //! \brief Internal transmittance of the same material at different thickness.
     //!

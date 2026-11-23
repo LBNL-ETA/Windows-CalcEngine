@@ -53,14 +53,26 @@ namespace CompoundProductTest
                            const CompoundProduct::Interface & expected,
                            const double tolerance)
     {
-        expectNear(actual.transmittance, expected.transmittance, tolerance);
+        expectNear(actual.transmittanceFront, expected.transmittanceFront, tolerance);
+        expectNear(actual.transmittanceBack, expected.transmittanceBack, tolerance);
         expectNear(actual.reflectanceFront, expected.reflectanceFront, tolerance);
         expectNear(actual.reflectanceBack, expected.reflectanceBack, tolerance);
     }
 
-    [[nodiscard]] inline bool hasWarning(const std::vector<CompoundProduct::Diagnostic> & diagnostics,
-                                         const double wavelength,
-                                         const CompoundProduct::Warning warning)
+    inline void expectNear(const CompoundProduct::ExternalProperties & actual,
+                           const CompoundProduct::ExternalProperties & expected,
+                           const double tolerance)
+    {
+        expectNear(actual.transmittanceFront, expected.transmittanceFront, tolerance);
+        expectNear(actual.transmittanceBack, expected.transmittanceBack, tolerance);
+        expectNear(actual.reflectanceFront, expected.reflectanceFront, tolerance);
+        expectNear(actual.reflectanceBack, expected.reflectanceBack, tolerance);
+    }
+
+    [[nodiscard]] inline bool
+      hasWarning(const std::vector<CompoundProduct::Diagnostic> & diagnostics,
+                 const double wavelength,
+                 const CompoundProduct::Warning warning)
     {
         for(const auto & diagnostic : diagnostics)
         {

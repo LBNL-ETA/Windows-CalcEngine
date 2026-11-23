@@ -33,7 +33,8 @@ namespace
 
     Interface coating()
     {
-        return {.transmittance = series(wavelengths, {0.5, 0.6}),
+        return {.transmittanceFront = series(wavelengths, {0.5, 0.6}),
+                .transmittanceBack = series(wavelengths, {0.5, 0.6}),
                 .reflectanceFront = series(wavelengths, {0.1, 0.2}),
                 .reflectanceBack = series(wavelengths, {0.3, 0.25})};
     }
@@ -45,24 +46,27 @@ namespace
 
     ExternalProperties uncoatedPane(const Monolithic & glass)
     {
-        return construct({.interfaces = {uncoatedInterface(glass), uncoatedInterface(glass)},
-                          .bulks = {bulkOf(glass)}});
+        return Assembly(uncoatedInterface(glass))
+          .add(bulkOf(glass), uncoatedInterface(glass))
+          .externalProperties();
     }
 
-    ExternalProperties coatedPane(const Monolithic & glass, const Bulk & bulk, const Side coatedSide)
+    ExternalProperties
+      coatedPane(const Monolithic & glass, const Bulk & bulk, const Side coatedSide)
     {
         if(coatedSide == Side::Front)
         {
-            return construct({.interfaces = {coating(), uncoatedInterface(glass)}, .bulks = {bulk}});
+            return Assembly(coating()).add(bulk, uncoatedInterface(glass)).externalProperties();
         }
-        return construct({.interfaces = {uncoatedInterface(glass), coating()}, .bulks = {bulk}});
+        return Assembly(uncoatedInterface(glass)).add(bulk, coating()).externalProperties();
     }
 
     void expectSameProduct(const ExternalProperties & actual,
                     const ExternalProperties & expected,
                     const double tolerance)
     {
-        expectNear(actual.transmittance, expected.transmittance, tolerance);
+        expectNear(actual.transmittanceFront, expected.transmittanceFront, tolerance);
+        expectNear(actual.transmittanceBack, expected.transmittanceBack, tolerance);
         expectNear(actual.reflectanceFront, expected.reflectanceFront, tolerance);
         expectNear(actual.reflectanceBack, expected.reflectanceBack, tolerance);
     }
@@ -72,7 +76,8 @@ namespace
 {
     Interface otherCoating()
     {
-        return {.transmittance = series(wavelengths, {0.7, 0.4}),
+        return {.transmittanceFront = series(wavelengths, {0.7, 0.4}),
+                .transmittanceBack = series(wavelengths, {0.7, 0.4}),
                 .reflectanceFront = series(wavelengths, {0.15, 0.3}),
                 .reflectanceBack = series(wavelengths, {0.05, 0.2})};
     }
@@ -112,35 +117,24 @@ namespace
                 .thickness = InterlayerThickness};
     }
 
-    //! Laminate of original glass with embedded coating, reference interlayer and other glass.
-    ReferenceLaminate referenceLaminate(const Interface & embedded)
+    //! Measured laminate of original glass with the given coating towards the interlayer,
+    //! reference interlayer and other glass.
+    ExternalProperties referenceLaminate(const Interface & embedded)
     {
-        const Stack stack{.interfaces = {uncoatedInterface(originalGlass()),
-                                         embedded,
-                                         nonReflectingInterface(wavelengths),
-                                         uncoatedInterface(otherGlass())},
-                          .bulks = {bulkOf(originalGlass()),
-                                    referenceInterlayer(),
-                                    bulkOf(otherGlass())}};
-        return {.measured = construct(stack),
-                .coatedPaneSubstrate = uncoatedPane(originalGlass()),
-                .interlayer = {.internalTransmittance = referenceInterlayer().internalTransmittance,
-                               .thickness = InterlayerThickness},
-                .uncoatedPane = uncoatedPane(otherGlass()),
-                .coatedPanePosition = Side::Front};
+        return Assembly(uncoatedInterface(originalGlass()))
+          .add(bulkOf(originalGlass()), embedded)
+          .add(referenceInterlayer(), nonReflectingInterface(wavelengths))
+          .add(bulkOf(otherGlass()), uncoatedInterface(otherGlass()))
+          .externalProperties();
     }
 
-    //! The same laminate measured from its other side: the coated pane is the back pane.
-    ReferenceLaminate referenceLaminateWithCoatedPaneAtBack(const Interface & embedded)
+    //! Coating that touches an interlayer, deconstructed from a reference laminate that was
+    //! measured with its coated pane in front.
+    Interface embeddedCoating(const ExternalProperties & reference)
     {
-        const auto inFront{referenceLaminate(embedded)};
-        return {.measured = {.transmittance = inFront.measured.transmittance,
-                             .reflectanceFront = inFront.measured.reflectanceBack,
-                             .reflectanceBack = inFront.measured.reflectanceFront},
-                .coatedPaneSubstrate = inFront.coatedPaneSubstrate,
-                .interlayer = inFront.interlayer,
-                .uncoatedPane = inFront.uncoatedPane,
-                .coatedPanePosition = Side::Back};
+        return reference
+          .deconstructEmbeddedCoating(originalGlass(), otherGlass(), referenceInterlayer())
+          .value;
     }
 }   // namespace
 
@@ -186,7 +180,7 @@ TEST_P(CompoundProductActions, CoatedPaneAtThickness)
     expectSameProduct(
       result.value.measured, coatedPane(originalGlass(), thickGlass, coatedSide), Tolerance);
     expectSameProduct(result.value.substrate,
-                      construct({.interfaces = {surface, surface}, .bulks = {thickGlass}}),
+                      Assembly(surface).add(thickGlass, surface).externalProperties(),
                       Tolerance);
     EXPECT_EQ(result.value.coatedSide, coatedSide);
     EXPECT_DOUBLE_EQ(result.value.thickness, NewThickness);
@@ -227,18 +221,19 @@ TEST_P(CompoundProductActions, WithCoatingOnTheSameSide)
     EXPECT_DOUBLE_EQ(result.value.thickness, OtherGlassThickness);
 }
 
-INSTANTIATE_TEST_SUITE_P(BothSides, CompoundProductActions, testing::Values(Side::Front, Side::Back));
+INSTANTIATE_TEST_SUITE_P(BothSides,
+                         CompoundProductActions,
+                         testing::Values(Side::Front, Side::Back));
 
 TEST(CompoundProductActionsThickness, UncoatedPaneAtThickness)
 {
     const auto result{originalPane().atThickness(6.0)};
 
     const auto surface{uncoatedInterface(originalGlass())};
-    const Stack expected{.interfaces = {surface, surface},
-                         .bulks = {withThickness(
-                           bulkOf(originalGlass()), OriginalGlassThickness, 6.0)}};
+    const auto thickGlass{withThickness(bulkOf(originalGlass()), OriginalGlassThickness, 6.0)};
+    const auto expected{Assembly(surface).add(thickGlass, surface)};
     EXPECT_TRUE(result.diagnostics.empty());
-    expectSameProduct(result.value.measured, construct(expected), Tolerance);
+    expectSameProduct(result.value.measured, expected.externalProperties(), Tolerance);
     EXPECT_DOUBLE_EQ(result.value.thickness, 6.0);
 }
 
@@ -246,17 +241,18 @@ TEST(CompoundProductActionsCoating, WithCoatingOnTheOtherSideKeepsGlassSideTowar
 {
     const auto result{otherPane().withCoating(coatingSource(Side::Back), Side::Front)};
 
-    const Stack expected{.interfaces = {flipped(coating()), uncoatedInterface(otherGlass())},
-                         .bulks = {bulkOf(otherGlass())}};
-    expectSameProduct(result.value.measured, construct(expected), Tolerance);
+    const auto expected{
+      Assembly(coating().flipped()).add(bulkOf(otherGlass()), uncoatedInterface(otherGlass()))};
+    expectSameProduct(result.value.measured, expected.externalProperties(), Tolerance);
     EXPECT_EQ(result.value.coatedSide, Side::Front);
 }
 
 TEST(CompoundProductActionsCoating, CoatBothSides)
 {
     const CoatedPane backSource{
-      .measured = construct({.interfaces = {uncoatedInterface(otherGlass()), otherCoating()},
-                             .bulks = {bulkOf(otherGlass())}}),
+      .measured = Assembly(uncoatedInterface(otherGlass()))
+                    .add(bulkOf(otherGlass()), otherCoating())
+                    .externalProperties(),
       .substrate = uncoatedPane(otherGlass()),
       .coatedSide = Side::Back,
       .thickness = OtherGlassThickness};
@@ -264,22 +260,20 @@ TEST(CompoundProductActionsCoating, CoatBothSides)
     const auto result{
       coatBothSides(uncoatedPane(originalGlass()), coatingSource(Side::Front), backSource)};
 
-    const Stack expected{.interfaces = {coating(), otherCoating()},
-                         .bulks = {bulkOf(originalGlass())}};
+    const auto expected{Assembly(coating()).add(bulkOf(originalGlass()), otherCoating())};
     EXPECT_TRUE(result.diagnostics.empty());
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value, expected.externalProperties(), Tolerance);
 }
 
 TEST(CompoundProductActionsLaminate, MakeInterlayer)
 {
     const auto noReflection{nonReflectingInterface(wavelengths)};
-    const Stack laminate{.interfaces = {uncoatedInterface(originalGlass()),
-                                        noReflection,
-                                        noReflection,
-                                        uncoatedInterface(otherGlass())},
-                         .bulks = {bulkOf(originalGlass()), interlayer(), bulkOf(otherGlass())}};
+    const auto laminate{Assembly(uncoatedInterface(originalGlass()))
+                          .add(bulkOf(originalGlass()), noReflection)
+                          .add(interlayer(), noReflection)
+                          .add(bulkOf(otherGlass()), uncoatedInterface(otherGlass()))};
 
-    const auto result{makeInterlayer(construct(laminate),
+    const auto result{makeInterlayer(laminate.externalProperties(),
                                      uncoatedPane(originalGlass()),
                                      uncoatedPane(otherGlass()),
                                      InterlayerThickness)};
@@ -316,30 +310,31 @@ TEST(CompoundProductActionsOptions, SubstrateReflectanceChoiceIsUsed)
 
     const auto result{pane.atThickness(6.0, frontReflectance)};
 
-    const auto glass{deconstructMonolithic(measured, ReflectanceChoice::Front).value};
-    const Stack expected{.interfaces = {uncoatedInterface(glass), uncoatedInterface(glass)},
-                         .bulks = {withThickness(bulkOf(glass), 3.0, 6.0)}};
-    expectSameProduct(result.value.measured, construct(expected), Tolerance);
+    const auto glass{measured.deconstructMonolithic(ReflectanceChoice::Front).value};
+    const auto expected{Assembly(uncoatedInterface(glass))
+                          .add(withThickness(bulkOf(glass), 3.0, 6.0), uncoatedInterface(glass))};
+    expectSameProduct(result.value.measured, expected.externalProperties(), Tolerance);
     const auto withAverage{pane.atThickness(6.0)};
     EXPECT_GT(std::abs(result.value.measured.reflectanceFront[0].value()
                        - withAverage.value.measured.reflectanceFront[0].value()),
               1e-4);
 }
 
-// Laminate. Every test compares the chain of calls with the stack that is written out directly.
+// Laminate. Every test compares the chain of calls with the assembly that is written out
+// directly.
 
 namespace
 {
-    Stack twoPaneStack(const Interface & frontSurface,
-                       const Interface & frontPaneAtInterlayer,
-                       const Interface & backPaneAtInterlayer,
-                       const Interface & backSurface)
+    ExternalProperties twoPanes(const Interface & frontSurface,
+                                const Interface & frontPaneAtInterlayer,
+                                const Interface & backPaneAtInterlayer,
+                                const Interface & backSurface)
     {
-        return {.interfaces = {frontSurface,
-                               frontPaneAtInterlayer,
-                               backPaneAtInterlayer,
-                               backSurface},
-                .bulks = {bulkOf(originalGlass()), interlayer(), bulkOf(otherGlass())}};
+        return Assembly(frontSurface)
+          .add(bulkOf(originalGlass()), frontPaneAtInterlayer)
+          .add(interlayer(), backPaneAtInterlayer)
+          .add(bulkOf(otherGlass()), backSurface)
+          .externalProperties();
     }
 
     Interface noReflection()
@@ -360,12 +355,12 @@ TEST(CompoundProductLaminate, TwoUncoatedPanes)
 {
     const auto result{Laminate(originalPane()).add(interlayerLayer(), otherPane()).spectra()};
 
-    const auto expected{twoPaneStack(uncoatedInterface(originalGlass()),
+    const auto expected{twoPanes(uncoatedInterface(originalGlass()),
                                      noReflection(),
                                      noReflection(),
                                      uncoatedInterface(otherGlass()))};
     EXPECT_TRUE(result.diagnostics.empty());
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value, expected, Tolerance);
 }
 
 TEST(CompoundProductLaminate, ThreePanes)
@@ -375,19 +370,13 @@ TEST(CompoundProductLaminate, ThreePanes)
                         .add(interlayerLayer(), originalPane())
                         .spectra()};
 
-    const Stack expected{
-      .interfaces = {uncoatedInterface(originalGlass()),
-                     noReflection(),
-                     noReflection(),
-                     noReflection(),
-                     noReflection(),
-                     uncoatedInterface(originalGlass())},
-      .bulks = {bulkOf(originalGlass()),
-                interlayer(),
-                bulkOf(otherGlass()),
-                interlayer(),
-                bulkOf(originalGlass())}};
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    const auto expected{Assembly(uncoatedInterface(originalGlass()))
+                          .add(bulkOf(originalGlass()), noReflection())
+                          .add(interlayer(), noReflection())
+                          .add(bulkOf(otherGlass()), noReflection())
+                          .add(interlayer(), noReflection())
+                          .add(bulkOf(originalGlass()), uncoatedInterface(originalGlass()))};
+    expectSameProduct(result.value, expected.externalProperties(), Tolerance);
 }
 
 TEST(CompoundProductLaminate, AddReturnsANewLaminateAndKeepsTheOriginal)
@@ -397,16 +386,17 @@ TEST(CompoundProductLaminate, AddReturnsANewLaminateAndKeepsTheOriginal)
     const auto extended{single.add(interlayerLayer(), otherPane())};
 
     expectSameProduct(single.spectra().value, uncoatedPane(originalGlass()), Tolerance);
-    EXPECT_GT(std::abs(single.spectra().value.transmittance[0].value()
-                       - extended.spectra().value.transmittance[0].value()),
+    EXPECT_GT(std::abs(single.spectra().value.transmittanceFront[0].value()
+                       - extended.spectra().value.transmittanceFront[0].value()),
               1e-4);
 }
 
 TEST(CompoundProductLaminate, CoatingsTowardsTheAirOnBothOuterSurfaces)
 {
     const CoatedPane backPane{
-      .measured = construct({.interfaces = {uncoatedInterface(otherGlass()), otherCoating()},
-                             .bulks = {bulkOf(otherGlass())}}),
+      .measured = Assembly(uncoatedInterface(otherGlass()))
+                    .add(bulkOf(otherGlass()), otherCoating())
+                    .externalProperties(),
       .substrate = uncoatedPane(otherGlass()),
       .coatedSide = Side::Back,
       .thickness = OtherGlassThickness};
@@ -414,8 +404,8 @@ TEST(CompoundProductLaminate, CoatingsTowardsTheAirOnBothOuterSurfaces)
     const auto result{
       Laminate(coatingSource(Side::Front)).add(interlayerLayer(), backPane).spectra()};
 
-    const auto expected{twoPaneStack(coating(), noReflection(), noReflection(), otherCoating())};
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    const auto expected{twoPanes(coating(), noReflection(), noReflection(), otherCoating())};
+    expectSameProduct(result.value, expected, Tolerance);
 }
 
 TEST(CompoundProductLaminate, EmbeddedCoatingOnThePaneInFront)
@@ -424,50 +414,57 @@ TEST(CompoundProductLaminate, EmbeddedCoatingOnThePaneInFront)
       Laminate(originalPane())
         .add(interlayerLayer(),
              otherPane(),
-             {.onPaneInFront = referenceLaminate(otherCoating()), .onPaneBehind = std::nullopt})
+             {.onPaneInFront = embeddedCoating(referenceLaminate(otherCoating())),
+              .onPaneBehind = std::nullopt})
         .spectra()};
 
-    const auto expected{twoPaneStack(uncoatedInterface(originalGlass()),
+    const auto expected{twoPanes(uncoatedInterface(originalGlass()),
                                      otherCoating(),
                                      noReflection(),
                                      uncoatedInterface(otherGlass()))};
     EXPECT_TRUE(result.diagnostics.empty());
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value, expected, Tolerance);
 }
 
 TEST(CompoundProductLaminate, EmbeddedCoatingOnThePaneBehind)
 {
     // The glass of the back pane is the other glass. The coating comes from a reference
-    // laminate whose coated pane is made of the original glass.
+    // laminate whose coated pane is made of the original glass. The coating is flipped, so that
+    // its side towards the glass stays towards the glass.
     const auto result{
       Laminate(originalPane())
         .add(interlayerLayer(),
              otherPane(),
-             {.onPaneInFront = std::nullopt, .onPaneBehind = referenceLaminate(otherCoating())})
+             {.onPaneInFront = std::nullopt,
+              .onPaneBehind = embeddedCoating(referenceLaminate(otherCoating())).flipped()})
         .spectra()};
 
-    const auto expected{twoPaneStack(uncoatedInterface(originalGlass()),
+    const auto expected{twoPanes(uncoatedInterface(originalGlass()),
                                      noReflection(),
-                                     flipped(otherCoating()),
+                                     otherCoating().flipped(),
                                      uncoatedInterface(otherGlass()))};
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value, expected, Tolerance);
 }
 
 TEST(CompoundProductLaminate, ReferenceLaminateMeasuredWithCoatedPaneAtBack)
 {
+    // The reference laminate was measured from its other side. It is flipped before the
+    // deconstruction, so that its coated pane is in front.
+    const auto measuredFromTheBack{referenceLaminate(otherCoating()).flipped()};
+
     const auto result{
       Laminate(originalPane())
         .add(interlayerLayer(),
              otherPane(),
-             {.onPaneInFront = referenceLaminateWithCoatedPaneAtBack(otherCoating()),
+             {.onPaneInFront = embeddedCoating(measuredFromTheBack.flipped()),
               .onPaneBehind = std::nullopt})
         .spectra()};
 
-    const auto expected{twoPaneStack(uncoatedInterface(originalGlass()),
+    const auto expected{twoPanes(uncoatedInterface(originalGlass()),
                                      otherCoating(),
                                      noReflection(),
                                      uncoatedInterface(otherGlass()))};
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value, expected, Tolerance);
 }
 
 TEST(CompoundProductLaminate, PaneWithACoatingOnEachSide)
@@ -477,12 +474,13 @@ TEST(CompoundProductLaminate, PaneWithACoatingOnEachSide)
       Laminate(coatingSource(Side::Front))
         .add(interlayerLayer(),
              otherPane(),
-             {.onPaneInFront = referenceLaminate(otherCoating()), .onPaneBehind = std::nullopt})
+             {.onPaneInFront = embeddedCoating(referenceLaminate(otherCoating())),
+              .onPaneBehind = std::nullopt})
         .spectra()};
 
-    const auto expected{twoPaneStack(
+    const auto expected{twoPanes(
       coating(), otherCoating(), noReflection(), uncoatedInterface(otherGlass()))};
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value, expected, Tolerance);
 }
 
 TEST(CompoundProductLaminate, InterlayerAtNewThickness)
@@ -491,16 +489,14 @@ TEST(CompoundProductLaminate, InterlayerAtNewThickness)
 
     const auto result{Laminate(originalPane()).add(thick, otherPane()).spectra()};
 
-    const Stack expected{
-      .interfaces = {uncoatedInterface(originalGlass()),
-                     noReflection(),
-                     noReflection(),
-                     uncoatedInterface(otherGlass())},
-      .bulks = {bulkOf(originalGlass()),
-                withThickness(interlayer(), InterlayerThickness, 2.0 * InterlayerThickness),
-                bulkOf(otherGlass())}};
+    const auto thickInterlayer{
+      withThickness(interlayer(), InterlayerThickness, 2.0 * InterlayerThickness)};
+    const auto expected{Assembly(uncoatedInterface(originalGlass()))
+                          .add(bulkOf(originalGlass()), noReflection())
+                          .add(thickInterlayer, noReflection())
+                          .add(bulkOf(otherGlass()), uncoatedInterface(otherGlass()))};
     EXPECT_DOUBLE_EQ(thick.thickness, 2.0 * InterlayerThickness);
-    expectSameProduct(result.value, construct(expected), Tolerance);
+    expectSameProduct(result.value, expected.externalProperties(), Tolerance);
 }
 
 TEST(CompoundProductLaminate, CoatingMeasuredInTheAirCannotTouchAnInterlayer)
