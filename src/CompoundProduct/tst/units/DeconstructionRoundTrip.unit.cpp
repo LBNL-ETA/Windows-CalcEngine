@@ -86,9 +86,7 @@ TEST(CompoundProductRoundTrip, InterfaceInsideLaminateOfThreePanes)
       frontPart.add(middleGlass, coating()).add(interlayer(), uncoatedBackPane())};
 
     const auto result{whole.externalProperties().deconstructInterface(
-      {.externalProperties = frontPart.externalProperties(), .bulkToRemainingPart = middleGlass},
-      {.externalProperties = uncoatedBackPane().externalProperties(),
-       .bulkToRemainingPart = interlayer()})};
+      frontPart, middleGlass, interlayer(), uncoatedBackPane())};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, coating(), Tolerance);
@@ -102,9 +100,8 @@ TEST(CompoundProductRoundTrip, PartBehind)
     const auto remainingPart{Assembly(coating()).add(bulkOf(backGlass()), surfaceOf(backGlass()))};
     const auto whole{frontPart.add(bulkOf(frontGlass()), remainingPart)};
 
-    const auto result{whole.externalProperties().deconstructPartBehind(
-      {.externalProperties = frontPart.externalProperties(),
-       .bulkToRemainingPart = bulkOf(frontGlass())})};
+    const auto result{
+      whole.externalProperties().deconstructPartBehind(frontPart, bulkOf(frontGlass()))};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, remainingPart.externalProperties(), Tolerance);
@@ -120,9 +117,8 @@ TEST(CompoundProductRoundTrip, RemainingPartIsUsedInAnAssembly)
     const auto measuredLaminate{
       oldFrontSurface.add(bulkOf(frontGlass()), behindFrontGlass).externalProperties()};
 
-    const auto remaining{measuredLaminate.deconstructPartBehind(
-      {.externalProperties = oldFrontSurface.externalProperties(),
-       .bulkToRemainingPart = bulkOf(frontGlass())})};
+    const auto remaining{
+      measuredLaminate.deconstructPartBehind(oldFrontSurface, bulkOf(frontGlass()))};
     const auto newLaminate{Assembly(surfaceOf(backGlass()))
                              .add(bulkOf(backGlass()), remaining.value)
                              .externalProperties()};
@@ -141,9 +137,8 @@ TEST(CompoundProductRoundTrip, PartInFrontOf)
       Assembly(surfaceOf(frontGlass())).add(bulkOf(frontGlass()), coating())};
     const auto whole{remainingPart.add(bulkOf(backGlass()), backPart)};
 
-    const auto result{whole.externalProperties().deconstructPartInFrontOf(
-      {.externalProperties = backPart.externalProperties(),
-       .bulkToRemainingPart = bulkOf(backGlass())})};
+    const auto result{
+      whole.externalProperties().deconstructPartInFrontOf(bulkOf(backGlass()), backPart)};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value, remainingPart.externalProperties(), Tolerance);
@@ -155,11 +150,24 @@ TEST(CompoundProductRoundTrip, BulkBetweenCoatedPanes)
 {
     const auto whole{coatedFrontPane().add(interlayer(), uncoatedBackPane())};
 
-    const auto result{whole.externalProperties().deconstructBulk(
-      coatedFrontPane().externalProperties(), uncoatedBackPane().externalProperties())};
+    const auto result{
+      whole.externalProperties().deconstructBulk(coatedFrontPane(), uncoatedBackPane())};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value.internalTransmittance, interlayer().internalTransmittance, Tolerance);
+}
+
+// A known part that is known only as a whole is given as an Assembly of its external properties.
+TEST(CompoundProductRoundTrip, KnownPartGivenByItsExternalProperties)
+{
+    const auto whole{coatedFrontPane().add(interlayer(), uncoatedBackPane())};
+    const Assembly frontPartAsAWhole{coatedFrontPane().externalProperties()};
+
+    const auto result{
+      whole.externalProperties().deconstructPartBehind(frontPartAsAWhole, interlayer())};
+
+    EXPECT_TRUE(result.diagnostics.empty());
+    expectNear(result.value, uncoatedBackPane().externalProperties(), Tolerance);
 }
 
 TEST(CompoundProductRoundTrip, Monolithic)

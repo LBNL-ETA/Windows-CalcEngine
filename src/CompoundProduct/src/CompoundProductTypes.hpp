@@ -78,7 +78,7 @@ namespace CompoundProduct
     };
 
     struct Monolithic;
-    struct KnownPart;
+    class Assembly;
 
     //! \brief Properties of a whole product, or of a part of it, at normal incidence.
     //!
@@ -103,6 +103,12 @@ namespace CompoundProduct
 
         ///////////////////////////////////////////////////////////////////////////
         /// General form. The unknown may be at any place of the product.
+        ///
+        /// A known part is given as an Assembly. It can be one interface, several known
+        /// components, or a part that is known only by its external properties. It is given as
+        /// it is seen in the product: its front is towards the front of the product. The
+        /// arguments are in the order in which the parts and the bulk layers lie in the product,
+        /// from the front to the back.
         ///////////////////////////////////////////////////////////////////////////
 
         //! \brief External properties of the part behind a known front part.
@@ -110,22 +116,29 @@ namespace CompoundProduct
         //! The known front part and the bulk layer behind it are removed from the product. The
         //! part that remains is returned as a whole. It may be one interface or several layers.
         [[nodiscard]] WithDiagnostics<ExternalProperties>
-          deconstructPartBehind(const KnownPart & frontPart,
+          deconstructPartBehind(const Assembly & frontPart,
+                                const Bulk & bulk,
                                 const Tolerances & tolerances = {}) const;
 
         //! \brief External properties of the part in front of a known back part.
         //!
-        //! The known back part and the bulk layer in front of it are removed from the product.
+        //! The bulk layer in front of the known back part and that part are removed from the
+        //! product.
         [[nodiscard]] WithDiagnostics<ExternalProperties>
-          deconstructPartInFrontOf(const KnownPart & backPart,
+          deconstructPartInFrontOf(const Bulk & bulk,
+                                   const Assembly & backPart,
                                    const Tolerances & tolerances = {}) const;
 
         //! \brief Internal properties of an interface that has a known part on each side.
         //!
-        //! Both known parts are removed. The interface is the part that remains.
+        //! frontBulk is the bulk layer between the front part and the interface. backBulk is the
+        //! bulk layer between the interface and the back part. Both known parts are removed.
+        //! The interface is the part that remains.
         [[nodiscard]] WithDiagnostics<Interface>
-          deconstructInterface(const KnownPart & frontPart,
-                               const KnownPart & backPart,
+          deconstructInterface(const Assembly & frontPart,
+                               const Bulk & frontBulk,
+                               const Bulk & backBulk,
+                               const Assembly & backPart,
                                const Tolerances & tolerances = {}) const;
 
         //! \brief Internal transmittance of a bulk layer that has a known part on each side.
@@ -133,13 +146,14 @@ namespace CompoundProduct
         //! Only the two transmittances of the product are used. Each of them gives one equation
         //! for the same unknown, and the mean of the two equations is solved.
         [[nodiscard]] WithDiagnostics<Bulk>
-          deconstructBulk(const ExternalProperties & frontPart,
-                          const ExternalProperties & backPart,
+          deconstructBulk(const Assembly & frontPart,
+                          const Assembly & backPart,
                           const Tolerances & tolerances = {}) const;
 
         //! \brief Internal properties of an uncoated pane.
         //!
-        //! This is the start of every calculation. It needs no other known component.
+        //! This is the only deconstruction that needs no known part. A calculation that starts
+        //! from measurements alone starts with it.
         [[nodiscard]] WithDiagnostics<Monolithic>
           deconstructMonolithic(ReflectanceChoice choice = ReflectanceChoice::Average,
                                 const Tolerances & tolerances = {}) const;
@@ -206,17 +220,5 @@ namespace CompoundProduct
     {
         FenestrationCommon::CSeries surfaceReflectance;
         FenestrationCommon::CSeries internalTransmittance;
-    };
-
-    //! \brief Known section of a product that a deconstruction removes from it.
-    //!
-    //! A part begins and ends with an interface. It can be one interface or any sequence of layers.
-    //! Its external properties are given as they are seen in the product: front of the part is
-    //! towards the front of the product.
-    struct KnownPart
-    {
-        ExternalProperties externalProperties;
-        //! Bulk layer between this part and the part that remains after the removal.
-        Bulk bulkToRemainingPart;
     };
 }   // namespace CompoundProduct

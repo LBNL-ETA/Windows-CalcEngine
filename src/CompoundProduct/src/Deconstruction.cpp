@@ -600,6 +600,14 @@ namespace CompoundProduct
             return result;
         }
 
+        //! Known part of a product together with the bulk layer between it and the part that
+        //! remains when it is removed.
+        struct KnownPart
+        {
+            ExternalProperties externalProperties;
+            Bulk bulkToRemainingPart;
+        };
+
         [[nodiscard]] std::vector<const CSeries *> seriesOf(const KnownPart & known)
         {
             auto result{seriesOf(known.externalProperties)};
@@ -669,40 +677,54 @@ namespace CompoundProduct
     }
 
     WithDiagnostics<Interface>
-      ExternalProperties::deconstructInterface(const KnownPart & frontPart,
-                                               const KnownPart & backPart,
+      ExternalProperties::deconstructInterface(const Assembly & frontPart,
+                                               const Bulk & frontBulk,
+                                               const Bulk & backBulk,
+                                               const Assembly & backPart,
                                                const Tolerances & tolerances) const
     {
-        return interfaceNextTo(*this, &frontPart, &backPart, tolerances);
+        const KnownPart front{.externalProperties = frontPart.externalProperties(),
+                              .bulkToRemainingPart = frontBulk};
+        const KnownPart back{.externalProperties = backPart.externalProperties(),
+                             .bulkToRemainingPart = backBulk};
+        return interfaceNextTo(*this, &front, &back, tolerances);
     }
 
     WithDiagnostics<ExternalProperties>
-      ExternalProperties::deconstructPartBehind(const KnownPart & frontPart,
+      ExternalProperties::deconstructPartBehind(const Assembly & frontPart,
+                                                const Bulk & bulk,
                                                 const Tolerances & tolerances) const
     {
-        return asPart(interfaceNextTo(*this, &frontPart, nullptr, tolerances));
+        const KnownPart front{.externalProperties = frontPart.externalProperties(),
+                              .bulkToRemainingPart = bulk};
+        return asPart(interfaceNextTo(*this, &front, nullptr, tolerances));
     }
 
     WithDiagnostics<ExternalProperties>
-      ExternalProperties::deconstructPartInFrontOf(const KnownPart & backPart,
+      ExternalProperties::deconstructPartInFrontOf(const Bulk & bulk,
+                                                   const Assembly & backPart,
                                                    const Tolerances & tolerances) const
     {
-        return asPart(interfaceNextTo(*this, nullptr, &backPart, tolerances));
+        const KnownPart back{.externalProperties = backPart.externalProperties(),
+                             .bulkToRemainingPart = bulk};
+        return asPart(interfaceNextTo(*this, nullptr, &back, tolerances));
     }
 
-    WithDiagnostics<Bulk> ExternalProperties::deconstructBulk(const ExternalProperties & frontPart,
-                                                              const ExternalProperties & backPart,
+    WithDiagnostics<Bulk> ExternalProperties::deconstructBulk(const Assembly & frontPart,
+                                                              const Assembly & backPart,
                                                               const Tolerances & tolerances) const
     {
+        const auto front{frontPart.externalProperties()};
+        const auto back{backPart.externalProperties()};
         auto allSeries{seriesOf(*this)};
-        std::ranges::copy(seriesOf(frontPart), std::back_inserter(allSeries));
-        std::ranges::copy(seriesOf(backPart), std::back_inserter(allSeries));
+        std::ranges::copy(seriesOf(front), std::back_inserter(allSeries));
+        std::ranges::copy(seriesOf(back), std::back_inserter(allSeries));
         Helper::requireSameWavelengths(allSeries);
         const auto wavelengths{transmittanceFront.getXArray()};
         const auto points{evaluate<double>(wavelengths.size(), [&](const size_t index) {
             return deconstructBulkAt(measuredAt(*this, index),
-                                     measuredAt(frontPart, index),
-                                     measuredAt(backPart, index),
+                                     measuredAt(front, index),
+                                     measuredAt(back, index),
                                      tolerances);
         })};
         return {.value = {.internalTransmittance = Helper::makeSeries(
