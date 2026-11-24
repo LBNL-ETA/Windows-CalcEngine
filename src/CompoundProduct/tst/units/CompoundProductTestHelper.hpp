@@ -53,20 +53,20 @@ namespace CompoundProductTest
                            const CompoundProduct::Interface & expected,
                            const double tolerance)
     {
-        expectNear(actual.transmittanceFront, expected.transmittanceFront, tolerance);
-        expectNear(actual.transmittanceBack, expected.transmittanceBack, tolerance);
-        expectNear(actual.reflectanceFront, expected.reflectanceFront, tolerance);
-        expectNear(actual.reflectanceBack, expected.reflectanceBack, tolerance);
+        expectNear(actual.tf, expected.tf, tolerance);
+        expectNear(actual.tb, expected.tb, tolerance);
+        expectNear(actual.rf, expected.rf, tolerance);
+        expectNear(actual.rb, expected.rb, tolerance);
     }
 
     inline void expectNear(const CompoundProduct::ExternalProperties & actual,
                            const CompoundProduct::ExternalProperties & expected,
                            const double tolerance)
     {
-        expectNear(actual.transmittanceFront, expected.transmittanceFront, tolerance);
-        expectNear(actual.transmittanceBack, expected.transmittanceBack, tolerance);
-        expectNear(actual.reflectanceFront, expected.reflectanceFront, tolerance);
-        expectNear(actual.reflectanceBack, expected.reflectanceBack, tolerance);
+        expectNear(actual.Tf, expected.Tf, tolerance);
+        expectNear(actual.Tb, expected.Tb, tolerance);
+        expectNear(actual.Rf, expected.Rf, tolerance);
+        expectNear(actual.Rb, expected.Rb, tolerance);
     }
 
     [[nodiscard]] inline bool

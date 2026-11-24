@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
+#include <numeric>
 #include <ranges>
 #include <stdexcept>
 
@@ -16,19 +17,19 @@ namespace CompoundProduct
         //! External properties of the part of the assembly that has been processed so far.
         struct PointProperties
         {
-            double transmittanceFront{0};
-            double transmittanceBack{0};
-            double reflectanceFront{0};
-            double reflectanceBack{0};
+            double Tf{0};
+            double Tb{0};
+            double Rf{0};
+            double Rb{0};
         };
 
         [[nodiscard]] PointProperties interfaceAt(const Interface & layerInterface,
                                                   const size_t index)
         {
-            return {.transmittanceFront = layerInterface.transmittanceFront[index].value(),
-                    .transmittanceBack = layerInterface.transmittanceBack[index].value(),
-                    .reflectanceFront = layerInterface.reflectanceFront[index].value(),
-                    .reflectanceBack = layerInterface.reflectanceBack[index].value()};
+            return {.Tf = layerInterface.tf[index].value(),
+                    .Tb = layerInterface.tb[index].value(),
+                    .Rf = layerInterface.rf[index].value(),
+                    .Rb = layerInterface.rb[index].value()};
         }
 
         //! Adds one bulk layer and the part "back" behind it to the part "front". The result is
@@ -39,99 +40,95 @@ namespace CompoundProduct
         {
             const auto tauSquared{internalTransmittance * internalTransmittance};
             const auto denominator{
-              Helper::nonZero(1.0 - front.reflectanceBack * back.reflectanceFront * tauSquared)};
-            const auto frontRoundTrip{front.transmittanceFront * front.transmittanceBack};
-            const auto backRoundTrip{back.transmittanceFront * back.transmittanceBack};
-            return {.transmittanceFront = front.transmittanceFront * back.transmittanceFront
+              Helper::nonZero(1.0 - front.Rb * back.Rf * tauSquared)};
+            const auto frontRoundTrip{front.Tf * front.Tb};
+            const auto backRoundTrip{back.Tf * back.Tb};
+            return {.Tf = front.Tf * back.Tf
                                           * internalTransmittance / denominator,
-                    .transmittanceBack = front.transmittanceBack * back.transmittanceBack
+                    .Tb = front.Tb * back.Tb
                                          * internalTransmittance / denominator,
-                    .reflectanceFront = front.reflectanceFront
-                                        + frontRoundTrip * back.reflectanceFront * tauSquared
+                    .Rf = front.Rf
+                                        + frontRoundTrip * back.Rf * tauSquared
                                             / denominator,
-                    .reflectanceBack = back.reflectanceBack
-                                       + backRoundTrip * front.reflectanceBack * tauSquared
+                    .Rb = back.Rb
+                                       + backRoundTrip * front.Rb * tauSquared
                                            / denominator};
         }
 
-        //! Interfaces and bulk layers of an assembly, from the front to the back. The number of
-        //! interfaces is the number of bulk layers plus one. Assembly keeps this rule.
-        struct Components
-        {
-            const std::vector<Interface> & interfaces;
-            const std::vector<Bulk> & bulks;
-        };
+        using Segments = std::vector<Assembly::Segment>;
 
-        [[nodiscard]] PointProperties constructAt(const Components & components, const size_t index)
+        [[nodiscard]] PointProperties
+          constructAt(const Interface & front, const Segments & segments, const size_t index)
         {
-            auto result{interfaceAt(components.interfaces.front(), index)};
-            for(const auto layer : std::views::iota(size_t{0}, components.bulks.size()))
-            {
-                result = add(result,
-                             components.bulks[layer].internalTransmittance[index].value(),
-                             interfaceAt(components.interfaces[layer + 1], index));
-            }
-            return result;
-        }
-
-        [[nodiscard]] std::vector<const CSeries *> allSeries(const Components & components)
-        {
-            std::vector<const CSeries *> result;
-            for(const auto & layerInterface : components.interfaces)
-            {
-                result.push_back(&layerInterface.transmittanceFront);
-                result.push_back(&layerInterface.transmittanceBack);
-                result.push_back(&layerInterface.reflectanceFront);
-                result.push_back(&layerInterface.reflectanceBack);
-            }
-            for(const auto & bulk : components.bulks)
-            {
-                result.push_back(&bulk.internalTransmittance);
-            }
-            return result;
-        }
-
-        [[nodiscard]] std::vector<PointProperties> constructAllPoints(const Components & components)
-        {
-            const auto size{components.interfaces.front().transmittanceFront.size()};
-            std::vector<PointProperties> points(size);
-            std::ranges::transform(
-              std::views::iota(size_t{0}, size), points.begin(), [&](const size_t index) {
-                  return constructAt(components, index);
+            return std::accumulate(
+              segments.begin(),
+              segments.end(),
+              interfaceAt(front, index),
+              [&](const PointProperties & soFar, const Assembly::Segment & segment) {
+                  return add(soFar,
+                             segment.bulk.tau[index].value(),
+                             interfaceAt(segment.backInterface, index));
               });
-            return points;
         }
 
-        [[nodiscard]] ExternalProperties construct(const Components & components)
+        [[nodiscard]] std::vector<const CSeries *> seriesOf(const Interface & layerInterface)
         {
-            Helper::requireSameWavelengths(allSeries(components));
-            const auto wavelengths{components.interfaces.front().transmittanceFront.getXArray()};
-            const auto points{constructAllPoints(components)};
+            return {
+              &layerInterface.tf, &layerInterface.tb, &layerInterface.rf, &layerInterface.rb};
+        }
+
+        [[nodiscard]] std::vector<const CSeries *> allSeries(const Interface & front,
+                                                             const Segments & segments)
+        {
+            auto result{seriesOf(front)};
+            for(const auto & segment : segments)
+            {
+                result.push_back(&segment.bulk.tau);
+                std::ranges::copy(seriesOf(segment.backInterface), std::back_inserter(result));
+            }
+            return result;
+        }
+
+        [[nodiscard]] ExternalProperties construct(const Interface & front,
+                                                   const Segments & segments)
+        {
+            Helper::requireSameWavelengths(allSeries(front, segments));
+            const auto wavelengths{front.tf.getXArray()};
+            std::vector<PointProperties> points(wavelengths.size());
+            std::ranges::transform(std::views::iota(size_t{0}, wavelengths.size()),
+                                   points.begin(),
+                                   [&](const size_t index) {
+                                       return constructAt(front, segments, index);
+                                   });
             const auto series{[&](double PointProperties::* member) {
                 return Helper::makeSeries(
                   wavelengths, [&](const size_t index) { return points[index].*member; });
             }};
-            return {.transmittanceFront = series(&PointProperties::transmittanceFront),
-                    .transmittanceBack = series(&PointProperties::transmittanceBack),
-                    .reflectanceFront = series(&PointProperties::reflectanceFront),
-                    .reflectanceBack = series(&PointProperties::reflectanceBack)};
+            return {.Tf = series(&PointProperties::Tf),
+                    .Tb = series(&PointProperties::Tb),
+                    .Rf = series(&PointProperties::Rf),
+                    .Rb = series(&PointProperties::Rb)};
         }
 
         //! A part that is known only as a whole acts in an assembly as one interface with the
         //! external properties of the part.
         [[nodiscard]] Interface asInterface(const ExternalProperties & part)
         {
-            return {.transmittanceFront = part.transmittanceFront,
-                    .transmittanceBack = part.transmittanceBack,
-                    .reflectanceFront = part.reflectanceFront,
-                    .reflectanceBack = part.reflectanceBack};
+            return {.tf = part.Tf, .tb = part.Tb, .rf = part.Rf, .rb = part.Rb};
+        }
+
+        //! The interface in front of the bulk layer of the segment with the given index.
+        [[nodiscard]] const Interface &
+          interfaceInFrontOf(const Interface & front, const Segments & segments, const size_t index)
+        {
+            return index == 0 ? front : segments[index - 1].backInterface;
         }
     }   // namespace
 
-    Assembly::Assembly(const Interface & frontPart) : m_Interfaces{frontPart}
+    Assembly::Assembly(const Interface & frontPart) : m_Front{frontPart}
     {}
 
-    Assembly::Assembly(const ExternalProperties & frontPart) : m_Interfaces{asInterface(frontPart)}
+    Assembly::Assembly(const ExternalProperties & frontPart) : m_Front{asInterface(frontPart)}
     {}
 
     Assembly Assembly::add(const Bulk & bulk, const Interface & part) const
@@ -147,27 +144,39 @@ namespace CompoundProduct
     Assembly Assembly::add(const Bulk & bulk, const Assembly & part) const
     {
         auto result{*this};
-        result.m_Bulks.push_back(bulk);
-        std::ranges::copy(part.m_Interfaces, std::back_inserter(result.m_Interfaces));
-        std::ranges::copy(part.m_Bulks, std::back_inserter(result.m_Bulks));
+        result.m_Segments.push_back({.bulk = bulk, .backInterface = part.m_Front});
+        std::ranges::copy(part.m_Segments, std::back_inserter(result.m_Segments));
         return result;
     }
 
+    //! The last interface becomes the first one. Every bulk layer is then followed by the
+    //! interface that was in front of it.
     Assembly Assembly::flipped() const
     {
-        auto result{*this};
-        std::ranges::reverse(result.m_Bulks);
-        std::ranges::transform(m_Interfaces | std::views::reverse,
-                               result.m_Interfaces.begin(),
-                               [](const Interface & layerInterface) {
-                                   return layerInterface.flipped();
-                               });
+        Assembly result{m_Segments.empty() ? m_Front.flipped()
+                                           : m_Segments.back().backInterface.flipped()};
+        for(const auto index : std::views::iota(size_t{0}, m_Segments.size()) | std::views::reverse)
+        {
+            result.m_Segments.push_back(
+              {.bulk = m_Segments[index].bulk,
+               .backInterface = interfaceInFrontOf(m_Front, m_Segments, index).flipped()});
+        }
         return result;
+    }
+
+    const Interface & Assembly::front() const
+    {
+        return m_Front;
+    }
+
+    const std::vector<Assembly::Segment> & Assembly::segments() const
+    {
+        return m_Segments;
     }
 
     ExternalProperties Assembly::externalProperties() const
     {
-        return construct(Components{.interfaces = m_Interfaces, .bulks = m_Bulks});
+        return construct(m_Front, m_Segments);
     }
 
     Interface nonReflectingInterface(const std::vector<double> & wavelengths)
@@ -175,26 +184,20 @@ namespace CompoundProduct
         const auto constant{[&](const double value) {
             return Helper::makeSeries(wavelengths, [=](const size_t) { return value; });
         }};
-        return {.transmittanceFront = constant(1.0),
-                .transmittanceBack = constant(1.0),
-                .reflectanceFront = constant(0.0),
-                .reflectanceBack = constant(0.0)};
+        return {.tf = constant(1.0),
+                .tb = constant(1.0),
+                .rf = constant(0.0),
+                .rb = constant(0.0)};
     }
 
     Interface Interface::flipped() const
     {
-        return {.transmittanceFront = transmittanceBack,
-                .transmittanceBack = transmittanceFront,
-                .reflectanceFront = reflectanceBack,
-                .reflectanceBack = reflectanceFront};
+        return {.tf = tb, .tb = tf, .rf = rb, .rb = rf};
     }
 
     ExternalProperties ExternalProperties::flipped() const
     {
-        return {.transmittanceFront = transmittanceBack,
-                .transmittanceBack = transmittanceFront,
-                .reflectanceFront = reflectanceBack,
-                .reflectanceBack = reflectanceFront};
+        return {.Tf = Tb, .Tb = Tf, .Rf = Rb, .Rb = Rf};
     }
 
     Bulk withThickness(const Bulk & bulk, const double oldThickness, const double newThickness)
@@ -204,8 +207,8 @@ namespace CompoundProduct
             throw std::runtime_error("Compound product: thickness must be positive.");
         }
         const auto exponent{newThickness / oldThickness};
-        const auto & tau{bulk.internalTransmittance};
-        return {.internalTransmittance =
+        const auto & tau{bulk.tau};
+        return {.tau =
                   Helper::makeSeries(tau.getXArray(), [&](const size_t index) {
                       return std::pow(std::max(tau[index].value(), 0.0), exponent);
                   })};
@@ -216,7 +219,7 @@ namespace CompoundProduct
         std::vector<double> result;
         for(const auto & product : products)
         {
-            std::ranges::copy(product.transmittanceFront.getXArray(),
+            std::ranges::copy(product.Tf.getXArray(),
                               std::back_inserter(result));
         }
         std::ranges::sort(result);

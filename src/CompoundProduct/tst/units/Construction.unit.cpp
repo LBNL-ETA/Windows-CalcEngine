@@ -15,20 +15,20 @@ namespace
     Monolithic glass()
     {
         return {.surfaceReflectance = series(wavelengths, {0.04, 0.05}),
-                .internalTransmittance = series(wavelengths, {0.9, 0.6})};
+                .tau = series(wavelengths, {0.9, 0.6})};
     }
 
     Interface coating()
     {
-        return {.transmittanceFront = series(wavelengths, {0.5, 0.6}),
-                .transmittanceBack = series(wavelengths, {0.45, 0.55}),
-                .reflectanceFront = series(wavelengths, {0.1, 0.2}),
-                .reflectanceBack = series(wavelengths, {0.3, 0.25})};
+        return {.tf = series(wavelengths, {0.5, 0.6}),
+                .tb = series(wavelengths, {0.45, 0.55}),
+                .rf = series(wavelengths, {0.1, 0.2}),
+                .rb = series(wavelengths, {0.3, 0.25})};
     }
 
     Bulk glassBulk()
     {
-        return {.internalTransmittance = glass().internalTransmittance};
+        return {.tau = glass().tau};
     }
 
     Assembly uncoatedPane()
@@ -55,10 +55,10 @@ TEST(CompoundProductConstruction, MonolithicClosedForm)
     }};
 
     expectNear(
-      result.transmittanceFront, {transmittance(0.04, 0.9), transmittance(0.05, 0.6)}, 1e-12);
-    expectNear(result.transmittanceBack, result.transmittanceFront, 1e-12);
-    expectNear(result.reflectanceFront, {reflectance(0.04, 0.9), reflectance(0.05, 0.6)}, 1e-12);
-    expectNear(result.reflectanceBack, result.reflectanceFront, 1e-12);
+      result.Tf, {transmittance(0.04, 0.9), transmittance(0.05, 0.6)}, 1e-12);
+    expectNear(result.Tb, result.Tf, 1e-12);
+    expectNear(result.Rf, {reflectance(0.04, 0.9), reflectance(0.05, 0.6)}, 1e-12);
+    expectNear(result.Rb, result.Rf, 1e-12);
 }
 
 TEST(CompoundProductConstruction, FlippedAssemblyIsTheProductSeenFromTheBack)
@@ -67,8 +67,8 @@ TEST(CompoundProductConstruction, FlippedAssemblyIsTheProductSeenFromTheBack)
     const auto reversed{coatedPane().flipped().externalProperties()};
 
     expectNear(reversed, original.flipped(), 1e-12);
-    expectNear(reversed.transmittanceFront, original.transmittanceBack, 1e-12);
-    expectNear(reversed.reflectanceFront, original.reflectanceBack, 1e-12);
+    expectNear(reversed.Tf, original.Tb, 1e-12);
+    expectNear(reversed.Rf, original.Rb, 1e-12);
 }
 
 TEST(CompoundProductConstruction, FlippedDoesNotChangeTheAssembly)
@@ -89,30 +89,30 @@ TEST(CompoundProductConstruction, FlippedDoesNotChangeTheAssembly)
 TEST(CompoundProductConstruction, JoinOfTwoInterfacesWithFourProperties)
 {
     const std::vector<double> single{0.5};
-    const Interface front{.transmittanceFront = series(single, {0.7}),
-                          .transmittanceBack = series(single, {0.6}),
-                          .reflectanceFront = series(single, {0.1}),
-                          .reflectanceBack = series(single, {0.2})};
-    const Interface back{.transmittanceFront = series(single, {0.5}),
-                         .transmittanceBack = series(single, {0.4}),
-                         .reflectanceFront = series(single, {0.3}),
-                         .reflectanceBack = series(single, {0.25})};
-    const Bulk between{.internalTransmittance = series(single, {0.9})};
+    const Interface front{.tf = series(single, {0.7}),
+                          .tb = series(single, {0.6}),
+                          .rf = series(single, {0.1}),
+                          .rb = series(single, {0.2})};
+    const Interface back{.tf = series(single, {0.5}),
+                         .tb = series(single, {0.4}),
+                         .rf = series(single, {0.3}),
+                         .rb = series(single, {0.25})};
+    const Bulk between{.tau = series(single, {0.9})};
 
     const auto result{Assembly(front).add(between, back).externalProperties()};
 
     const auto denominator{1 - 0.2 * 0.3 * 0.81};
-    expectNear(result.transmittanceFront, {0.7 * 0.5 * 0.9 / denominator}, 1e-12);
-    expectNear(result.transmittanceBack, {0.6 * 0.4 * 0.9 / denominator}, 1e-12);
-    expectNear(result.reflectanceFront, {0.1 + 0.7 * 0.6 * 0.3 * 0.81 / denominator}, 1e-12);
-    expectNear(result.reflectanceBack, {0.25 + 0.5 * 0.4 * 0.2 * 0.81 / denominator}, 1e-12);
+    expectNear(result.Tf, {0.7 * 0.5 * 0.9 / denominator}, 1e-12);
+    expectNear(result.Tb, {0.6 * 0.4 * 0.9 / denominator}, 1e-12);
+    expectNear(result.Rf, {0.1 + 0.7 * 0.6 * 0.3 * 0.81 / denominator}, 1e-12);
+    expectNear(result.Rb, {0.25 + 0.5 * 0.4 * 0.2 * 0.81 / denominator}, 1e-12);
 }
 
 // A part that is known only by its external properties gives the same product as the same part
 // given by its components.
 TEST(CompoundProductConstruction, AssemblyAcceptsPartsKnownAsAWhole)
 {
-    const Bulk between{.internalTransmittance = series(wavelengths, {0.97, 0.7})};
+    const Bulk between{.tau = series(wavelengths, {0.97, 0.7})};
     const auto fromComponents{uncoatedPane().add(between, coatedPane()).externalProperties()};
 
     const auto fromWholeParts{Assembly(uncoatedPane().externalProperties())
@@ -125,7 +125,7 @@ TEST(CompoundProductConstruction, AssemblyAcceptsPartsKnownAsAWhole)
 // An assembly that is added as a part gives the same product as its components added one by one.
 TEST(CompoundProductConstruction, AssemblyAcceptsAnAssemblyAsPart)
 {
-    const Bulk between{.internalTransmittance = series(wavelengths, {0.97, 0.7})};
+    const Bulk between{.tau = series(wavelengths, {0.97, 0.7})};
 
     const auto result{coatedPane().add(between, uncoatedPane()).externalProperties()};
 
@@ -135,6 +135,54 @@ TEST(CompoundProductConstruction, AssemblyAcceptsAnAssemblyAsPart)
                           .add(glassBulk(), uncoatedInterface(glass()))
                           .externalProperties()};
     expectNear(result, expected, 1e-12);
+}
+
+// The components of an assembly are read back in the order in which they lie in the product.
+TEST(CompoundProductConstruction, AssemblyShowsItsComponents)
+{
+    const auto pane{coatedPane()};
+
+    expectNear(pane.front(), uncoatedInterface(glass()), 1e-12);
+    ASSERT_EQ(pane.segments().size(), 1U);
+    expectNear(pane.segments()[0].bulk.tau, glassBulk().tau, 1e-12);
+    expectNear(pane.segments()[0].backInterface, coating(), 1e-12);
+}
+
+// The flipped pane starts with the coating seen from its other side.
+TEST(CompoundProductConstruction, FlippedAssemblyShowsItsComponentsInReverseOrder)
+{
+    const auto flippedPane{coatedPane().flipped()};
+
+    expectNear(flippedPane.front(), coating().flipped(), 1e-12);
+    ASSERT_EQ(flippedPane.segments().size(), 1U);
+    expectNear(flippedPane.segments()[0].bulk.tau, glassBulk().tau, 1e-12);
+    expectNear(flippedPane.segments()[0].backInterface, uncoatedInterface(glass()), 1e-12);
+}
+
+// Nothing inside a part that is known only as a whole is known. It is one interface with the
+// external properties of the part, and it has no segment.
+TEST(CompoundProductConstruction, PartKnownAsAWholeIsOneInterface)
+{
+    const auto whole{coatedPane().externalProperties()};
+
+    const Assembly part{whole};
+
+    EXPECT_TRUE(part.segments().empty());
+    expectNear(part.front().tf, whole.Tf, 1e-12);
+    expectNear(part.front().tb, whole.Tb, 1e-12);
+    expectNear(part.front().rf, whole.Rf, 1e-12);
+    expectNear(part.front().rb, whole.Rb, 1e-12);
+}
+
+// An assembly that is added as a part keeps all its components.
+TEST(CompoundProductConstruction, AddedAssemblyKeepsItsComponents)
+{
+    const auto laminate{coatedPane().add(glassBulk(), uncoatedPane())};
+
+    ASSERT_EQ(laminate.segments().size(), 3U);
+    expectNear(laminate.segments()[0].backInterface, coating(), 1e-12);
+    expectNear(laminate.segments()[1].backInterface, uncoatedInterface(glass()), 1e-12);
+    expectNear(laminate.segments()[2].backInterface, uncoatedInterface(glass()), 1e-12);
 }
 
 TEST(CompoundProductConstruction, AssemblyAddDoesNotChangeTheAssembly)
@@ -163,10 +211,10 @@ TEST(CompoundProductConstruction, TwoIndexMatchedPanesEqualOneThickPane)
 
 TEST(CompoundProductConstruction, WithThickness)
 {
-    const Bulk pane{.internalTransmittance = glass().internalTransmittance};
+    const Bulk pane{.tau = glass().tau};
 
-    expectNear(withThickness(pane, 3.0, 6.0).internalTransmittance, {0.81, 0.36}, 1e-12);
-    expectNear(withThickness(pane, 3.0, 1.5).internalTransmittance,
+    expectNear(withThickness(pane, 3.0, 6.0).tau, {0.81, 0.36}, 1e-12);
+    expectNear(withThickness(pane, 3.0, 1.5).tau,
                {std::sqrt(0.9), std::sqrt(0.6)},
                1e-12);
     EXPECT_THROW((void)withThickness(pane, 0.0, 6.0), std::runtime_error);
@@ -174,7 +222,7 @@ TEST(CompoundProductConstruction, WithThickness)
 
 TEST(CompoundProductConstruction, PartsAtDifferentWavelengthsThrow)
 {
-    const Bulk otherWavelengths{.internalTransmittance = series({0.4, 0.7}, {0.9, 0.6})};
+    const Bulk otherWavelengths{.tau = series({0.4, 0.7}, {0.9, 0.6})};
     const auto surface{uncoatedInterface(glass())};
 
     const auto pane{Assembly(surface).add(otherWavelengths, surface)};
@@ -186,10 +234,10 @@ TEST(CompoundProductConstruction, CommonWavelengths)
 {
     const auto product{[](const std::vector<double> & lambdas) {
         const std::vector<double> zeros(lambdas.size(), 0.0);
-        return ExternalProperties{.transmittanceFront = series(lambdas, zeros),
-                                  .transmittanceBack = series(lambdas, zeros),
-                                  .reflectanceFront = series(lambdas, zeros),
-                                  .reflectanceBack = series(lambdas, zeros)};
+        return ExternalProperties{.Tf = series(lambdas, zeros),
+                                  .Tb = series(lambdas, zeros),
+                                  .Rf = series(lambdas, zeros),
+                                  .Rb = series(lambdas, zeros)};
     }};
 
     const auto result{commonWavelengths({product({0.3, 0.5, 0.7}), product({0.4, 0.5, 2.5})})};

@@ -23,10 +23,10 @@ namespace
                                const std::vector<double> & reflectanceFront,
                                const std::vector<double> & reflectanceBack)
     {
-        return {.transmittanceFront = series(wavelengths, transmittance),
-                .transmittanceBack = series(wavelengths, transmittance),
-                .reflectanceFront = series(wavelengths, reflectanceFront),
-                .reflectanceBack = series(wavelengths, reflectanceBack)};
+        return {.Tf = series(wavelengths, transmittance),
+                .Tb = series(wavelengths, transmittance),
+                .Rf = series(wavelengths, reflectanceFront),
+                .Rb = series(wavelengths, reflectanceBack)};
     }
 
     ExternalProperties substrate()
@@ -90,7 +90,7 @@ TEST(CompoundProductReference, Monolithic)
                 0.04300465712468566,
                 0.039903761949652325},
                Tolerance);
-    expectNear(result.internalTransmittance,
+    expectNear(result.tau,
                {0.22502547379278057,
                 0.5643323096637146,
                 0.9939982951865283,
@@ -105,7 +105,7 @@ TEST(CompoundProductReference, Coating)
     const auto result{coated().deconstructCoating(glass(), Side::Back, noTolerances())};
 
     EXPECT_TRUE(result.diagnostics.empty());
-    expectNear(result.value.transmittanceFront,
+    expectNear(result.value.tf,
                {0.004630088170958243,
                 0.01658043287962344,
                 0.35585801667909017,
@@ -113,7 +113,7 @@ TEST(CompoundProductReference, Coating)
                 0.005324501462207354,
                 0.0010561628636654079},
                Tolerance);
-    expectNear(result.value.reflectanceFront,
+    expectNear(result.value.rf,
                {4.851706169980125,
                 0.9788959726713669,
                 0.27935015832964183,
@@ -121,7 +121,7 @@ TEST(CompoundProductReference, Coating)
                 1.0526731237242772,
                 1.082893696756826},
                Tolerance);
-    expectNear(result.value.reflectanceBack,
+    expectNear(result.value.rb,
                {0.05999994214394423,
                 0.08399514823891294,
                 0.2242728377537766,
@@ -133,7 +133,7 @@ TEST(CompoundProductReference, Coating)
 
 TEST(CompoundProductReference, Interlayer)
 {
-    expectNear(interlayer().internalTransmittance,
+    expectNear(interlayer().tau,
                {0.06600837724246904,
                 0.014048964284214338,
                 0.7275305568309383,
@@ -150,7 +150,7 @@ TEST(CompoundProductReference, EmbeddedCoating)
 
     // Reflectance on the interlayer side is 17 and 63 at the first two wavelengths, where the
     // laminate is opaque. Comparison there is relative to the size of the number.
-    expectNear(result.value.transmittanceFront,
+    expectNear(result.value.tf,
                {0.6662455635617535,
                 0.499025315004059,
                 0.3555399988619099,
@@ -158,7 +158,7 @@ TEST(CompoundProductReference, EmbeddedCoating)
                 0.0058088685500785366,
                 0.0},
                Tolerance);
-    expectNear(result.value.reflectanceFront,
+    expectNear(result.value.rf,
                {0.16255442535381898,
                 0.10001120922756838,
                 0.21554319595457888,
@@ -166,7 +166,7 @@ TEST(CompoundProductReference, EmbeddedCoating)
                 0.8848601427193691,
                 0.946110787527845},
                Tolerance);
-    expectNear(result.value.reflectanceBack,
+    expectNear(result.value.rb,
                {17.12119251941439,
                 62.70525331305453,
                 0.3061845187143756,
@@ -179,30 +179,30 @@ TEST(CompoundProductReference, EmbeddedCoating)
 TEST(CompoundProductReference, DoubleMonolithicISO9050Example)
 {
     const std::vector<double> single{0.3};
-    const ExternalProperties measured{.transmittanceFront = series(single, {0.269229}),
-                                      .transmittanceBack = series(single, {0.269229}),
-                                      .reflectanceFront = series(single, {0.242135}),
-                                      .reflectanceBack = series(single, {0.236891})};
-    const Interface frontSurface{.transmittanceFront = series(single, {0.6}),
-                                 .transmittanceBack = series(single, {0.6}),
-                                 .reflectanceFront = series(single, {0.2}),
-                                 .reflectanceBack = series(single, {0.15})};
-    const Interface backSurface{.transmittanceFront = series(single, {0.66}),
-                                .transmittanceBack = series(single, {0.66}),
-                                .reflectanceFront = series(single, {0.12}),
-                                .reflectanceBack = series(single, {0.18})};
+    const ExternalProperties measured{.Tf = series(single, {0.269229}),
+                                      .Tb = series(single, {0.269229}),
+                                      .Rf = series(single, {0.242135}),
+                                      .Rb = series(single, {0.236891})};
+    const Interface frontSurface{.tf = series(single, {0.6}),
+                                 .tb = series(single, {0.6}),
+                                 .rf = series(single, {0.2}),
+                                 .rb = series(single, {0.15})};
+    const Interface backSurface{.tf = series(single, {0.66}),
+                                .tb = series(single, {0.66}),
+                                .rf = series(single, {0.12}),
+                                .rb = series(single, {0.18})};
 
     const auto result{
       measured.deconstructDoubleMonolithic(frontSurface,
-                                  Bulk{.internalTransmittance = series(single, {0.94})},
+                                  Bulk{.tau = series(single, {0.94})},
                                   backSurface,
-                                  Bulk{.internalTransmittance = series(single, {0.83})})};
+                                  Bulk{.tau = series(single, {0.83})})};
 
     EXPECT_TRUE(result.diagnostics.empty());
-    expectNear(result.value.transmittanceFront, {0.85}, 1e-5);
-    expectNear(result.value.transmittanceBack, {0.85}, 1e-5);
-    expectNear(result.value.reflectanceFront, {0.07}, 1e-5);
-    expectNear(result.value.reflectanceBack, {0.09}, 1e-5);
+    expectNear(result.value.tf, {0.85}, 1e-5);
+    expectNear(result.value.tb, {0.85}, 1e-5);
+    expectNear(result.value.rf, {0.07}, 1e-5);
+    expectNear(result.value.rb, {0.09}, 1e-5);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -223,21 +223,21 @@ TEST(CompoundProductDiagnostics, CoatingBehindWeaklyTransmittingSubstrate)
     EXPECT_FALSE(
       hasWarning(result.diagnostics, 0.550, Warning::InsensitiveCoatingSubstrateSide));
 
-    for(const auto & point : result.value.reflectanceFront)
+    for(const auto & point : result.value.rf)
     {
         EXPECT_GE(point.value(), 0.0);
         EXPECT_LE(point.value(), 1.0);
     }
-    EXPECT_NEAR(result.value.reflectanceFront[3].value(), 0.020392120836534217, 1e-6);
+    EXPECT_NEAR(result.value.rf[3].value(), 0.020392120836534217, 1e-6);
 }
 
 TEST(CompoundProductDiagnostics, OpaqueMonolithic)
 {
     const std::vector<double> lambdas{0.3, 0.5, 5.0};
-    const ExternalProperties measured{.transmittanceFront = series(lambdas, {0.0, 0.9, 0.0}),
-                                      .transmittanceBack = series(lambdas, {0.0, 0.9, 0.0}),
-                                      .reflectanceFront = series(lambdas, {0.07, 0.08, 0.0}),
-                                      .reflectanceBack = series(lambdas, {0.07, 0.08, 0.0})};
+    const ExternalProperties measured{.Tf = series(lambdas, {0.0, 0.9, 0.0}),
+                                      .Tb = series(lambdas, {0.0, 0.9, 0.0}),
+                                      .Rf = series(lambdas, {0.07, 0.08, 0.0}),
+                                      .Rb = series(lambdas, {0.07, 0.08, 0.0})};
 
     const auto result{measured.deconstructMonolithic()};
 
@@ -245,7 +245,7 @@ TEST(CompoundProductDiagnostics, OpaqueMonolithic)
     EXPECT_TRUE(hasWarning(result.diagnostics, 0.3, Warning::OpaqueLayer));
     EXPECT_TRUE(hasWarning(result.diagnostics, 5.0, Warning::NoData));
     EXPECT_NEAR(result.value.surfaceReflectance[0].value(), 0.07, 1e-12);
-    EXPECT_NEAR(result.value.internalTransmittance[0].value(), 0.0, 1e-12);
+    EXPECT_NEAR(result.value.tau[0].value(), 0.0, 1e-12);
     EXPECT_NEAR(result.value.surfaceReflectance[2].value(), 0.0, 1e-12);
 }
 
@@ -253,17 +253,17 @@ TEST(CompoundProductDiagnostics, OpaqueSubstrateUnderCoating)
 {
     const std::vector<double> single{0.3};
     const Monolithic opaque{.surfaceReflectance = series(single, {0.07}),
-                            .internalTransmittance = series(single, {0.0})};
-    const ExternalProperties measured{.transmittanceFront = series(single, {0.0}),
-                                      .transmittanceBack = series(single, {0.0}),
-                                      .reflectanceFront = series(single, {0.07}),
-                                      .reflectanceBack = series(single, {0.4})};
+                            .tau = series(single, {0.0})};
+    const ExternalProperties measured{.Tf = series(single, {0.0}),
+                                      .Tb = series(single, {0.0}),
+                                      .Rf = series(single, {0.07}),
+                                      .Rb = series(single, {0.4})};
 
     const auto result{measured.deconstructCoating(opaque, Side::Back)};
 
     EXPECT_TRUE(hasWarning(result.diagnostics, 0.3, Warning::OpaqueSubstrate));
-    EXPECT_NEAR(result.value.transmittanceFront[0].value(), 0.0, 1e-12);
-    EXPECT_NEAR(result.value.reflectanceBack[0].value(), 0.4, 1e-12);
+    EXPECT_NEAR(result.value.tf[0].value(), 0.0, 1e-12);
+    EXPECT_NEAR(result.value.rb[0].value(), 0.4, 1e-12);
 }
 
 TEST(CompoundProductDiagnostics, OpaqueLaminate)
@@ -275,13 +275,13 @@ TEST(CompoundProductDiagnostics, OpaqueLaminate)
     // panes do not transmit enough for a reliable result.
     EXPECT_TRUE(hasWarning(result.diagnostics, 0.300, Warning::InsensitiveInterlayer));
     EXPECT_FALSE(hasWarning(result.diagnostics, 0.550, Warning::InsensitiveInterlayer));
-    EXPECT_NEAR(result.value.internalTransmittance[3].value(), 0.994046815431529, 1e-6);
+    EXPECT_NEAR(result.value.tau[3].value(), 0.994046815431529, 1e-6);
 }
 
 TEST(CompoundProductDiagnostics, DifferentWavelengthsThrow)
 {
     const Monolithic other{.surfaceReflectance = series({0.3, 0.5}, {0.04, 0.04}),
-                           .internalTransmittance = series({0.3, 0.5}, {0.9, 0.9})};
+                           .tau = series({0.3, 0.5}, {0.9, 0.9})};
 
     EXPECT_THROW((void)coated().deconstructCoating(other, Side::Back), std::runtime_error);
 }

@@ -18,13 +18,11 @@ namespace CompoundProduct
         InsensitiveInterlayer
     };
 
-    //! source is the name of the input whose deconstruction raised the warning. It is set by
-    //! the actions and it is empty in the result of a single deconstruction.
+    //! \brief One warning at one wavelength.
     struct Diagnostic
     {
         double wavelength{0};
         Warning warning{Warning::NoData};
-        std::string source{};
     };
 
     //! \brief Limits used to decide when a measured value does not carry enough information.
@@ -58,20 +56,20 @@ namespace CompoundProduct
     //! \brief Bulk material between two interfaces. Transmittance is for one pass through it.
     struct Bulk
     {
-        FenestrationCommon::CSeries internalTransmittance;
+        FenestrationCommon::CSeries tau;
     };
 
     //! \brief Internal properties of one interface.
     //!
-    //! transmittanceFront and reflectanceFront are seen by light that travels from the front of
-    //! the product to the back, transmittanceBack and reflectanceBack by light that travels in
-    //! the opposite direction.
+    //! tf is the transmittance and rf the reflectance for light that travels from the front of
+    //! the product to the back. tb and rb are the same for light that travels in the opposite
+    //! direction. Small letters are used for internal properties.
     struct Interface
     {
-        FenestrationCommon::CSeries transmittanceFront;
-        FenestrationCommon::CSeries transmittanceBack;
-        FenestrationCommon::CSeries reflectanceFront;
-        FenestrationCommon::CSeries reflectanceBack;
+        FenestrationCommon::CSeries tf;
+        FenestrationCommon::CSeries tb;
+        FenestrationCommon::CSeries rf;
+        FenestrationCommon::CSeries rb;
 
         //! \brief The same interface seen from its other side.
         [[nodiscard]] Interface flipped() const;
@@ -82,9 +80,10 @@ namespace CompoundProduct
 
     //! \brief Properties of a whole product, or of a part of it, at normal incidence.
     //!
-    //! transmittanceFront is for light that enters at the front, transmittanceBack for light that
-    //! enters at the back. A product that was measured with one transmittance has the same
-    //! spectrum in both.
+    //! Tf is the transmittance and Rf the reflectance for light that enters at the front. Tb and
+    //! Rb are the same for light that enters at the back. A product that was measured with one
+    //! transmittance has the same spectrum in Tf and Tb. Capital letters are used for external
+    //! properties.
     //!
     //! The functions that start with "deconstruct" calculate internal properties from these
     //! external properties. Everything else in the product must be known. They throw
@@ -93,16 +92,17 @@ namespace CompoundProduct
     //! reported in the diagnostics of the result.
     struct ExternalProperties
     {
-        FenestrationCommon::CSeries transmittanceFront;
-        FenestrationCommon::CSeries transmittanceBack;
-        FenestrationCommon::CSeries reflectanceFront;
-        FenestrationCommon::CSeries reflectanceBack;
+        FenestrationCommon::CSeries Tf;
+        FenestrationCommon::CSeries Tb;
+        FenestrationCommon::CSeries Rf;
+        FenestrationCommon::CSeries Rb;
 
         //! \brief The same product seen from its back side.
         [[nodiscard]] ExternalProperties flipped() const;
 
         ///////////////////////////////////////////////////////////////////////////
-        /// General form. The unknown may be at any place of the product.
+        /// General functions. They are the equations of the model. The unknown may be at any
+        /// place of the product. The functions of the cases below call them.
         ///
         /// A known part is given as an Assembly. It can be one interface, several known
         /// components, or a part that is known only by its external properties. It is given as
@@ -129,17 +129,18 @@ namespace CompoundProduct
                                    const Assembly & backPart,
                                    const Tolerances & tolerances = {}) const;
 
-        //! \brief Internal properties of an interface that has a known part on each side.
+        //! \brief External properties of the part that has a known part on each side.
         //!
-        //! frontBulk is the bulk layer between the front part and the interface. backBulk is the
-        //! bulk layer between the interface and the back part. Both known parts are removed.
-        //! The interface is the part that remains.
-        [[nodiscard]] WithDiagnostics<Interface>
-          deconstructInterface(const Assembly & frontPart,
-                               const Bulk & frontBulk,
-                               const Bulk & backBulk,
-                               const Assembly & backPart,
-                               const Tolerances & tolerances = {}) const;
+        //! frontBulk is the bulk layer between the front part and the part in the middle.
+        //! backBulk is the bulk layer between the part in the middle and the back part. Both
+        //! known parts are removed. The part in the middle is returned as a whole. It may be one
+        //! interface or several layers.
+        [[nodiscard]] WithDiagnostics<ExternalProperties>
+          deconstructPartInTheMiddle(const Assembly & frontPart,
+                                     const Bulk & frontBulk,
+                                     const Bulk & backBulk,
+                                     const Assembly & backPart,
+                                     const Tolerances & tolerances = {}) const;
 
         //! \brief Internal transmittance of a bulk layer that has a known part on each side.
         //!
@@ -150,23 +151,26 @@ namespace CompoundProduct
                           const Assembly & backPart,
                           const Tolerances & tolerances = {}) const;
 
-        //! \brief Internal properties of an uncoated pane.
+        //! \brief Internal properties of a part that consists of two equal interfaces with a
+        //! bulk layer between them.
         //!
-        //! This is the only deconstruction that needs no known part. A calculation that starts
-        //! from measurements alone starts with it.
+        //! The interfaces do not absorb. An uncoated pane is such a part, and it is the first
+        //! case of the sources. This is the only deconstruction that needs no known part. A
+        //! calculation that starts from measurements alone starts with it.
         [[nodiscard]] WithDiagnostics<Monolithic>
           deconstructMonolithic(ReflectanceChoice choice = ReflectanceChoice::Average,
                                 const Tolerances & tolerances = {}) const;
 
         ///////////////////////////////////////////////////////////////////////////
-        /// Cases of the sources (LaminateEquations, pylam, Optics 5.1). Each of them is the
-        /// general form for one type of product, with the warnings of Optics 5.1 for it.
+        /// Functions of the cases of the sources (LaminateEquations, pylam, Optics 5.1). Each
+        /// of them takes the products of one case, calls one general function and applies the
+        /// rules of Optics 5.1 for that case.
         ///////////////////////////////////////////////////////////////////////////
 
         //! \brief Internal properties of the coating of a coated pane.
         //!
         //! Result is oriented in the same way as the coating in the pane. For coating on the back
-        //! side, reflectanceFront is the reflectance seen from the substrate.
+        //! side, rf is the reflectance seen from the substrate.
         [[nodiscard]] WithDiagnostics<Interface>
           deconstructCoating(const Monolithic & substrate,
                              FenestrationCommon::Side coatedSide,
@@ -183,8 +187,8 @@ namespace CompoundProduct
         //! \brief Internal properties of a coating that is placed between the front pane and the
         //! interlayer of a laminate.
         //!
-        //! reflectanceFront of the result is the reflectance seen from the front pane,
-        //! reflectanceBack is the reflectance seen from the interlayer.
+        //! rf of the result is the reflectance seen from the front pane, rb is the reflectance
+        //! seen from the interlayer.
         [[nodiscard]] WithDiagnostics<Interface>
           deconstructEmbeddedCoating(const Monolithic & front,
                                      const Monolithic & back,
@@ -219,6 +223,6 @@ namespace CompoundProduct
     struct Monolithic
     {
         FenestrationCommon::CSeries surfaceReflectance;
-        FenestrationCommon::CSeries internalTransmittance;
+        FenestrationCommon::CSeries tau;
     };
 }   // namespace CompoundProduct
