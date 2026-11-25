@@ -200,18 +200,18 @@ namespace CompoundProduct
         return {.Tf = Tb, .Tb = Tf, .Rf = Rb, .Rb = Rf};
     }
 
-    Bulk withThickness(const Bulk & bulk, const double oldThickness, const double newThickness)
+    Bulk Bulk::atThickness(const double newThickness) const
     {
-        if(oldThickness <= 0.0 || newThickness < 0.0)
+        if(thickness <= 0.0 || newThickness < 0.0)
         {
             throw std::runtime_error("Compound product: thickness must be positive.");
         }
-        const auto exponent{newThickness / oldThickness};
-        const auto & tau{bulk.tau};
+        const auto exponent{newThickness / thickness};
         return {.tau =
                   Helper::makeSeries(tau.getXArray(), [&](const size_t index) {
                       return std::pow(std::max(tau[index].value(), 0.0), exponent);
-                  })};
+                  }),
+                .thickness = newThickness};
     }
 
     std::vector<double> commonWavelengths(const std::vector<ExternalProperties> & products)

@@ -19,6 +19,10 @@ namespace
     const std::vector<double> wavelengths{0.300, 0.320, 0.400, 0.550, 1.000, 2.000};
     constexpr double Tolerance{1e-6};
 
+    // Thicknesses of the layers of the tests. The unit is free.
+    constexpr double GlassThickness{6.0};
+    constexpr double InterlayerThickness{0.76};
+
     ExternalProperties product(const std::vector<double> & transmittance,
                                const std::vector<double> & reflectanceFront,
                                const std::vector<double> & reflectanceBack)
@@ -69,12 +73,12 @@ namespace
 
     Monolithic glass()
     {
-        return substrate().deconstructMonolithic(ReflectanceChoice::Average, noTolerances()).value;
+        return substrate().deconstructMonolithic(GlassThickness, ReflectanceChoice::Average, noTolerances()).value;
     }
 
     Bulk interlayer()
     {
-        return laminate().deconstructInterlayer(glass(), glass(), noTolerances()).value;
+        return laminate().deconstructInterlayer(glass(), glass(), InterlayerThickness, noTolerances()).value;
     }
 }   // namespace
 
@@ -90,7 +94,7 @@ TEST(CompoundProductReference, Monolithic)
                 0.04300465712468566,
                 0.039903761949652325},
                Tolerance);
-    expectNear(result.tau,
+    expectNear(result.bulk.tau,
                {0.22502547379278057,
                 0.5643323096637146,
                 0.9939982951865283,
@@ -194,9 +198,9 @@ TEST(CompoundProductReference, DoubleMonolithicISO9050Example)
 
     const auto result{
       measured.deconstructDoubleMonolithic(frontSurface,
-                                  Bulk{.tau = series(single, {0.94})},
+                                  Bulk{.tau = series(single, {0.94}), .thickness = GlassThickness},
                                   backSurface,
-                                  Bulk{.tau = series(single, {0.83})})};
+                                  Bulk{.tau = series(single, {0.83}), .thickness = GlassThickness})};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value.tf, {0.85}, 1e-5);
@@ -211,7 +215,7 @@ TEST(CompoundProductReference, DoubleMonolithicISO9050Example)
 
 TEST(CompoundProductDiagnostics, CoatingBehindWeaklyTransmittingSubstrate)
 {
-    const auto substrateGlass{substrate().deconstructMonolithic().value};
+    const auto substrateGlass{substrate().deconstructMonolithic(GlassThickness).value};
     const auto result{coated().deconstructCoating(substrateGlass, Side::Back)};
 
     // Substrate internal transmittance at 0.300 is 0.225, which is below the threshold. Plain
@@ -239,13 +243,13 @@ TEST(CompoundProductDiagnostics, OpaqueMonolithic)
                                       .Rf = series(lambdas, {0.07, 0.08, 0.0}),
                                       .Rb = series(lambdas, {0.07, 0.08, 0.0})};
 
-    const auto result{measured.deconstructMonolithic()};
+    const auto result{measured.deconstructMonolithic(GlassThickness)};
 
     ASSERT_EQ(result.diagnostics.size(), 2U);
     EXPECT_TRUE(hasWarning(result.diagnostics, 0.3, Warning::OpaqueLayer));
     EXPECT_TRUE(hasWarning(result.diagnostics, 5.0, Warning::NoData));
     EXPECT_NEAR(result.value.surfaceReflectance[0].value(), 0.07, 1e-12);
-    EXPECT_NEAR(result.value.tau[0].value(), 0.0, 1e-12);
+    EXPECT_NEAR(result.value.bulk.tau[0].value(), 0.0, 1e-12);
     EXPECT_NEAR(result.value.surfaceReflectance[2].value(), 0.0, 1e-12);
 }
 
@@ -253,7 +257,7 @@ TEST(CompoundProductDiagnostics, OpaqueSubstrateUnderCoating)
 {
     const std::vector<double> single{0.3};
     const Monolithic opaque{.surfaceReflectance = series(single, {0.07}),
-                            .tau = series(single, {0.0})};
+                            .bulk = {.tau = series(single, {0.0}), .thickness = GlassThickness}};
     const ExternalProperties measured{.Tf = series(single, {0.0}),
                                       .Tb = series(single, {0.0}),
                                       .Rf = series(single, {0.07}),
@@ -268,8 +272,8 @@ TEST(CompoundProductDiagnostics, OpaqueSubstrateUnderCoating)
 
 TEST(CompoundProductDiagnostics, OpaqueLaminate)
 {
-    const auto substrateGlass{substrate().deconstructMonolithic().value};
-    const auto result{laminate().deconstructInterlayer(substrateGlass, substrateGlass)};
+    const auto substrateGlass{substrate().deconstructMonolithic(GlassThickness).value};
+    const auto result{laminate().deconstructInterlayer(substrateGlass, substrateGlass, InterlayerThickness)};
 
     // Laminate transmittance at 0.300 is 0.003, which is above the limit of detection, but the
     // panes do not transmit enough for a reliable result.
@@ -281,7 +285,7 @@ TEST(CompoundProductDiagnostics, OpaqueLaminate)
 TEST(CompoundProductDiagnostics, DifferentWavelengthsThrow)
 {
     const Monolithic other{.surfaceReflectance = series({0.3, 0.5}, {0.04, 0.04}),
-                           .tau = series({0.3, 0.5}, {0.9, 0.9})};
+                           .bulk = {.tau = series({0.3, 0.5}, {0.9, 0.9}), .thickness = GlassThickness}};
 
     EXPECT_THROW((void)coated().deconstructCoating(other, Side::Back), std::runtime_error);
 }

@@ -15,26 +15,30 @@ namespace
     const std::vector<double> wavelengths{0.4, 0.6};
     constexpr double Tolerance{1e-9};
 
+    // Thicknesses of the layers of the tests. The unit is free.
+    constexpr double GlassThickness{6.0};
+    constexpr double InterlayerThickness{0.76};
+
     Monolithic frontGlass()
     {
         return {.surfaceReflectance = series(wavelengths, {0.04, 0.05}),
-                .tau = series(wavelengths, {0.9, 0.6})};
+                .bulk = {.tau = series(wavelengths, {0.9, 0.6}), .thickness = GlassThickness}};
     }
 
     Monolithic backGlass()
     {
         return {.surfaceReflectance = series(wavelengths, {0.045, 0.042}),
-                .tau = series(wavelengths, {0.95, 0.8})};
+                .bulk = {.tau = series(wavelengths, {0.95, 0.8}), .thickness = GlassThickness}};
     }
 
     Bulk bulkOf(const Monolithic & monolithic)
     {
-        return {.tau = monolithic.tau};
+        return monolithic.bulk;
     }
 
     Bulk interlayer()
     {
-        return {.tau = series(wavelengths, {0.97, 0.7})};
+        return {.tau = series(wavelengths, {0.97, 0.7}), .thickness = InterlayerThickness};
     }
 
     Interface coating()
@@ -151,10 +155,11 @@ TEST(CompoundProductRoundTrip, BulkBetweenCoatedPanes)
     const auto whole{coatedFrontPane().add(interlayer(), uncoatedBackPane())};
 
     const auto result{
-      whole.externalProperties().deconstructBulk(coatedFrontPane(), uncoatedBackPane())};
+      whole.externalProperties().deconstructBulk(coatedFrontPane(), uncoatedBackPane(), InterlayerThickness)};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value.tau, interlayer().tau, Tolerance);
+    EXPECT_DOUBLE_EQ(result.value.thickness, InterlayerThickness);
 }
 
 // A known part that is known only as a whole is given as an Assembly of its external properties.
@@ -175,11 +180,12 @@ TEST(CompoundProductRoundTrip, Monolithic)
     const auto pane{
       Assembly(surfaceOf(frontGlass())).add(bulkOf(frontGlass()), surfaceOf(frontGlass()))};
 
-    const auto result{pane.externalProperties().deconstructMonolithic()};
+    const auto result{pane.externalProperties().deconstructMonolithic(GlassThickness)};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value.surfaceReflectance, frontGlass().surfaceReflectance, Tolerance);
-    expectNear(result.value.tau, frontGlass().tau, Tolerance);
+    expectNear(result.value.bulk.tau, frontGlass().bulk.tau, Tolerance);
+    EXPECT_DOUBLE_EQ(result.value.bulk.thickness, GlassThickness);
 }
 
 TEST(CompoundProductRoundTrip, CoatingOnBack)
@@ -209,10 +215,11 @@ TEST(CompoundProductRoundTrip, Interlayer)
                           .add(interlayer(), uncoatedBackPane())};
 
     const auto result{
-      laminate.externalProperties().deconstructInterlayer(frontGlass(), backGlass())};
+      laminate.externalProperties().deconstructInterlayer(frontGlass(), backGlass(), InterlayerThickness)};
 
     EXPECT_TRUE(result.diagnostics.empty());
     expectNear(result.value.tau, interlayer().tau, Tolerance);
+    EXPECT_DOUBLE_EQ(result.value.thickness, InterlayerThickness);
 }
 
 TEST(CompoundProductRoundTrip, EmbeddedCoating)
@@ -269,22 +276,19 @@ TEST(CompoundProductRoundTrip, DoubleMonolithicAbsorbingSurfaces)
 // This is newSubstrateThickness of the sources.
 TEST(CompoundProductRoundTrip, MeasuredPaneAtAnotherThickness)
 {
-    constexpr double MeasuredThickness{3.0};
-    constexpr double NewThickness{6.0};
+    constexpr double NewThickness{3.0};
     const auto measured{Assembly(surfaceOf(frontGlass()))
                           .add(bulkOf(frontGlass()), surfaceOf(frontGlass()))
                           .externalProperties()};
 
-    const auto glass{measured.deconstructMonolithic().value};
-    const auto result{
-      Assembly(uncoatedInterface(glass))
-        .add(withThickness(bulkOf(glass), MeasuredThickness, NewThickness), uncoatedInterface(glass))
-        .externalProperties()};
+    const auto glass{measured.deconstructMonolithic(GlassThickness).value};
+    const auto result{Assembly(uncoatedInterface(glass))
+                        .add(glass.bulk.atThickness(NewThickness), uncoatedInterface(glass))
+                        .externalProperties()};
 
     const auto expected{
       Assembly(surfaceOf(frontGlass()))
-        .add(withThickness(bulkOf(frontGlass()), MeasuredThickness, NewThickness),
-             surfaceOf(frontGlass()))
+        .add(frontGlass().bulk.atThickness(NewThickness), surfaceOf(frontGlass()))
         .externalProperties()};
     expectNear(result, expected, Tolerance);
 }
@@ -301,8 +305,8 @@ TEST(CompoundProductRoundTrip, LaminateFromTwoMeasuredPanes)
                               .add(bulkOf(backGlass()), surfaceOf(backGlass()))
                               .externalProperties()};
 
-    const auto front{measuredFront.deconstructMonolithic().value};
-    const auto back{measuredBack.deconstructMonolithic().value};
+    const auto front{measuredFront.deconstructMonolithic(GlassThickness).value};
+    const auto back{measuredBack.deconstructMonolithic(GlassThickness).value};
     const auto laminate{Assembly(uncoatedInterface(front))
                           .add(bulkOf(front), noReflection())
                           .add(interlayer(), noReflection())

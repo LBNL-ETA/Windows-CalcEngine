@@ -53,10 +53,21 @@ namespace CompoundProduct
         Average
     };
 
-    //! \brief Bulk material between two interfaces. Transmittance is for one pass through it.
+    //! \brief Bulk material between two interfaces.
+    //!
+    //! tau is the internal transmittance for one pass through the layer. thickness is the
+    //! thickness of the layer for which tau holds. Its unit is free, but a new thickness must
+    //! be given in the same unit. Construction and deconstruction use tau only.
     struct Bulk
     {
         FenestrationCommon::CSeries tau;
+        double thickness;
+
+        //! \brief The same material at another thickness.
+        //!
+        //! Throws std::runtime_error if the thickness of this layer is not positive or if
+        //! newThickness is negative. This layer is not changed.
+        [[nodiscard]] Bulk atThickness(double newThickness) const;
     };
 
     //! \brief Internal properties of one interface.
@@ -145,10 +156,12 @@ namespace CompoundProduct
         //! \brief Internal transmittance of a bulk layer that has a known part on each side.
         //!
         //! Only the two transmittances of the product are used. Each of them gives one equation
-        //! for the same unknown, and the mean of the two equations is solved.
+        //! for the same unknown, and the mean of the two equations is solved. thickness is the
+        //! thickness of the bulk layer in the product. It is stored in the result.
         [[nodiscard]] WithDiagnostics<Bulk>
           deconstructBulk(const Assembly & frontPart,
                           const Assembly & backPart,
+                          double thickness,
                           const Tolerances & tolerances = {}) const;
 
         //! \brief Internal properties of a part that consists of two equal interfaces with a
@@ -156,9 +169,12 @@ namespace CompoundProduct
         //!
         //! The interfaces do not absorb. An uncoated pane is such a part, and it is the first
         //! case of the sources. This is the only deconstruction that needs no known part. A
-        //! calculation that starts from measurements alone starts with it.
+        //! calculation that starts from measurements alone starts with it. thickness is the
+        //! thickness of the bulk layer, for a pane the thickness of the pane. It is stored in
+        //! the result.
         [[nodiscard]] WithDiagnostics<Monolithic>
-          deconstructMonolithic(ReflectanceChoice choice = ReflectanceChoice::Average,
+          deconstructMonolithic(double thickness,
+                                ReflectanceChoice choice = ReflectanceChoice::Average,
                                 const Tolerances & tolerances = {}) const;
 
         ///////////////////////////////////////////////////////////////////////////
@@ -179,9 +195,12 @@ namespace CompoundProduct
         //! \brief Internal transmittance of the interlayer of a laminate of two uncoated panes.
         //!
         //! It is assumed that there is no reflection between the interlayer and the panes.
+        //! thickness is the thickness of the interlayer in the laminate. It is stored in the
+        //! result.
         [[nodiscard]] WithDiagnostics<Bulk>
           deconstructInterlayer(const Monolithic & front,
                                 const Monolithic & back,
+                                double thickness,
                                 const Tolerances & tolerances = {}) const;
 
         //! \brief Internal properties of a coating that is placed between the front pane and the
@@ -223,6 +242,7 @@ namespace CompoundProduct
     struct Monolithic
     {
         FenestrationCommon::CSeries surfaceReflectance;
-        FenestrationCommon::CSeries tau;
+        //! The glass of the pane.
+        Bulk bulk;
     };
 }   // namespace CompoundProduct

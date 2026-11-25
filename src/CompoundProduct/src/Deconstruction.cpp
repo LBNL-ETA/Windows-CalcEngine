@@ -56,7 +56,7 @@ namespace CompoundProduct
                                                    const size_t index)
         {
             return {.surfaceReflectance = monolithic.surfaceReflectance[index].value(),
-                    .tau = monolithic.tau[index].value()};
+                    .tau = monolithic.bulk.tau[index].value()};
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -519,7 +519,7 @@ namespace CompoundProduct
             for(const auto * monolithic : monolithics)
             {
                 result.push_back(&monolithic->surfaceReflectance);
-                result.push_back(&monolithic->tau);
+                result.push_back(&monolithic->bulk.tau);
             }
             return result;
         }
@@ -592,11 +592,13 @@ namespace CompoundProduct
         }
         [[nodiscard]] WithDiagnostics<Bulk>
           toBulk(const std::vector<double> & wavelengths,
-                 const std::vector<PointResult<double>> & points)
+                 const std::vector<PointResult<double>> & points,
+                 const double thickness)
         {
             return {.value = {.tau = Helper::makeSeries(
                                 wavelengths,
-                                [&](const size_t index) { return points[index].value; })},
+                                [&](const size_t index) { return points[index].value; }),
+                              .thickness = thickness},
                     .diagnostics = diagnosticsOf(wavelengths, points)};
         }
 
@@ -622,7 +624,7 @@ namespace CompoundProduct
             const auto points{evaluate<double>(wavelengths.size(), [&](const size_t index) {
                 return rule(index, tau[index].value());
             })};
-            return toBulk(wavelengths, points);
+            return toBulk(wavelengths, points, general.thickness);
         }
 
         //! The general functions are called without the correction to the physical limits. A
@@ -632,11 +634,6 @@ namespace CompoundProduct
             auto result{tolerances};
             result.clampToPhysical = false;
             return result;
-        }
-
-        [[nodiscard]] Bulk bulkOf(const Monolithic & monolithic)
-        {
-            return {.tau = monolithic.tau};
         }
 
         //! Surface of a monolithic towards the air, as a known part.
@@ -649,8 +646,8 @@ namespace CompoundProduct
         //! reflect, the glass, and the bare surface towards the air.
         [[nodiscard]] Assembly paneBehindInterlayer(const Monolithic & pane)
         {
-            return Assembly(nonReflectingInterface(pane.tau.getXArray()))
-              .add(bulkOf(pane), uncoatedInterface(pane));
+            return Assembly(nonReflectingInterface(pane.bulk.tau.getXArray()))
+              .add(pane.bulk, uncoatedInterface(pane));
         }
     }   // namespace
 
@@ -698,6 +695,7 @@ namespace CompoundProduct
 
     WithDiagnostics<Bulk> ExternalProperties::deconstructBulk(const Assembly & frontPart,
                                                               const Assembly & backPart,
+                                                              const double thickness,
                                                               const Tolerances & tolerances) const
     {
         const auto front{frontPart.externalProperties()};
@@ -713,11 +711,12 @@ namespace CompoundProduct
                                      measuredAt(back, index),
                                      tolerances);
         })};
-        return toBulk(wavelengths, points);
+        return toBulk(wavelengths, points, thickness);
     }
 
     WithDiagnostics<Monolithic>
-      ExternalProperties::deconstructMonolithic(const ReflectanceChoice choice,
+      ExternalProperties::deconstructMonolithic(const double thickness,
+                                                const ReflectanceChoice choice,
                                                 const Tolerances & tolerances) const
     {
         Helper::requireSameWavelengths(seriesOf(*this));
@@ -731,8 +730,8 @@ namespace CompoundProduct
               wavelengths, [&](const size_t index) { return points[index].value.*member; });
         }};
         return {.value = {.surfaceReflectance = series(&MonolithicPoint::surfaceReflectance),
-                          .tau =
-                            series(&MonolithicPoint::tau)},
+                          .bulk = {.tau = series(&MonolithicPoint::tau),
+                                   .thickness = thickness}},
                 .diagnostics = diagnosticsOf(wavelengths, points)};
     }
 
@@ -750,7 +749,7 @@ namespace CompoundProduct
         if(coatedSide == Side::Front)
         {
             const auto coating{
-              deconstructPartInFrontOf(bulkOf(substrate), bareSurfaceOf(substrate), generalTolerances)};
+              deconstructPartInFrontOf(substrate.bulk, bareSurfaceOf(substrate), generalTolerances)};
             return asInterface(
               withRules(coating.value, [&](const size_t index, const ExternalPoint & point) {
                   return frontCoatingRules(
@@ -758,7 +757,7 @@ namespace CompoundProduct
               }));
         }
         const auto coating{
-          deconstructPartBehind(bareSurfaceOf(substrate), bulkOf(substrate), generalTolerances)};
+          deconstructPartBehind(bareSurfaceOf(substrate), substrate.bulk, generalTolerances)};
         return asInterface(
           withRules(coating.value, [&](const size_t index, const ExternalPoint & point) {
               return coatingRules(
@@ -769,12 +768,13 @@ namespace CompoundProduct
     WithDiagnostics<Bulk>
       ExternalProperties::deconstructInterlayer(const Monolithic & front,
                                                 const Monolithic & back,
+                                                const double thickness,
                                                 const Tolerances & tolerances) const
     {
         Helper::requireSameWavelengths(seriesOf(*this, {&front, &back}));
         const auto frontPane{paneBehindInterlayer(front).flipped()};
-        const auto interlayer{
-          deconstructBulk(frontPane, paneBehindInterlayer(back), withoutCorrection(tolerances))};
+        const auto interlayer{deconstructBulk(
+          frontPane, paneBehindInterlayer(back), thickness, withoutCorrection(tolerances))};
         return withRules(interlayer.value, [&](const size_t index, const double tau) {
             return interlayerRules(tau,
                                    measuredAt(*this, index),
@@ -794,7 +794,7 @@ namespace CompoundProduct
         allSeries.push_back(&interlayer.tau);
         Helper::requireSameWavelengths(allSeries);
         const auto coating{deconstructPartInTheMiddle(bareSurfaceOf(front),
-                                                      bulkOf(front),
+                                                      front.bulk,
                                                       interlayer,
                                                       paneBehindInterlayer(back),
                                                       withoutCorrection(tolerances))};
@@ -835,6 +835,6 @@ namespace CompoundProduct
                                                       const Tolerances & tolerances) const
     {
         return deconstructDoubleMonolithic(
-          uncoatedInterface(front), bulkOf(front), uncoatedInterface(back), bulkOf(back), tolerances);
+          uncoatedInterface(front), front.bulk, uncoatedInterface(back), back.bulk, tolerances);
     }
 }   // namespace CompoundProduct

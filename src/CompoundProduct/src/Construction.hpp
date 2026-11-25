@@ -62,11 +62,6 @@ namespace CompoundProduct
     //! \brief Interface that does not reflect (for example glass to interlayer).
     [[nodiscard]] Interface nonReflectingInterface(const std::vector<double> & wavelengths);
 
-    //! \brief Internal transmittance of the same material at different thickness.
-    //!
-    //! Both thicknesses must be given in the same unit.
-    [[nodiscard]] Bulk withThickness(const Bulk & bulk, double oldThickness, double newThickness);
-
     //! \brief Sorted wavelengths that are present in at least one of the products.
     [[nodiscard]] std::vector<double>
       commonWavelengths(const std::vector<ExternalProperties> & products);

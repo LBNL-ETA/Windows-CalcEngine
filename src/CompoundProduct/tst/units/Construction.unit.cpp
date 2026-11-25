@@ -12,10 +12,14 @@ namespace
 {
     const std::vector<double> wavelengths{0.4, 0.6};
 
+    // Thicknesses of the layers of the tests. The unit is free.
+    constexpr double GlassThickness{6.0};
+    constexpr double InterlayerThickness{0.76};
+
     Monolithic glass()
     {
         return {.surfaceReflectance = series(wavelengths, {0.04, 0.05}),
-                .tau = series(wavelengths, {0.9, 0.6})};
+                .bulk = {.tau = series(wavelengths, {0.9, 0.6}), .thickness = GlassThickness}};
     }
 
     Interface coating()
@@ -28,7 +32,7 @@ namespace
 
     Bulk glassBulk()
     {
-        return {.tau = glass().tau};
+        return glass().bulk;
     }
 
     Assembly uncoatedPane()
@@ -97,7 +101,7 @@ TEST(CompoundProductConstruction, JoinOfTwoInterfacesWithFourProperties)
                          .tb = series(single, {0.4}),
                          .rf = series(single, {0.3}),
                          .rb = series(single, {0.25})};
-    const Bulk between{.tau = series(single, {0.9})};
+    const Bulk between{.tau = series(single, {0.9}), .thickness = GlassThickness};
 
     const auto result{Assembly(front).add(between, back).externalProperties()};
 
@@ -112,7 +116,7 @@ TEST(CompoundProductConstruction, JoinOfTwoInterfacesWithFourProperties)
 // given by its components.
 TEST(CompoundProductConstruction, AssemblyAcceptsPartsKnownAsAWhole)
 {
-    const Bulk between{.tau = series(wavelengths, {0.97, 0.7})};
+    const Bulk between{.tau = series(wavelengths, {0.97, 0.7}), .thickness = GlassThickness};
     const auto fromComponents{uncoatedPane().add(between, coatedPane()).externalProperties()};
 
     const auto fromWholeParts{Assembly(uncoatedPane().externalProperties())
@@ -125,7 +129,7 @@ TEST(CompoundProductConstruction, AssemblyAcceptsPartsKnownAsAWhole)
 // An assembly that is added as a part gives the same product as its components added one by one.
 TEST(CompoundProductConstruction, AssemblyAcceptsAnAssemblyAsPart)
 {
-    const Bulk between{.tau = series(wavelengths, {0.97, 0.7})};
+    const Bulk between{.tau = series(wavelengths, {0.97, 0.7}), .thickness = GlassThickness};
 
     const auto result{coatedPane().add(between, uncoatedPane()).externalProperties()};
 
@@ -203,26 +207,43 @@ TEST(CompoundProductConstruction, TwoIndexMatchedPanesEqualOneThickPane)
                      .add(glassBulk(), nonReflectingInterface(wavelengths))
                      .add(glassBulk(), surface)
                      .externalProperties()};
-    const auto thick{
-      Assembly(surface).add(withThickness(glassBulk(), 3.0, 6.0), surface).externalProperties()};
+    const auto thick{Assembly(surface)
+                       .add(glassBulk().atThickness(2.0 * GlassThickness), surface)
+                       .externalProperties()};
 
     expectNear(two, thick, 1e-12);
 }
 
-TEST(CompoundProductConstruction, WithThickness)
+// The glass of the tests is 6 thick. At twice the thickness the internal transmittance is
+// squared, at half the thickness it is the square root. The result holds the new thickness, so
+// that a second change needs no old thickness either.
+TEST(CompoundProductConstruction, BulkAtAnotherThickness)
 {
-    const Bulk pane{.tau = glass().tau};
+    const auto pane{glassBulk()};
 
-    expectNear(withThickness(pane, 3.0, 6.0).tau, {0.81, 0.36}, 1e-12);
-    expectNear(withThickness(pane, 3.0, 1.5).tau,
-               {std::sqrt(0.9), std::sqrt(0.6)},
-               1e-12);
-    EXPECT_THROW((void)withThickness(pane, 0.0, 6.0), std::runtime_error);
+    const auto thicker{pane.atThickness(12.0)};
+    const auto thinner{pane.atThickness(3.0)};
+
+    expectNear(pane.tau, {0.9, 0.6}, 1e-12);
+    expectNear(thicker.tau, {0.81, 0.36}, 1e-12);
+    expectNear(thinner.tau, {std::sqrt(0.9), std::sqrt(0.6)}, 1e-12);
+    EXPECT_DOUBLE_EQ(thicker.thickness, 12.0);
+    EXPECT_DOUBLE_EQ(thinner.thickness, 3.0);
+    expectNear(thicker.atThickness(6.0).tau, pane.tau, 1e-12);
+}
+
+// A layer without a thickness cannot be changed to another thickness.
+TEST(CompoundProductConstruction, BulkWithoutThicknessCannotChangeIt)
+{
+    const Bulk withoutThickness{.tau = glassBulk().tau, .thickness = 0.0};
+
+    EXPECT_THROW((void)withoutThickness.atThickness(6.0), std::runtime_error);
+    EXPECT_THROW((void)glassBulk().atThickness(-1.0), std::runtime_error);
 }
 
 TEST(CompoundProductConstruction, PartsAtDifferentWavelengthsThrow)
 {
-    const Bulk otherWavelengths{.tau = series({0.4, 0.7}, {0.9, 0.6})};
+    const Bulk otherWavelengths{.tau = series({0.4, 0.7}, {0.9, 0.6}), .thickness = GlassThickness};
     const auto surface{uncoatedInterface(glass())};
 
     const auto pane{Assembly(surface).add(otherWavelengths, surface)};

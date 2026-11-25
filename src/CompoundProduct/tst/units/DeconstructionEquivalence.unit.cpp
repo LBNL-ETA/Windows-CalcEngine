@@ -28,31 +28,37 @@ namespace
     const std::vector wavelengths{0.3, 0.55, 1.0, 2.5};
     constexpr double Tolerance{1e-12};
 
+    // Thicknesses of the layers of the tests. The unit is free.
+    constexpr double GlassThickness{6.0};
+    constexpr double InterlayerThickness{0.76};
+
     Monolithic frontGlass()
     {
         return {.surfaceReflectance = series(wavelengths, {0.05, 0.04, 0.042, 0.045}),
-                .tau = series(wavelengths, {0.4, 0.9, 0.8, 0.6})};
+                .bulk = {.tau = series(wavelengths, {0.4, 0.9, 0.8, 0.6}), .thickness = GlassThickness}};
     }
 
     Monolithic backGlass()
     {
         return {.surfaceReflectance = series(wavelengths, {0.048, 0.045, 0.041, 0.043}),
-                .tau = series(wavelengths, {0.6, 0.95, 0.8, 0.7})};
+                .bulk = {.tau = series(wavelengths, {0.6, 0.95, 0.8, 0.7}), .thickness = GlassThickness}};
     }
 
     Bulk bulkOf(const Monolithic & monolithic)
     {
-        return {.tau = monolithic.tau};
+        return monolithic.bulk;
     }
 
     Bulk interlayer()
     {
-        return {.tau = series(wavelengths, {0.7, 0.97, 0.9, 0.8})};
+        return {.tau = series(wavelengths, {0.7, 0.97, 0.9, 0.8}),
+                .thickness = InterlayerThickness};
     }
 
+    // A layer that changes nothing. It has no thickness.
     Bulk fullyTransparentBulk()
     {
-        return {.tau = series(wavelengths, {1.0, 1.0, 1.0, 1.0})};
+        return {.tau = series(wavelengths, {1.0, 1.0, 1.0, 1.0}), .thickness = 0.0};
     }
 
     Interface coating()
@@ -169,8 +175,8 @@ TEST(CompoundProductEquivalence, InterlayerIsTheBulkBetweenTwoPanes)
 {
     const auto measured{frontPane().add(interlayer(), backPane()).externalProperties()};
 
-    const auto caseResult{measured.deconstructInterlayer(frontGlass(), backGlass())};
-    const auto generalResult{measured.deconstructBulk(frontPane(), backPane())};
+    const auto caseResult{measured.deconstructInterlayer(frontGlass(), backGlass(), InterlayerThickness)};
+    const auto generalResult{measured.deconstructBulk(frontPane(), backPane(), InterlayerThickness)};
 
     EXPECT_TRUE(caseResult.diagnostics.empty());
     EXPECT_TRUE(generalResult.diagnostics.empty());
@@ -241,7 +247,7 @@ TEST(CompoundProductEquivalence, BulkBetweenTwoPanesIsAnInterfaceThatDoesNotRefl
     {
         EXPECT_EQ(diagnostic.warning, Warning::UnphysicalClamped);
     }
-    const auto asBulk{measured.deconstructBulk(frontPane(), backPane())};
+    const auto asBulk{measured.deconstructBulk(frontPane(), backPane(), InterlayerThickness)};
 
     const auto & tau{asBulk.value.tau};
     const Interface expected{.tf = tau,
@@ -265,8 +271,7 @@ namespace
     Monolithic glassWith(const double secondInternalTransmittance)
     {
         return {.surfaceReflectance = series(twoWavelengths, {0.04, 0.045}),
-                .tau =
-                  series(twoWavelengths, {0.9, secondInternalTransmittance})};
+                .bulk = {.tau = series(twoWavelengths, {0.9, secondInternalTransmittance}), .thickness = GlassThickness}};
     }
 
     Interface coatingAtTwoWavelengths()
@@ -335,14 +340,14 @@ TEST(CompoundProductCaseRules, CoatingOnSubstrateBelowSensitivityThreshold)
 TEST(CompoundProductCaseRules, InterlayerBetweenPanesBelowSensitivityThreshold)
 {
     const auto glass{glassWith(0.2)};
-    const Bulk interlayerBulk{.tau = series(twoWavelengths, {0.97, 0.8})};
+    const Bulk interlayerBulk{.tau = series(twoWavelengths, {0.97, 0.8}), .thickness = InterlayerThickness};
     const auto front{
       bareSurfaceOf(glass).add(bulkOf(glass), nonReflectingInterface(twoWavelengths))};
     const auto back{front.flipped()};
     const auto measured{front.add(interlayerBulk, back).externalProperties()};
 
-    const auto caseResult{measured.deconstructInterlayer(glass, glass)};
-    const auto generalResult{measured.deconstructBulk(front, back)};
+    const auto caseResult{measured.deconstructInterlayer(glass, glass, InterlayerThickness)};
+    const auto generalResult{measured.deconstructBulk(front, back, InterlayerThickness)};
 
     ASSERT_EQ(caseResult.diagnostics.size(), 1U);
     EXPECT_TRUE(hasWarning(caseResult.diagnostics, 2.5, Warning::InsensitiveInterlayer));
@@ -359,7 +364,7 @@ TEST(CompoundProductCaseRules, EmbeddedCoatingBehindOpaqueFrontGlass)
 {
     const auto front{glassWith(0.0)};
     const auto back{glassWith(0.8)};
-    const Bulk interlayerBulk{.tau = series(twoWavelengths, {0.97, 0.8})};
+    const Bulk interlayerBulk{.tau = series(twoWavelengths, {0.97, 0.8}), .thickness = InterlayerThickness};
     const auto backPart{Assembly(nonReflectingInterface(twoWavelengths))
                           .add(bulkOf(back), uncoatedInterface(back))};
     const auto measured{bareSurfaceOf(front)
@@ -458,7 +463,7 @@ TEST(CompoundProductInterlayerCheck, InterlayerCaseGivesTooLowTauWhenInterfacesR
 {
     const auto laminate{laminateWithReflectingInterlayerInterfaces()};
 
-    const auto result{laminate.deconstructInterlayer(frontGlass(), backGlass())};
+    const auto result{laminate.deconstructInterlayer(frontGlass(), backGlass(), InterlayerThickness)};
 
     // interlayer() is used above in laminateWithReflectingInterlayerInterfaces() but with small
     // reflectance interfaces.
@@ -493,8 +498,8 @@ TEST(CompoundProductInterlayerCheck, PartBetweenThePanesGivesInterfaceReflectanc
 {
     const auto laminate{laminateWithReflectingInterlayerInterfaces()};
 
-    const auto parts{partBetweenThePanes(laminate).deconstructMonolithic()};
+    const auto parts{partBetweenThePanes(laminate).deconstructMonolithic(InterlayerThickness)};
 
     expectNear(parts.value.surfaceReflectance, {0.004, 0.004, 0.004, 0.004}, 1e-9);
-    expectNear(parts.value.tau, {0.7, 0.97, 0.9, 0.8}, 1e-9);
+    expectNear(parts.value.bulk.tau, {0.7, 0.97, 0.9, 0.8}, 1e-9);
 }
